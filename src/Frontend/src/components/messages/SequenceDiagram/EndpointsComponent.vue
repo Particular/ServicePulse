@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Endpoint } from "@/resources/SequenceDiagram/Endpoint";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 
 interface EndpointWithLocation extends Endpoint {
   width: number;
@@ -20,12 +20,22 @@ interface EndpointSurround {
   stroke: string;
 }
 
+export interface EndpointCentrePoint {
+  name: string;
+  centre: number;
+  top: number;
+}
+
 const Endpoint_Width = 260;
 const Endpoint_Gap = 30;
 const Endpoint_Image_Width = 20;
 
 const props = defineProps<{
   endpoints: Endpoint[];
+}>();
+
+const emit = defineEmits<{
+  centrePoints: [EndpointCentrePoint[]];
 }>();
 
 const epRefs = ref<SVGTextElement[]>([]);
@@ -60,6 +70,13 @@ const endpoints = computed(() =>
     }
     return endpoint;
   })
+);
+
+watch(endpoints, () =>
+  emit(
+    "centrePoints",
+    endpoints.value.map((endpoint) => ({ name: endpoint.name, centre: endpoint.x ?? 0, top: (endpoint.surround?.y ?? 0) + (endpoint.surround?.height ?? 0) + 15 }) as EndpointCentrePoint)
+  )
 );
 
 function setEndpointRef(el: SVGTextElement, index: number) {
