@@ -211,6 +211,7 @@ async function retryMessage() {
   }
 }
 let storedMessage: Message;
+let storedMessageNoSagas: Message;
 
 async function downloadHeadersAndBody(message: ExtendedFailedMessage) {
   if (isError(message)) return;
@@ -219,6 +220,10 @@ async function downloadHeadersAndBody(message: ExtendedFailedMessage) {
     const [, data] = await useTypedFetchFromServiceControl<Message[]>(`messages/search/${message.message_id}`);
     storedMessage = data[0];
     storedMessage.invoked_sagas = [<SagaInfo>{ saga_id: "45f425fc-26ce-163b-4f64-857b889348f3", saga_type: "ServiceControl.SmokeTest.AuditingSaga" }];
+
+    storedMessageNoSagas = structuredClone(storedMessage);
+    storedMessageNoSagas.invoked_sagas = [];
+
     const messageDetails = data.find((value) => value.receiving_endpoint.name === message.receiving_endpoint?.name);
 
     if (!messageDetails) {
@@ -448,12 +453,16 @@ onUnmounted(() => {
                 <h5 :class="{ active: panel === 3 }" class="nav-item" @click.prevent="togglePanel(3)"><a href="#">Headers</a></h5>
                 <h5 v-if="!isMassTransitConnected" :class="{ active: panel === 4 }" class="nav-item" @click.prevent="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
                 <h5 :class="{ active: panel === 5 }" class="nav-item" @click.prevent="togglePanel(5)"><a href="#">Saga</a></h5>
+                <h5 :class="{ active: panel === 6 }" class="nav-item" @click.prevent="togglePanel(6)"><a href="#">scenario holder - no saga data</a></h5>
+                <h5 :class="{ active: panel === 7 }" class="nav-item" @click.prevent="togglePanel(7)"><a href="#">scenario holder - plug-in needed</a></h5>
               </div>
               <StackTraceView v-if="panel === 1 && failedMessage.exception?.stack_trace" :message="failedMessage" />
               <BodyView v-if="panel === 2" :message="failedMessage" />
               <HeadersView v-if="panel === 3" :message="failedMessage" />
               <FlowDiagram v-if="panel === 4" :message="failedMessage" />
               <SagaView v-if="panel === 5" :message="storedMessage" :saga-history="sagaHistory" />
+              <SagaView v-if="panel === 6" :message="storedMessageNoSagas" />
+              <SagaView v-if="panel === 7" :message="storedMessage" />
             </div>
           </div>
 
