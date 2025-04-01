@@ -10,6 +10,7 @@ import TimeSince from "../TimeSince.vue";
 import moment from "moment";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import FlowDiagram from "./FlowDiagram.vue";
+import SequenceDiagram from "./SequenceDiagram.vue";
 import EditRetryDialog from "../failedmessages/EditRetryDialog.vue";
 import routeLinks from "@/router/routeLinks";
 import { EditAndRetryConfig } from "@/resources/Configuration";
@@ -24,7 +25,6 @@ import HeadersView from "@/components/messages/HeadersView.vue";
 import StackTraceView from "@/components/messages/StacktraceView.vue";
 import { stringify, parse } from "lossless-json";
 import xmlFormat from "xml-formatter";
-import { ModelCreator } from "@/resources/SequenceDiagram/SequenceModel";
 
 let refreshInterval: number | undefined;
 let pollingFaster = false;
@@ -134,7 +134,7 @@ async function fetchMessageDetails(message: ExtendedFailedMessage) {
     message.headers = messageDetails.headers;
     message.conversationId = messageDetails.headers.find((header) => header.key === NServiceBusHeaders.ConversationId)?.value ?? "";
 
-    await Promise.all([downloadBody(message), fetchConversation(message)]);
+    await downloadBody(message);
   } catch (err) {
     console.log(err);
     return;
@@ -165,15 +165,6 @@ async function downloadBody(message: ExtendedFailedMessage) {
   } catch {
     message.bodyUnavailable = true;
   }
-}
-
-async function fetchConversation(message: ExtendedFailedMessage) {
-  const response = await useFetchFromServiceControl(`conversations/${"5a69bfcd-e220-4509-a18b-b2a500437878"}`); //${"9d91504c-d8b7-488c-b525-b2a300109653"}`);
-  if (response.status === 404) {
-    return;
-  }
-
-  message.conversation = new ModelCreator((await response.json()) as Message[]);
 }
 
 function togglePanel(panelNum: number) {
@@ -359,11 +350,13 @@ onUnmounted(() => {
                 <h5 :class="{ active: panel === 2 }" class="nav-item" @click.prevent="togglePanel(2)"><a href="#">Message body</a></h5>
                 <h5 :class="{ active: panel === 3 }" class="nav-item" @click.prevent="togglePanel(3)"><a href="#">Headers</a></h5>
                 <h5 v-if="!isMassTransitConnected" :class="{ active: panel === 4 }" class="nav-item" @click.prevent="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
+                <h5 :class="{ active: panel === 3 }" class="nav-item" @click.prevent="togglePanel(5)"><a href="#">Sequence Diagram</a></h5>
               </div>
               <StackTraceView v-if="panel === 1 && failedMessage.exception?.stack_trace" :message="failedMessage" />
               <BodyView v-if="panel === 2" :message="failedMessage" />
               <HeadersView v-if="panel === 3" :message="failedMessage" />
               <FlowDiagram v-if="panel === 4" :message="failedMessage" />
+              <SequenceDiagram v-if="panel === 5" />
             </div>
           </div>
 

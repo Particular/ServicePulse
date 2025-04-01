@@ -30,92 +30,92 @@ export function createSendingEndpoint(message: Message): Endpoint {
 }
 
 export class EndpointRegistry {
-  #store = new Map<string, EndpointItem>();
+  _store = new Map<string, EndpointItem>();
 
   register(item: Endpoint) {
-    let endpoint = this.#store.get(item.name);
+    let endpoint = this._store.get(item.name);
     if (!endpoint) {
       endpoint = item as EndpointItem;
-      this.#store.set(endpoint.name, endpoint);
+      this._store.set(endpoint.name, endpoint);
     }
 
     item.hosts.forEach((host) => endpoint.addHost(host as Host));
   }
 
   get(item: Endpoint) {
-    return this.#store.get(item.name)! as Endpoint;
+    return this._store.get(item.name)! as Endpoint;
   }
 }
 
 class EndpointItem implements Endpoint {
-  #hosts: Map<string, Host>;
-  #name: string;
-  #handlers: Handler[] = [];
+  private _hosts: Map<string, Host>;
+  private _name: string;
+  private _handlers: Handler[] = [];
 
   constructor(name: string, host: string, id: string, version?: string) {
     const initialHost = new Host(host, id, version);
-    this.#hosts = new Map<string, Host>([[initialHost.equatableKey, initialHost]]);
-    this.#name = name;
+    this._hosts = new Map<string, Host>([[initialHost.equatableKey, initialHost]]);
+    this._name = name;
   }
 
   get name() {
-    return this.#name;
+    return this._name;
   }
   get hosts() {
-    return [...this.#hosts].map(([, host]) => host);
+    return [...this._hosts].map(([, host]) => host);
   }
   get host() {
-    return [...this.#hosts].map(([, host]) => host.host).join(",");
+    return [...this._hosts].map(([, host]) => host.host).join(",");
   }
   get hostId() {
-    return [...this.#hosts].map(([, host]) => host.hostId).join(",");
+    return [...this._hosts].map(([, host]) => host.hostId).join(",");
   }
   get handlers() {
-    return [...this.#handlers];
+    return [...this._handlers];
   }
 
   addHost(host: Host) {
-    if (!this.#hosts.has(host.equatableKey)) {
-      this.#hosts.set(host.equatableKey, host);
+    if (!this._hosts.has(host.equatableKey)) {
+      this._hosts.set(host.equatableKey, host);
     } else {
-      const existing = this.#hosts.get(host.equatableKey)!;
+      const existing = this._hosts.get(host.equatableKey)!;
       existing.addVersions(host.versions);
     }
   }
 
   addHandler(handler: Handler) {
-    this.#handlers.push(handler);
+    this._handlers.push(handler);
   }
 }
 
 class Host implements EndpointHost {
-  #host: string;
-  #hostId: string;
-  #versions: Set<string>;
+  private _host: string;
+  private _hostId: string;
+  private _versions: Set<string>;
 
   constructor(host: string, hostId: string, version?: string) {
-    this.#host = host;
-    this.#hostId = hostId;
-    this.#versions = new Set<string>();
+    this._host = host;
+    this._hostId = hostId;
+    this._versions = new Set<string>();
     this.addVersions([version]);
   }
 
   get host() {
-    return this.#host;
+    return this._host;
   }
   get hostId() {
-    return this.#hostId;
+    return this._hostId;
   }
 
   get versions() {
-    return [...this.#versions];
+    return [...this._versions];
   }
 
   get equatableKey() {
-    return `${this.#hostId}###${this.#host}`;
+    return `${this._hostId}###${this._host}`;
   }
 
   addVersions(versions: (string | undefined)[]) {
-    versions.filter((version) => version).forEach((version) => this.#versions.add(version!.toLowerCase()));
+    versions.filter((version) => version).forEach((version) => this._versions.add(version!.toLowerCase()));
   }
 }

@@ -58,11 +58,11 @@ export function createRoutedMessage(message: Message): RoutedMessage {
 
 class MessageProcessingRouteItem implements MessageProcessingRoute {
   readonly name?: string;
-  #fromRoutedMessage?: RoutedMessageItem;
+  private _fromRoutedMessage?: RoutedMessageItem;
   readonly processingHandler?: Handler;
 
   constructor(routedMessage?: RoutedMessageItem, processingHandler?: Handler) {
-    this.#fromRoutedMessage = routedMessage;
+    this._fromRoutedMessage = routedMessage;
     this.processingHandler = processingHandler;
 
     if (routedMessage && this.processingHandler) {
@@ -74,7 +74,7 @@ class MessageProcessingRouteItem implements MessageProcessingRoute {
   }
 
   get fromRoutedMessage() {
-    return this.#fromRoutedMessage as RoutedMessage | undefined;
+    return this._fromRoutedMessage as RoutedMessage | undefined;
   }
 }
 
