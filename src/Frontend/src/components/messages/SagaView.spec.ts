@@ -17,12 +17,12 @@ interface componentDSLAssertions {
   displayedSagaNameIs(humanizedSagaName: string): void;
   linkIsShown(arg0: { withText: string; withHref: string }): void;
   NoSagaDataAvailableMessageIsShownWithMessage(message: RegExp): void;
-  SagaPlugInNeededIsShownWithTheMessage(message: RegExp): void;
+  SagaPlugInNeededIsShownWithTheMessages({ messages, withPluginDownloadUrl }: { messages: RegExp[]; withPluginDownloadUrl: string }): void;
   SagaSequenceIsNotShown(): void;
 }
 
 describe("Feature: Message not involved in Saga", () => {
-  describe("Rule: 0.1: When the selected message has not participated in a Saga, display a legend indicating it.​", () => {
+  describe("Rule: When the selected message has not participated in a Saga, display a legend indicating it.​", () => {
     test("EXAMPLE: A message that has not participated in a saga is selected", () => {
       const message = {} as Message;
       message.invoked_sagas = [];
@@ -34,8 +34,8 @@ describe("Feature: Message not involved in Saga", () => {
   });
 });
 
-describe("Feature: 1 Detecting no Audited Saga Data Available", () => {
-  describe("Rule: 1.1: When a message participates in a Saga, but the Saga data is unavailable, display a legend indicating that the Saga audit plugin is needed to visualize the saga.", () => {
+describe("Feature: Detecting no Audited Saga Data Available", () => {
+  describe("Rule: When a message participates in a Saga, but the Saga data is unavailable, display a legend indicating that the Saga audit plugin is needed to visualize the saga.", () => {
     test("EXAMPLE: A message that was participated in a Saga without the Saga audit plugin being active gets selected", () => {
       const message = {} as Message;
       const invokedSaga = {} as SagaInfo;
@@ -43,7 +43,10 @@ describe("Feature: 1 Detecting no Audited Saga Data Available", () => {
       message.invoked_sagas = [invokedSaga];
 
       const componentDriver = rendercomponent({ message: message, sagaHistory: undefined });
-      componentDriver.assert.SagaPlugInNeededIsShownWithTheMessage(/To visualize your saga, please install the appropriate nuget package in your endpoint. Saga audit plugin needed to visualize saga/i);
+      componentDriver.assert.SagaPlugInNeededIsShownWithTheMessages({
+        messages: [/Saga audit plugin needed to visualize saga/i, /To visualize your saga, please install the appropriate nuget package in your endpoint/i, /install-package NServiceBus\.SagaAudit/i],
+        withPluginDownloadUrl: "https://www.nuget.org/packages/NServiceBus.SagaAudit",
+      });
     });
   });
 });
@@ -126,15 +129,21 @@ function rendercomponent({ message, sagaHistory = undefined }: { message: Messag
 
         this.SagaSequenceIsNotShown();
       },
-      SagaPlugInNeededIsShownWithTheMessage(message: RegExp) {
-        // Ensure that only one status message is shown
-        expect(screen.queryAllByRole("status")).toHaveLength(1);
+      SagaPlugInNeededIsShownWithTheMessages({ messages, withPluginDownloadUrl }: { messages: RegExp[]; withPluginDownloadUrl: string }) {
+        // Use the matcher to find the container element
+        const messageContainer = screen.queryByRole("status", { name: /saga-plugin-needed/i });
+        expect(messageContainer).toBeInTheDocument();
 
-        const status = screen.queryByRole("status", { name: /saga-plugin-needed/i });
-        expect(status).toBeInTheDocument();
+        // using within to find the text inside the container per each item in messages
+        messages.forEach((message) => {
+          const statusText = within(messageContainer!).getByText(message);
+          expect(statusText).toBeInTheDocument();
+        });
 
-        const statusText = within(status!).getByText(message);
-        expect(statusText).toBeInTheDocument();
+        // Verify the link
+        const link = screen.getByRole("link", { name: "install-package NServiceBus.SagaAudit" });
+        expect(link).toBeInTheDocument();
+        expect(link).toHaveAttribute("href", withPluginDownloadUrl);
 
         this.SagaSequenceIsNotShown();
       },
