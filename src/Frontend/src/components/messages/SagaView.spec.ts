@@ -52,11 +52,11 @@ describe("Feature: Detecting no Audited Saga Data Available", () => {
 
 describe("Feature: Navigation and Contextual Information", () => {
   describe("Rule: Provide clear navigational elements to move between the message flow diagram and the saga view.", () => {
-    test("EXAMPLE: An record with id 123 gets selected", () => {
+    test("EXAMPLE: A message record with id '123' and with a saga Id '88878' gets selected", () => {
       //A "← Back to Messages" link allows users to easily navigate back to the flow diagram.
       const message = {} as Message;
       const invokedSaga = {} as SagaInfo;
-      invokedSaga.saga_id = "saga_id";
+      invokedSaga.saga_id = "88878";
       message.invoked_sagas = [invokedSaga];
 
       const storedMessageRecordId = "123";
