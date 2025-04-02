@@ -8,12 +8,21 @@ const Height_Per_Out = 40;
 const Handler_Gap = 20;
 const Handler_Width = 14;
 
+export interface HandlerLocation {
+  id: string;
+  left: number;
+  right: number;
+  y: number;
+  height: number;
+}
+
 const props = defineProps<{
   handlers: Handler[];
   endpointCentrePoints: EndpointCentrePoint[];
 }>();
 const emit = defineEmits<{
   maxHeight: [height: number];
+  handlerLocations: [locations: HandlerLocation[]];
 }>();
 
 const messageTypeRefs = ref<SVGTextElement[]>([]);
@@ -46,7 +55,8 @@ const handlers = computed(() => {
 
     return {
       key: handler.id,
-      x: (endpoint?.centre ?? 0) - Handler_Width / 2,
+      left: (endpoint?.centre ?? 0) - Handler_Width / 2,
+      right: (endpoint?.centre ?? 0) + Handler_Width / 2,
       y,
       height,
       fill,
@@ -58,6 +68,10 @@ const handlers = computed(() => {
   });
 
   emit("maxHeight", nextY);
+  emit(
+    "handlerLocations",
+    result.map((handler) => ({ id: handler.key, left: handler.left, right: handler.right, y: handler.y, height: handler.height }))
+  );
   return result;
 });
 
@@ -68,7 +82,7 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
 
 <template>
   <g>
-    <g v-for="(handler, i) in handlers" :key="handler.key" :transform="`translate(${handler.x}, ${handler.y})`">
+    <g v-for="(handler, i) in handlers" :key="handler.key" :transform="`translate(${handler.left}, ${handler.y})`">
       <!--Handler Activation Box-->
       <rect :width="Handler_Width" :height="handler.height" :fill="handler.fill" />
       <path v-if="handler.icon" :d="handler.icon" fill="white" :transform="`translate(${Handler_Width / 2 - handler.iconSize / 2}, ${handler.height / 2 - handler.iconSize / 2})`" />

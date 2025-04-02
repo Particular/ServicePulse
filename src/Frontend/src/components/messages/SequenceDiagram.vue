@@ -8,13 +8,15 @@ import { ModelCreator } from "@/resources/SequenceDiagram/SequenceModel";
 import { ref } from "vue";
 import Endpoints, { EndpointCentrePoint } from "./SequenceDiagram/EndpointsComponent.vue";
 import Timeline from "./SequenceDiagram/TimelineComponent.vue";
-import Handlers from "./SequenceDiagram/HandlersComponent.vue";
+import Handlers, { HandlerLocation } from "./SequenceDiagram/HandlersComponent.vue";
+import Routes from "./SequenceDiagram/RoutesComponent.vue";
 
 const endpoints = ref<Endpoint[]>([]);
 const handlers = ref<Handler[]>([]);
 const routes = ref<MessageProcessingRoute[]>([]);
 const endpointCentrePoints = ref<EndpointCentrePoint[]>([]);
 const maxHeight = ref(150);
+const handlerLocations = ref<HandlerLocation[]>([]);
 
 async function fetchConversation() {
   const response = await useFetchFromServiceControl(`conversations/${"b4dac7d7-4571-4f26-aa32-b29c0030c95f"}`); //${"9d91504c-d8b7-488c-b525-b2a300109653"}`);
@@ -36,13 +38,17 @@ function setTimelines(centrePoints: EndpointCentrePoint[]) {
 function setMaxHeight(height: number) {
   maxHeight.value = height;
 }
+function setHandlerLocations(locations: HandlerLocation[]) {
+  handlerLocations.value = locations;
+}
 </script>
 
 <template>
   <svg class="sequence-diagram" width="100%" :height="maxHeight + 20">
-    <Endpoints :endpoints="endpoints" v-on:centre-points="setTimelines" />
+    <Endpoints :endpoints="endpoints" @centre-points="setTimelines" />
     <Timeline :centre-points="endpointCentrePoints" :height="maxHeight" />
-    <Handlers :handlers="handlers" :endpoint-centre-points="endpointCentrePoints" v-on:max-height="setMaxHeight" />
+    <Handlers :handlers="handlers" :endpoint-centre-points="endpointCentrePoints" @max-height="setMaxHeight" @handlerLocations="setHandlerLocations" />
+    <Routes :routes="routes" :handler-locations="handlerLocations" />
   </svg>
 </template>
 
@@ -56,6 +62,8 @@ function setMaxHeight(height: number) {
   --gray80: #cccccc;
   --gray90: #e6e6e6;
   --gray95: #b3b3b3;
+  --highlight: #0b6eef;
+  --highlight-background: #c5dee9;
   background: white;
 }
 </style>
