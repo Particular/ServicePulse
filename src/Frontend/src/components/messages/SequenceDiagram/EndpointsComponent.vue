@@ -36,6 +36,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   centrePoints: [EndpointCentrePoint[]];
+  maxWidth: [width: number];
 }>();
 
 const epRefs = ref<SVGTextElement[]>([]);
@@ -72,12 +73,14 @@ const endpoints = computed(() =>
   })
 );
 
-watch(endpoints, () =>
+watch(endpoints, () => {
   emit(
     "centrePoints",
     endpoints.value.map((endpoint) => ({ name: endpoint.name, centre: endpoint.x ?? 0, top: (endpoint.surround?.y ?? 0) + (endpoint.surround?.height ?? 0) + 15 }) as EndpointCentrePoint)
-  )
-);
+  );
+  const lastEndpoint = endpoints.value[endpoints.value.length - 1];
+  emit("maxWidth", (lastEndpoint.x ?? 0) + lastEndpoint.width);
+});
 
 function setEndpointRef(el: SVGTextElement, index: number) {
   if (el) epRefs.value[index] = el;

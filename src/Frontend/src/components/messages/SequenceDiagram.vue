@@ -15,6 +15,7 @@ const endpoints = ref<Endpoint[]>([]);
 const handlers = ref<Handler[]>([]);
 const routes = ref<MessageProcessingRoute[]>([]);
 const endpointCentrePoints = ref<EndpointCentrePoint[]>([]);
+const maxWidth = ref(150);
 const maxHeight = ref(150);
 const handlerLocations = ref<HandlerLocation[]>([]);
 
@@ -35,6 +36,9 @@ fetchConversation();
 function setTimelines(centrePoints: EndpointCentrePoint[]) {
   endpointCentrePoints.value = centrePoints;
 }
+function setMaxWidth(width: number) {
+  maxWidth.value = width;
+}
 function setMaxHeight(height: number) {
   maxHeight.value = height;
 }
@@ -44,15 +48,23 @@ function setHandlerLocations(locations: HandlerLocation[]) {
 </script>
 
 <template>
-  <svg class="sequence-diagram" width="100%" :height="maxHeight + 20">
-    <Endpoints :endpoints="endpoints" @centre-points="setTimelines" />
-    <Timeline :centre-points="endpointCentrePoints" :height="maxHeight" />
-    <Handlers :handlers="handlers" :endpoint-centre-points="endpointCentrePoints" @max-height="setMaxHeight" @handlerLocations="setHandlerLocations" />
-    <Routes :routes="routes" :handler-locations="handlerLocations" />
-  </svg>
+  <div class="outer">
+    <svg class="sequence-diagram" :width="`max(100%, ${isNaN(maxWidth) ? 0 : maxWidth}px)`" :height="maxHeight + 20">
+      <Endpoints :endpoints="endpoints" @centre-points="setTimelines" @max-width="setMaxWidth" />
+      <Timeline :centre-points="endpointCentrePoints" :height="maxHeight" />
+      <Handlers :handlers="handlers" :endpoint-centre-points="endpointCentrePoints" @max-height="setMaxHeight" @handler-locations="setHandlerLocations" />
+      <Routes :routes="routes" :handler-locations="handlerLocations" />
+    </svg>
+  </div>
 </template>
 
 <style scoped>
+.outer {
+  max-width: 100%;
+  max-height: calc(100vh - 27em);
+  overflow: auto;
+}
+
 .sequence-diagram {
   --error: red;
   --gray20: #333333;
