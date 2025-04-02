@@ -1,6 +1,6 @@
 import { NServiceBusHeaders } from "../Header";
 import Message, { MessageStatus } from "../Message";
-import { MessageProcessingRoute, RoutedMessage } from "./RoutedMessage";
+import { Direction, MessageProcessingRoute, RoutedMessage } from "./RoutedMessage";
 import { Endpoint } from "./Endpoint";
 import { friendlyTypeName } from "./SequenceModel";
 
@@ -16,6 +16,7 @@ export interface Handler {
   processedAt?: Date;
   readonly handledAt?: Date;
   processingTime?: number;
+  readonly direction: Direction;
   route?: MessageProcessingRoute;
   readonly selectedMessage?: Message;
   updateProcessedAt(timeSent: Date): void;
@@ -75,10 +76,10 @@ export function updateProcessingHandler(handler: Handler, message: Message) {
 }
 
 class HandlerItem implements Handler {
-  #id: string;
-  #endpoint: Endpoint;
-  #processedAtGuess?: Date;
-  #outMessages: RoutedMessage[];
+  private _id: string;
+  private _endpoint: Endpoint;
+  private _processedAtGuess?: Date;
+  private _outMessages: RoutedMessage[];
   name?: string;
   partOfSaga?: string;
   inMessage?: RoutedMessage;
@@ -88,17 +89,17 @@ class HandlerItem implements Handler {
   route?: MessageProcessingRoute;
 
   constructor(id: string, endpoint: Endpoint) {
-    this.#id = id;
-    this.#endpoint = endpoint;
-    this.#outMessages = [];
+    this._id = id;
+    this._endpoint = endpoint;
+    this._outMessages = [];
   }
 
   get id() {
-    return this.#id;
+    return this._id;
   }
 
   get endpoint() {
-    return this.#endpoint;
+    return this._endpoint;
   }
 
   get isPartOfSaga() {
@@ -106,7 +107,7 @@ class HandlerItem implements Handler {
   }
 
   get handledAt() {
-    return this.processedAt ?? this.#processedAtGuess;
+    return this.processedAt ?? this._processedAtGuess;
   }
 
   get selectedMessage() {
@@ -114,14 +115,18 @@ class HandlerItem implements Handler {
   }
 
   get outMessages() {
-    return [...this.#outMessages];
+    return [...this._outMessages];
+  }
+
+  get direction() {
+    return this.outMessages[0]?.direction === Direction.Left ? Direction.Right : Direction.Left;
   }
 
   updateProcessedAt(timeSent: Date) {
-    if (!this.#processedAtGuess || this.#processedAtGuess.getTime() > timeSent.getTime()) this.#processedAtGuess = timeSent;
+    if (!this._processedAtGuess || this._processedAtGuess.getTime() > timeSent.getTime()) this._processedAtGuess = timeSent;
   }
 
   addOutMessage(routedMessage: RoutedMessage) {
-    this.#outMessages = [routedMessage, ...this.#outMessages].sort((a, b) => (a.sentTime?.getTime() ?? 0) - (b.sentTime?.getTime() ?? 0));
+    this._outMessages = [routedMessage, ...this._outMessages].sort((a, b) => (a.sentTime?.getTime() ?? 0) - (b.sentTime?.getTime() ?? 0));
   }
 }

@@ -8,11 +8,13 @@ import { ModelCreator } from "@/resources/SequenceDiagram/SequenceModel";
 import { ref } from "vue";
 import Endpoints, { EndpointCentrePoint } from "./SequenceDiagram/EndpointsComponent.vue";
 import Timeline from "./SequenceDiagram/TimelineComponent.vue";
+import Handlers from "./SequenceDiagram/HandlersComponent.vue";
 
 const endpoints = ref<Endpoint[]>([]);
 const handlers = ref<Handler[]>([]);
 const routes = ref<MessageProcessingRoute[]>([]);
-const timelines = ref<EndpointCentrePoint[]>([]);
+const endpointCentrePoints = ref<EndpointCentrePoint[]>([]);
+const maxHeight = ref(150);
 
 async function fetchConversation() {
   const response = await useFetchFromServiceControl(`conversations/${"b4dac7d7-4571-4f26-aa32-b29c0030c95f"}`); //${"9d91504c-d8b7-488c-b525-b2a300109653"}`);
@@ -29,14 +31,18 @@ async function fetchConversation() {
 fetchConversation();
 
 function setTimelines(centrePoints: EndpointCentrePoint[]) {
-  timelines.value = centrePoints;
+  endpointCentrePoints.value = centrePoints;
+}
+function setMaxHeight(height: number) {
+  maxHeight.value = height;
 }
 </script>
 
 <template>
-  <svg class="sequence-diagram" width="100%" height="100%">
+  <svg class="sequence-diagram" width="100%" :height="maxHeight + 20">
     <Endpoints :endpoints="endpoints" v-on:centre-points="setTimelines" />
-    <Timeline :centre-points="timelines" :height="150" />
+    <Timeline :centre-points="endpointCentrePoints" :height="maxHeight" />
+    <Handlers :handlers="handlers" :endpoint-centre-points="endpointCentrePoints" v-on:max-height="setMaxHeight" />
   </svg>
 </template>
 
