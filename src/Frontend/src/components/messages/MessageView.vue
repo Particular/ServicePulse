@@ -15,7 +15,7 @@ import routeLinks from "@/router/routeLinks";
 import { EditAndRetryConfig } from "@/resources/Configuration";
 import { TYPE } from "vue-toastification";
 import { ExtendedFailedMessage, FailedMessageError, FailedMessageStatus, isError } from "@/resources/FailedMessage";
-import Message from "@/resources/Message";
+import Message, { SagaInfo } from "@/resources/Message";
 import { NServiceBusHeaders } from "@/resources/Header";
 import { useConfiguration } from "@/composables/configuration";
 import { useIsMassTransitConnected } from "@/composables/useIsMassTransitConnected";
@@ -25,6 +25,101 @@ import StackTraceView from "@/components/messages/StacktraceView.vue";
 import { stringify, parse } from "lossless-json";
 import xmlFormat from "xml-formatter";
 import SagaView from "./SagaView.vue";
+import { SagaHistory } from "@/resources/SagaHistory";
+
+const sagaHistory = ref<SagaHistory>({
+  id: "45f425fc-26ce-163b-4f64-857b889348f3",
+  saga_id: "45f425fc-26ce-163b-4f64-857b889348f3",
+  saga_type: "ServiceControl.SmokeTest.AuditingSaga",
+  changes: [
+    {
+      start_time: "2025-03-28T03:04:08.3819211Z",
+      finish_time: "2025-03-28T03:04:08.3836Z",
+      status: "completed",
+      state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
+      initiating_message: {
+        message_id: "876d89bd-7a1f-43f1-b384-b2ae003290e8",
+        is_saga_timeout_message: true,
+        originating_endpoint: "Endpoint1",
+        originating_machine: "mobvm2",
+        time_sent: "2025-03-28T03:04:06.321561Z",
+        message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
+        intent: "Send",
+      },
+      outgoing_messages: [],
+      endpoint: "Endpoint1",
+    },
+    {
+      start_time: "2025-03-28T03:04:07.5416262Z",
+      finish_time: "2025-03-28T03:04:07.5509712Z",
+      status: "updated",
+      state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
+      initiating_message: {
+        message_id: "1308367f-c6a2-418f-9df2-b2ae00328fc9",
+        is_saga_timeout_message: true,
+        originating_endpoint: "Endpoint1",
+        originating_machine: "mobvm2",
+        time_sent: "2025-03-28T03:04:05.37723Z",
+        message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
+        intent: "Send",
+      },
+      outgoing_messages: [],
+      endpoint: "Endpoint1",
+    },
+    {
+      start_time: "2025-03-28T03:04:06.3088353Z",
+      finish_time: "2025-03-28T03:04:06.3218175Z",
+      status: "updated",
+      state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
+      initiating_message: {
+        message_id: "e5bb5304-7892-4d39-96e2-b2ae003290df",
+        is_saga_timeout_message: false,
+        originating_endpoint: "Sender",
+        originating_machine: "mobvm2",
+        time_sent: "2025-03-28T03:04:06.293765Z",
+        message_type: "ServiceControl.SmokeTest.SagaMessage2",
+        intent: "Send",
+      },
+      outgoing_messages: [
+        {
+          delivery_delay: "00:00:02",
+          destination: "Endpoint1",
+          message_id: "876d89bd-7a1f-43f1-b384-b2ae003290e8",
+          time_sent: "2025-03-28T03:04:06.3214397Z",
+          message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
+          intent: "Send",
+        },
+      ],
+      endpoint: "Endpoint1",
+    },
+    {
+      start_time: "2025-03-28T03:04:05.3332078Z",
+      finish_time: "2025-03-28T03:04:05.3799483Z",
+      status: "new",
+      state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
+      initiating_message: {
+        message_id: "4b9fdea7-d78c-41f0-91ee-b2ae00328f9c",
+        is_saga_timeout_message: false,
+        originating_endpoint: "Sender",
+        originating_machine: "mobvm2",
+        time_sent: "2025-03-28T03:04:05.235534Z",
+        message_type: "ServiceControl.SmokeTest.SagaMessage1",
+        intent: "Send",
+      },
+      outgoing_messages: [
+        {
+          delivery_delay: "00:00:02",
+          destination: "Endpoint1",
+          message_id: "1308367f-c6a2-418f-9df2-b2ae00328fc9",
+          time_sent: "2025-03-28T03:04:05.3715034Z",
+          message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
+          intent: "Send",
+        },
+      ],
+      endpoint: "Endpoint1",
+    },
+  ],
+});
 
 let refreshInterval: number | undefined;
 let pollingFaster = false;
@@ -116,6 +211,7 @@ async function retryMessage() {
   }
 }
 let storedMessage: Message;
+let storedMessageNoSagas: Message;
 
 async function downloadHeadersAndBody(message: ExtendedFailedMessage) {
   if (isError(message)) return;
@@ -123,6 +219,11 @@ async function downloadHeadersAndBody(message: ExtendedFailedMessage) {
   try {
     const [, data] = await useTypedFetchFromServiceControl<Message[]>(`messages/search/${message.message_id}`);
     storedMessage = data[0];
+    storedMessage.invoked_sagas = [<SagaInfo>{ saga_id: "45f425fc-26ce-163b-4f64-857b889348f3", saga_type: "ServiceControl.SmokeTest.AuditingSaga" }];
+
+    storedMessageNoSagas = structuredClone(storedMessage);
+    storedMessageNoSagas.invoked_sagas = [];
+
     const messageDetails = data.find((value) => value.receiving_endpoint.name === message.receiving_endpoint?.name);
 
     if (!messageDetails) {
@@ -352,12 +453,16 @@ onUnmounted(() => {
                 <h5 :class="{ active: panel === 3 }" class="nav-item" @click.prevent="togglePanel(3)"><a href="#">Headers</a></h5>
                 <h5 v-if="!isMassTransitConnected" :class="{ active: panel === 4 }" class="nav-item" @click.prevent="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
                 <h5 :class="{ active: panel === 5 }" class="nav-item" @click.prevent="togglePanel(5)"><a href="#">Saga</a></h5>
+                <h5 :class="{ active: panel === 6 }" class="nav-item" @click.prevent="togglePanel(6)"><a href="#">scenario holder - no saga data</a></h5>
+                <h5 :class="{ active: panel === 7 }" class="nav-item" @click.prevent="togglePanel(7)"><a href="#">scenario holder - plug-in needed</a></h5>
               </div>
               <StackTraceView v-if="panel === 1 && failedMessage.exception?.stack_trace" :message="failedMessage" />
               <BodyView v-if="panel === 2" :message="failedMessage" />
               <HeadersView v-if="panel === 3" :message="failedMessage" />
               <FlowDiagram v-if="panel === 4" :message="failedMessage" />
-              <SagaView v-if="panel === 5" :message="storedMessage" />
+              <SagaView v-if="panel === 5" :message="storedMessage" :saga-history="sagaHistory" />
+              <SagaView v-if="panel === 6" :message="storedMessageNoSagas" />
+              <SagaView v-if="panel === 7" :message="storedMessage" />
             </div>
           </div>
 
