@@ -1,36 +1,23 @@
 <script setup lang="ts">
-import { Handler, HandlerState } from "@/resources/SequenceDiagram/Handler";
-import { EndpointCentrePoint } from "./EndpointsComponent.vue";
+import { HandlerState } from "@/resources/SequenceDiagram/Handler";
 import { computed, ref } from "vue";
 import { Direction } from "@/resources/SequenceDiagram/RoutedMessage";
+import { useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
+import { storeToRefs } from "pinia";
 
 const Height_Per_Out = 40;
 const Handler_Gap = 20;
 const Handler_Width = 14;
 
-export interface HandlerLocation {
-  id: string;
-  left: number;
-  right: number;
-  y: number;
-  height: number;
-}
-
-const props = defineProps<{
-  handlers: Handler[];
-  endpointCentrePoints: EndpointCentrePoint[];
-}>();
-const emit = defineEmits<{
-  maxHeight: [height: number];
-  handlerLocations: [locations: HandlerLocation[]];
-}>();
+const store = useSequenceDiagramStore();
+const { handlers, endpointCentrePoints } = storeToRefs(store);
 
 const messageTypeRefs = ref<SVGTextElement[]>([]);
 
-const handlers = computed(() => {
+const handlerItems = computed(() => {
   let nextY = 0;
-  const result = props.handlers.map((handler, index) => {
-    const endpoint = props.endpointCentrePoints.find((cp) => cp.name === handler.endpoint.name)!;
+  const result = handlers.value.map((handler, index) => {
+    const endpoint = endpointCentrePoints.value.find((cp) => cp.name === handler.endpoint.name)!;
     const messageTypeElement = messageTypeRefs.value[index];
     const count = handler.outMessages.length;
     const height = (count === 0 ? 1 : count) * Height_Per_Out;
@@ -67,11 +54,9 @@ const handlers = computed(() => {
     };
   });
 
-  emit("maxHeight", nextY);
-  emit(
-    "handlerLocations",
-    result.map((handler) => ({ id: handler.key, left: handler.left, right: handler.right, y: handler.y, height: handler.height }))
-  );
+  store.setMaxHeight(nextY);
+  store.setHandlerLocations(result.map((handler) => ({ id: handler.key, left: handler.left, right: handler.right, y: handler.y, height: handler.height })));
+
   return result;
 });
 
@@ -82,7 +67,7 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
 
 <template>
   <g>
-    <g v-for="(handler, i) in handlers" :key="handler.key" :transform="`translate(${handler.left}, ${handler.y})`">
+    <g v-for="(handler, i) in handlerItems" :key="handler.key" :transform="`translate(${handler.left}, ${handler.y})`">
       <!--Handler Activation Box-->
       <rect :width="Handler_Width" :height="handler.height" :fill="handler.fill" />
       <path v-if="handler.icon" :d="handler.icon" fill="white" :transform="`translate(${Handler_Width / 2 - handler.iconSize / 2}, ${handler.height / 2 - handler.iconSize / 2})`" />

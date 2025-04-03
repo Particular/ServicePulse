@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Endpoint } from "@/resources/SequenceDiagram/Endpoint";
+import { EndpointCentrePoint, useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
+import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 
 interface EndpointWithLocation extends Endpoint {
@@ -20,33 +22,21 @@ interface EndpointSurround {
   stroke: string;
 }
 
-export interface EndpointCentrePoint {
-  name: string;
-  centre: number;
-  top: number;
-}
-
 const Endpoint_Width = 260;
 const Endpoint_Gap = 30;
 const Endpoint_Image_Width = 20;
 
-const props = defineProps<{
-  endpoints: Endpoint[];
-}>();
-
-const emit = defineEmits<{
-  centrePoints: [EndpointCentrePoint[]];
-  maxWidth: [width: number];
-}>();
+const store = useSequenceDiagramStore();
+const { endpoints } = storeToRefs(store);
 
 const epRefs = ref<SVGTextElement[]>([]);
-const endpoints = computed(() =>
-  props.endpoints.map((x, index) => {
+const endpointItems = computed(() =>
+  endpoints.value.map((x, index) => {
     const endpoint = x as EndpointWithLocation;
     const el = epRefs.value[index];
     if (el) {
       const bounds = el.getBBox();
-      const previousEndpoint = index > 0 ? endpoints.value[index - 1] : undefined;
+      const previousEndpoint = index > 0 ? endpointItems.value[index - 1] : undefined;
       endpoint.width = Math.max(Endpoint_Width, bounds.width);
       endpoint.textWidth = bounds.width;
       endpoint.x = (previousEndpoint?.x ?? Endpoint_Width / 2) + (previousEndpoint?.width ?? 0) + Endpoint_Gap;
@@ -73,13 +63,10 @@ const endpoints = computed(() =>
   })
 );
 
-watch(endpoints, () => {
-  emit(
-    "centrePoints",
-    endpoints.value.map((endpoint) => ({ name: endpoint.name, centre: endpoint.x ?? 0, top: (endpoint.surround?.y ?? 0) + (endpoint.surround?.height ?? 0) + 15 }) as EndpointCentrePoint)
-  );
-  const lastEndpoint = endpoints.value[endpoints.value.length - 1];
-  emit("maxWidth", (lastEndpoint.x ?? 0) + lastEndpoint.width);
+watch(endpointItems, () => {
+  store.setEndpointCentrePoints(endpointItems.value.map((endpoint) => ({ name: endpoint.name, centre: endpoint.x ?? 0, top: (endpoint.surround?.y ?? 0) + (endpoint.surround?.height ?? 0) + 15 }) as EndpointCentrePoint));
+  const lastEndpoint = endpointItems.value[endpointItems.value.length - 1];
+  store.setMaxWidth((lastEndpoint.x ?? 0) + lastEndpoint.width);
 });
 
 function setEndpointRef(el: SVGTextElement, index: number) {
@@ -88,7 +75,7 @@ function setEndpointRef(el: SVGTextElement, index: number) {
 </script>
 
 <template>
-  <g v-for="(endpoint, i) in endpoints" :key="endpoint.name" transform="translate(0,15)">
+  <g v-for="(endpoint, i) in endpointItems" :key="endpoint.name" transform="translate(0,15)">
     <rect
       v-if="endpoint.surround"
       :x="endpoint.surround.x"

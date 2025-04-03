@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { EndpointCentrePoint } from "./EndpointsComponent.vue";
+import { useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
+import { storeToRefs } from "pinia";
 
-defineProps<{
-  centrePoints: EndpointCentrePoint[];
-  height: number;
-}>();
+const store = useSequenceDiagramStore();
+const { endpointCentrePoints, maxHeight } = storeToRefs(store);
 </script>
 
 <template>
-  <g v-for="timeline in centrePoints" :key="timeline.name">
-    <path :d="`M${timeline.centre} ${timeline.top} v0 ${height - timeline.top}`" stroke="var(--gray90)" stroke-width="2" />
+  <g v-for="timeline in endpointCentrePoints" :key="timeline.name">
+    <path :d="`M${timeline.centre} ${timeline.top} v0 ${maxHeight - timeline.top}`" stroke="var(--gray90)" stroke-width="2" />
   </g>
 </template>

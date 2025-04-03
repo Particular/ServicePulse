@@ -1,59 +1,24 @@
 <script setup lang="ts">
-import { useFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
-import Message from "@/resources/Message";
-import { Endpoint } from "@/resources/SequenceDiagram/Endpoint";
-import { Handler } from "@/resources/SequenceDiagram/Handler";
-import { MessageProcessingRoute } from "@/resources/SequenceDiagram/RoutedMessage";
-import { ModelCreator } from "@/resources/SequenceDiagram/SequenceModel";
-import { ref } from "vue";
-import Endpoints, { EndpointCentrePoint } from "./SequenceDiagram/EndpointsComponent.vue";
+import Endpoints from "./SequenceDiagram/EndpointsComponent.vue";
 import Timeline from "./SequenceDiagram/TimelineComponent.vue";
-import Handlers, { HandlerLocation } from "./SequenceDiagram/HandlersComponent.vue";
+import Handlers from "./SequenceDiagram/HandlersComponent.vue";
 import Routes from "./SequenceDiagram/RoutesComponent.vue";
+import { useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
+import { storeToRefs } from "pinia";
 
-const endpoints = ref<Endpoint[]>([]);
-const handlers = ref<Handler[]>([]);
-const routes = ref<MessageProcessingRoute[]>([]);
-const endpointCentrePoints = ref<EndpointCentrePoint[]>([]);
-const maxWidth = ref(150);
-const maxHeight = ref(150);
-const handlerLocations = ref<HandlerLocation[]>([]);
+const store = useSequenceDiagramStore();
+store.setConversationId("b4dac7d7-4571-4f26-aa32-b29c0030c95f");
 
-async function fetchConversation() {
-  const response = await useFetchFromServiceControl(`conversations/${"b4dac7d7-4571-4f26-aa32-b29c0030c95f"}`); //${"9d91504c-d8b7-488c-b525-b2a300109653"}`);
-  if (response.status === 404) {
-    return;
-  }
-
-  const model = new ModelCreator((await response.json()) as Message[]);
-  endpoints.value = model.endpoints;
-  handlers.value = model.handlers;
-  routes.value = model.routes;
-}
-
-fetchConversation();
-
-function setTimelines(centrePoints: EndpointCentrePoint[]) {
-  endpointCentrePoints.value = centrePoints;
-}
-function setMaxWidth(width: number) {
-  maxWidth.value = width;
-}
-function setMaxHeight(height: number) {
-  maxHeight.value = height;
-}
-function setHandlerLocations(locations: HandlerLocation[]) {
-  handlerLocations.value = locations;
-}
+const { maxWidth, maxHeight } = storeToRefs(store);
 </script>
 
 <template>
   <div class="outer">
     <svg class="sequence-diagram" :width="`max(100%, ${isNaN(maxWidth) ? 0 : maxWidth}px)`" :height="maxHeight + 20">
-      <Endpoints :endpoints="endpoints" @centre-points="setTimelines" @max-width="setMaxWidth" />
-      <Timeline :centre-points="endpointCentrePoints" :height="maxHeight" />
-      <Handlers :handlers="handlers" :endpoint-centre-points="endpointCentrePoints" @max-height="setMaxHeight" @handler-locations="setHandlerLocations" />
-      <Routes :routes="routes" :handler-locations="handlerLocations" />
+      <Endpoints />
+      <Timeline />
+      <Handlers />
+      <Routes />
     </svg>
   </div>
 </template>

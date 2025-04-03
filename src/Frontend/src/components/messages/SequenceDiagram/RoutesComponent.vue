@@ -1,27 +1,26 @@
 <script setup lang="ts">
-import { Direction, MessageProcessingRoute, RoutedMessageType } from "@/resources/SequenceDiagram/RoutedMessage";
-import { HandlerLocation } from "./HandlersComponent.vue";
+import { Direction, RoutedMessageType } from "@/resources/SequenceDiagram/RoutedMessage";
 import { computed, ref } from "vue";
+import { useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
+import { storeToRefs } from "pinia";
 
 const Arrow_Head_Width = 4;
 const Message_Type_Margin = 4;
 
-const props = defineProps<{
-  routes: MessageProcessingRoute[];
-  handlerLocations: HandlerLocation[];
-}>();
+const store = useSequenceDiagramStore();
+const { routes, handlerLocations } = storeToRefs(store);
 
 const messageTypeRefs = ref<SVGTextElement[]>([]);
 const highlightId = ref<string | undefined>();
 
 const arrows = computed(() =>
-  props.routes.map((route, index) => {
+  routes.value.map((route, index) => {
     if (!route.name) return;
     const fromHandler = route.fromRoutedMessage?.fromHandler;
     if (!fromHandler) return;
-    const fromHandlerLocation = props.handlerLocations.find((hl) => hl.id === fromHandler.id);
+    const fromHandlerLocation = handlerLocations.value.find((hl) => hl.id === fromHandler.id);
     if (!fromHandlerLocation) return;
-    const toHandlerLocation = props.handlerLocations.find((hl) => hl.id === route.fromRoutedMessage?.toHandler?.id);
+    const toHandlerLocation = handlerLocations.value.find((hl) => hl.id === route.fromRoutedMessage?.toHandler?.id);
     if (!toHandlerLocation) return;
 
     //TODO: is messageId enough to uniquely identify?
@@ -30,7 +29,7 @@ const arrows = computed(() =>
 
     const [direction, width, x] = (() => {
       if (fromHandlerLocation.id === toHandlerLocation.id) return [Direction.Right, 15 + Arrow_Head_Width, fromHandlerLocation.right];
-      if (props.handlerLocations.indexOf(fromHandlerLocation) < props.handlerLocations.indexOf(toHandlerLocation)) return [Direction.Right, toHandlerLocation.left - fromHandlerLocation.right - Arrow_Head_Width, fromHandlerLocation.right];
+      if (handlerLocations.value.indexOf(fromHandlerLocation) < handlerLocations.value.indexOf(toHandlerLocation)) return [Direction.Right, toHandlerLocation.left - fromHandlerLocation.right - Arrow_Head_Width, fromHandlerLocation.right];
       return [Direction.Left, toHandlerLocation.left - fromHandlerLocation.right - Arrow_Head_Width, toHandlerLocation.left];
     })();
     route.fromRoutedMessage.direction = direction;
