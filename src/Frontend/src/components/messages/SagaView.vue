@@ -14,9 +14,23 @@ const props = withDefaults(
   { sagaHistory: undefined }
 );
 
-const participatedInSaga = computed(() => props.sagaHistory || (props.message?.invoked_sagas ?? []).length > 0);
-const hasSagaData = computed(() => (props.sagaHistory?.changes?.length ?? 0) > 0);
-const showNoPluginActiveLeged = computed(() => participatedInSaga.value === true && hasSagaData.value === false);
+interface SagaViewModel {
+  SagaTitle: string;
+  SagaGuid: string;
+  MessageIdUrl: string;
+  ParticipatedInSaga: boolean;
+  HasSagaData: boolean;
+  ShowNoPluginActiveLeged: boolean;
+}
+
+const vm = computed<SagaViewModel>(() => ({
+  SagaTitle: (props.message.invoked_sagas.length > 0 && typeToName(props.message.invoked_sagas[0].saga_type)) || "Unkonwn saga",
+  SagaGuid: (props.message.invoked_sagas.length > 0 && props.message.invoked_sagas[0].saga_id) || "Missing guid",
+  MessageIdUrl: routeLinks.messages.message.link(props.message.id),
+  ParticipatedInSaga: !!props.message.invoked_sagas.length,
+  HasSagaData: !!props.sagaHistory,
+  ShowNoPluginActiveLeged: !props.sagaHistory && props.message?.invoked_sagas.length > 0,
+}));
 </script>
 
 <template>
@@ -27,7 +41,7 @@ const showNoPluginActiveLeged = computed(() => participatedInSaga.value === true
     </div>
     <!-- No saga Data Available container -->
 
-    <div v-if="participatedInSaga == false" class="body">
+    <div v-if="vm.ParticipatedInSaga == false" class="body">
       <div class="saga-message">
         <div class="saga-message-container">
           <img class="saga-message-image" src="@/assets/NoSaga.svg" alt="" />
@@ -37,7 +51,7 @@ const showNoPluginActiveLeged = computed(() => participatedInSaga.value === true
     </div>
     <!-- Saga Audit Plugin Needed container -->
 
-    <div v-if="showNoPluginActiveLeged" class="body" role="status" aria-label="saga-plugin-needed">
+    <div v-if="vm.ShowNoPluginActiveLeged" class="body" role="status" aria-label="saga-plugin-needed">
       <div class="saga-message">
         <div class="saga-message-container">
           <img class="saga-message-image" src="@/assets/NoSaga.svg" alt="" />
@@ -52,17 +66,17 @@ const showNoPluginActiveLeged = computed(() => participatedInSaga.value === true
     </div>
     <!-- Main Saga Data container -->
 
-    <div v-if="hasSagaData" role="list" aria-label="saga-sequence-list" class="body" style="display: flex">
+    <div v-if="vm.HasSagaData" role="list" aria-label="saga-sequence-list" class="body" style="display: flex">
       <div class="container">
         <div class="block">
           <div class="row row--center">
             <div class="cell cell--center">
               <div class="cell-inner">
                 <!-- //TODO: this link needs to be configured so it navigates back but to the corresponding message in the flow diagram -->
-                <RouterLink :to="routeLinks.messages.message.link(message.id)">← Back to Messages</RouterLink>
-                <h1 aria-label="saga name" class="main-title">{{ message.invoked_sagas.length > 0 && typeToName(message.invoked_sagas[0].saga_type) }}</h1>
+                <RouterLink :to="vm.MessageIdUrl">← Back to Messages</RouterLink>
+                <h1 aria-label="saga name" class="main-title">{{ vm.SagaTitle }}</h1>
                 <div>
-                  <b>guid</b> <span role="note" aria-label="saga guid">{{ message.invoked_sagas.length > 0 && message.invoked_sagas[0].saga_id }}</span>
+                  <b>guid</b> <span role="note" aria-label="saga guid">{{ vm.SagaGuid }}</span>
                 </div>
               </div>
             </div>
