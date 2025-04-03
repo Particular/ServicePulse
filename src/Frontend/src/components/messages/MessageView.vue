@@ -44,6 +44,7 @@ const showEditRetryModal = ref(false);
 
 const configuration = useConfiguration();
 const isMassTransitConnected = useIsMassTransitConnected();
+const showAllMessages = window.defaultConfig.showAllMessages;
 
 async function loadFailedMessage() {
   const response = await useFetchFromServiceControl(`errors/last/${id.value}`);
@@ -350,13 +351,13 @@ onUnmounted(() => {
                 <h5 :class="{ active: panel === 2 }" class="nav-item" @click.prevent="togglePanel(2)"><a href="#">Message body</a></h5>
                 <h5 :class="{ active: panel === 3 }" class="nav-item" @click.prevent="togglePanel(3)"><a href="#">Headers</a></h5>
                 <h5 v-if="!isMassTransitConnected" :class="{ active: panel === 4 }" class="nav-item" @click.prevent="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
-                <h5 :class="{ active: panel === 3 }" class="nav-item" @click.prevent="togglePanel(5)"><a href="#">Sequence Diagram</a></h5>
+                <h5 v-if="showAllMessages" :class="{ active: panel === 5 }" class="nav-item" @click.prevent="togglePanel(5)"><a href="#">Sequence Diagram</a></h5>
               </div>
               <StackTraceView v-if="panel === 1 && failedMessage.exception?.stack_trace" :message="failedMessage" />
               <BodyView v-if="panel === 2" :message="failedMessage" />
               <HeadersView v-if="panel === 3" :message="failedMessage" />
               <FlowDiagram v-if="panel === 4" :message="failedMessage" />
-              <SequenceDiagram v-if="panel === 5" />
+              <SequenceDiagram v-if="showAllMessages && panel === 5" />
             </div>
           </div>
 
