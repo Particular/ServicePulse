@@ -26,25 +26,28 @@ const arrows = computed(() =>
     const arrowIndex = fromHandler.outMessages.findIndex((out) => route.fromRoutedMessage?.messageId === out.messageId) + 1;
     const y = fromHandlerLocation.y + (fromHandlerLocation.height / (fromHandler.outMessages.length + 1)) * arrowIndex; //TODO work out the reason - 15 is applied in WPF;
 
-    const [direction, width, x] = (() => {
+    const [direction, width, fromX] = (() => {
       if (fromHandlerLocation.id === toHandlerLocation.id) return [Direction.Right, 15 + Arrow_Head_Width, fromHandlerLocation.right];
       if (handlerLocations.value.indexOf(fromHandlerLocation) < handlerLocations.value.indexOf(toHandlerLocation)) return [Direction.Right, toHandlerLocation.left - fromHandlerLocation.right - Arrow_Head_Width, fromHandlerLocation.right];
       return [Direction.Left, toHandlerLocation.left - fromHandlerLocation.right - Arrow_Head_Width, toHandlerLocation.left];
     })();
     route.fromRoutedMessage.direction = direction;
 
+    const toX = toHandlerLocation.left + (toHandlerLocation.right - toHandlerLocation.left) / 2;
     const messageTypeElement = messageTypeRefs.value[index];
     const messageTypeElementBounds = messageTypeElement?.getBBox();
 
     return {
       id: route.name,
-      x,
+      fromX,
       y,
       direction,
       width,
+      toX,
+      height: Math.abs(y - toHandlerLocation.y),
       type: route.fromRoutedMessage.type,
       messageType: route.fromRoutedMessage.name,
-      messageTypeOffset: x + width + Arrow_Head_Width + 10, //TODO: apply using messageTypeRef if arrow is left
+      messageTypeOffset: toX + 3, //TODO: apply using messageTypeRef if arrow is left
       highlight: highlightId.value === route.name,
       highlightTextWidth: messageTypeElementBounds?.width,
       highlightTextHeight: messageTypeElementBounds?.height,
@@ -60,9 +63,17 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
 <template>
   <template v-for="(arrow, i) in arrows" :key="arrow?.id">
     <g v-if="arrow != null">
-      <path :d="`M${arrow.x} ${arrow.y} h${arrow.width}`" stroke-width="4" stroke="black" />
-      <path v-if="arrow.direction === Direction.Right" :d="`M${arrow.x + arrow.width} ${arrow.y - 7.5} l10 7.5 -10,7.5z`" fill="black" />
-      <path v-if="arrow.direction === Direction.Left" :d="`M${arrow.x - Arrow_Head_Width} ${arrow.y} l10,-7.5 0,15z`" fill="black" />
+      <!--Main Arrow-->
+      <g>
+        <path :d="`M${arrow.fromX} ${arrow.y} h${arrow.width}`" stroke-width="4" stroke="black" />
+        <path v-if="arrow.direction === Direction.Right" :d="`M${arrow.fromX + arrow.width} ${arrow.y - 7.5} l10 7.5 -10,7.5z`" fill="black" />
+        <path v-if="arrow.direction === Direction.Left" :d="`M${arrow.fromX - Arrow_Head_Width} ${arrow.y} l10,-7.5 0,15z`" fill="black" />
+      </g>
+      <!--Highlight Arrow-->
+      <g v-if="arrow.highlight" :transform="`translate(${arrow.toX},${arrow.y})`" stroke="var(--highlight)" fill="var(--highlight)">
+        <path :d="`M0 0 v${arrow.height - 6}`" stroke-width="2" />
+        <path :d="`M0 ${arrow.height} l-3,-6 6,0z`" />
+      </g>
       <!--Message Type and Icon-->
       <g
         class="clickable"
