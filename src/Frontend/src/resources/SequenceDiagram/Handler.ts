@@ -120,7 +120,7 @@ class HandlerItem implements Handler {
   }
 
   get direction() {
-    return this.outMessages[0]?.direction === Direction.Left ? Direction.Right : Direction.Left;
+    return this.outMessages[0]?.direction ?? Direction.Right;
   }
 
   updateProcessedAt(timeSent: Date) {

@@ -63,7 +63,7 @@ const handlers = computed(() => {
       icon,
       iconSize,
       messageType: handler.name,
-      messageTypeOffset: handler.direction === Direction.Left ? ((messageTypeElement?.getBBox().width ?? 0) + 24) * -1 : 10,
+      messageTypeOffset: handler.direction === Direction.Right ? ((messageTypeElement?.getBBox().width ?? 0) + 24) * -1 : 20,
     };
   });
 

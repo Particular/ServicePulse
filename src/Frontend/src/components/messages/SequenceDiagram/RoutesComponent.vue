@@ -33,6 +33,7 @@ const arrows = computed(() =>
       if (props.handlerLocations.indexOf(fromHandlerLocation) < props.handlerLocations.indexOf(toHandlerLocation)) return [Direction.Right, toHandlerLocation.left - fromHandlerLocation.right - Arrow_Head_Width, fromHandlerLocation.right];
       return [Direction.Left, toHandlerLocation.left - fromHandlerLocation.right - Arrow_Head_Width, toHandlerLocation.left];
     })();
+    route.fromRoutedMessage.direction = direction;
 
     const messageTypeElement = messageTypeRefs.value[index];
     const messageTypeElementBounds = messageTypeElement?.getBBox();
