@@ -41,13 +41,14 @@ export function createProcessingHandler(message: Message, processingEndpoint: En
 }
 
 export class HandlerRegistry {
-  #store = new Map<[string, string], HandlerItem>();
+  #store = new Map<string, HandlerItem>();
+  private storeKey = (id: string, endpointName: string) => `${id}###${endpointName}`;
 
   register(handler: Handler) {
-    const existing = this.#store.get([handler.id, handler.endpoint.name]);
+    const existing = this.#store.get(this.storeKey(handler.id, handler.endpoint.name));
     if (existing) return { handler: existing, isNew: false };
 
-    this.#store.set([handler.id, handler.endpoint.name], handler as HandlerItem);
+    this.#store.set(this.storeKey(handler.id, handler.endpoint.name), handler as HandlerItem);
     return { handler, isNew: true };
   }
 }
