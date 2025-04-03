@@ -22,7 +22,7 @@ export interface HandlerLocation {
 }
 
 export const useSequenceDiagramStore = defineStore("SequenceDiagramStore", () => {
-  const conversationId = ref("");
+  const conversationId = ref<string>();
 
   const endpoints = ref<Endpoint[]>([]);
   const handlers = ref<Handler[]>([]);
@@ -31,8 +31,10 @@ export const useSequenceDiagramStore = defineStore("SequenceDiagramStore", () =>
   const maxWidth = ref(150);
   const maxHeight = ref(150);
   const handlerLocations = ref<HandlerLocation[]>([]);
+  const highlightId = ref<string>();
 
   watch(conversationId, async () => {
+    if (!conversationId.value) return;
     const response = await useFetchFromServiceControl(`conversations/${conversationId.value}`);
     if (response.status === 404) {
       return;
@@ -64,6 +66,10 @@ export const useSequenceDiagramStore = defineStore("SequenceDiagramStore", () =>
     handlerLocations.value = locations;
   }
 
+  function setHighlightId(id?: string) {
+    highlightId.value = id;
+  }
+
   return {
     setConversationId,
     endpoints,
@@ -73,10 +79,12 @@ export const useSequenceDiagramStore = defineStore("SequenceDiagramStore", () =>
     maxWidth,
     maxHeight,
     handlerLocations,
+    highlightId,
     setMaxWidth,
     setMaxHeight,
     setEndpointCentrePoints,
     setHandlerLocations,
+    setHighlightId,
   };
 });
 

@@ -7,7 +7,7 @@ import { useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
 import { storeToRefs } from "pinia";
 
 const store = useSequenceDiagramStore();
-store.setConversationId("b4dac7d7-4571-4f26-aa32-b29c0030c95f");
+store.setConversationId("39907d51-12e5-4202-82c3-b2b30077ebd4");
 
 const { maxWidth, maxHeight } = storeToRefs(store);
 </script>

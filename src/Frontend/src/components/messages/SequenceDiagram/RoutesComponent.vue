@@ -8,10 +8,9 @@ const Arrow_Head_Width = 4;
 const Message_Type_Margin = 4;
 
 const store = useSequenceDiagramStore();
-const { routes, handlerLocations } = storeToRefs(store);
+const { routes, handlerLocations, highlightId } = storeToRefs(store);
 
 const messageTypeRefs = ref<SVGTextElement[]>([]);
-const highlightId = ref<string | undefined>();
 
 const arrows = computed(() =>
   routes.value.map((route, index) => {
@@ -56,9 +55,6 @@ const arrows = computed(() =>
 function setMessageTypeRef(el: SVGTextElement, index: number) {
   if (el) messageTypeRefs.value[index] = el;
 }
-function setHighlightId(arrowId?: string) {
-  highlightId.value = arrowId;
-}
 </script>
 
 <template>
@@ -72,8 +68,8 @@ function setHighlightId(arrowId?: string) {
         class="clickable"
         :transform="`translate(${arrow.messageTypeOffset}, ${arrow.y - 7.5 - Message_Type_Margin})`"
         :fill="arrow.highlight ? 'var(--highlight)' : 'black'"
-        @mouseover="() => setHighlightId(arrow.id)"
-        @mouseleave="() => setHighlightId()"
+        @mouseover="() => store.setHighlightId(arrow.id)"
+        @mouseleave="() => store.setHighlightId()"
       >
         <rect v-if="arrow.highlight && arrow.messageTypeOffset" :width="arrow.highlightTextWidth + 19 + 4 + 4" :height="arrow.highlightTextHeight + 4 + 4" fill="var(--highlight-background)" />
         <svg :x="Message_Type_Margin" :y="Message_Type_Margin" width="15" height="15" viewBox="0 0 32 32">
