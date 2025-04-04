@@ -21,6 +21,7 @@ interface SagaViewModel {
   ParticipatedInSaga: boolean;
   HasSagaData: boolean;
   ShowNoPluginActiveLeged: boolean;
+  SagaUpdates: Array<{ start_time: Date; finish_time: Date }>;
 }
 
 const vm = computed<SagaViewModel>(() => ({
@@ -30,7 +31,25 @@ const vm = computed<SagaViewModel>(() => ({
   ParticipatedInSaga: !!props.message.invoked_sagas.length,
   HasSagaData: !!props.sagaHistory,
   ShowNoPluginActiveLeged: !props.sagaHistory && props.message?.invoked_sagas.length > 0,
+  SagaUpdates:
+    props.sagaHistory?.changes
+      .map((update) => ({ start_time: update.start_time, finish_time: update.finish_time }))
+      .sort((a, b) => a.start_time.getTime() - b.start_time.getTime())
+      .sort((a, b) => a.finish_time.getTime() - b.finish_time.getTime()) || [],
 }));
+
+// if (sagaData?.Changes != null)
+// {
+//     sagaData.Changes = sagaData.Changes.OrderBy(x => x.StartTime)
+//                                        .ThenBy(x => x.FinishTime)
+//                                        .ToList();
+
+//     foreach (var timeout in sagaData.Changes.SelectMany(update => update.TimeoutMessages))
+//     {
+//         timeout.HasBeenProcessed =
+//             sagaData.Changes.Any(update => update.InitiatingMessage?.MessageId == timeout.MessageId);
+//     }
+// }
 </script>
 
 <template>
@@ -66,7 +85,7 @@ const vm = computed<SagaViewModel>(() => ({
     </div>
     <!-- Main Saga Data container -->
 
-    <div v-if="vm.HasSagaData" role="list" aria-label="saga-sequence-list" class="body" style="display: flex">
+    <div v-if="vm.HasSagaData" role="table" aria-label="saga-sequence-list" class="body" style="display: flex">
       <div class="container">
         <div class="block">
           <div class="row row--center">
@@ -83,7 +102,7 @@ const vm = computed<SagaViewModel>(() => ({
           </div>
         </div>
 
-        <div class="block">
+        <div v-for="(update, index) in vm.SagaUpdates" :key="index" class="block" role="row">
           <div class="row">
             <div class="cell cell--side cell--left">
               <div class="cell-inner cell-inner-side">
@@ -96,7 +115,7 @@ const vm = computed<SagaViewModel>(() => ({
               <div class="cell-inner">
                 <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaInitiatedIcon.svg" alt="" />
                 <h2 class="saga-status saga-status--inline">Saga Initiated</h2>
-                <div class="timestamp timestamp--inline">17/3/2025 21:17:15</div>
+                <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.start_time.toLocaleDateString("en-GB") }} {{ update.start_time.toLocaleTimeString("en-GB") }}</div>
               </div>
             </div>
           </div>
@@ -118,116 +137,7 @@ const vm = computed<SagaViewModel>(() => ({
               <div class="cell-inner cell-inner-side cell-inner-side--active">
                 <img class="saga-icon saga-icon--side-cell" src="@/assets/TimeoutIcon.svg" alt="" />
                 <h2 class="message-title">MyCustomTimeout</h2>
-                <div class="timestamp">17/3/2025 21:17:15</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="block">
-          <div class="row">
-            <div class="cell cell--side cell--left">
-              <div class="cell-inner cell-inner-side">
-                <img class="saga-icon saga-icon--side-cell" src="@/assets/CommandIcon.svg" alt="" />
-                <h2 class="message-title">SagaMessage2</h2>
-                <div class="timestamp">17/3/2025 21:17:16</div>
-              </div>
-            </div>
-            <div class="cell cell--center cell--center--border">
-              <div class="cell-inner">
-                <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaUpdatedIcon.svg" alt="" />
-                <h2 class="saga-status saga-status--inline">Saga Updated</h2>
-                <div class="timestamp timestamp--inline">17/3/2025 21:17:16</div>
-              </div>
-            </div>
-          </div>
-          <div class="row row--center">
-            <div class="cell cell--center">
-              <div class="cell-inner cell-inner-center">
-                <div class="properties"><a class="properties-link" href="">All Properties</a> / <a class="properties-link properties-link--active" href="">Updated Properties</a></div>
-                <img class="saga-icon saga-icon--center-cell saga-icon--overlap" src="@/assets/SagaTimeoutIcon.svg" alt="" />
-                <a class="timeout-status" href="">Timeout Requested = 2s</a>
-              </div>
-            </div>
-          </div>
-          <div class="row row--right">
-            <div class="cell cell--center cell--top-border">
-              <div class="cell-inner cell-inner-top"></div>
-            </div>
-            <div class="cell cell--side">
-              <div class="cell-inner cell-inner-right"></div>
-              <div class="cell-inner cell-inner-side">
-                <img class="saga-icon saga-icon--side-cell" src="@/assets/TimeoutIcon.svg" alt="" />
-                <h2 class="message-title">MyCustomTimeout</h2>
-                <div class="timestamp">17/3/2025 21:17:16</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="block">
-          <div class="row">
-            <div class="cell cell--side cell--left">
-              <div class="cell-inner cell-inner-side cell-inner-side--active">
-                <img class="saga-icon saga-icon--side-cell" src="@/assets/TimeoutIcon.svg" alt="" />
-                <h2 class="message-title">MyCustomTimeout</h2>
-                <div class="timestamp">17/3/2025 21:17:15</div>
-              </div>
-            </div>
-            <div class="cell cell--center cell--center--border">
-              <div class="cell-inner">
-                <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaTimeoutIcon.svg" alt="" />
-                <a class="timeout-status" href="">Timeout Invoked</a><br />
-                <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaUpdatedIcon.svg" alt="" />
-                <h2 class="saga-status saga-status--inline">Saga Updated</h2>
-                <div class="timestamp timestamp--inline">17/3/2025 21:17:17</div>
-              </div>
-            </div>
-          </div>
-          <div class="row row--center">
-            <div class="cell cell--center">
-              <div class="cell-inner">
-                <div class="properties"><a class="properties-link" href="">All Properties</a> / <a class="properties-link properties-link--active" href="">Updated Properties</a></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="block">
-          <div class="row">
-            <div class="cell cell--side cell--left">
-              <div class="cell-inner cell-inner-side">
-                <img class="saga-icon saga-icon--side-cell" src="@/assets/TimeoutIcon.svg" alt="" />
-                <h2 class="message-title">MyCustomTimeout</h2>
-                <div class="timestamp">17/3/2025 21:17:16</div>
-              </div>
-            </div>
-            <div class="cell cell--center cell--center--border">
-              <div class="cell-inner">
-                <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaTimeoutIcon.svg" alt="" />
-                <a class="timeout-status" href="">Timeout Invoked</a><br />
-                <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaUpdatedIcon.svg" alt="" />
-                <h2 class="saga-status saga-status--inline">Saga Updated</h2>
-                <div class="timestamp timestamp--inline">17/3/2025 21:17:18</div>
-              </div>
-            </div>
-          </div>
-          <div class="row row--center">
-            <div class="cell cell--center">
-              <div class="cell-inner">
-                <div class="properties"><a class="properties-link" href="">All Properties</a> / <a class="properties-link properties-link--active" href="">Updated Properties</a></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="block">
-          <div class="row row--center">
-            <div class="cell cell--center cell--inverted">
-              <div class="cell-inner">
-                <img class="saga-icon ga-icon--center-cell" src="@/assets/SagaCompletedIcon.svg" alt="" />
-                <h2 class="saga-status saga-status--inline">Saga Completed</h2>
-                <div class="timestamp">17/3/2025 21:17:18</div>
+                <div class="timestamp"></div>
               </div>
             </div>
           </div>

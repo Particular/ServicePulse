@@ -12,6 +12,7 @@ interface componentDSL {
 
 //Defines a domain-specific language (DSL) for checking assertions against the system under test (sut)
 interface componentDSLAssertions {
+  thereAreTheFollowingSagaChangesInThisOrder(sagaUpdates: { timeStamp: string }[]): void;
   displayedSagaGuidIs(sagaId: string): void;
   displayedSagaNameIs(humanizedSagaName: string): void;
   linkIsShown(arg0: { withText: string; withHref: string }): void;
@@ -93,8 +94,54 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
   });
 
   describe("Rule: 3.2 Display a chronological timeline of saga events.", () => {
-    test.todo("EXAMPLE: A message with a Saga Id '123' and a Saga Type 'ServiceControl.SmokeTest.AuditingSaga' gets selected", () => {
-      //     Each saga event ("Saga Initiated," "Saga Updated," "Timeout Invoked," "Saga Completed") is timestamped and visually aligned vertically to represent progression over time. Events are ordered by the time they ocurred. Incoming messages are displayed on the left, and outgoing messages are displayed on the right.
+    test("EXAMPLE: A message with a Saga Id '123' and a Saga Type 'ServiceControl.SmokeTest.AuditingSaga' gets selected", () => {
+      //     Each saga event ("Saga Initiated," "Saga Updated," "Timeout Invoked," "Saga Completed") is timestamped to represent progression over time. Events are ordered by the time they ocurred.
+      //TODO:  "Incoming messages are displayed on the left, and outgoing messages are displayed on the right."  in another test?
+
+      //arragement
+      //sampleSagaHistory already not sorted TODO: Make this more clear so the reader of this test doesn't have to go arround and figure out the preconditions
+      const message = {} as Message;
+      const invokedSaga = {} as SagaInfo;
+      invokedSaga.saga_id = "123";
+      invokedSaga.saga_type = "ServiceControl.SmokeTest.AuditingSaga";
+      message.invoked_sagas = [invokedSaga];
+
+      //access each of the saga changes and update its start time and finish time to the same values being read from the variable declaration,
+      // but set them again explicitly here
+      //so that the reader of this test can see the preconditions at play
+      //and understand the test better without having to jump around
+      sampleSagaHistory.changes[0].start_time = new Date("2025-03-28T03:04:08.3819211Z"); // A
+      sampleSagaHistory.changes[0].finish_time = new Date("2025-03-28T03:04:08.3836Z"); // A1
+      sampleSagaHistory.changes[1].start_time = new Date("2025-03-28T03:04:07.5416262Z"); // B
+      sampleSagaHistory.changes[1].finish_time = new Date("2025-03-28T03:04:07.5509712Z"); //B1
+      sampleSagaHistory.changes[2].start_time = new Date("2025-03-28T03:04:06.3088353Z"); //C
+      sampleSagaHistory.changes[2].finish_time = new Date("2025-03-28T03:04:06.3218175Z"); //C1
+      sampleSagaHistory.changes[3].start_time = new Date("2025-03-28T03:04:05.3332078Z"); //D
+      sampleSagaHistory.changes[3].finish_time = new Date("2025-03-28T03:04:05.3799483Z"); //D1
+      sampleSagaHistory.changes[3].status = "new";
+
+      //B(1), C(2),  A(0), D(3)
+      //B(1), C1(2), C(2), A1(0)
+
+      //act
+      const componentDriver = rendercomponent({ message: message, sagaHistory: sampleSagaHistory });
+
+      //assert
+
+      componentDriver.assert.thereAreTheFollowingSagaChangesInThisOrder([
+        {
+          timeStamp: "27/03/2025 20:04:05",
+        },
+        {
+          timeStamp: "27/03/2025 20:04:06",
+        },
+        {
+          timeStamp: "27/03/2025 20:04:07",
+        },
+        {
+          timeStamp: "27/03/2025 20:04:08",
+        },
+      ]);
     });
   });
 });
@@ -114,7 +161,7 @@ function rendercomponent({ message, sagaHistory = undefined }: { message: Messag
 
   const dslAPI: componentDSL = {
     action1: () => {
-      // Add actions here
+      // Add actions here;dl;;lksd;lksd;lkdmdslm,.mc,.
     },
     assert: {
       NoSagaDataAvailableMessageIsShownWithMessage(message: RegExp) {
@@ -165,20 +212,36 @@ function rendercomponent({ message, sagaHistory = undefined }: { message: Messag
         expect(sagaGuid).toBeInTheDocument();
         expect(sagaGuid).toHaveTextContent(guid);
       },
+      thereAreTheFollowingSagaChangesInThisOrder: function (sagaUpdates: { timeStamp: string }[]): void {
+        //Retrive the main parent component that contains the saga changes
+        const sagaChangesContainer = screen.getByRole("table", { name: /saga-sequence-list/i });
+
+        const sagaUpdatesElements = within(sagaChangesContainer).queryAllByRole("row");
+        //from within each sagaUpdatesElemtns get the values of an element with aria-label="time stamp"
+        //and check if the values are in the same order as the sagaUpdates array passed to this function
+        const sagaUpdatesTimestamps = sagaUpdatesElements.map((item: HTMLElement) => within(item).getByLabelText("time stamp"));
+
+        //expect the number of found sagaUpdatesTimestamps to be the same as the number of sagaUpdates passed to this function
+        expect(sagaUpdatesTimestamps).toHaveLength(sagaUpdates.length);
+
+        const sagaUpdatesTimestampsValues = sagaUpdatesTimestamps.map((item) => item.innerHTML);
+        // //check if the values are in the same order as the sagaUpdates array passed to this function
+        expect(sagaUpdatesTimestampsValues).toEqual(sagaUpdates.map((item) => item.timeStamp));
+      },
     },
   };
 
   return dslAPI;
 }
 
-const sampleSagaHistory = <SagaHistory>{
+const sampleSagaHistory: SagaHistory = {
   id: "45f425fc-26ce-163b-4f64-857b889348f3",
   saga_id: "45f425fc-26ce-163b-4f64-857b889348f3",
   saga_type: "ServiceControl.SmokeTest.AuditingSaga",
   changes: [
     {
-      start_time: "2025-03-28T03:04:08.3819211Z",
-      finish_time: "2025-03-28T03:04:08.3836Z",
+      start_time: new Date("2025-03-28T03:04:08.3819211Z"),
+      finish_time: new Date("2025-03-28T03:04:08.3836Z"),
       status: "completed",
       state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
       initiating_message: {
@@ -186,7 +249,7 @@ const sampleSagaHistory = <SagaHistory>{
         is_saga_timeout_message: true,
         originating_endpoint: "Endpoint1",
         originating_machine: "mobvm2",
-        time_sent: "2025-03-28T03:04:06.321561Z",
+        time_sent: new Date("2025-03-28T03:04:06.321561Z"),
         message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
         intent: "Send",
       },
@@ -194,8 +257,8 @@ const sampleSagaHistory = <SagaHistory>{
       endpoint: "Endpoint1",
     },
     {
-      start_time: "2025-03-28T03:04:07.5416262Z",
-      finish_time: "2025-03-28T03:04:07.5509712Z",
+      start_time: new Date("2025-03-28T03:04:07.5416262Z"),
+      finish_time: new Date("2025-03-28T03:04:07.5509712Z"),
       status: "updated",
       state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
       initiating_message: {
@@ -203,7 +266,7 @@ const sampleSagaHistory = <SagaHistory>{
         is_saga_timeout_message: true,
         originating_endpoint: "Endpoint1",
         originating_machine: "mobvm2",
-        time_sent: "2025-03-28T03:04:05.37723Z",
+        time_sent: new Date("2025-03-28T03:04:05.37723Z"),
         message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
         intent: "Send",
       },
@@ -211,8 +274,8 @@ const sampleSagaHistory = <SagaHistory>{
       endpoint: "Endpoint1",
     },
     {
-      start_time: "2025-03-28T03:04:06.3088353Z",
-      finish_time: "2025-03-28T03:04:06.3218175Z",
+      start_time: new Date("2025-03-28T03:04:06.3088353Z"),
+      finish_time: new Date("2025-03-28T03:04:06.3218175Z"),
       status: "updated",
       state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
       initiating_message: {
@@ -220,7 +283,7 @@ const sampleSagaHistory = <SagaHistory>{
         is_saga_timeout_message: false,
         originating_endpoint: "Sender",
         originating_machine: "mobvm2",
-        time_sent: "2025-03-28T03:04:06.293765Z",
+        time_sent: new Date("2025-03-28T03:04:06.293765Z"),
         message_type: "ServiceControl.SmokeTest.SagaMessage2",
         intent: "Send",
       },
@@ -229,7 +292,7 @@ const sampleSagaHistory = <SagaHistory>{
           delivery_delay: "00:00:02",
           destination: "Endpoint1",
           message_id: "876d89bd-7a1f-43f1-b384-b2ae003290e8",
-          time_sent: "2025-03-28T03:04:06.3214397Z",
+          time_sent: new Date("2025-03-28T03:04:06.3214397Z"),
           message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
           intent: "Send",
         },
@@ -237,8 +300,8 @@ const sampleSagaHistory = <SagaHistory>{
       endpoint: "Endpoint1",
     },
     {
-      start_time: "2025-03-28T03:04:05.3332078Z",
-      finish_time: "2025-03-28T03:04:05.3799483Z",
+      start_time: new Date("2025-03-28T03:04:05.3332078Z"),
+      finish_time: new Date("2025-03-28T03:04:05.3799483Z"),
       status: "new",
       state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
       initiating_message: {
@@ -246,7 +309,7 @@ const sampleSagaHistory = <SagaHistory>{
         is_saga_timeout_message: false,
         originating_endpoint: "Sender",
         originating_machine: "mobvm2",
-        time_sent: "2025-03-28T03:04:05.235534Z",
+        time_sent: new Date("2025-03-28T03:04:05.235534Z"),
         message_type: "ServiceControl.SmokeTest.SagaMessage1",
         intent: "Send",
       },
@@ -255,7 +318,7 @@ const sampleSagaHistory = <SagaHistory>{
           delivery_delay: "00:00:02",
           destination: "Endpoint1",
           message_id: "1308367f-c6a2-418f-9df2-b2ae00328fc9",
-          time_sent: "2025-03-28T03:04:05.3715034Z",
+          time_sent: new Date("2025-03-28T03:04:05.3715034Z"),
           message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
           intent: "Send",
         },

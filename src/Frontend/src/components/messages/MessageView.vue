@@ -27,14 +27,14 @@ import xmlFormat from "xml-formatter";
 import SagaView from "./SagaView.vue";
 import { SagaHistory } from "@/resources/SagaHistory";
 
-const sagaHistory = ref<SagaHistory>({
+const sagaHistory: SagaHistory = {
   id: "45f425fc-26ce-163b-4f64-857b889348f3",
   saga_id: "45f425fc-26ce-163b-4f64-857b889348f3",
   saga_type: "ServiceControl.SmokeTest.AuditingSaga",
   changes: [
     {
-      start_time: "2025-03-28T03:04:08.3819211Z",
-      finish_time: "2025-03-28T03:04:08.3836Z",
+      start_time: new Date("2025-03-28T03:04:08.3819211Z"),
+      finish_time: new Date("2025-03-28T03:04:08.3836Z"),
       status: "completed",
       state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
       initiating_message: {
@@ -42,7 +42,7 @@ const sagaHistory = ref<SagaHistory>({
         is_saga_timeout_message: true,
         originating_endpoint: "Endpoint1",
         originating_machine: "mobvm2",
-        time_sent: "2025-03-28T03:04:06.321561Z",
+        time_sent: new Date("2025-03-28T03:04:06.321561Z"),
         message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
         intent: "Send",
       },
@@ -50,8 +50,8 @@ const sagaHistory = ref<SagaHistory>({
       endpoint: "Endpoint1",
     },
     {
-      start_time: "2025-03-28T03:04:07.5416262Z",
-      finish_time: "2025-03-28T03:04:07.5509712Z",
+      start_time: new Date("2025-03-28T03:04:07.5416262Z"),
+      finish_time: new Date("2025-03-28T03:04:07.5509712Z"),
       status: "updated",
       state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
       initiating_message: {
@@ -59,7 +59,7 @@ const sagaHistory = ref<SagaHistory>({
         is_saga_timeout_message: true,
         originating_endpoint: "Endpoint1",
         originating_machine: "mobvm2",
-        time_sent: "2025-03-28T03:04:05.37723Z",
+        time_sent: new Date("2025-03-28T03:04:05.37723Z"),
         message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
         intent: "Send",
       },
@@ -67,8 +67,8 @@ const sagaHistory = ref<SagaHistory>({
       endpoint: "Endpoint1",
     },
     {
-      start_time: "2025-03-28T03:04:06.3088353Z",
-      finish_time: "2025-03-28T03:04:06.3218175Z",
+      start_time: new Date("2025-03-28T03:04:06.3088353Z"),
+      finish_time: new Date("2025-03-28T03:04:06.3218175Z"),
       status: "updated",
       state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
       initiating_message: {
@@ -76,7 +76,7 @@ const sagaHistory = ref<SagaHistory>({
         is_saga_timeout_message: false,
         originating_endpoint: "Sender",
         originating_machine: "mobvm2",
-        time_sent: "2025-03-28T03:04:06.293765Z",
+        time_sent: new Date("2025-03-28T03:04:06.293765Z"),
         message_type: "ServiceControl.SmokeTest.SagaMessage2",
         intent: "Send",
       },
@@ -85,7 +85,7 @@ const sagaHistory = ref<SagaHistory>({
           delivery_delay: "00:00:02",
           destination: "Endpoint1",
           message_id: "876d89bd-7a1f-43f1-b384-b2ae003290e8",
-          time_sent: "2025-03-28T03:04:06.3214397Z",
+          time_sent: new Date("2025-03-28T03:04:06.3214397Z"),
           message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
           intent: "Send",
         },
@@ -93,8 +93,8 @@ const sagaHistory = ref<SagaHistory>({
       endpoint: "Endpoint1",
     },
     {
-      start_time: "2025-03-28T03:04:05.3332078Z",
-      finish_time: "2025-03-28T03:04:05.3799483Z",
+      start_time: new Date("2025-03-28T03:04:05.3332078Z"),
+      finish_time: new Date("2025-03-28T03:04:05.3799483Z"),
       status: "new",
       state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
       initiating_message: {
@@ -102,7 +102,7 @@ const sagaHistory = ref<SagaHistory>({
         is_saga_timeout_message: false,
         originating_endpoint: "Sender",
         originating_machine: "mobvm2",
-        time_sent: "2025-03-28T03:04:05.235534Z",
+        time_sent: new Date("2025-03-28T03:04:05.235534Z"),
         message_type: "ServiceControl.SmokeTest.SagaMessage1",
         intent: "Send",
       },
@@ -111,7 +111,7 @@ const sagaHistory = ref<SagaHistory>({
           delivery_delay: "00:00:02",
           destination: "Endpoint1",
           message_id: "1308367f-c6a2-418f-9df2-b2ae00328fc9",
-          time_sent: "2025-03-28T03:04:05.3715034Z",
+          time_sent: new Date("2025-03-28T03:04:05.3715034Z"),
           message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
           intent: "Send",
         },
@@ -119,7 +119,7 @@ const sagaHistory = ref<SagaHistory>({
       endpoint: "Endpoint1",
     },
   ],
-});
+};
 
 let refreshInterval: number | undefined;
 let pollingFaster = false;
