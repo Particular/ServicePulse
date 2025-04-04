@@ -68,7 +68,7 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
     <g v-if="arrow != null">
       <!--Main Arrow-->
       <g>
-        <path :d="`M${arrow.fromX} ${arrow.y} h${arrow.width}`" stroke-width="4" stroke="black" />
+        <path :d="`M${arrow.fromX} ${arrow.y} h${arrow.width}`" stroke-width="3.5" stroke="black" :stroke-dasharray="arrow.type === RoutedMessageType.Event ? '12 8' : undefined" />
         <path v-if="arrow.direction === Direction.Right" :d="`M${arrow.fromX + arrow.width} ${arrow.y - 7.5} l10 7.5 -10,7.5z`" fill="black" />
         <path v-if="arrow.direction === Direction.Left" :d="`M${arrow.toHandlerCentre + 1} ${arrow.y} l10,-7.5 0,15z`" fill="black" />
       </g>
