@@ -17,15 +17,15 @@ const arrows = computed(() =>
     if (!route.name) return;
     const fromHandler = route.fromRoutedMessage?.fromHandler;
     if (!fromHandler) return;
-    const fromHandlerLocation = handlerLocations.value.find((hl) => hl.id === fromHandler.id);
+    const fromHandlerLocation = handlerLocations.value.find((hl) => hl.id === fromHandler.id && hl.endpointName === fromHandler.endpoint.name);
     if (!fromHandlerLocation) return;
-    const toHandlerLocation = handlerLocations.value.find((hl) => hl.id === route.fromRoutedMessage?.toHandler?.id);
+    const toHandlerLocation = handlerLocations.value.find((hl) => hl.id === route.fromRoutedMessage?.toHandler?.id && hl.endpointName === route.fromRoutedMessage?.receiving.name);
     if (!toHandlerLocation) return;
 
     const messageTypeElement = messageTypeRefs.value[index];
     const messageTypeElementBounds = messageTypeElement?.getBBox();
     //TODO: is messageId enough to uniquely identify?
-    const arrowIndex = fromHandler.outMessages.findIndex((out) => route.fromRoutedMessage?.messageId === out.messageId) + 1;
+    const arrowIndex = fromHandler.outMessages.findIndex((out) => route.fromRoutedMessage?.messageId === out.messageId && route.fromRoutedMessage?.receiving.name === out.receiving.name) + 1;
     const y = fromHandlerLocation.y + (fromHandlerLocation.height / (fromHandler.outMessages.length + 1)) * arrowIndex; //TODO work out the reason - 15 is applied in WPF;
 
     const toHandlerCentre = toHandlerLocation.left + (toHandlerLocation.right - toHandlerLocation.left) / 2;

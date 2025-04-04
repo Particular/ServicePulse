@@ -66,7 +66,7 @@ class MessageProcessingRouteItem implements MessageProcessingRoute {
     this.processingHandler = processingHandler;
 
     if (routedMessage && this.processingHandler) {
-      this.name = `${processingHandler?.name}(${routedMessage.messageId})`;
+      this.name = `${processingHandler?.name}(${routedMessage.messageId}###${routedMessage.receiving.name}})`;
     }
 
     if (routedMessage) routedMessage.route = this;

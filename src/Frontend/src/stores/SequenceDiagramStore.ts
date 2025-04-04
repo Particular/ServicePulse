@@ -15,6 +15,7 @@ export interface EndpointCentrePoint {
 
 export interface HandlerLocation {
   id: string;
+  endpointName: string;
   left: number;
   right: number;
   y: number;

@@ -48,6 +48,7 @@ const handlerItems = computed(() => {
 
     return {
       id: handler.id,
+      endpointName: handler.endpoint.name,
       incomingId: handler.route?.name,
       left: (endpoint?.centre ?? 0) - Handler_Width / 2,
       right: (endpoint?.centre ?? 0) + Handler_Width / 2,
@@ -63,7 +64,7 @@ const handlerItems = computed(() => {
   });
 
   store.setMaxHeight(nextY);
-  store.setHandlerLocations(result.map((handler) => ({ id: handler.id, left: handler.left, right: handler.right, y: handler.y, height: handler.height })));
+  store.setHandlerLocations(result.map((handler) => ({ id: handler.id, endpointName: handler.endpointName, left: handler.left, right: handler.right, y: handler.y, height: handler.height })));
 
   return result;
 });
