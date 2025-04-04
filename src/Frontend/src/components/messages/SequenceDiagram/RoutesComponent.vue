@@ -36,8 +36,8 @@ const arrows = computed(() =>
     })();
     route.fromRoutedMessage.direction = direction;
 
-    if (messageTypeOffset < 20) {
-      store.setStartX(-1 * messageTypeOffset + 20);
+    if (messageTypeOffset < 0) {
+      store.setStartX(-1 * messageTypeOffset);
     }
 
     return {

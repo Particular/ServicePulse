@@ -41,6 +41,11 @@ const handlerItems = computed(() => {
       return 0;
     })();
 
+    const messageTypeOffset = handler.direction === Direction.Right ? ((messageTypeElement?.getBBox().width ?? 0) + 24) * -1 : 20;
+    if (messageTypeOffset < 0) {
+      store.setStartX(-1 * messageTypeOffset);
+    }
+
     return {
       id: handler.id,
       incomingId: handler.route?.name,
@@ -52,7 +57,7 @@ const handlerItems = computed(() => {
       icon,
       iconSize,
       messageType: handler.name,
-      messageTypeOffset: handler.direction === Direction.Right ? ((messageTypeElement?.getBBox().width ?? 0) + 24) * -1 : 20,
+      messageTypeOffset,
       messageTypeHighlight: handler.route?.name === highlightId.value,
     };
   });
