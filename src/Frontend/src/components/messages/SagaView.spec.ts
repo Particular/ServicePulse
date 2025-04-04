@@ -12,7 +12,7 @@ interface componentDSL {
 
 //Defines a domain-specific language (DSL) for checking assertions against the system under test (sut)
 interface componentDSLAssertions {
-  thereAreTheFollowingSagaChangesInThisOrder(sagaUpdates: { timeStamp: string }[]): void;
+  thereAreTheFollowingSagaChangesInThisOrder(sagaUpdates: { expectedRenderedLocalTime: string }[]): void;
   displayedSagaGuidIs(sagaId: string): void;
   displayedSagaNameIs(humanizedSagaName: string): void;
   linkIsShown(arg0: { withText: string; withHref: string }): void;
@@ -125,21 +125,23 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
 
       //act
       const componentDriver = rendercomponent({ message: message, sagaHistory: sampleSagaHistory });
+      //TODO: as part of the ACT section of this test, ensure to set the environment to a fixed timezone
+      // so that the test is not affected by the local timezone of the machine running the test
 
       //assert
 
       componentDriver.assert.thereAreTheFollowingSagaChangesInThisOrder([
         {
-          timeStamp: "27/03/2025 20:04:05",
+          expectedRenderedLocalTime: "27/03/2025 20:04:05",
         },
         {
-          timeStamp: "27/03/2025 20:04:06",
+          expectedRenderedLocalTime: "27/03/2025 20:04:06",
         },
         {
-          timeStamp: "27/03/2025 20:04:07",
+          expectedRenderedLocalTime: "27/03/2025 20:04:07",
         },
         {
-          timeStamp: "27/03/2025 20:04:08",
+          expectedRenderedLocalTime: "27/03/2025 20:04:08",
         },
       ]);
     });
@@ -212,7 +214,7 @@ function rendercomponent({ message, sagaHistory = undefined }: { message: Messag
         expect(sagaGuid).toBeInTheDocument();
         expect(sagaGuid).toHaveTextContent(guid);
       },
-      thereAreTheFollowingSagaChangesInThisOrder: function (sagaUpdates: { timeStamp: string }[]): void {
+      thereAreTheFollowingSagaChangesInThisOrder: function (sagaUpdates: { expectedRenderedLocalTime: string }[]): void {
         //Retrive the main parent component that contains the saga changes
         const sagaChangesContainer = screen.getByRole("table", { name: /saga-sequence-list/i });
 
@@ -226,7 +228,7 @@ function rendercomponent({ message, sagaHistory = undefined }: { message: Messag
 
         const sagaUpdatesTimestampsValues = sagaUpdatesTimestamps.map((item) => item.innerHTML);
         // //check if the values are in the same order as the sagaUpdates array passed to this function
-        expect(sagaUpdatesTimestampsValues).toEqual(sagaUpdates.map((item) => item.timeStamp));
+        expect(sagaUpdatesTimestampsValues).toEqual(sagaUpdates.map((item) => item.expectedRenderedLocalTime));
       },
     },
   };
