@@ -21,9 +21,12 @@ export interface HandlerLocation {
   height: number;
 }
 
+export const Endpoint_Width = 260;
+
 export const useSequenceDiagramStore = defineStore("SequenceDiagramStore", () => {
   const conversationId = ref<string>();
 
+  const startX = ref(Endpoint_Width / 2);
   const endpoints = ref<Endpoint[]>([]);
   const handlers = ref<Handler[]>([]);
   const routes = ref<MessageProcessingRoute[]>([]);
@@ -47,7 +50,17 @@ export const useSequenceDiagramStore = defineStore("SequenceDiagramStore", () =>
   });
 
   function setConversationId(id: string) {
+    endpoints.value = [];
+    handlers.value = [];
+    routes.value = [];
+    startX.value = Endpoint_Width / 2;
     conversationId.value = id;
+  }
+
+  function setStartX(offset: number) {
+    const newValue = Math.max(offset + Endpoint_Width / 2, startX.value);
+    if (newValue === startX.value) return;
+    startX.value = newValue;
   }
 
   function setMaxWidth(width: number) {
@@ -72,6 +85,7 @@ export const useSequenceDiagramStore = defineStore("SequenceDiagramStore", () =>
 
   return {
     setConversationId,
+    startX,
     endpoints,
     handlers,
     routes,
@@ -80,6 +94,7 @@ export const useSequenceDiagramStore = defineStore("SequenceDiagramStore", () =>
     maxHeight,
     handlerLocations,
     highlightId,
+    setStartX,
     setMaxWidth,
     setMaxHeight,
     setEndpointCentrePoints,
