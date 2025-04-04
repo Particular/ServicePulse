@@ -123,10 +123,14 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
       //B(1), C(2),  A(0), D(3)
       //B(1), C1(2), C(2), A1(0)
 
-      //act
+      //ACT
       const componentDriver = rendercomponent({ message: message, sagaHistory: sampleSagaHistory });
-      //TODO: as part of the ACT section of this test, ensure to set the environment to a fixed timezone
-      // so that the test is not affected by the local timezone of the machine running the test
+      // Set the environment to a fixed timezone
+      // JSDOM, used by Vitest, defaults to UTC timezone
+      // To ensure consistency, explicitly set the timezone to UTC
+      // This ensures that the rendered local time of the saga changes
+      // will always be interpreted and displayed in UTC, avoiding flakiness
+      process.env.TZ = "UTC";
 
       //assert
 
