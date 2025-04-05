@@ -87,4 +87,24 @@ const filteredHeaders = computed(() => {
   border-radius: 3px;
   padding: 5px;
 }
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table td:first-child {
+  width: 25%;
+  white-space: nowrap;
+}
+
+.table td:nth-child(2) {
+  width: 75%;
+  word-wrap: break-word;
+}
 </style>
