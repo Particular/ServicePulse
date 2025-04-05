@@ -28,7 +28,7 @@ const filteredHeaders = computed(() => {
         <div class="text-search-container">
           <div class="text-search">
             <div class="filter-group">
-              <FilterInput v-model="searchTerm" />
+              <FilterInput v-model="searchTerm" aria-label="Filter by name" :placeholder="'Search for a header key or value...'" />
             </div>
           </div>
         </div>
