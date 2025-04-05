@@ -21,35 +21,61 @@ interface SagaViewModel {
   ParticipatedInSaga: boolean;
   HasSagaData: boolean;
   ShowNoPluginActiveLeged: boolean;
-  SagaUpdates: Array<{ start_time: Date; finish_time: Date }>;
+  SagaCompleted: boolean;
+  CompletionTime: Date | null;
+  SagaUpdates: Array<{
+    start_time: Date;
+    finish_time: Date;
+    initiating_message_type: string;
+    initiating_message_timestamp: Date;
+    timeout_message_type: string;
+    timeout_message_timestamp: Date;
+    status: string;
+    status_display: string;
+    delivery_delay?: string;
+    has_timeout: boolean;
+    timeout_seconds: string;
+    has_timeout_message: boolean;
+  }>;
 }
 
-const vm = computed<SagaViewModel>(() => ({
-  SagaTitle: (props.message.invoked_sagas.length > 0 && typeToName(props.message.invoked_sagas[0].saga_type)) || "Unkonwn saga",
-  SagaGuid: (props.message.invoked_sagas.length > 0 && props.message.invoked_sagas[0].saga_id) || "Missing guid",
-  MessageIdUrl: routeLinks.messages.message.link(props.message.id),
-  ParticipatedInSaga: !!props.message.invoked_sagas.length,
-  HasSagaData: !!props.sagaHistory,
-  ShowNoPluginActiveLeged: !props.sagaHistory && props.message?.invoked_sagas.length > 0,
-  SagaUpdates:
-    props.sagaHistory?.changes
-      .map((update) => ({ start_time: update.start_time, finish_time: update.finish_time }))
-      .sort((a, b) => a.start_time.getTime() - b.start_time.getTime())
-      .sort((a, b) => a.finish_time.getTime() - b.finish_time.getTime()) || [],
-}));
+const vm = computed<SagaViewModel>(() => {
+  const completedUpdate = props.sagaHistory?.changes.find((update) => update.status === "completed");
 
-// if (sagaData?.Changes != null)
-// {
-//     sagaData.Changes = sagaData.Changes.OrderBy(x => x.StartTime)
-//                                        .ThenBy(x => x.FinishTime)
-//                                        .ToList();
+  return {
+    SagaTitle: (props.message.invoked_sagas.length > 0 && typeToName(props.message.invoked_sagas[0].saga_type)) || "Unkonwn saga",
+    SagaGuid: (props.message.invoked_sagas.length > 0 && props.message.invoked_sagas[0].saga_id) || "Missing guid",
+    MessageIdUrl: routeLinks.messages.message.link(props.message.id),
+    ParticipatedInSaga: !!props.message.invoked_sagas.length,
+    HasSagaData: !!props.sagaHistory,
+    ShowNoPluginActiveLeged: !props.sagaHistory && props.message?.invoked_sagas.length > 0,
+    SagaCompleted: !!completedUpdate,
+    CompletionTime: completedUpdate ? completedUpdate.finish_time : null,
+    SagaUpdates:
+      props.sagaHistory?.changes
+        .map((update) => {
+          const raw_timeout_message_type = update.outgoing_messages[0]?.message_type || "Unknown Timeout";
+          const delivery_delay = update.outgoing_messages[0]?.delivery_delay || "00:00:00";
 
-//     foreach (var timeout in sagaData.Changes.SelectMany(update => update.TimeoutMessages))
-//     {
-//         timeout.HasBeenProcessed =
-//             sagaData.Changes.Any(update => update.InitiatingMessage?.MessageId == timeout.MessageId);
-//     }
-// }
+          return {
+            start_time: update.start_time,
+            finish_time: update.finish_time,
+            status: update.status,
+            status_display: update.status === "new" ? "Saga Initiated" : update.status === "completed" ? "Saga Completed" : "Saga Updated",
+            initiating_message_type: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
+            initiating_message_timestamp: update.initiating_message?.time_sent || new Date(),
+            timeout_message_type: typeToName(raw_timeout_message_type) || "",
+            timeout_message_timestamp: update.outgoing_messages[0]?.time_sent || new Date(),
+            delivery_delay,
+            has_timeout: !!delivery_delay && delivery_delay !== "00:00:00",
+            timeout_seconds: delivery_delay.split(":")[2] || "0",
+            has_timeout_message: !!raw_timeout_message_type && raw_timeout_message_type !== "Unknown Timeout",
+          };
+        })
+        .sort((a, b) => a.start_time.getTime() - b.start_time.getTime())
+        .sort((a, b) => a.finish_time.getTime() - b.finish_time.getTime()) || [],
+  };
+});
 </script>
 
 <template>
@@ -60,7 +86,7 @@ const vm = computed<SagaViewModel>(() => ({
     </div>
     <!-- No saga Data Available container -->
 
-    <div v-if="vm.ParticipatedInSaga == false" class="body">
+    <div v-if="!vm.ParticipatedInSaga" class="body">
       <div class="saga-message">
         <div class="saga-message-container">
           <img class="saga-message-image" src="@/assets/NoSaga.svg" alt="" />
@@ -107,14 +133,14 @@ const vm = computed<SagaViewModel>(() => ({
             <div class="cell cell--side cell--left">
               <div class="cell-inner cell-inner-side">
                 <img class="saga-icon saga-icon--side-cell" src="@/assets/CommandIcon.svg" alt="" />
-                <h2 class="message-title">SagaMessage1</h2>
-                <div class="timestamp">17/3/2025 21:17:15</div>
+                <h2 class="message-title" aria-label="initiating message type">{{ update.initiating_message_type }}</h2>
+                <div class="timestamp" aria-label="initiating message timestamp">{{ update.initiating_message_timestamp.toLocaleDateString() }} {{ update.initiating_message_timestamp.toLocaleTimeString() }}</div>
               </div>
             </div>
             <div class="cell cell--center cell--center--border">
               <div class="cell-inner">
                 <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaInitiatedIcon.svg" alt="" />
-                <h2 class="saga-status saga-status--inline">Saga Initiated</h2>
+                <h2 class="saga-status saga-status--inline">{{ update.status_display }}</h2>
                 <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.start_time.toLocaleDateString() }} {{ update.start_time.toLocaleTimeString() }}</div>
               </div>
             </div>
@@ -122,13 +148,18 @@ const vm = computed<SagaViewModel>(() => ({
           <div class="row row--center">
             <div class="cell cell--center">
               <div class="cell-inner cell-inner-center">
-                <div class="properties"><a class="properties-link" href="">All Properties</a> / <a class="properties-link properties-link--active" href="">Updated Properties</a></div>
-                <img class="saga-icon saga-icon--center-cell saga-icon--overlap" src="@/assets/SagaTimeoutIcon.svg" alt="" />
-                <a class="timeout-status" href="">Timeout Requested = 2s</a>
+                <div class="properties">
+                  <a class="properties-link" href="">All Properties</a> /
+                  <a class="properties-link properties-link--active" href="">Updated Properties</a>
+                </div>
+                <template v-if="update.has_timeout">
+                  <img class="saga-icon saga-icon--center-cell saga-icon--overlap" src="@/assets/SagaTimeoutIcon.svg" alt="" />
+                  <a class="timeout-status" href="" aria-label="timeout requested"> Timeout Requested = {{ update.timeout_seconds }}s </a>
+                </template>
               </div>
             </div>
           </div>
-          <div class="row row--right">
+          <div v-if="update.has_timeout_message" class="row row--right">
             <div class="cell cell--center cell--top-border">
               <div class="cell-inner cell-inner-top"></div>
             </div>
@@ -136,8 +167,24 @@ const vm = computed<SagaViewModel>(() => ({
               <div class="cell-inner cell-inner-right"></div>
               <div class="cell-inner cell-inner-side cell-inner-side--active">
                 <img class="saga-icon saga-icon--side-cell" src="@/assets/TimeoutIcon.svg" alt="" />
-                <h2 class="message-title">MyCustomTimeout</h2>
-                <div class="timestamp"></div>
+                <h2 class="message-title" aria-label="timeout message type">{{ update.timeout_message_type }}</h2>
+                <div class="timestamp" aria-label="timeout message timestamp">{{ update.timeout_message_timestamp.toLocaleDateString() }} {{ update.timeout_message_timestamp.toLocaleTimeString() }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Saga Completed section -->
+        <div v-if="vm.SagaCompleted" class="block">
+          <div class="row row--center">
+            <div class="cell cell--center cell--inverted">
+              <div class="cell-inner">
+                <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaCompletedIcon.svg" alt="" />
+                <h2 class="saga-status saga-status--inline">Saga Completed</h2>
+                <div class="timestamp" aria-label="saga completion time">
+                  {{ vm.CompletionTime ? vm.CompletionTime.toLocaleDateString() : "" }}
+                  {{ vm.CompletionTime ? vm.CompletionTime.toLocaleTimeString() : "" }}
+                </div>
               </div>
             </div>
           </div>
