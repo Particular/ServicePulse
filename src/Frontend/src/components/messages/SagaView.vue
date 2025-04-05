@@ -115,7 +115,7 @@ const vm = computed<SagaViewModel>(() => ({
               <div class="cell-inner">
                 <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaInitiatedIcon.svg" alt="" />
                 <h2 class="saga-status saga-status--inline">Saga Initiated</h2>
-                <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.start_time.toLocaleDateString("en-GB") }} {{ update.start_time.toLocaleTimeString("en-GB") }}</div>
+                <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.start_time.toLocaleDateString() }} {{ update.start_time.toLocaleTimeString() }}</div>
               </div>
             </div>
           </div>

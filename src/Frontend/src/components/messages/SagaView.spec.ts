@@ -106,6 +106,13 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
       invokedSaga.saga_type = "ServiceControl.SmokeTest.AuditingSaga";
       message.invoked_sagas = [invokedSaga];
 
+      // Set the environment to a fixed timezone
+      // JSDOM, used by Vitest, defaults to UTC timezone
+      // To ensure consistency, explicitly set the timezone to UTC
+      // This ensures that the rendered local time of the saga changes
+      // will always be interpreted and displayed in UTC, avoiding flakiness
+      process.env.TZ = "UTC";
+
       //access each of the saga changes and update its start time and finish time to the same values being read from the variable declaration,
       // but set them again explicitly here
       //so that the reader of this test can see the preconditions at play
@@ -125,27 +132,21 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
 
       //ACT
       const componentDriver = rendercomponent({ message: message, sagaHistory: sampleSagaHistory });
-      // Set the environment to a fixed timezone
-      // JSDOM, used by Vitest, defaults to UTC timezone
-      // To ensure consistency, explicitly set the timezone to UTC
-      // This ensures that the rendered local time of the saga changes
-      // will always be interpreted and displayed in UTC, avoiding flakiness
-      process.env.TZ = "UTC";
 
       //assert
 
       componentDriver.assert.thereAreTheFollowingSagaChangesInThisOrder([
         {
-          expectedRenderedLocalTime: "27/03/2025 20:04:05",
+          expectedRenderedLocalTime: "3/28/2025 3:04:05 AM",
         },
         {
-          expectedRenderedLocalTime: "27/03/2025 20:04:06",
+          expectedRenderedLocalTime: "3/28/2025 3:04:06 AM",
         },
         {
-          expectedRenderedLocalTime: "27/03/2025 20:04:07",
+          expectedRenderedLocalTime: "3/28/2025 3:04:07 AM",
         },
         {
-          expectedRenderedLocalTime: "27/03/2025 20:04:08",
+          expectedRenderedLocalTime: "3/28/2025 3:04:08 AM",
         },
       ]);
     });
