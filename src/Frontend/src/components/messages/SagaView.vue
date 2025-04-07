@@ -32,13 +32,13 @@ onUnmounted(() => {
 });
 
 interface OutgoingMessage {
-  message_type: string;
-  message_id: string;
-  time_sent: Date;
-  delivery_delay?: string;
-  has_timeout: boolean;
-  timeout_seconds: string;
-  intent: string;
+  MessageType: string;
+  MessageId: string;
+  TimeSent: Date;
+  DeliveryDelay?: string;
+  HasTimeout: boolean;
+  TimeoutSeconds: string;
+  Intent: string;
 }
 
 interface SagaViewModel {
@@ -51,14 +51,14 @@ interface SagaViewModel {
   SagaCompleted: boolean;
   CompletionTime: Date | null;
   SagaUpdates: Array<{
-    start_time: Date;
-    finish_time: Date;
-    initiating_message_type: string;
-    initiating_message_timestamp: Date;
-    status: string;
-    status_display: string;
-    outgoing_messages: OutgoingMessage[];
-    has_timeout: boolean;
+    StartTime: Date;
+    FinishTime: Date;
+    InitiatingMessageType: string;
+    InitiatingMessageTimestamp: Date;
+    Status: string;
+    StatusDisplay: string;
+    OutgoingMessages: OutgoingMessage[];
+    HasTimeout: boolean;
   }>;
 }
 
@@ -81,32 +81,32 @@ const vm = computed<SagaViewModel>(() => {
           const outgoingMessages = update.outgoing_messages.map((msg) => {
             const delivery_delay = msg.delivery_delay || "00:00:00";
             return {
-              message_type: typeToName(msg.message_type) || "",
-              message_id: msg.message_id,
-              time_sent: new Date(msg.time_sent),
-              delivery_delay,
-              has_timeout: !!delivery_delay && delivery_delay !== "00:00:00",
-              timeout_seconds: delivery_delay.split(":")[2] || "0",
-              intent: msg.intent,
+              MessageType: typeToName(msg.message_type) || "",
+              MessageId: msg.message_id,
+              TimeSent: new Date(msg.time_sent),
+              DeliveryDelay: delivery_delay,
+              HasTimeout: !!delivery_delay && delivery_delay !== "00:00:00",
+              TimeoutSeconds: delivery_delay.split(":")[2] || "0",
+              Intent: msg.intent,
             };
           });
 
           // Check if any of the outgoing messages have a timeout
-          const hasTimeout = outgoingMessages.some((msg) => msg.has_timeout);
+          const hasTimeout = outgoingMessages.some((msg) => msg.HasTimeout);
 
           return {
-            start_time: new Date(update.start_time),
-            finish_time: new Date(update.finish_time),
-            status: update.status,
-            status_display: update.status === "new" ? "Saga Initiated" : update.status === "completed" ? "Saga Completed" : "Saga Updated",
-            initiating_message_type: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
-            initiating_message_timestamp: new Date(update.initiating_message?.time_sent || Date.now()),
-            outgoing_messages: outgoingMessages,
-            has_timeout: hasTimeout,
+            StartTime: new Date(update.start_time),
+            FinishTime: new Date(update.finish_time),
+            Status: update.status,
+            StatusDisplay: update.status === "new" ? "Saga Initiated" : update.status === "completed" ? "Saga Completed" : "Saga Updated",
+            InitiatingMessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
+            InitiatingMessageTimestamp: new Date(update.initiating_message?.time_sent || Date.now()),
+            OutgoingMessages: outgoingMessages,
+            HasTimeout: hasTimeout,
           };
         })
-        .sort((a, b) => a.start_time.getTime() - b.start_time.getTime())
-        .sort((a, b) => a.finish_time.getTime() - b.finish_time.getTime()) || [],
+        .sort((a, b) => a.StartTime.getTime() - b.StartTime.getTime())
+        .sort((a, b) => a.FinishTime.getTime() - b.FinishTime.getTime()) || [],
   };
 });
 </script>
@@ -166,15 +166,15 @@ const vm = computed<SagaViewModel>(() => {
             <div class="cell cell--side cell--left">
               <div class="cell-inner cell-inner-side">
                 <img class="saga-icon saga-icon--side-cell" src="@/assets/CommandIcon.svg" alt="" />
-                <h2 class="message-title" aria-label="initiating message type">{{ update.initiating_message_type }}</h2>
-                <div class="timestamp" aria-label="initiating message timestamp">{{ update.initiating_message_timestamp.toLocaleDateString() }} {{ update.initiating_message_timestamp.toLocaleTimeString() }}</div>
+                <h2 class="message-title" aria-label="initiating message type">{{ update.InitiatingMessageType }}</h2>
+                <div class="timestamp" aria-label="initiating message timestamp">{{ update.InitiatingMessageTimestamp.toLocaleDateString() }} {{ update.InitiatingMessageTimestamp.toLocaleTimeString() }}</div>
               </div>
             </div>
             <div class="cell cell--center cell--center--border">
               <div class="cell-inner">
                 <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaInitiatedIcon.svg" alt="" />
-                <h2 class="saga-status saga-status--inline">{{ update.status_display }}</h2>
-                <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.start_time.toLocaleDateString() }} {{ update.start_time.toLocaleTimeString() }}</div>
+                <h2 class="saga-status saga-status--inline">{{ update.StatusDisplay }}</h2>
+                <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.StartTime.toLocaleDateString() }} {{ update.StartTime.toLocaleTimeString() }}</div>
               </div>
             </div>
           </div>
@@ -185,10 +185,10 @@ const vm = computed<SagaViewModel>(() => {
                   <a class="properties-link" href="">All Properties</a> /
                   <a class="properties-link properties-link--active" href="">Updated Properties</a>
                 </div>
-                <template v-if="update.has_timeout">
-                  <div v-for="(msg, msgIndex) in update.outgoing_messages.filter((m) => m.has_timeout)" :key="msgIndex">
+                <template v-if="update.HasTimeout">
+                  <div v-for="(msg, msgIndex) in update.OutgoingMessages.filter((m) => m.HasTimeout)" :key="msgIndex">
                     <img class="saga-icon saga-icon--center-cell saga-icon--overlap" src="@/assets/SagaTimeoutIcon.svg" alt="" />
-                    <a class="timeout-status" href="" aria-label="timeout requested"> Timeout Requested = {{ msg.timeout_seconds }}s </a>
+                    <a class="timeout-status" href="" aria-label="timeout requested"> Timeout Requested = {{ msg.TimeoutSeconds }}s </a>
                   </div>
                 </template>
               </div>
@@ -196,7 +196,7 @@ const vm = computed<SagaViewModel>(() => {
           </div>
 
           <!-- Display each outgoing timeout message -->
-          <div v-for="(msg, msgIndex) in update.outgoing_messages.filter((m) => m.has_timeout)" :key="'timeout-' + msgIndex" class="row row--right">
+          <div v-for="(msg, msgIndex) in update.OutgoingMessages.filter((m) => m.HasTimeout)" :key="'timeout-' + msgIndex" class="row row--right">
             <div class="cell cell--center cell--top-border">
               <div class="cell-inner cell-inner-top"></div>
             </div>
@@ -204,8 +204,8 @@ const vm = computed<SagaViewModel>(() => {
               <div class="cell-inner cell-inner-right"></div>
               <div class="cell-inner cell-inner-side cell-inner-side--active">
                 <img class="saga-icon saga-icon--side-cell" src="@/assets/TimeoutIcon.svg" alt="" />
-                <h2 class="message-title" aria-label="timeout message type">{{ msg.message_type }}</h2>
-                <div class="timestamp" aria-label="timeout message timestamp">{{ msg.time_sent.toLocaleDateString() }} {{ msg.time_sent.toLocaleTimeString() }}</div>
+                <h2 class="message-title" aria-label="timeout message type">{{ msg.MessageType }}</h2>
+                <div class="timestamp" aria-label="timeout message timestamp">{{ msg.TimeSent.toLocaleDateString() }} {{ msg.TimeSent.toLocaleTimeString() }}</div>
               </div>
             </div>
           </div>
