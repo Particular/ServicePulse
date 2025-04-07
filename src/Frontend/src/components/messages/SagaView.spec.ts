@@ -111,7 +111,7 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
   });
 
   describe("Rule: 3.2 Display a chronological timeline of saga events.", () => {
-    test("EXAMPLE: A message with a Saga Id '123' and a Saga Type 'ServiceControl.SmokeTest.AuditingSaga' gets selected", () => {
+    test("EXAMPLE: Rendering a Saga with 4 changes", () => {
       //     Each saga event ("Saga Initiated," "Saga Updated," "Timeout Invoked," "Saga Completed") is timestamped to represent progression over time. Events are ordered by the time they ocurred.
       //TODO:  "Incoming messages are displayed on the left, and outgoing messages are displayed on the right."  in another test?
 
