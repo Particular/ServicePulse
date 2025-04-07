@@ -1,18 +1,45 @@
 <script setup lang="ts">
 import Message from "@/resources/Message";
-import { SagaHistory } from "@/resources/SagaHistory";
-import { computed } from "vue";
+import { computed, onUnmounted, watch } from "vue";
 import { RouterLink } from "vue-router";
 import routeLinks from "@/router/routeLinks";
 import { typeToName } from "@/composables/typeHumanizer";
+import { useSagaHistoryStore } from "@/stores/sagaHistoryStore";
 
-const props = withDefaults(
-  defineProps<{
-    message: Message;
-    sagaHistory?: SagaHistory;
-  }>(),
-  { sagaHistory: undefined }
+const props = defineProps<{
+  message: Message;
+}>();
+
+// Use the store instead of saga history prop
+const sagaHistoryStore = useSagaHistoryStore();
+
+// Add logic to watch for message and set saga ID when component mounts or message changes
+watch(
+  () => props.message?.invoked_sagas,
+  (newSagas) => {
+    if (newSagas?.length > 0) {
+      sagaHistoryStore.setSagaId(newSagas[0].saga_id);
+    } else {
+      sagaHistoryStore.clearSagaHistory();
+    }
+  },
+  { immediate: true }
 );
+
+// Clean up when component is unmounted
+onUnmounted(() => {
+  sagaHistoryStore.clearSagaHistory();
+});
+
+interface OutgoingMessage {
+  message_type: string;
+  message_id: string;
+  time_sent: Date;
+  delivery_delay?: string;
+  has_timeout: boolean;
+  timeout_seconds: string;
+  intent: string;
+}
 
 interface SagaViewModel {
   SagaTitle: string;
@@ -28,48 +55,54 @@ interface SagaViewModel {
     finish_time: Date;
     initiating_message_type: string;
     initiating_message_timestamp: Date;
-    timeout_message_type: string;
-    timeout_message_timestamp: Date;
     status: string;
     status_display: string;
-    delivery_delay?: string;
+    outgoing_messages: OutgoingMessage[];
     has_timeout: boolean;
-    timeout_seconds: string;
-    has_timeout_message: boolean;
   }>;
 }
 
 const vm = computed<SagaViewModel>(() => {
-  const completedUpdate = props.sagaHistory?.changes.find((update) => update.status === "completed");
+  const completedUpdate = sagaHistoryStore.sagaHistory?.changes.find((update) => update.status === "completed");
 
   return {
-    SagaTitle: (props.message.invoked_sagas.length > 0 && typeToName(props.message.invoked_sagas[0].saga_type)) || "Unkonwn saga",
+    SagaTitle: (props.message.invoked_sagas.length > 0 && typeToName(props.message.invoked_sagas[0].saga_type)) || "Unknown saga",
     SagaGuid: (props.message.invoked_sagas.length > 0 && props.message.invoked_sagas[0].saga_id) || "Missing guid",
     MessageIdUrl: routeLinks.messages.message.link(props.message.id),
     ParticipatedInSaga: !!props.message.invoked_sagas.length,
-    HasSagaData: !!props.sagaHistory,
-    ShowNoPluginActiveLeged: !props.sagaHistory && props.message?.invoked_sagas.length > 0,
+    HasSagaData: !!sagaHistoryStore.sagaHistory,
+    ShowNoPluginActiveLeged: !sagaHistoryStore.sagaHistory && props.message?.invoked_sagas.length > 0,
     SagaCompleted: !!completedUpdate,
-    CompletionTime: completedUpdate ? completedUpdate.finish_time : null,
+    CompletionTime: completedUpdate ? new Date(completedUpdate.finish_time) : null,
     SagaUpdates:
-      props.sagaHistory?.changes
+      sagaHistoryStore.sagaHistory?.changes
         .map((update) => {
-          const raw_timeout_message_type = update.outgoing_messages[0]?.message_type || "Unknown Timeout";
-          const delivery_delay = update.outgoing_messages[0]?.delivery_delay || "00:00:00";
+          // Process all outgoing messages
+          const outgoingMessages = update.outgoing_messages.map((msg) => {
+            const delivery_delay = msg.delivery_delay || "00:00:00";
+            return {
+              message_type: typeToName(msg.message_type) || "",
+              message_id: msg.message_id,
+              time_sent: new Date(msg.time_sent),
+              delivery_delay,
+              has_timeout: !!delivery_delay && delivery_delay !== "00:00:00",
+              timeout_seconds: delivery_delay.split(":")[2] || "0",
+              intent: msg.intent,
+            };
+          });
+
+          // Check if any of the outgoing messages have a timeout
+          const hasTimeout = outgoingMessages.some((msg) => msg.has_timeout);
 
           return {
-            start_time: update.start_time,
-            finish_time: update.finish_time,
+            start_time: new Date(update.start_time),
+            finish_time: new Date(update.finish_time),
             status: update.status,
             status_display: update.status === "new" ? "Saga Initiated" : update.status === "completed" ? "Saga Completed" : "Saga Updated",
             initiating_message_type: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
-            initiating_message_timestamp: update.initiating_message?.time_sent || new Date(),
-            timeout_message_type: typeToName(raw_timeout_message_type) || "",
-            timeout_message_timestamp: update.outgoing_messages[0]?.time_sent || new Date(),
-            delivery_delay,
-            has_timeout: !!delivery_delay && delivery_delay !== "00:00:00",
-            timeout_seconds: delivery_delay.split(":")[2] || "0",
-            has_timeout_message: !!raw_timeout_message_type && raw_timeout_message_type !== "Unknown Timeout",
+            initiating_message_timestamp: new Date(update.initiating_message?.time_sent || Date.now()),
+            outgoing_messages: outgoingMessages,
+            has_timeout: hasTimeout,
           };
         })
         .sort((a, b) => a.start_time.getTime() - b.start_time.getTime())
@@ -153,13 +186,17 @@ const vm = computed<SagaViewModel>(() => {
                   <a class="properties-link properties-link--active" href="">Updated Properties</a>
                 </div>
                 <template v-if="update.has_timeout">
-                  <img class="saga-icon saga-icon--center-cell saga-icon--overlap" src="@/assets/SagaTimeoutIcon.svg" alt="" />
-                  <a class="timeout-status" href="" aria-label="timeout requested"> Timeout Requested = {{ update.timeout_seconds }}s </a>
+                  <div v-for="(msg, msgIndex) in update.outgoing_messages.filter((m) => m.has_timeout)" :key="msgIndex">
+                    <img class="saga-icon saga-icon--center-cell saga-icon--overlap" src="@/assets/SagaTimeoutIcon.svg" alt="" />
+                    <a class="timeout-status" href="" aria-label="timeout requested"> Timeout Requested = {{ msg.timeout_seconds }}s </a>
+                  </div>
                 </template>
               </div>
             </div>
           </div>
-          <div v-if="update.has_timeout_message" class="row row--right">
+
+          <!-- Display each outgoing timeout message -->
+          <div v-for="(msg, msgIndex) in update.outgoing_messages.filter((m) => m.has_timeout)" :key="'timeout-' + msgIndex" class="row row--right">
             <div class="cell cell--center cell--top-border">
               <div class="cell-inner cell-inner-top"></div>
             </div>
@@ -167,8 +204,8 @@ const vm = computed<SagaViewModel>(() => {
               <div class="cell-inner cell-inner-right"></div>
               <div class="cell-inner cell-inner-side cell-inner-side--active">
                 <img class="saga-icon saga-icon--side-cell" src="@/assets/TimeoutIcon.svg" alt="" />
-                <h2 class="message-title" aria-label="timeout message type">{{ update.timeout_message_type }}</h2>
-                <div class="timestamp" aria-label="timeout message timestamp">{{ update.timeout_message_timestamp.toLocaleDateString() }} {{ update.timeout_message_timestamp.toLocaleTimeString() }}</div>
+                <h2 class="message-title" aria-label="timeout message type">{{ msg.message_type }}</h2>
+                <div class="timestamp" aria-label="timeout message timestamp">{{ msg.time_sent.toLocaleDateString() }} {{ msg.time_sent.toLocaleTimeString() }}</div>
               </div>
             </div>
           </div>

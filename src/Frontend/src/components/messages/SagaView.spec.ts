@@ -3,6 +3,7 @@ import sut from "./SagaView.vue";
 import Message, { SagaInfo } from "@/resources/Message";
 import { SagaHistory } from "@/resources/SagaHistory";
 import makeRouter from "@/router";
+import { createTestingPinia } from "@pinia/testing";
 
 //Defines a domain-specific language (DSL) for interacting with the system under test (sut)
 interface componentDSL {
@@ -42,7 +43,12 @@ describe("Feature: Detecting no Audited Saga Data Available", () => {
       invokedSaga.saga_id = "saga_id";
       message.invoked_sagas = [invokedSaga];
 
-      const componentDriver = rendercomponent({ message: message, sagaHistory: undefined });
+      // No need to manually set up the store - it will be empty by default
+      const componentDriver = rendercomponent({
+        message: message,
+        // No initial state needed - we want an empty saga history
+      });
+
       componentDriver.assert.SagaPlugInNeededIsShownWithTheMessages({
         messages: [/Saga audit plugin needed to visualize saga/i, /To visualize your saga, please install the appropriate nuget package in your endpoint/i, /install-package NServiceBus\.SagaAudit/i],
         withPluginDownloadUrl: "https://www.nuget.org/packages/NServiceBus.SagaAudit",
@@ -63,22 +69,33 @@ describe("Feature: Navigation and Contextual Information", () => {
       const storedMessageRecordId = "123";
       message.id = storedMessageRecordId;
 
-      const componentDriver = rendercomponent({ message: message, sagaHistory: sampleSagaHistory });
-      //TODO: this link needs to be configured so it navigates back but to the corresponding message in the flow diagram
+      // Set initial state with sample saga history
+      const componentDriver = rendercomponent({
+        message: message,
+        initialState: {
+          sagaHistory: { sagaHistory: sampleSagaHistory },
+        },
+      });
+
       componentDriver.assert.linkIsShown({ withText: "← Back to Messages", withHref: `#/messages/${storedMessageRecordId}` });
     });
   });
 
   describe("Rule: Clearly indicate contextual information like Saga ID and Saga Type.", () => {
     test("EXAMPLE: A message with a Saga Id '123' and a Saga Type 'ServiceControl.SmokeTest.AuditingSaga' gets selected", () => {
-      //The saga’s type ("AuditingSaga") and unique identifier (guid) are prominently displayed at the top for reference.
       const message = {} as Message;
       const invokedSaga = {} as SagaInfo;
       invokedSaga.saga_id = "123";
       invokedSaga.saga_type = "ServiceControl.SmokeTest.AuditingSaga";
       message.invoked_sagas = [invokedSaga];
 
-      const componentDriver = rendercomponent({ message: message, sagaHistory: sampleSagaHistory });
+      // Set initial state with sample saga history
+      const componentDriver = rendercomponent({
+        message: message,
+        initialState: {
+          sagaHistory: { sagaHistory: sampleSagaHistory },
+        },
+      });
 
       componentDriver.assert.displayedSagaNameIs("AuditingSaga");
       componentDriver.assert.displayedSagaGuidIs("123");
@@ -130,8 +147,13 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
       //B(1), C(2),  A(0), D(3)
       //B(1), C1(2), C(2), A1(0)
 
-      //ACT
-      const componentDriver = rendercomponent({ message: message, sagaHistory: sampleSagaHistory });
+      // Set up the store with sample saga history
+      const componentDriver = rendercomponent({
+        message: message,
+        initialState: {
+          sagaHistory: { sagaHistory: sampleSagaHistory },
+        },
+      });
 
       //assert
 
@@ -153,16 +175,22 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
   });
 });
 
-function rendercomponent({ message, sagaHistory = undefined }: { message: Message; sagaHistory?: SagaHistory }): componentDSL {
+function rendercomponent({ message, initialState = {} }: { message: Message; initialState?: { sagaHistory?: { sagaHistory: SagaHistory } } }): componentDSL {
   const router = makeRouter();
 
+  // Render with createTestingPinia
   render(sut, {
     props: {
       message,
-      sagaHistory,
     },
     global: {
-      plugins: [router],
+      plugins: [
+        router,
+        createTestingPinia({
+          initialState,
+          stubActions: true, // Explicitly stub actions (this is the default)
+        }),
+      ],
     },
   });
 
