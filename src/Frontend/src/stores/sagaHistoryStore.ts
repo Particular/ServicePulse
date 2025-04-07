@@ -19,12 +19,10 @@ export const useSagaHistoryStore = defineStore("sagaHistory", () => {
     await fetchSagaHistory(newSagaId);
   });
 
-  // Action to set saga ID
   function setSagaId(id: string | null) {
     sagaId.value = id;
   }
 
-  // Action to fetch saga history
   async function fetchSagaHistory(id: string) {
     if (!id) return;
 
@@ -53,7 +51,6 @@ export const useSagaHistoryStore = defineStore("sagaHistory", () => {
     }
   }
 
-  // Action to clear saga history
   function clearSagaHistory() {
     sagaHistory.value = null;
     sagaId.value = null;
