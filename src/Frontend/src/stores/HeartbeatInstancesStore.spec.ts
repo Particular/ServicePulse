@@ -81,7 +81,7 @@ describe("HeartbeatInstancesStore tests", () => {
       [{ name: "", track_instances: true }]
     );
 
-    const names = () => filteredInstances.value.map((value: EndpointsView) => value.host_display_name);
+    const names = () => filteredInstances.value.map((value) => value.host_display_name);
     sortByInstances.value = { property: ColumnNames.InstanceName, isAscending: true };
     expect(names()).toEqual(["Anna", "John", "Oliver"]);
 
