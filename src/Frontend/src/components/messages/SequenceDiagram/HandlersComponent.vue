@@ -41,6 +41,7 @@ const handlerItems = computed(() => {
       return 0;
     })();
 
+    //determine which side of the handler to render the messageType on. If it's the left side (for a right arrow) then we apply a negative offset
     const messageTypeOffset = handler.direction === Direction.Right ? ((messageTypeElement?.getBBox().width ?? 0) + 24) * -1 : 20;
     if (messageTypeOffset < 0) {
       store.setStartX(-1 * messageTypeOffset);
@@ -75,23 +76,21 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
 </script>
 
 <template>
-  <g>
-    <g v-for="(handler, i) in handlerItems" :key="handler.id" :transform="`translate(${handler.left}, ${handler.y})`">
-      <!--Handler Activation Box-->
-      <rect :width="Handler_Width" :height="handler.height" :class="handler.incomingId && 'clickable'" :fill="handler.fill" @mouseover="() => store.setHighlightId(handler.incomingId)" @mouseleave="() => store.setHighlightId()" />
-      <path v-if="handler.icon" :d="handler.icon" fill="white" :transform="`translate(${Handler_Width / 2 - handler.iconSize / 2}, ${handler.height / 2 - handler.iconSize / 2})`" />
-      <!--Message Type and Icon-->
-      <g
-        v-if="handler.messageType"
-        :transform="`translate(${handler.messageTypeOffset}, 4)`"
-        class="clickable"
-        :fill="handler.messageTypeHighlight ? 'var(--highlight)' : 'var(--gray40)'"
-        @mouseover="() => store.setHighlightId(handler.incomingId)"
-        @mouseleave="() => store.setHighlightId()"
-      >
-        <path d="M9,3L9,3 9,0 0,0 0,3 4,3 4,6 0,6 0,9 4,9 4,12 0,12 0,15 9,15 9,12 5,12 5,9 9,9 9,6 5,6 5,3z" />
-        <text x="14" y="10" alignment-baseline="middle" :ref="(el) => setMessageTypeRef(el as SVGTextElement, i)">{{ handler.messageType }}</text>
-      </g>
+  <g v-for="(handler, i) in handlerItems" :key="handler.id" :transform="`translate(${handler.left}, ${handler.y})`">
+    <!--Handler Activation Box-->
+    <rect :width="Handler_Width" :height="handler.height" :class="handler.incomingId && 'clickable'" :fill="handler.fill" @mouseover="() => store.setHighlightId(handler.incomingId)" @mouseleave="() => store.setHighlightId()" />
+    <path v-if="handler.icon" :d="handler.icon" fill="white" :transform="`translate(${Handler_Width / 2 - handler.iconSize / 2}, ${handler.height / 2 - handler.iconSize / 2})`" />
+    <!--Message Type and Icon-->
+    <g
+      v-if="handler.messageType"
+      :transform="`translate(${handler.messageTypeOffset}, 4)`"
+      class="clickable"
+      :fill="handler.messageTypeHighlight ? 'var(--highlight)' : 'var(--gray40)'"
+      @mouseover="() => store.setHighlightId(handler.incomingId)"
+      @mouseleave="() => store.setHighlightId()"
+    >
+      <path d="M9,3L9,3 9,0 0,0 0,3 4,3 4,6 0,6 0,9 4,9 4,12 0,12 0,15 9,15 9,12 5,12 5,9 9,9 9,6 5,6 5,3z" />
+      <text x="14" y="10" alignment-baseline="middle" :ref="(el) => setMessageTypeRef(el as SVGTextElement, i)">{{ handler.messageType }}</text>
     </g>
   </g>
 </template>

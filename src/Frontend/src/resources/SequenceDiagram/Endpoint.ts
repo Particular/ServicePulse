@@ -33,20 +33,20 @@ export function createSendingEndpoint(message: Message): Endpoint {
 }
 
 export class EndpointRegistry {
-  _store = new Map<string, EndpointItem>();
+  #store = new Map<string, EndpointItem>();
 
   register(item: Endpoint) {
-    let endpoint = this._store.get(item.name);
+    let endpoint = this.#store.get(item.name);
     if (!endpoint) {
       endpoint = item as EndpointItem;
-      this._store.set(endpoint.name, endpoint);
+      this.#store.set(endpoint.name, endpoint);
     }
 
     item.hosts.forEach((host) => endpoint.addHost(host as Host));
   }
 
   get(item: Endpoint) {
-    return this._store.get(item.name)! as Endpoint;
+    return this.#store.get(item.name)! as Endpoint;
   }
 }
 

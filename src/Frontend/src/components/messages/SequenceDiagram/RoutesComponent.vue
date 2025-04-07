@@ -24,7 +24,6 @@ const arrows = computed(() =>
 
     const messageTypeElement = messageTypeRefs.value[index];
     const messageTypeElementBounds = messageTypeElement?.getBBox();
-    //TODO: is messageId enough to uniquely identify?
     const arrowIndex = fromHandler.outMessages.findIndex((out) => route.fromRoutedMessage?.messageId === out.messageId && route.fromRoutedMessage?.receiving.name === out.receiving.name) + 1;
     const y = fromHandlerLocation.y + (fromHandlerLocation.height / (fromHandler.outMessages.length + 1)) * arrowIndex; //TODO work out the reason - 15 is applied in WPF;
 
@@ -85,7 +84,13 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
         @mouseover="() => store.setHighlightId(arrow.id)"
         @mouseleave="() => store.setHighlightId()"
       >
-        <rect v-if="arrow.highlight && arrow.messageTypeOffset" :width="arrow.highlightTextWidth + 15 + Message_Type_Margin * 3" :height="arrow.highlightTextHeight + Message_Type_Margin * 2" fill="var(--highlight-background)" />
+        <!--19 is width of MessageType icon, plus a gap-->
+        <rect
+          v-if="arrow.highlight && arrow.messageTypeOffset"
+          :width="arrow.highlightTextWidth + 19 + Message_Type_Margin + Message_Type_Margin"
+          :height="arrow.highlightTextHeight + Message_Type_Margin + Message_Type_Margin"
+          fill="var(--highlight-background)"
+        />
         <svg :x="Message_Type_Margin" :y="Message_Type_Margin" width="15" height="15" viewBox="0 0 32 32">
           <path
             v-if="arrow.type === RoutedMessageType.Timeout"

@@ -10,7 +10,7 @@ import * as precondition from "../../test/preconditions";
 import { EndpointSettings } from "@/resources/EndpointSettings";
 import { serviceControlWithHeartbeats } from "@/components/heartbeats/serviceControlWithHeartbeats";
 import flushPromises from "flush-promises";
-import { EndpointStatus, LogicalEndpoint } from "@/resources/Heartbeat";
+import { EndpointStatus } from "@/resources/Heartbeat";
 import { ColumnNames, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 
 describe("HeartbeatsStore tests", () => {
@@ -302,7 +302,7 @@ describe("HeartbeatsStore tests", () => {
         ]
       );
 
-      const names = () => filteredHealthyEndpoints.value.map((value: LogicalEndpoint) => value.name);
+      const names = () => filteredHealthyEndpoints.value.map((value) => value.name);
 
       sortByInstances.value = { property: ColumnNames.Name, isAscending: true };
       expect(names()).toEqual(["Anna", "John", "Oliver"]);
