@@ -89,7 +89,7 @@ async function deleteInstance(instance: EndpointsView) {
 
 async function deleteAllInstances() {
   try {
-    await Promise.all(sortedInstances.value.filter((instance: EndpointsView) => instance.name === endpointName).map((instance: EndpointsView) => store.deleteEndpointInstance(instance)));
+    await Promise.all(sortedInstances.value.filter((instance) => instance.name === endpointName).map((instance) => store.deleteEndpointInstance(instance)));
     useShowToast(TYPE.SUCCESS, "Endpoint deleted", "", false, { timeout: 1000 });
     await router.replace(backLink.value);
   } catch {

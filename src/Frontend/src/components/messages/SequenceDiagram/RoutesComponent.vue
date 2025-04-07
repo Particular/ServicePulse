@@ -82,7 +82,13 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
         @mouseover="() => store.setHighlightId(arrow.id)"
         @mouseleave="() => store.setHighlightId()"
       >
-        <rect v-if="arrow.highlight && arrow.messageTypeOffset" :width="arrow.highlightTextWidth + 19 + 4 + 4" :height="arrow.highlightTextHeight + 4 + 4" fill="var(--highlight-background)" />
+        <!--19 is width of MessageType icon, plus a gap-->
+        <rect
+          v-if="arrow.highlight && arrow.messageTypeOffset"
+          :width="arrow.highlightTextWidth + 19 + Message_Type_Margin + Message_Type_Margin"
+          :height="arrow.highlightTextHeight + Message_Type_Margin + Message_Type_Margin"
+          fill="var(--highlight-background)"
+        />
         <svg :x="Message_Type_Margin" :y="Message_Type_Margin" width="15" height="15" viewBox="0 0 32 32">
           <path
             v-if="arrow.type === RoutedMessageType.Timeout"
