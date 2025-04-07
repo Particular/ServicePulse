@@ -35,6 +35,7 @@ interface OutgoingMessage {
   MessageType: string;
   MessageId: string;
   TimeSent: Date;
+  FormattedTimeSent: string; // Pre-formatted date string
   DeliveryDelay?: string;
   HasTimeout: boolean;
   TimeoutSeconds: string;
@@ -50,11 +51,14 @@ interface SagaViewModel {
   ShowNoPluginActiveLeged: boolean;
   SagaCompleted: boolean;
   CompletionTime: Date | null;
+  FormattedCompletionTime: string; // Pre-formatted completion time
   SagaUpdates: Array<{
     StartTime: Date;
+    FormattedStartTime: string; // Pre-formatted start time
     FinishTime: Date;
     InitiatingMessageType: string;
     InitiatingMessageTimestamp: Date;
+    FormattedInitiatingMessageTimestamp: string; // Pre-formatted initiating message timestamp
     Status: string;
     StatusDisplay: string;
     OutgoingMessages: OutgoingMessage[];
@@ -64,6 +68,7 @@ interface SagaViewModel {
 
 const vm = computed<SagaViewModel>(() => {
   const completedUpdate = sagaHistoryStore.sagaHistory?.changes.find((update) => update.status === "completed");
+  const completionTime = completedUpdate ? new Date(completedUpdate.finish_time) : null;
 
   return {
     SagaTitle: (props.message.invoked_sagas.length > 0 && typeToName(props.message.invoked_sagas[0].saga_type)) || "Unknown saga",
@@ -73,17 +78,26 @@ const vm = computed<SagaViewModel>(() => {
     HasSagaData: !!sagaHistoryStore.sagaHistory,
     ShowNoPluginActiveLeged: !sagaHistoryStore.sagaHistory && props.message?.invoked_sagas.length > 0,
     SagaCompleted: !!completedUpdate,
-    CompletionTime: completedUpdate ? new Date(completedUpdate.finish_time) : null,
+    CompletionTime: completionTime,
+    FormattedCompletionTime: completionTime ? `${completionTime.toLocaleDateString()} ${completionTime.toLocaleTimeString()}` : "",
     SagaUpdates:
       sagaHistoryStore.sagaHistory?.changes
         .map((update) => {
+          // Convert dates
+          const startTime = new Date(update.start_time);
+          const finishTime = new Date(update.finish_time);
+          const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
+
           // Process all outgoing messages
           const outgoingMessages = update.outgoing_messages.map((msg) => {
             const delivery_delay = msg.delivery_delay || "00:00:00";
+            const timeSent = new Date(msg.time_sent);
+
             return {
               MessageType: typeToName(msg.message_type) || "",
               MessageId: msg.message_id,
-              TimeSent: new Date(msg.time_sent),
+              TimeSent: timeSent,
+              FormattedTimeSent: `${timeSent.toLocaleDateString()} ${timeSent.toLocaleTimeString()}`,
               DeliveryDelay: delivery_delay,
               HasTimeout: !!delivery_delay && delivery_delay !== "00:00:00",
               TimeoutSeconds: delivery_delay.split(":")[2] || "0",
@@ -95,12 +109,14 @@ const vm = computed<SagaViewModel>(() => {
           const hasTimeout = outgoingMessages.some((msg) => msg.HasTimeout);
 
           return {
-            StartTime: new Date(update.start_time),
-            FinishTime: new Date(update.finish_time),
+            StartTime: startTime,
+            FormattedStartTime: `${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`,
+            FinishTime: finishTime,
             Status: update.status,
             StatusDisplay: update.status === "new" ? "Saga Initiated" : update.status === "completed" ? "Saga Completed" : "Saga Updated",
             InitiatingMessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
-            InitiatingMessageTimestamp: new Date(update.initiating_message?.time_sent || Date.now()),
+            InitiatingMessageTimestamp: initiatingMessageTimestamp,
+            FormattedInitiatingMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
             OutgoingMessages: outgoingMessages,
             HasTimeout: hasTimeout,
           };
@@ -167,14 +183,14 @@ const vm = computed<SagaViewModel>(() => {
               <div class="cell-inner cell-inner-side">
                 <img class="saga-icon saga-icon--side-cell" src="@/assets/CommandIcon.svg" alt="" />
                 <h2 class="message-title" aria-label="initiating message type">{{ update.InitiatingMessageType }}</h2>
-                <div class="timestamp" aria-label="initiating message timestamp">{{ update.InitiatingMessageTimestamp.toLocaleDateString() }} {{ update.InitiatingMessageTimestamp.toLocaleTimeString() }}</div>
+                <div class="timestamp" aria-label="initiating message timestamp">{{ update.FormattedInitiatingMessageTimestamp }}</div>
               </div>
             </div>
             <div class="cell cell--center cell--center--border">
               <div class="cell-inner">
                 <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaInitiatedIcon.svg" alt="" />
                 <h2 class="saga-status saga-status--inline">{{ update.StatusDisplay }}</h2>
-                <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.StartTime.toLocaleDateString() }} {{ update.StartTime.toLocaleTimeString() }}</div>
+                <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.FormattedStartTime }}</div>
               </div>
             </div>
           </div>
@@ -205,7 +221,7 @@ const vm = computed<SagaViewModel>(() => {
               <div class="cell-inner cell-inner-side cell-inner-side--active">
                 <img class="saga-icon saga-icon--side-cell" src="@/assets/TimeoutIcon.svg" alt="" />
                 <h2 class="message-title" aria-label="timeout message type">{{ msg.MessageType }}</h2>
-                <div class="timestamp" aria-label="timeout message timestamp">{{ msg.TimeSent.toLocaleDateString() }} {{ msg.TimeSent.toLocaleTimeString() }}</div>
+                <div class="timestamp" aria-label="timeout message timestamp">{{ msg.FormattedTimeSent }}</div>
               </div>
             </div>
           </div>
@@ -218,10 +234,7 @@ const vm = computed<SagaViewModel>(() => {
               <div class="cell-inner">
                 <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaCompletedIcon.svg" alt="" />
                 <h2 class="saga-status saga-status--inline">Saga Completed</h2>
-                <div class="timestamp" aria-label="saga completion time">
-                  {{ vm.CompletionTime ? vm.CompletionTime.toLocaleDateString() : "" }}
-                  {{ vm.CompletionTime ? vm.CompletionTime.toLocaleTimeString() : "" }}
-                </div>
+                <div class="timestamp" aria-label="saga completion time">{{ vm.FormattedCompletionTime }}</div>
               </div>
             </div>
           </div>
