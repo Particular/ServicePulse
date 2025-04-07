@@ -22,7 +22,6 @@ interface EndpointSurround {
   stroke: string;
 }
 
-const Endpoint_Width = 260;
 const Endpoint_Gap = 30;
 const Endpoint_Image_Width = 20;
 
