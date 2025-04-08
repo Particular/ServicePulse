@@ -6,6 +6,18 @@ import routeLinks from "@/router/routeLinks";
 import { typeToName } from "@/composables/typeHumanizer";
 import { useSagaHistoryStore } from "@/stores/sagaHistoryStore";
 
+// Import the images directly
+import CommandIcon from "@/assets/command.svg";
+import EventIcon from "@/assets/event.svg";
+import TimeoutIcon from "@/assets/TimeoutIcon.svg";
+import SagaIcon from "@/assets/SagaIcon.svg";
+import SagaInitiatedIcon from "@/assets/SagaInitiatedIcon.svg";
+import SagaCompletedIcon from "@/assets/SagaCompletedIcon.svg";
+import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";
+import ToolbarEndpointIcon from "@/assets/Shell_ToolbarEndpoint.svg";
+import NoSagaIcon from "@/assets/NoSaga.svg";
+import CopyClipboardIcon from "@/assets/Shell_CopyClipboard.svg";
+
 const props = defineProps<{
   message: Message;
 }>();
@@ -26,20 +38,41 @@ watch(
   { immediate: true }
 );
 
-// Clean up when component is unmounted
 onUnmounted(() => {
   sagaHistoryStore.clearSagaHistory();
 });
 
-interface OutgoingMessage {
-  MessageType: string;
-  MessageId: string;
-  TimeSent: Date;
-  FormattedTimeSent: string; // Pre-formatted date string
-  DeliveryDelay?: string;
-  HasTimeout: boolean;
+interface SagaMessageDataItem {
+  Key: string;
+  Value: string;
+}
+
+interface SagaMessage {
+  MessageFriendlyTypeName: string;
+  FormattedTimeSent: string;
+  Data: SagaMessageDataItem[];
+  IsEventMessage: boolean;
+  IsCommandMessage: boolean;
+}
+
+interface SagaTimeoutMessage extends SagaMessage {
   TimeoutSeconds: string;
-  Intent: string;
+  TimeoutFriendly: string;
+}
+interface SagaUpdate {
+  StartTime: Date;
+  FinishTime: Date;
+  FormattedStartTime: string;
+  InitiatingMessageType: string;
+  FormattedInitiatingMessageTimestamp: string;
+  Status: string;
+  StatusDisplay: string;
+  HasTimeout: boolean;
+  IsFirstNode: boolean;
+  NonTimeoutMessages: SagaMessage[];
+  TimeoutMessages: SagaTimeoutMessage[];
+  HasNonTimeoutMessages: boolean;
+  HasTimeoutMessages: boolean;
 }
 
 interface SagaViewModel {
@@ -50,20 +83,8 @@ interface SagaViewModel {
   HasSagaData: boolean;
   ShowNoPluginActiveLeged: boolean;
   SagaCompleted: boolean;
-  CompletionTime: Date | null;
-  FormattedCompletionTime: string; // Pre-formatted completion time
-  SagaUpdates: Array<{
-    StartTime: Date;
-    FormattedStartTime: string; // Pre-formatted start time
-    FinishTime: Date;
-    InitiatingMessageType: string;
-    InitiatingMessageTimestamp: Date;
-    FormattedInitiatingMessageTimestamp: string; // Pre-formatted initiating message timestamp
-    Status: string;
-    StatusDisplay: string;
-    OutgoingMessages: OutgoingMessage[];
-    HasTimeout: boolean;
-  }>;
+  FormattedCompletionTime: string;
+  SagaUpdates: SagaUpdate[];
 }
 
 const vm = computed<SagaViewModel>(() => {
@@ -78,47 +99,72 @@ const vm = computed<SagaViewModel>(() => {
     HasSagaData: !!sagaHistoryStore.sagaHistory,
     ShowNoPluginActiveLeged: !sagaHistoryStore.sagaHistory && props.message?.invoked_sagas.length > 0,
     SagaCompleted: !!completedUpdate,
-    CompletionTime: completionTime,
     FormattedCompletionTime: completionTime ? `${completionTime.toLocaleDateString()} ${completionTime.toLocaleTimeString()}` : "",
     SagaUpdates:
       sagaHistoryStore.sagaHistory?.changes
         .map((update) => {
-          // Convert dates
           const startTime = new Date(update.start_time);
           const finishTime = new Date(update.finish_time);
           const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
 
-          // Process all outgoing messages
           const outgoingMessages = update.outgoing_messages.map((msg) => {
             const delivery_delay = msg.delivery_delay || "00:00:00";
             const timeSent = new Date(msg.time_sent);
+            const hasTimeout = !!delivery_delay && delivery_delay !== "00:00:00";
 
             return {
-              MessageType: typeToName(msg.message_type) || "",
+              MessageType: msg.message_type || "",
               MessageId: msg.message_id,
-              TimeSent: timeSent,
               FormattedTimeSent: `${timeSent.toLocaleDateString()} ${timeSent.toLocaleTimeString()}`,
               DeliveryDelay: delivery_delay,
-              HasTimeout: !!delivery_delay && delivery_delay !== "00:00:00",
+              HasTimeout: hasTimeout,
               TimeoutSeconds: delivery_delay.split(":")[2] || "0",
               Intent: msg.intent,
             };
           });
 
-          // Check if any of the outgoing messages have a timeout
-          const hasTimeout = outgoingMessages.some((msg) => msg.HasTimeout);
+          const timeoutMessages = outgoingMessages
+            .filter((msg) => msg.HasTimeout)
+            .map((msg) => {
+              return {
+                MessageFriendlyTypeName: typeToName(msg.MessageType),
+                FormattedTimeSent: msg.FormattedTimeSent,
+                TimeoutSeconds: msg.TimeoutSeconds,
+                TimeoutFriendly: `${msg.TimeoutSeconds}s`,
+                Data: [],
+                IsEventMessage: msg.Intent === "Publish",
+                IsCommandMessage: msg.Intent !== "Publish",
+              } as SagaTimeoutMessage;
+            });
+
+          const nonTimeoutMessages = outgoingMessages
+            .filter((msg) => !msg.HasTimeout)
+            .map((msg) => {
+              return {
+                MessageFriendlyTypeName: typeToName(msg.MessageType),
+                FormattedTimeSent: msg.FormattedTimeSent,
+                Data: [],
+                IsEventMessage: msg.Intent === "Publish",
+                IsCommandMessage: msg.Intent !== "Publish",
+              } as SagaMessage;
+            });
+
+          const hasTimeout = timeoutMessages.length > 0;
 
           return {
             StartTime: startTime,
-            FormattedStartTime: `${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`,
             FinishTime: finishTime,
+            FormattedStartTime: `${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`,
             Status: update.status,
             StatusDisplay: update.status === "new" ? "Saga Initiated" : update.status === "completed" ? "Saga Completed" : "Saga Updated",
             InitiatingMessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
-            InitiatingMessageTimestamp: initiatingMessageTimestamp,
             FormattedInitiatingMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
-            OutgoingMessages: outgoingMessages,
             HasTimeout: hasTimeout,
+            IsFirstNode: update.status === "new",
+            TimeoutMessages: timeoutMessages,
+            NonTimeoutMessages: nonTimeoutMessages,
+            HasNonTimeoutMessages: nonTimeoutMessages.length > 0,
+            HasTimeoutMessages: timeoutMessages.length > 0,
           };
         })
         .sort((a, b) => a.StartTime.getTime() - b.StartTime.getTime())
@@ -130,15 +176,15 @@ const vm = computed<SagaViewModel>(() => {
 <template>
   <div class="saga-container">
     <div class="header">
-      <div class="saga-top-logo"><img class="saga-top-logo-image" src="@/assets/SagaIcon.svg" alt="" />Saga</div>
-      <button class="saga-button" aria-label="message-not-involved-in-saga"><img class="saga-button-icon" src="@/assets/Shell_ToolbarEndpoint.svg" alt="" />Show Message Data</button>
+      <div class="saga-top-logo"><img class="saga-top-logo-image" :src="SagaIcon" alt="" />Saga</div>
+      <button class="saga-button" aria-label="message-not-involved-in-saga"><img class="saga-button-icon" :src="ToolbarEndpointIcon" alt="" />Show Message Data</button>
     </div>
 
     <!-- No saga Data Available container -->
     <div v-if="!vm.ParticipatedInSaga" class="body">
       <div class="saga-message">
         <div class="saga-message-container">
-          <img class="saga-message-image" src="@/assets/NoSaga.svg" alt="" />
+          <img class="saga-message-image" :src="NoSagaIcon" alt="" />
           <h1 role="status" aria-label="message-not-involved-in-saga" class="saga-message-title">No Saga Data Available</h1>
         </div>
       </div>
@@ -148,12 +194,12 @@ const vm = computed<SagaViewModel>(() => {
     <div v-if="vm.ShowNoPluginActiveLeged" class="body" role="status" aria-label="saga-plugin-needed">
       <div class="saga-message">
         <div class="saga-message-container">
-          <img class="saga-message-image" src="@/assets/NoSaga.svg" alt="" />
+          <img class="saga-message-image" :src="NoSagaIcon" alt="" />
           <h1 class="saga-message-title">Saga audit plugin needed to visualize saga</h1>
           <div class="saga-message-box">
             <p class="saga-message-text">To visualize your saga, please install the appropriate nuget package in your endpoint</p>
             <a href="https://www.nuget.org/packages/NServiceBus.SagaAudit" class="saga-message-link">install-package NServiceBus.SagaAudit</a>
-            <img class="saga-message-icon" src="@/assets/Shell_CopyClipboard.svg" alt="" />
+            <img class="saga-message-icon" :src="CopyClipboardIcon" alt="" />
           </div>
         </div>
       </div>
@@ -181,14 +227,14 @@ const vm = computed<SagaViewModel>(() => {
           <div class="row">
             <div class="cell cell--side">
               <div class="cell-inner cell-inner-side">
-                <img class="saga-icon saga-icon--side-cell" src="@/assets/CommandIcon.svg" alt="" />
+                <img class="saga-icon saga-icon--side-cell" :src="CommandIcon" alt="" />
                 <h2 class="message-title" aria-label="initiating message type">{{ update.InitiatingMessageType }}</h2>
                 <div class="timestamp" aria-label="initiating message timestamp">{{ update.FormattedInitiatingMessageTimestamp }}</div>
               </div>
             </div>
             <div class="cell cell--center cell-flex">
               <div class="cell-inner cell-inner--align-bottom">
-                <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaInitiatedIcon.svg" alt="" />
+                <img class="saga-icon saga-icon--center-cell" :src="SagaInitiatedIcon" alt="" />
                 <h2 class="saga-status-title saga-status-title--inline">{{ update.StatusDisplay }}</h2>
                 <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.FormattedStartTime }}</div>
               </div>
@@ -223,8 +269,8 @@ const vm = computed<SagaViewModel>(() => {
 
                 <!-- Timeout request indicators -->
                 <template v-if="update.HasTimeout">
-                  <div v-for="(msg, msgIndex) in update.OutgoingMessages.filter((m) => m.HasTimeout)" :key="msgIndex">
-                    <img class="saga-icon saga-icon--center-cell saga-icon--overlap" src="@/assets/SagaTimeoutIcon.svg" alt="" />
+                  <div v-for="(msg, msgIndex) in update.TimeoutMessages" :key="msgIndex">
+                    <img class="saga-icon saga-icon--center-cell saga-icon--overlap" :src="SagaTimeoutIcon" alt="" />
                     <a class="timeout-status" href="" aria-label="timeout requested"> Timeout Requested = {{ msg.TimeoutSeconds }}s </a>
                   </div>
                 </template>
@@ -232,12 +278,12 @@ const vm = computed<SagaViewModel>(() => {
             </div>
 
             <!-- Right side - outgoing messages (non-timeout) -->
-            <div class="cell cell--side cell--aling-top" v-if="update.OutgoingMessages && update.OutgoingMessages.filter((m) => !m.HasTimeout).length > 0">
+            <div class="cell cell--side cell--aling-top" v-if="update.HasNonTimeoutMessages">
               <div class="cell-inner cell-inner-right"></div>
-              <div v-for="(msg, msgIndex) in update.OutgoingMessages.filter((m) => !m.HasTimeout)" :key="msgIndex">
+              <div v-for="(msg, msgIndex) in update.NonTimeoutMessages" :key="msgIndex">
                 <div class="cell-inner cell-inner-side">
-                  <img class="saga-icon saga-icon--side-cell" src="@/assets/CommandIcon.svg" alt="" />
-                  <h2 class="message-title">{{ msg.MessageType }}</h2>
+                  <img class="saga-icon saga-icon--side-cell" :src="msg.IsEventMessage ? EventIcon : CommandIcon" :alt="msg.IsEventMessage ? 'Event' : 'Command'" />
+                  <h2 class="message-title">{{ msg.MessageFriendlyTypeName }}</h2>
                   <div class="timestamp">{{ msg.FormattedTimeSent }}</div>
                 </div>
                 <div class="message-data-box">
@@ -248,15 +294,15 @@ const vm = computed<SagaViewModel>(() => {
           </div>
 
           <!-- Display each outgoing timeout message -->
-          <div v-for="(msg, msgIndex) in update.OutgoingMessages.filter((m) => m.HasTimeout)" :key="'timeout-' + msgIndex" class="row row--right">
+          <div v-for="(msg, msgIndex) in update.TimeoutMessages" :key="'timeout-' + msgIndex" class="row row--right">
             <div class="cell cell--center cell--top-border">
               <div class="cell-inner cell-inner-top"></div>
             </div>
             <div class="cell cell--side">
               <div class="cell-inner cell-inner-right"></div>
               <div class="cell-inner cell-inner-side cell-inner-side--active">
-                <img class="saga-icon saga-icon--side-cell" src="@/assets/TimeoutIcon.svg" alt="" />
-                <h2 class="message-title" aria-label="timeout message type">{{ msg.MessageType }}</h2>
+                <img class="saga-icon saga-icon--side-cell" :src="TimeoutIcon" alt="" />
+                <h2 class="message-title" aria-label="timeout message type">{{ msg.MessageFriendlyTypeName }}</h2>
                 <div class="timestamp" aria-label="timeout message timestamp">{{ msg.FormattedTimeSent }}</div>
               </div>
               <div class="message-data-box">
@@ -271,7 +317,7 @@ const vm = computed<SagaViewModel>(() => {
           <div class="row row--center">
             <div class="cell cell--center cell--inverted">
               <div class="cell-inner">
-                <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaCompletedIcon.svg" alt="" />
+                <img class="saga-icon saga-icon--center-cell" :src="SagaCompletedIcon" alt="" />
                 <h2 class="saga-status-title saga-status-title--inline">Saga Completed</h2>
                 <div class="timestamp" aria-label="saga completion time">{{ vm.FormattedCompletionTime }}</div>
               </div>
