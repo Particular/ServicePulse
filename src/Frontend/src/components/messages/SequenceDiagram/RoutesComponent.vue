@@ -78,7 +78,7 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
       </g>
       <!--Message Type and Icon-->
       <g
-        class="clickable"
+        class="clickable message-type"
         :transform="`translate(${arrow.messageTypeOffset}, ${arrow.y - 7.5 - Message_Type_Margin})`"
         :fill="arrow.highlight ? 'var(--highlight)' : 'black'"
         @mouseover="() => store.setHighlightId(arrow.id)"
@@ -112,5 +112,9 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
 <style scoped>
 .clickable {
   cursor: pointer;
+}
+
+.message-type text::selection {
+  fill: white;
 }
 </style>

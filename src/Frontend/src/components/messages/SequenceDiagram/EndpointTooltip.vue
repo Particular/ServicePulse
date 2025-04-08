@@ -6,34 +6,25 @@ defineProps<{ endpoint: Endpoint }>();
 
 <template>
   <div class="endpoint-tooltip">
-    <div class="tooltip-row">
-      <label>Name:</label>
-      <span>{{ endpoint.name }}</span>
-    </div>
-    <div class="tooltip-row">
-      <label>NSB Version:</label>
-      <span>{{ endpoint.version }}</span>
-    </div>
-    <div class="tooltip-row">
-      <label>Host:</label>
-      <span>{{ endpoint.host }}</span>
-    </div>
+    <label>Name:</label>
+    <span>{{ endpoint.name }}</span>
+    <label>NSB Version:</label>
+    <span>{{ endpoint.version }}</span>
+    <label>Host:</label>
+    <span>{{ endpoint.host }}</span>
   </div>
 </template>
 
 <style>
 .endpoint-tooltip {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: max-content max-content;
+  column-gap: 0.5em;
 }
 
-.tooltip-row {
-  display: flex;
-  gap: 0.5em;
-}
-
-.tooltip-row label {
-  align-self: flex-end;
+.endpoint-tooltip label {
+  grid-column: 1;
+  justify-self: end;
   font-weight: bold;
   color: #b3b3b3;
 }
