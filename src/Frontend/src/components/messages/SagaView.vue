@@ -130,11 +130,11 @@ const vm = computed<SagaViewModel>(() => {
 <template>
   <div class="saga-container">
     <div class="header">
-      <div>Saga</div>
-      <button aria-label="message-not-involved-in-saga">Show Message Data</button>
+      <div class="saga-top-logo"><img class="saga-top-logo-image" src="@/assets/SagaIcon.svg" alt="" />Saga</div>
+      <button class="saga-button" aria-label="message-not-involved-in-saga"><img class="saga-button-icon" src="@/assets/Shell_ToolbarEndpoint.svg" alt="" />Show Message Data</button>
     </div>
-    <!-- No saga Data Available container -->
 
+    <!-- No saga Data Available container -->
     <div v-if="!vm.ParticipatedInSaga" class="body">
       <div class="saga-message">
         <div class="saga-message-container">
@@ -143,8 +143,8 @@ const vm = computed<SagaViewModel>(() => {
         </div>
       </div>
     </div>
-    <!-- Saga Audit Plugin Needed container -->
 
+    <!-- Saga Audit Plugin Needed container -->
     <div v-if="vm.ShowNoPluginActiveLeged" class="body" role="status" aria-label="saga-plugin-needed">
       <div class="saga-message">
         <div class="saga-message-container">
@@ -158,15 +158,14 @@ const vm = computed<SagaViewModel>(() => {
         </div>
       </div>
     </div>
-    <!-- Main Saga Data container -->
 
+    <!-- Main Saga Data container -->
     <div v-if="vm.HasSagaData" role="table" aria-label="saga-sequence-list" class="body" style="display: flex">
       <div class="container">
         <div class="block">
           <div class="row row--center">
             <div class="cell cell--center">
               <div class="cell-inner">
-                <!-- //TODO: this link needs to be configured so it navigates back but to the corresponding message in the flow diagram -->
                 <RouterLink :to="vm.MessageIdUrl">← Back to Messages</RouterLink>
                 <h1 aria-label="saga name" class="main-title">{{ vm.SagaTitle }}</h1>
                 <div>
@@ -178,35 +177,72 @@ const vm = computed<SagaViewModel>(() => {
         </div>
 
         <div v-for="(update, index) in vm.SagaUpdates" :key="index" class="block" role="row">
+          <!-- Initiating message and saga status header -->
           <div class="row">
-            <div class="cell cell--side cell--left">
+            <div class="cell cell--side">
               <div class="cell-inner cell-inner-side">
                 <img class="saga-icon saga-icon--side-cell" src="@/assets/CommandIcon.svg" alt="" />
                 <h2 class="message-title" aria-label="initiating message type">{{ update.InitiatingMessageType }}</h2>
                 <div class="timestamp" aria-label="initiating message timestamp">{{ update.FormattedInitiatingMessageTimestamp }}</div>
               </div>
             </div>
-            <div class="cell cell--center cell--center--border">
-              <div class="cell-inner">
+            <div class="cell cell--center cell-flex">
+              <div class="cell-inner cell-inner--align-bottom">
                 <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaInitiatedIcon.svg" alt="" />
-                <h2 class="saga-status saga-status--inline">{{ update.StatusDisplay }}</h2>
+                <h2 class="saga-status-title saga-status-title--inline">{{ update.StatusDisplay }}</h2>
                 <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.FormattedStartTime }}</div>
               </div>
             </div>
           </div>
-          <div class="row row--center">
-            <div class="cell cell--center">
+
+          <!-- Saga properties and outgoing messages -->
+          <div class="row">
+            <!-- Left side - Message Data box -->
+            <div class="cell cell--side cell--left-border cell--aling-top">
+              <div class="message-data-box">
+                <span class="message-data-box-text"><b>Property Y</b> = Sample value</span>
+              </div>
+            </div>
+
+            <!-- Center - Saga properties and timeout requests -->
+            <div class="cell cell--center cell--center--border">
               <div class="cell-inner cell-inner-center">
-                <div class="properties">
-                  <a class="properties-link" href="">All Properties</a> /
-                  <a class="properties-link properties-link--active" href="">Updated Properties</a>
+                <div class="saga-properties">
+                  <a class="saga-properties-link" href="">All Properties</a> /
+                  <a class="saga-properties-link saga-properties-link--active" href="">Updated Properties</a>
                 </div>
+
+                <!-- Display detailed saga properties if available -->
+                <ul v-if="update.Status !== 'completed'" class="saga-properties-list">
+                  <li class="saga-properties-list-item">
+                    <span class="saga-properties-list-text" title="Prop 1 (new)">Prop 1 (new)</span>
+                    <span class="saga-properties-list-text">=</span>
+                    <span class="saga-properties-list-text" title=""> sample property value</span>
+                  </li>
+                </ul>
+
+                <!-- Timeout request indicators -->
                 <template v-if="update.HasTimeout">
                   <div v-for="(msg, msgIndex) in update.OutgoingMessages.filter((m) => m.HasTimeout)" :key="msgIndex">
                     <img class="saga-icon saga-icon--center-cell saga-icon--overlap" src="@/assets/SagaTimeoutIcon.svg" alt="" />
                     <a class="timeout-status" href="" aria-label="timeout requested"> Timeout Requested = {{ msg.TimeoutSeconds }}s </a>
                   </div>
                 </template>
+              </div>
+            </div>
+
+            <!-- Right side - outgoing messages (non-timeout) -->
+            <div class="cell cell--side cell--aling-top" v-if="update.OutgoingMessages && update.OutgoingMessages.filter((m) => !m.HasTimeout).length > 0">
+              <div class="cell-inner cell-inner-right"></div>
+              <div v-for="(msg, msgIndex) in update.OutgoingMessages.filter((m) => !m.HasTimeout)" :key="msgIndex">
+                <div class="cell-inner cell-inner-side">
+                  <img class="saga-icon saga-icon--side-cell" src="@/assets/CommandIcon.svg" alt="" />
+                  <h2 class="message-title">{{ msg.MessageType }}</h2>
+                  <div class="timestamp">{{ msg.FormattedTimeSent }}</div>
+                </div>
+                <div class="message-data-box">
+                  <span class="message-data-box-text"><b>Property 1</b> = Sample value</span>
+                </div>
               </div>
             </div>
           </div>
@@ -223,6 +259,9 @@ const vm = computed<SagaViewModel>(() => {
                 <h2 class="message-title" aria-label="timeout message type">{{ msg.MessageType }}</h2>
                 <div class="timestamp" aria-label="timeout message timestamp">{{ msg.FormattedTimeSent }}</div>
               </div>
+              <div class="message-data-box">
+                <span class="message-data-box-text"><b>Property X</b> =Sample value</span>
+              </div>
             </div>
           </div>
         </div>
@@ -233,7 +272,7 @@ const vm = computed<SagaViewModel>(() => {
             <div class="cell cell--center cell--inverted">
               <div class="cell-inner">
                 <img class="saga-icon saga-icon--center-cell" src="@/assets/SagaCompletedIcon.svg" alt="" />
-                <h2 class="saga-status saga-status--inline">Saga Completed</h2>
+                <h2 class="saga-status-title saga-status-title--inline">Saga Completed</h2>
                 <div class="timestamp" aria-label="saga completion time">{{ vm.FormattedCompletionTime }}</div>
               </div>
             </div>
@@ -258,7 +297,7 @@ const vm = computed<SagaViewModel>(() => {
 /* Main containers */
 
 .header {
-  padding: 0.25rem;
+  padding: 0.5rem;
   border-bottom: solid 2px #ddd;
 }
 .body {
@@ -310,9 +349,11 @@ const vm = computed<SagaViewModel>(() => {
   /* width: 66.6667%; */
 }
 .block {
+  /* border: solid 1px lightgreen; */
 }
 .row {
   display: flex;
+  /* border: solid 1px red; */
 }
 .row--center {
   justify-content: center;
@@ -323,13 +364,19 @@ const vm = computed<SagaViewModel>(() => {
 .cell {
   padding: 0;
 }
+.cell-flex {
+  display: flex;
+}
 .cell--side {
   align-self: flex-end;
   width: 25%;
   padding: 0;
 }
-.cell--left {
-  border-bottom: solid 2px #000000;
+.cell--aling-top {
+  align-self: flex-start;
+}
+.cell--left-border {
+  border-top: solid 2px #000000;
 }
 .cell--center {
   width: 50%;
@@ -338,7 +385,8 @@ const vm = computed<SagaViewModel>(() => {
 }
 .cell--center--border {
   display: flex;
-  border-bottom: solid 2px #000000;
+  flex-direction: column;
+  border-top: solid 2px #000000;
 }
 .cell--inverted {
   background-color: #333333;
@@ -350,7 +398,6 @@ const vm = computed<SagaViewModel>(() => {
   /* align-self: flex-start; */
 }
 .cell-inner {
-  align-self: flex-end;
   padding: 0.5rem;
 }
 .cell-inner-top {
@@ -361,6 +408,9 @@ const vm = computed<SagaViewModel>(() => {
   padding: 0.5rem;
   border-left: solid 2px #000000;
   margin-left: 1rem;
+}
+.cell-inner-center:first-child {
+  flex-grow: 1;
 }
 .cell-inner-side {
   padding: 0.25rem 0.25rem 0;
@@ -391,12 +441,46 @@ const vm = computed<SagaViewModel>(() => {
   margin-left: 100%;
   left: -5px;
 }
+.cell-inner--align-bottom {
+  align-self: flex-end;
+}
 
 /* Content styles */
 
-/* * {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-} */
+.saga-top-logo {
+  margin-bottom: 0.5rem;
+  color: #00a3c4;
+  font-size: 1.1rem;
+}
+.saga-top-logo-image {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: -0.4rem;
+  margin-right: 0.25rem;
+}
+.saga-button {
+  display: block;
+  padding: 0.2rem 0.7rem 0.1rem;
+  color: #555555;
+  font-size: 0.75rem;
+  border: solid 2px #00a3c4;
+  background-color: #e3e4e5;
+}
+.saga-button:focus,
+.saga-button:hover {
+  background-color: #daebfc;
+}
+
+.saga-button:active,
+.saga-button--active {
+  background-color: #c3dffc;
+}
+.saga-button-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-top: -0.2rem;
+  margin-right: 0.25rem;
+}
 
 .main-title {
   margin: 0.3rem 0;
@@ -407,21 +491,24 @@ const vm = computed<SagaViewModel>(() => {
 .back-link {
   font-size: 0.75rem;
 }
-.saga-status {
+.saga-status-title {
   margin: 0;
   font-size: 1rem;
   font-weight: 900;
 }
-.cell--inverted .saga-status {
+.cell--inverted .saga-status-title {
   font-size: 0.9rem;
 }
-.saga-status--inline {
+.saga-status-title--inline {
   display: inline-block;
 }
 .message-title {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 900;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .timestamp {
   font-size: 0.9rem;
@@ -434,23 +521,65 @@ const vm = computed<SagaViewModel>(() => {
 .cell--inverted .timestamp {
   margin-left: 1.2rem;
 }
-.properties {
-  font-size: 0.5rem;
+.saga-properties {
+  margin: 0 -0.25rem;
+  padding: 0.25rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
 }
-.properties-link {
-  padding: 0.2rem;
+.saga-properties-link {
+  padding: 0 0.25rem;
   text-decoration: underline;
 }
-.properties-link--active {
+.saga-properties-link--active {
   font-weight: 900;
   color: #000000;
 }
+.saga-properties-list {
+  margin: 0;
+  padding-left: 0.25rem;
+  list-style: none;
+}
+.saga-properties-list-item {
+  display: flex;
+}
+.saga-properties-list-text {
+  display: inline-block;
+  padding-top: 0.25rem;
+  padding-right: 0.75rem;
+  overflow: hidden;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+.saga-properties-list-text:first-child {
+  min-width: 8rem;
+  max-width: 8rem;
+  display: inline-block;
+  text-overflow: ellipsis;
+}
+
 .timeout-status {
   display: inline-block;
   margin-top: 0.7rem;
   font-size: 1rem;
   font-weight: 900;
+}
+
+.message-data-box {
+  display: flex;
+  margin-bottom: 1rem;
+  padding: 0.2rem;
+  background-color: #ffffff;
+  border: solid 1px #cccccc;
+  font-size: 0.75rem;
+}
+.message-data-box-text {
+  display: inline-block;
+  overflow: hidden;
+  max-width: 100%;
+  padding: 0%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* Icon styles */
