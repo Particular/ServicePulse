@@ -5,6 +5,7 @@ import { RouterLink } from "vue-router";
 import routeLinks from "@/router/routeLinks";
 import { typeToName } from "@/composables/typeHumanizer";
 import { useSagaHistoryStore } from "@/stores/sagaHistoryStore";
+import { SagaHistory } from "@/resources/SagaHistory";
 
 // Import the images directly
 import CommandIcon from "@/assets/command.svg";
@@ -22,10 +23,9 @@ const props = defineProps<{
   message: Message;
 }>();
 
-// Use the store instead of saga history prop
 const sagaHistoryStore = useSagaHistoryStore();
 
-// Add logic to watch for message and set saga ID when component mounts or message changes
+//Watch for message and set saga ID when component mounts or message changes
 watch(
   () => props.message?.invoked_sagas,
   (newSagas) => {
@@ -59,7 +59,7 @@ interface SagaTimeoutMessage extends SagaMessage {
   TimeoutSeconds: string;
   TimeoutFriendly: string;
 }
-interface SagaUpdate {
+interface SagaUpdateViewModel {
   StartTime: Date;
   FinishTime: Date;
   FormattedStartTime: string;
@@ -75,6 +75,79 @@ interface SagaUpdate {
   HasTimeoutMessages: boolean;
 }
 
+function parseSagaUpdates(sagaHistory: SagaHistory | null): SagaUpdateViewModel[] {
+  if (!sagaHistory || !sagaHistory.changes || !sagaHistory.changes.length) return [];
+
+  return sagaHistory.changes
+    .map((update) => {
+      const startTime = new Date(update.start_time);
+      const finishTime = new Date(update.finish_time);
+      const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
+
+      const outgoingMessages = update.outgoing_messages.map((msg) => {
+        const delivery_delay = msg.delivery_delay || "00:00:00";
+        const timeSent = new Date(msg.time_sent);
+        const hasTimeout = !!delivery_delay && delivery_delay !== "00:00:00";
+
+        return {
+          MessageType: msg.message_type || "",
+          MessageId: msg.message_id,
+          FormattedTimeSent: `${timeSent.toLocaleDateString()} ${timeSent.toLocaleTimeString()}`,
+          DeliveryDelay: delivery_delay,
+          HasTimeout: hasTimeout,
+          TimeoutSeconds: delivery_delay.split(":")[2] || "0",
+          Intent: msg.intent,
+        };
+      });
+
+      const timeoutMessages = outgoingMessages
+        .filter((msg) => msg.HasTimeout)
+        .map((msg) => {
+          return {
+            MessageFriendlyTypeName: typeToName(msg.MessageType),
+            FormattedTimeSent: msg.FormattedTimeSent,
+            TimeoutSeconds: msg.TimeoutSeconds,
+            TimeoutFriendly: `${msg.TimeoutSeconds}s`,
+            Data: [],
+            IsEventMessage: msg.Intent === "Publish",
+            IsCommandMessage: msg.Intent !== "Publish",
+          } as SagaTimeoutMessage;
+        });
+
+      const nonTimeoutMessages = outgoingMessages
+        .filter((msg) => !msg.HasTimeout)
+        .map((msg) => {
+          return {
+            MessageFriendlyTypeName: typeToName(msg.MessageType),
+            FormattedTimeSent: msg.FormattedTimeSent,
+            Data: [],
+            IsEventMessage: msg.Intent === "Publish",
+            IsCommandMessage: msg.Intent !== "Publish",
+          } as SagaMessage;
+        });
+
+      const hasTimeout = timeoutMessages.length > 0;
+
+      return {
+        StartTime: startTime,
+        FinishTime: finishTime,
+        FormattedStartTime: `${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`,
+        Status: update.status,
+        StatusDisplay: update.status === "new" ? "Saga Initiated" : update.status === "completed" ? "Saga Completed" : "Saga Updated",
+        InitiatingMessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
+        FormattedInitiatingMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
+        HasTimeout: hasTimeout,
+        IsFirstNode: update.status === "new",
+        TimeoutMessages: timeoutMessages,
+        NonTimeoutMessages: nonTimeoutMessages,
+        HasNonTimeoutMessages: nonTimeoutMessages.length > 0,
+        HasTimeoutMessages: timeoutMessages.length > 0,
+      };
+    })
+    .sort((a, b) => a.StartTime.getTime() - b.StartTime.getTime())
+    .sort((a, b) => a.FinishTime.getTime() - b.FinishTime.getTime());
+}
+
 interface SagaViewModel {
   SagaTitle: string;
   SagaGuid: string;
@@ -84,7 +157,7 @@ interface SagaViewModel {
   ShowNoPluginActiveLeged: boolean;
   SagaCompleted: boolean;
   FormattedCompletionTime: string;
-  SagaUpdates: SagaUpdate[];
+  SagaUpdates: SagaUpdateViewModel[];
 }
 
 const vm = computed<SagaViewModel>(() => {
@@ -100,75 +173,7 @@ const vm = computed<SagaViewModel>(() => {
     ShowNoPluginActiveLeged: !sagaHistoryStore.sagaHistory && props.message?.invoked_sagas.length > 0,
     SagaCompleted: !!completedUpdate,
     FormattedCompletionTime: completionTime ? `${completionTime.toLocaleDateString()} ${completionTime.toLocaleTimeString()}` : "",
-    SagaUpdates:
-      sagaHistoryStore.sagaHistory?.changes
-        .map((update) => {
-          const startTime = new Date(update.start_time);
-          const finishTime = new Date(update.finish_time);
-          const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
-
-          const outgoingMessages = update.outgoing_messages.map((msg) => {
-            const delivery_delay = msg.delivery_delay || "00:00:00";
-            const timeSent = new Date(msg.time_sent);
-            const hasTimeout = !!delivery_delay && delivery_delay !== "00:00:00";
-
-            return {
-              MessageType: msg.message_type || "",
-              MessageId: msg.message_id,
-              FormattedTimeSent: `${timeSent.toLocaleDateString()} ${timeSent.toLocaleTimeString()}`,
-              DeliveryDelay: delivery_delay,
-              HasTimeout: hasTimeout,
-              TimeoutSeconds: delivery_delay.split(":")[2] || "0",
-              Intent: msg.intent,
-            };
-          });
-
-          const timeoutMessages = outgoingMessages
-            .filter((msg) => msg.HasTimeout)
-            .map((msg) => {
-              return {
-                MessageFriendlyTypeName: typeToName(msg.MessageType),
-                FormattedTimeSent: msg.FormattedTimeSent,
-                TimeoutSeconds: msg.TimeoutSeconds,
-                TimeoutFriendly: `${msg.TimeoutSeconds}s`,
-                Data: [],
-                IsEventMessage: msg.Intent === "Publish",
-                IsCommandMessage: msg.Intent !== "Publish",
-              } as SagaTimeoutMessage;
-            });
-
-          const nonTimeoutMessages = outgoingMessages
-            .filter((msg) => !msg.HasTimeout)
-            .map((msg) => {
-              return {
-                MessageFriendlyTypeName: typeToName(msg.MessageType),
-                FormattedTimeSent: msg.FormattedTimeSent,
-                Data: [],
-                IsEventMessage: msg.Intent === "Publish",
-                IsCommandMessage: msg.Intent !== "Publish",
-              } as SagaMessage;
-            });
-
-          const hasTimeout = timeoutMessages.length > 0;
-
-          return {
-            StartTime: startTime,
-            FinishTime: finishTime,
-            FormattedStartTime: `${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`,
-            Status: update.status,
-            StatusDisplay: update.status === "new" ? "Saga Initiated" : update.status === "completed" ? "Saga Completed" : "Saga Updated",
-            InitiatingMessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
-            FormattedInitiatingMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
-            HasTimeout: hasTimeout,
-            IsFirstNode: update.status === "new",
-            TimeoutMessages: timeoutMessages,
-            NonTimeoutMessages: nonTimeoutMessages,
-            HasNonTimeoutMessages: nonTimeoutMessages.length > 0,
-            HasTimeoutMessages: timeoutMessages.length > 0,
-          };
-        })
-        .sort((a, b) => a.StartTime.getTime() - b.StartTime.getTime())
-        .sort((a, b) => a.FinishTime.getTime() - b.FinishTime.getTime()) || [],
+    SagaUpdates: parseSagaUpdates(sagaHistoryStore.sagaHistory),
   };
 });
 </script>
