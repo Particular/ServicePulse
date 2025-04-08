@@ -56,7 +56,6 @@ interface SagaMessage {
 }
 
 interface SagaTimeoutMessage extends SagaMessage {
-  TimeoutSeconds: string;
   TimeoutFriendly: string;
 }
 interface SagaUpdateViewModel {
@@ -84,47 +83,38 @@ function parseSagaUpdates(sagaHistory: SagaHistory | null): SagaUpdateViewModel[
       const finishTime = new Date(update.finish_time);
       const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
 
+      // Create common base message objects with shared properties
       const outgoingMessages = update.outgoing_messages.map((msg) => {
         const delivery_delay = msg.delivery_delay || "00:00:00";
         const timeSent = new Date(msg.time_sent);
         const hasTimeout = !!delivery_delay && delivery_delay !== "00:00:00";
+        const timeoutSeconds = delivery_delay.split(":")[2] || "0";
+        const isEventMessage = msg.intent === "Publish";
 
         return {
           MessageType: msg.message_type || "",
           MessageId: msg.message_id,
           FormattedTimeSent: `${timeSent.toLocaleDateString()} ${timeSent.toLocaleTimeString()}`,
-          DeliveryDelay: delivery_delay,
           HasTimeout: hasTimeout,
-          TimeoutSeconds: delivery_delay.split(":")[2] || "0",
-          Intent: msg.intent,
+          TimeoutSeconds: timeoutSeconds,
+          MessageFriendlyTypeName: typeToName(msg.message_type || ""),
+          Data: [] as SagaMessageDataItem[],
+          IsEventMessage: isEventMessage,
+          IsCommandMessage: !isEventMessage,
         };
       });
 
       const timeoutMessages = outgoingMessages
         .filter((msg) => msg.HasTimeout)
-        .map((msg) => {
-          return {
-            MessageFriendlyTypeName: typeToName(msg.MessageType),
-            FormattedTimeSent: msg.FormattedTimeSent,
-            TimeoutSeconds: msg.TimeoutSeconds,
-            TimeoutFriendly: `${msg.TimeoutSeconds}s`,
-            Data: [],
-            IsEventMessage: msg.Intent === "Publish",
-            IsCommandMessage: msg.Intent !== "Publish",
-          } as SagaTimeoutMessage;
-        });
+        .map(
+          (msg) =>
+            ({
+              ...msg,
+              TimeoutFriendly: `${msg.TimeoutSeconds}s`, //TODO: Update with logic from ServiceInsight
+            }) as SagaTimeoutMessage
+        );
 
-      const nonTimeoutMessages = outgoingMessages
-        .filter((msg) => !msg.HasTimeout)
-        .map((msg) => {
-          return {
-            MessageFriendlyTypeName: typeToName(msg.MessageType),
-            FormattedTimeSent: msg.FormattedTimeSent,
-            Data: [],
-            IsEventMessage: msg.Intent === "Publish",
-            IsCommandMessage: msg.Intent !== "Publish",
-          } as SagaMessage;
-        });
+      const nonTimeoutMessages = outgoingMessages.filter((msg) => !msg.HasTimeout) as SagaMessage[];
 
       const hasTimeout = timeoutMessages.length > 0;
 
@@ -276,7 +266,7 @@ const vm = computed<SagaViewModel>(() => {
                 <template v-if="update.HasTimeout">
                   <div v-for="(msg, msgIndex) in update.TimeoutMessages" :key="msgIndex">
                     <img class="saga-icon saga-icon--center-cell saga-icon--overlap" :src="SagaTimeoutIcon" alt="" />
-                    <a class="timeout-status" href="" aria-label="timeout requested"> Timeout Requested = {{ msg.TimeoutSeconds }}s </a>
+                    <a class="timeout-status" href="" aria-label="timeout requested"> Timeout Requested = {{ msg.TimeoutFriendly }} </a>
                   </div>
                 </template>
               </div>
