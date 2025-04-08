@@ -18,7 +18,7 @@ defineProps<{ endpoint: Endpoint }>();
 <style>
 .endpoint-tooltip {
   display: grid;
-  grid-template-columns: max-content max-content;
+  grid-template-columns: auto auto;
   column-gap: 0.5em;
 }
 
@@ -27,5 +27,9 @@ defineProps<{ endpoint: Endpoint }>();
   justify-self: end;
   font-weight: bold;
   color: #b3b3b3;
+}
+
+.endpoint-tooltip span {
+  word-break: break-all;
 }
 </style>

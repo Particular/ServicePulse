@@ -5,12 +5,14 @@ import Handlers from "./SequenceDiagram/HandlersComponent.vue";
 import Routes from "./SequenceDiagram/RoutesComponent.vue";
 import { useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
 import { storeToRefs } from "pinia";
-import TooltipOverlay from "./SequenceDiagram/TooltipOverlay.vue";
+import useTooltips from "./SequenceDiagram/tooltipOverlay.ts";
 
 const store = useSequenceDiagramStore();
 store.setConversationId("4de4bdad-83ce-4785-87de-b2b701813673");
 
 const { maxWidth, maxHeight } = storeToRefs(store);
+
+useTooltips();
 </script>
 
 <template>
@@ -21,7 +23,6 @@ const { maxWidth, maxHeight } = storeToRefs(store);
       <Handlers />
       <Routes />
     </svg>
-    <TooltipOverlay />
   </div>
 </template>
 
