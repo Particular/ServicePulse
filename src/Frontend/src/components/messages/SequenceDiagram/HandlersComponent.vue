@@ -43,16 +43,18 @@ const handlerItems = computed(() => {
 
     //determine which side of the handler to render the messageType on. If it's the left side (for a right arrow) then we apply a negative offset
     const messageTypeOffset = handler.direction === Direction.Right ? ((messageTypeElement?.getBBox().width ?? 0) + 24) * -1 : 20;
-    if (messageTypeOffset < 0) {
-      store.setStartX(-1 * messageTypeOffset);
+    const left = (endpoint?.centre ?? 0) - Handler_Width / 2;
+    const right = (endpoint?.centre ?? 0) + Handler_Width / 2;
+    if (left + messageTypeOffset < 0) {
+      store.setStartX(-1 * (left + messageTypeOffset) + 20);
     }
 
     return {
       id: handler.id,
       endpointName: handler.endpoint.name,
       incomingId: handler.route?.name,
-      left: (endpoint?.centre ?? 0) - Handler_Width / 2,
-      right: (endpoint?.centre ?? 0) + Handler_Width / 2,
+      left,
+      right,
       y,
       height,
       fill,
