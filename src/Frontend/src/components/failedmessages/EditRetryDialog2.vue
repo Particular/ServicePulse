@@ -2,12 +2,13 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useRetryEditedMessage } from "@/composables/serviceFailedMessage";
 import MessageHeader from "./EditMessageHeader.vue";
-import { EditAndRetryConfig } from "@/resources/Configuration";
 import type Header from "@/resources/Header";
-import { ExtendedFailedMessage } from "@/resources/FailedMessage";
 import parseContentType from "@/composables/contentTypeParser";
 import { CodeLanguage } from "@/components/codeEditorTypes";
 import CodeEditor from "@/components/CodeEditor.vue";
+import { useMessageStore } from "@/stores/MessageStore";
+import { storeToRefs } from "pinia";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
 interface HeaderWithEditing extends Header {
   isLocked: boolean;
@@ -18,13 +19,7 @@ interface HeaderWithEditing extends Header {
 
 const emit = defineEmits<{
   cancel: [];
-  retried: [];
-}>();
-
-const props = defineProps<{
-  id: string;
-  message: ExtendedFailedMessage;
-  configuration: EditAndRetryConfig;
+  confirm: [];
 }>();
 
 interface LocalMessageState {
@@ -57,9 +52,10 @@ let origMessageBody: string;
 const showEditAndRetryConfirmation = ref(false);
 const showCancelConfirmation = ref(false);
 const showEditRetryGenericError = ref(false);
-
-const id = computed(() => props.id);
-const messageBody = computed(() => props.message.messageBody);
+const store = useMessageStore();
+const { state, headers, body, edit_and_retry_config } = storeToRefs(store);
+const id = computed(() => state.value.data.id ?? "");
+const messageBody = computed(() => body.value.data.value);
 
 watch(messageBody, (newValue) => {
   if (newValue !== origMessageBody) {
@@ -118,7 +114,7 @@ async function retryEditedMessage() {
   try {
     await useRetryEditedMessage(id.value, localMessage);
     localMessage.value.retried = true;
-    return emit("retried");
+    return emit("confirm");
   } catch {
     showEditAndRetryConfirmation.value = false;
     showEditRetryGenericError.value = true;
@@ -126,51 +122,50 @@ async function retryEditedMessage() {
 }
 
 function initializeMessageBodyAndHeaders() {
-  origMessageBody = props.message.messageBody;
-  localMessage.value = {
+  origMessageBody = body.value.data.value ?? "";
+  const local = <LocalMessageState>{
     isBodyChanged: false,
     isBodyEmpty: false,
     isContentTypeSupported: false,
     bodyContentType: undefined,
-    bodyUnavailable: props.message.bodyUnavailable,
+    bodyUnavailable: body.value.not_found ?? false,
     isEvent: false,
-    retried: props.message.retried,
-    headers: props.message.headers.map((header: Header) => ({ ...header })) as HeaderWithEditing[],
-    messageBody: props.message.messageBody,
+    retried: state.value.data.failure_status.retried ?? false,
+    headers: headers.value.data.map((header: Header) => ({ ...header })) as HeaderWithEditing[],
+    messageBody: body.value.data.value ?? "",
   };
-  localMessage.value.isBodyEmpty = false;
-  localMessage.value.isBodyChanged = false;
 
   const contentType = getContentType();
-  localMessage.value.bodyContentType = contentType;
+  local.bodyContentType = contentType;
   const parsedContentType = parseContentType(contentType);
-  localMessage.value.isContentTypeSupported = parsedContentType.isSupported;
-  localMessage.value.language = parsedContentType.language;
+  local.isContentTypeSupported = parsedContentType.isSupported;
+  local.language = parsedContentType.language;
 
   const messageIntent = getMessageIntent();
-  localMessage.value.isEvent = messageIntent === "Publish";
+  local.isEvent = messageIntent === "Publish";
 
-  for (let index = 0; index < props.message.headers.length; index++) {
-    const header: HeaderWithEditing = props.message.headers[index] as HeaderWithEditing;
+  for (let index = 0; index < headers.value.data.length; index++) {
+    const header: HeaderWithEditing = headers.value.data[index] as HeaderWithEditing;
 
     header.isLocked = false;
     header.isSensitive = false;
     header.isMarkedAsRemoved = false;
     header.isChanged = false;
 
-    if (props.configuration.locked_headers.includes(header.key)) {
+    if (edit_and_retry_config.value.locked_headers.includes(header.key)) {
       header.isLocked = true;
-    } else if (props.configuration.sensitive_headers.includes(header.key)) {
+    } else if (edit_and_retry_config.value.sensitive_headers.includes(header.key)) {
       header.isSensitive = true;
     }
 
-    localMessage.value.headers[index] = header;
+    local.headers[index] = header;
   }
+
+  localMessage.value = local;
 }
 
 function togglePanel(panelNum: number) {
   panel.value = panelNum;
-  return false;
 }
 
 onMounted(() => {
@@ -227,7 +222,8 @@ onMounted(() => {
                       </table>
                       <div role="tabpanel" v-if="panel === 2 && !localMessage.bodyUnavailable" style="height: calc(100% - 260px)">
                         <div style="margin-top: 1.25rem">
-                          <CodeEditor aria-label="message body" :read-only="!localMessage.isContentTypeSupported" v-model="localMessage.messageBody" :language="localMessage.language" :show-gutter="true"></CodeEditor>
+                          <LoadingSpinner v-if="body.loading" />
+                          <CodeEditor v-else aria-label="message body" :read-only="!localMessage.isContentTypeSupported" v-model="localMessage.messageBody" :language="localMessage.language" :show-gutter="true"></CodeEditor>
                         </div>
                         <span class="empty-error" v-if="localMessage.isBodyEmpty"><i class="fa fa-exclamation-triangle"></i> Message body cannot be empty</span>
                         <span class="reset-body" v-if="localMessage.isBodyChanged"><i class="fa fa-undo" v-tippy="`Reset changes`"></i> <a @click="resetBodyChanges()" href="javascript:void(0)">Reset changes</a></span>
