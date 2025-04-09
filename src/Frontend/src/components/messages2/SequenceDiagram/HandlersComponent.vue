@@ -79,7 +79,7 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
 </script>
 
 <template>
-  <g v-for="(handler, i) in handlerItems" :key="handler.id" :transform="`translate(${handler.left}, ${handler.y})`">
+  <g v-for="(handler, i) in handlerItems" :key="`${handler.id}###${handler.endpointName}`" :transform="`translate(${handler.left}, ${handler.y})`">
     <!--Handler Activation Box-->
     <g :ref="(el) => handler.setUIRef(el as SVGElement)">
       <rect :width="Handler_Width" :height="handler.height" :class="handler.incomingId && 'clickable'" :fill="handler.fill" @mouseover="() => store.setHighlightId(handler.incomingId)" @mouseleave="() => store.setHighlightId()" />

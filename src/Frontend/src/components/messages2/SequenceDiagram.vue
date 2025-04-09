@@ -6,16 +6,14 @@ import Routes from "./SequenceDiagram/RoutesComponent.vue";
 import { useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
 import { storeToRefs } from "pinia";
 import useTooltips from "./SequenceDiagram/tooltipOverlay.ts";
-import { onUnmounted } from "vue";
+import { onMounted } from "vue";
 
 const store = useSequenceDiagramStore();
-store.setConversationId("4de4bdad-83ce-4785-87de-b2b701813673");
-
 const { maxWidth, maxHeight } = storeToRefs(store);
 
 useTooltips();
 
-onUnmounted(() => store.setConversationId(""));
+onMounted(() => store.refreshConversation());
 </script>
 
 <template>
