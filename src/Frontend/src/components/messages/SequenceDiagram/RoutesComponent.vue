@@ -53,6 +53,7 @@ const arrows = computed(() =>
       highlight: highlightId.value === route.name,
       highlightTextWidth: messageTypeElementBounds?.width,
       highlightTextHeight: messageTypeElementBounds?.height,
+      setUIRef: (el: SVGElement) => (route.uiRef = el),
     };
   })
 );
@@ -83,6 +84,7 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
         :fill="arrow.highlight ? 'var(--highlight)' : 'black'"
         @mouseover="() => store.setHighlightId(arrow.id)"
         @mouseleave="() => store.setHighlightId()"
+        :ref="(el) => arrow.setUIRef(el as SVGElement)"
       >
         <!--19 is width of MessageType icon, plus a gap-->
         <rect

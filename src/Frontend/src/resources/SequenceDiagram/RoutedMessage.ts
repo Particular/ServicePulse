@@ -24,6 +24,7 @@ export interface MessageProcessingRoute {
   readonly name?: string;
   readonly fromRoutedMessage?: RoutedMessage;
   readonly processingHandler?: Handler;
+  uiRef?: SVGElement;
 }
 
 export enum Direction {
@@ -61,6 +62,7 @@ class MessageProcessingRouteItem implements MessageProcessingRoute {
   readonly name?: string;
   private _fromRoutedMessage?: RoutedMessageItem;
   readonly processingHandler?: Handler;
+  uiRef?: SVGElement;
 
   constructor(routedMessage?: RoutedMessageItem, processingHandler?: Handler) {
     this._fromRoutedMessage = routedMessage;
