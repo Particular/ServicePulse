@@ -23,12 +23,6 @@ export default interface Message {
   invoked_sagas?: SagaInfo[];
   originates_from_saga?: SagaInfo;
 }
-export interface ExtendedMessage extends Message {
-  notFound: boolean;
-  error: boolean;
-  headersNotFound: boolean;
-  messageBodyNotFound: boolean;
-}
 
 export enum MessageStatus {
   Failed = "failed",
