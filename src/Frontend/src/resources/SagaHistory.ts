@@ -6,8 +6,8 @@ export interface SagaHistory {
 }
 
 export interface SagaStateChange {
-  start_time: string;
-  finish_time: string;
+  start_time: Date;
+  finish_time: Date;
   status: string;
   state_after_change: string;
   initiating_message: InitiatingMessage;
@@ -20,7 +20,7 @@ export interface InitiatingMessage {
   is_saga_timeout_message: boolean;
   originating_endpoint: string;
   originating_machine: string;
-  time_sent: string;
+  time_sent: Date;
   message_type: string;
   intent: string;
 }
@@ -29,7 +29,7 @@ export interface OutgoingMessage {
   delivery_delay?: string;
   destination: string;
   message_id: string;
-  time_sent: string;
+  time_sent: Date;
   message_type: string;
   intent: string;
 }
