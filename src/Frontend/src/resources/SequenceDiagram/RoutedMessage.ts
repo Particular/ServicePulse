@@ -48,7 +48,7 @@ export function createRoutedMessage(message: Message): RoutedMessage {
 
   if (message.message_intent === MessageIntent.Publish) routedMessage.type = RoutedMessageType.Event;
   else {
-    const isTimeoutString = message.headers.find((h) => h.key === NServiceBusHeaders.IsSagaTimeoutMessage)?.value;
+    const isTimeoutString = message.headers.find((h) => h.key === NServiceBusHeaders.IsSagaTimeoutMessage)?.value?.toLowerCase();
     const isTimeout = (isTimeoutString ?? "") === "true";
     if (isTimeout) routedMessage.type = RoutedMessageType.Timeout;
     else if (message.receiving_endpoint.host_id === message.sending_endpoint.host_id && message.receiving_endpoint.name === message.sending_endpoint.name) routedMessage.type = RoutedMessageType.Local;
