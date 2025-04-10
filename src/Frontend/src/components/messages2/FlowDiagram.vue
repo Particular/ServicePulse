@@ -9,6 +9,7 @@ import { ControlButton, Controls } from "@vue-flow/controls";
 import { useMessageStore } from "@/stores/MessageStore";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import { storeToRefs } from "pinia";
+import { useRoute } from "vue-router";
 import EndpointDetails from "@/resources/EndpointDetails.ts";
 import { hexToCSSFilter } from "hex-to-css-filter";
 import TextEllipses from "@/components/TextEllipses.vue";
@@ -45,6 +46,7 @@ const nodeSpacingY = 200;
 
 const store = useMessageStore();
 const { state } = storeToRefs(store);
+const route = useRoute();
 
 async function getConversation(conversationId: string) {
   await store.loadConversation(conversationId);
@@ -227,8 +229,8 @@ const greenColor = hexToCSSFilter("#00c468").filter;
             <i class="fa" :class="typeIcon(data.type)" v-tippy="data.type" />
             <div class="lead">
               <strong>
-                <RouterLink v-if="data.isError" :to="{ path: routeLinks.messages.failedMessage.link(data.id) }"><TextEllipses style="width: 204px" :text="data.nodeName" ellipses-style="LeftSide" /></RouterLink>
-                <RouterLink v-else :to="{ path: routeLinks.messages.successMessage.link(data.messageId, data.id) }"><TextEllipses style="width: 204px" :text="data.nodeName" ellipses-style="LeftSide" /></RouterLink>
+                <RouterLink v-if="data.isError" :to="{ path: routeLinks.messages.failedMessage.link(data.id), query: { back: route.path } }"><TextEllipses style="width: 204px" :text="data.nodeName" ellipses-style="LeftSide" /></RouterLink>
+                <RouterLink v-else :to="{ path: routeLinks.messages.successMessage.link(data.messageId, data.id), query: { back: route.path } }"><TextEllipses style="width: 204px" :text="data.nodeName" ellipses-style="LeftSide" /></RouterLink>
               </strong>
             </div>
             <div class="time-sent">
