@@ -27,8 +27,8 @@ const handlerItems = computed(() => {
     const fill = (() => {
       if (handler.id === "First") return "black";
       if (handler.state === HandlerState.Fail) return "var(--error)";
-      if (handler.route?.name === selectedId.value) return "var(--highlight)";
-      if (handler.route?.name === highlightId.value) return "var(--highlight-background)";
+      if (handler.route && handler.route.name === selectedId.value) return "var(--highlight)";
+      if (handler.route && handler.route.name === highlightId.value) return "var(--highlight-background)";
       return "var(--gray60)";
     })();
     const icon = (() => {
