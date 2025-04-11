@@ -110,7 +110,7 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
     });
   });
 
-  describe("Rule: 3.2 Display a chronological timeline of saga events.", () => {
+  describe("Rule: 3.2 Display a chronological timeline of saga events in UTC.", () => {
     test("EXAMPLE: Rendering a Saga with 4 changes", () => {
       //     Each saga event ("Saga Initiated," "Saga Updated," "Timeout Invoked," "Saga Completed") is timestamped to represent progression over time. Events are ordered by the time they ocurred.
       //TODO:  "Incoming messages are displayed on the left, and outgoing messages are displayed on the right."  in another test?
@@ -169,6 +169,69 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
         },
         {
           expectedRenderedLocalTime: "3/28/2025 3:04:08 AM",
+        },
+      ]);
+    });
+  });
+  describe("Rule: 3.3 Display a chronological timeline of saga events in PST.", () => {
+    test("EXAMPLE: Rendering a Saga with 4 changes", () => {
+      //     Each saga event ("Saga Initiated," "Saga Updated," "Timeout Invoked," "Saga Completed") is timestamped to represent progression over time. Events are ordered by the time they ocurred.
+      //TODO:  "Incoming messages are displayed on the left, and outgoing messages are displayed on the right."  in another test?
+
+      //arragement
+      //sampleSagaHistory already not sorted TODO: Make this more clear so the reader of this test doesn't have to go arround and figure out the preconditions
+      const message = {} as Message;
+      const invokedSaga = {} as SagaInfo;
+      invokedSaga.saga_id = "123";
+      invokedSaga.saga_type = "ServiceControl.SmokeTest.AuditingSaga";
+      message.invoked_sagas = [invokedSaga];
+
+      // Set the environment to a fixed timezone
+      // JSDOM, used by Vitest, defaults to PST timezone
+      // To ensure consistency, explicitly set the timezone to PST
+      // This ensures that the rendered local time of the saga changes
+      // will always be interpreted and displayed in PST, avoiding flakiness
+      process.env.TZ = "PST";
+
+      //access each of the saga changes and update its start time and finish time to the same values being read from the variable declaration,
+      // but set them again explicitly here
+      //so that the reader of this test can see the preconditions at play
+      //and understand the test better without having to jump around
+      sampleSagaHistory.changes[0].start_time = new Date("2025-03-28T03:04:08.3819211Z"); // A
+      sampleSagaHistory.changes[0].finish_time = new Date("2025-03-28T03:04:08.3836Z"); // A1
+      sampleSagaHistory.changes[1].start_time = new Date("2025-03-28T03:04:07.5416262Z"); // B
+      sampleSagaHistory.changes[1].finish_time = new Date("2025-03-28T03:04:07.5509712Z"); //B1
+      sampleSagaHistory.changes[2].start_time = new Date("2025-03-28T03:04:06.3088353Z"); //C
+      sampleSagaHistory.changes[2].finish_time = new Date("2025-03-28T03:04:06.3218175Z"); //C1
+      sampleSagaHistory.changes[3].start_time = new Date("2025-03-28T03:04:05.3332078Z"); //D
+      sampleSagaHistory.changes[3].finish_time = new Date("2025-03-28T03:04:05.3799483Z"); //D1
+      sampleSagaHistory.changes[3].status = "new";
+
+      //B(1), C(2),  A(0), D(3)
+      //B(1), C1(2), C(2), A1(0)
+
+      // Set up the store with sample saga history
+      const componentDriver = rendercomponent({
+        message: message,
+        initialState: {
+          sagaHistory: { sagaHistory: sampleSagaHistory },
+        },
+      });
+
+      //assert
+
+      componentDriver.assert.thereAreTheFollowingSagaChangesInThisOrder([
+        {
+          expectedRenderedLocalTime: "3/27/2025 8:04:05 PM",
+        },
+        {
+          expectedRenderedLocalTime: "3/27/2025 8:04:06 PM",
+        },
+        {
+          expectedRenderedLocalTime: "3/27/2025 8:04:07 PM",
+        },
+        {
+          expectedRenderedLocalTime: "3/27/2025 8:04:08 PM",
         },
       ]);
     });
