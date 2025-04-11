@@ -27,6 +27,7 @@ export interface Handler {
 export enum HandlerState {
   Fail,
   Success,
+  Unknown,
 }
 
 export const ConversationStartHandlerName = "First";
@@ -85,7 +86,7 @@ class HandlerItem implements Handler {
   name?: string;
   partOfSaga?: string;
   inMessage?: RoutedMessage;
-  state: HandlerState = HandlerState.Fail;
+  state: HandlerState = HandlerState.Unknown;
   processedAt?: Date;
   processingTime?: number;
   route?: MessageProcessingRoute;
