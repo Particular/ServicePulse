@@ -10,7 +10,7 @@ const Handler_Gap = 20;
 const Handler_Width = 14;
 
 const store = useSequenceDiagramStore();
-const { handlers, endpointCentrePoints, highlightId } = storeToRefs(store);
+const { handlers, endpointCentrePoints, highlightId, selectedId } = storeToRefs(store);
 
 const messageTypeRefs = ref<SVGTextElement[]>([]);
 
@@ -27,6 +27,7 @@ const handlerItems = computed(() => {
     const fill = (() => {
       if (handler.id === "First") return "black";
       if (handler.state === HandlerState.Fail) return "var(--error)";
+      if (handler.route?.name === selectedId.value) return "var(--highlight)";
       if (handler.route?.name === highlightId.value) return "var(--highlight-background)";
       return "var(--gray60)";
     })();
@@ -51,6 +52,8 @@ const handlerItems = computed(() => {
 
     return {
       id: handler.id,
+      messageId: { id: handler.selectedMessage?.message_id, uniqueId: handler.selectedMessage?.id },
+      isError: handler.state === HandlerState.Fail,
       endpointName: handler.endpoint.name,
       incomingId: handler.route?.name,
       left,
@@ -63,6 +66,7 @@ const handlerItems = computed(() => {
       messageType: handler.name,
       messageTypeOffset,
       messageTypeHighlight: handler.route?.name === highlightId.value,
+      messageTypeSelected: handler.route?.name === selectedId.value,
       setUIRef: (el: SVGElement) => (handler.uiRef = el),
     };
   });
@@ -81,18 +85,32 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
 <template>
   <g v-for="(handler, i) in handlerItems" :key="`${handler.id}###${handler.endpointName}`" :transform="`translate(${handler.left}, ${handler.y})`">
     <!--Handler Activation Box-->
-    <g :ref="(el) => handler.setUIRef(el as SVGElement)">
-      <rect :width="Handler_Width" :height="handler.height" :class="handler.incomingId && 'clickable'" :fill="handler.fill" @mouseover="() => store.setHighlightId(handler.incomingId)" @mouseleave="() => store.setHighlightId()" />
+    <g :ref="(el) => handler.setUIRef(el as SVGElement)" class="activation-box">
+      <rect
+        :width="Handler_Width"
+        :height="handler.height"
+        :class="{
+          clickable: handler.incomingId && !handler.messageTypeSelected,
+        }"
+        :fill="handler.fill"
+        @mouseover="() => store.setHighlightId(handler.incomingId)"
+        @mouseleave="() => store.setHighlightId()"
+        @click="handler.incomingId && !handler.messageTypeSelected && store.navigateTo(handler.messageId.uniqueId, handler.messageId.id, handler.isError)"
+      />
       <path v-if="handler.icon" :d="handler.icon" fill="white" :transform="`translate(${Handler_Width / 2 - handler.iconSize / 2}, ${handler.height / 2 - handler.iconSize / 2})`" />
     </g>
     <!--Message Type and Icon-->
     <g
       v-if="handler.messageType"
       :transform="`translate(${handler.messageTypeOffset}, 4)`"
-      class="clickable"
-      :fill="handler.messageTypeHighlight ? 'var(--highlight)' : 'var(--gray40)'"
+      :class="{
+        clickable: !handler.messageTypeSelected,
+        'message-type': true,
+        highlight: handler.messageTypeHighlight || handler.messageTypeSelected,
+      }"
       @mouseover="() => store.setHighlightId(handler.incomingId)"
       @mouseleave="() => store.setHighlightId()"
+      @click="handler.incomingId && !handler.messageTypeSelected && store.navigateTo(handler.messageId.uniqueId, handler.messageId.id, handler.isError)"
     >
       <path d="M9,3L9,3 9,0 0,0 0,3 4,3 4,6 0,6 0,9 4,9 4,12 0,12 0,15 9,15 9,12 5,12 5,9 9,9 9,6 5,6 5,3z" />
       <text x="14" y="10" alignment-baseline="middle" :ref="(el) => setMessageTypeRef(el as SVGTextElement, i)">{{ handler.messageType }}</text>
@@ -103,5 +121,17 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
 <style scoped>
 .clickable {
   cursor: pointer;
+}
+
+.activation-box:focus {
+  outline: none;
+}
+
+.message-type {
+  fill: var(--gray40);
+}
+
+.message-type.highlight {
+  fill: var(--highlight);
 }
 </style>
