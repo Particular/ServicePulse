@@ -98,8 +98,8 @@ function setMessageTypeRef(el: SVGTextElement, index: number) {
         <!--19 is width of MessageType icon, plus a gap-->
         <rect
           v-if="(arrow.highlight || arrow.selected) && arrow.messageTypeOffset"
-          :width="arrow.highlightTextWidth + 19 + Message_Type_Margin + Message_Type_Margin"
-          :height="arrow.highlightTextHeight + Message_Type_Margin + Message_Type_Margin"
+          :width="(arrow.highlightTextWidth ?? 0) + 19 + Message_Type_Margin + Message_Type_Margin"
+          :height="(arrow.highlightTextHeight ?? 0) + Message_Type_Margin + Message_Type_Margin"
           class="border"
         />
         <svg :x="Message_Type_Margin" :y="Message_Type_Margin" width="15" height="15" viewBox="0 0 32 32">
