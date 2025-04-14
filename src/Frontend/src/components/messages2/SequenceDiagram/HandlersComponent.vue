@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { HandlerState } from "@/resources/SequenceDiagram/Handler";
-import { computed, ref } from "vue";
+import { computed, onActivated, ref, watch } from "vue";
 import { Direction } from "@/resources/SequenceDiagram/RoutedMessage";
 import { useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
 import { storeToRefs } from "pinia";
@@ -13,6 +13,14 @@ const store = useSequenceDiagramStore();
 const { handlers, endpointCentrePoints, highlightId, selectedId } = storeToRefs(store);
 
 const messageTypeRefs = ref<SVGTextElement[]>([]);
+const hasMadeVisible = ref(false);
+const selectedElement = ref<SVGElement>();
+//reset values to allow scroll to element on switching back to this tab
+onActivated(() => {
+  hasMadeVisible.value = false;
+  if (selectedElement.value) scrollToIfSelected(selectedElement.value, selectedId.value);
+});
+watch(selectedId, () => (selectedElement.value = undefined));
 
 const handlerItems = computed(() => {
   let nextY = 0;
@@ -80,10 +88,19 @@ const handlerItems = computed(() => {
 function setMessageTypeRef(el: SVGTextElement, index: number) {
   if (el) messageTypeRefs.value[index] = el;
 }
+
+function scrollToIfSelected(el: SVGElement, handlerId: string | undefined) {
+  if (!hasMadeVisible.value && el && handlerId === selectedId.value) {
+    hasMadeVisible.value = true;
+    selectedElement.value = el;
+    //can't be done immediately since the sequence diagram hasn't completed layout yet
+    setTimeout(() => selectedElement.value!.scrollIntoView(false), 30);
+  }
+}
 </script>
 
 <template>
-  <g v-for="(handler, i) in handlerItems" :key="`${handler.id}###${handler.endpointName}`" :transform="`translate(${handler.left}, ${handler.y})`">
+  <g v-for="(handler, i) in handlerItems" :key="`${handler.id}###${handler.endpointName}`" :ref="(el) => scrollToIfSelected(el as SVGElement, handler.incomingId)" :transform="`translate(${handler.left}, ${handler.y})`">
     <!--Handler Activation Box-->
     <g :ref="(el) => handler.setUIRef(el as SVGElement)" class="activation-box">
       <rect
