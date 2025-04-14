@@ -63,7 +63,7 @@ const handlerItems = computed(() => {
       fill,
       icon,
       iconSize,
-      messageType: handler.name,
+      messageType: handler.friendlyName,
       messageTypeOffset,
       messageTypeHighlight: handler.route?.name === highlightId.value,
       messageTypeSelected: handler.route?.name === selectedId.value,

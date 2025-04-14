@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
-import { friendlyTypeName, ModelCreator } from "@/resources/SequenceDiagram/SequenceModel";
+import { ModelCreator } from "@/resources/SequenceDiagram/SequenceModel";
 import { Endpoint } from "@/resources/SequenceDiagram/Endpoint";
 import { Handler } from "@/resources/SequenceDiagram/Handler";
 import { MessageProcessingRoute } from "@/resources/SequenceDiagram/RoutedMessage";
@@ -40,7 +40,7 @@ export const useSequenceDiagramStore = defineStore("SequenceDiagramStore", () =>
   const handlerLocations = ref<HandlerLocation[]>([]);
   const highlightId = ref<string>();
 
-  const selectedId = computed(() => `${friendlyTypeName(state.value.data.message_type ?? "")}(${state.value.data.id})`);
+  const selectedId = computed(() => `${state.value.data.message_type ?? ""}(${state.value.data.id})`);
 
   watch(
     () => messageStore.conversationData.data,
