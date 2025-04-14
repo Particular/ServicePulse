@@ -1,8 +1,8 @@
-import EndpointDetails from "../EndpointDetails";
-import { NServiceBusHeaders } from "../Header";
-import Message, { MessageIntent, MessageStatus } from "../Message";
+import EndpointDetails from "../../../resources/EndpointDetails";
+import { NServiceBusHeaders } from "../../../resources/Header";
+import Message, { MessageIntent, MessageStatus } from "../../../resources/Message";
 import { Handler } from "./Handler";
-import { friendlyTypeName } from "./SequenceModel";
+import { friendlyTypeName } from "../utils";
 
 export interface RoutedMessage {
   id: string;

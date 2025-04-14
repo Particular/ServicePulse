@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Direction, RoutedMessageType } from "@/resources/SequenceDiagram/RoutedMessage";
+import { Direction, RoutedMessageType } from "@/components/messages2/SequenceDiagram/RoutedMessage";
 import { computed, ref } from "vue";
 import { useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
 import { storeToRefs } from "pinia";
-import { HandlerState } from "@/resources/SequenceDiagram/Handler";
+import { HandlerState } from "@/components/messages2/SequenceDiagram/Handler";
 
 const Arrow_Head_Width = 10;
 const Message_Type_Margin = 4;

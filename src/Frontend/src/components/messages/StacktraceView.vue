@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ExtendedFailedMessage } from "@/resources/FailedMessage";
 import CodeEditor from "@/components/CodeEditor.vue";
+import { ExtendedFailedMessage } from "../messages2/FailedMessage";
 
 const props = defineProps<{
   message: ExtendedFailedMessage;

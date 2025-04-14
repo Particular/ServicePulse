@@ -1,5 +1,5 @@
-import { NServiceBusHeaders } from "../Header";
-import Message from "../Message";
+import { NServiceBusHeaders } from "../../../resources/Header";
+import Message from "../../../resources/Message";
 import { Handler } from "./Handler";
 
 export interface Endpoint {

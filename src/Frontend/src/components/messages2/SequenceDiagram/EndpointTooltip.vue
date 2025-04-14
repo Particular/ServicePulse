@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Endpoint } from "@/resources/SequenceDiagram/Endpoint";
+import { Endpoint } from "@/components/messages2/SequenceDiagram/Endpoint";
 
 defineProps<{ endpoint: Endpoint }>();
 </script>

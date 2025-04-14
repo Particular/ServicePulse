@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ExtendedFailedMessage } from "@/resources/FailedMessage";
+import { ExtendedFailedMessage } from "../messages2/FailedMessage";
 import { computed } from "vue";
 import CodeEditor from "@/components/CodeEditor.vue";
 import parseContentType from "@/composables/contentTypeParser";

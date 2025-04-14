@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { HandlerState } from "@/resources/SequenceDiagram/Handler";
+import { HandlerState } from "@/components/messages2/SequenceDiagram/Handler";
 import { computed, onActivated, ref, watch } from "vue";
-import { Direction } from "@/resources/SequenceDiagram/RoutedMessage";
+import { Direction } from "@/components/messages2/SequenceDiagram/RoutedMessage";
 import { useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
 import { storeToRefs } from "pinia";
 

@@ -3,7 +3,8 @@ import { useRouter } from "vue-router";
 import TimeSince from "../TimeSince.vue";
 import NoData from "../NoData.vue";
 import routeLinks from "@/router/routeLinks";
-import { FailedMessageStatus, ExtendedFailedMessage } from "@/resources/FailedMessage";
+import { FailedMessageStatus } from "@/resources/FailedMessage";
+import { ExtendedFailedMessage } from "../messages2/FailedMessage";
 import { hexToCSSFilter } from "hex-to-css-filter";
 
 export interface IMessageList {
