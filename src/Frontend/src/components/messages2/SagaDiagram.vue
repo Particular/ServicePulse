@@ -13,6 +13,7 @@ import EventIcon from "@/assets/event.svg";
 import TimeoutIcon from "@/assets/TimeoutIcon.svg";
 import SagaIcon from "@/assets/SagaIcon.svg";
 import SagaInitiatedIcon from "@/assets/SagaInitiatedIcon.svg";
+import SagaUpdatedIcon from "@/assets/SagaUpdatedIcon.svg";
 import SagaCompletedIcon from "@/assets/SagaCompletedIcon.svg";
 import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";
 import ToolbarEndpointIcon from "@/assets/Shell_ToolbarEndpoint.svg";
@@ -179,7 +180,7 @@ const vm = computed<SagaViewModel>(() => {
   <div class="saga-container">
     <div class="header">
       <div class="saga-top-logo"><img class="saga-top-logo-image" :src="SagaIcon" alt="" />Saga</div>
-      <button class="saga-button"><img class="saga-button-icon" :src="ToolbarEndpointIcon" alt="" />Show Message Data</button>
+      <button class="saga-button" aria-label="message-not-involved-in-saga"><img class="saga-button-icon" :src="ToolbarEndpointIcon" alt="" />Show Message Data</button>
     </div>
 
     <!-- No saga Data Available container -->
@@ -213,7 +214,7 @@ const vm = computed<SagaViewModel>(() => {
         <div class="block">
           <div class="row row--center">
             <div class="cell cell--center">
-              <div class="cell-inner">
+              <div class="cell-inner cell-inner-center">
                 <RouterLink :to="vm.MessageIdUrl">← Back to Messages</RouterLink>
                 <h1 aria-label="saga name" class="main-title">{{ vm.SagaTitle }}</h1>
                 <div>
@@ -224,6 +225,7 @@ const vm = computed<SagaViewModel>(() => {
           </div>
         </div>
 
+        <!-- Iterate through each saga update -->
         <div v-for="(update, index) in vm.SagaUpdates" :key="index" class="block" role="row">
           <!-- Initiating message and saga status header -->
           <div class="row">
@@ -235,8 +237,8 @@ const vm = computed<SagaViewModel>(() => {
               </div>
             </div>
             <div class="cell cell--center cell-flex">
-              <div class="cell-inner cell-inner--align-bottom">
-                <img class="saga-icon saga-icon--center-cell" :src="SagaInitiatedIcon" alt="" />
+              <div class="cell-inner cell-inner-center cell-inner--align-bottom">
+                <img class="saga-icon saga-icon--center-cell" :src="update.IsFirstNode ? SagaInitiatedIcon : SagaUpdatedIcon" alt="" />
                 <h2 class="saga-status-title saga-status-title--inline">{{ update.StatusDisplay }}</h2>
                 <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.FormattedStartTime }}</div>
               </div>
@@ -247,81 +249,96 @@ const vm = computed<SagaViewModel>(() => {
           <div class="row">
             <!-- Left side - Message Data box -->
             <div class="cell cell--side cell--left-border cell--aling-top">
-              <div class="message-data-box">
-                <span class="message-data-box-text"><b>Property Y</b> = Sample value</span>
+              <div class="message-data message-data--active">
+                <!-- Generic message data boxes since we don't have specific data -->
+                <div class="message-data-box" v-if="update.InitiatingMessageType">
+                  <b class="message-data-box-text">OrderId</b>
+                  <span class="message-data-box-text">=</span>
+                  <span class="message-data-box-text--ellipsis" title="Sample ID">Sample ID</span>
+                </div>
               </div>
             </div>
 
-            <!-- Center - Saga properties and timeout requests -->
+            <!-- Center - Saga properties -->
             <div class="cell cell--center cell--center--border">
-              <div class="cell-inner cell-inner-center">
+              <div class="cell-inner cell-inner-line">
                 <div class="saga-properties">
                   <a class="saga-properties-link" href="">All Properties</a> /
                   <a class="saga-properties-link saga-properties-link--active" href="">Updated Properties</a>
                 </div>
 
-                <!-- Display detailed saga properties if available -->
+                <!-- Display saga properties if available -->
                 <ul v-if="update.Status !== 'completed'" class="saga-properties-list">
                   <li class="saga-properties-list-item">
-                    <span class="saga-properties-list-text" title="Prop 1 (new)">Prop 1 (new)</span>
+                    <span class="saga-properties-list-text" title="Property (new)">Property (new)</span>
                     <span class="saga-properties-list-text">=</span>
-                    <span class="saga-properties-list-text" title=""> sample property value</span>
+                    <span class="saga-properties-list-text" title="Sample Value"> Sample Value</span>
                   </li>
                 </ul>
-
-                <!-- Timeout request indicators -->
-                <template v-if="update.HasTimeout">
-                  <div v-for="(msg, msgIndex) in update.TimeoutMessages" :key="msgIndex">
-                    <img class="saga-icon saga-icon--center-cell saga-icon--overlap" :src="SagaTimeoutIcon" alt="" />
-                    <a class="timeout-status" href="" aria-label="timeout requested"> Timeout Requested = {{ msg.TimeoutFriendly }} </a>
-                  </div>
-                </template>
               </div>
             </div>
 
             <!-- Right side - outgoing messages (non-timeout) -->
             <div class="cell cell--side cell--aling-top" v-if="update.HasNonTimeoutMessages">
               <div class="cell-inner cell-inner-right"></div>
-              <div v-for="(msg, msgIndex) in update.NonTimeoutMessages" :key="msgIndex">
+              <template v-for="(msg, msgIndex) in update.NonTimeoutMessages" :key="msgIndex">
                 <div class="cell-inner cell-inner-side">
                   <img class="saga-icon saga-icon--side-cell" :src="msg.IsEventMessage ? EventIcon : CommandIcon" :alt="msg.IsEventMessage ? 'Event' : 'Command'" />
                   <h2 class="message-title">{{ msg.MessageFriendlyTypeName }}</h2>
                   <div class="timestamp">{{ msg.FormattedTimeSent }}</div>
                 </div>
-                <div class="message-data-box">
-                  <span class="message-data-box-text"><b>Property 1</b> = Sample value</span>
+                <div class="message-data message-data--active">
+                  <div class="message-data-box">
+                    <b class="message-data-box-text">OrderId</b>
+                    <span class="message-data-box-text">=</span>
+                    <span class="message-data-box-text--ellipsis" title="Sample ID">Sample ID</span>
+                  </div>
                 </div>
-              </div>
+              </template>
             </div>
           </div>
 
-          <!-- Display each outgoing timeout message -->
-          <div v-for="(msg, msgIndex) in update.TimeoutMessages" :key="'timeout-' + msgIndex" class="row row--right">
-            <div class="cell cell--center cell--top-border">
-              <div class="cell-inner cell-inner-top"></div>
-            </div>
-            <div class="cell cell--side">
-              <div class="cell-inner cell-inner-right"></div>
-              <div class="cell-inner cell-inner-side cell-inner-side--active">
-                <img class="saga-icon saga-icon--side-cell" :src="TimeoutIcon" alt="" />
-                <h2 class="message-title" aria-label="timeout message type">{{ msg.MessageFriendlyTypeName }}</h2>
-                <div class="timestamp" aria-label="timeout message timestamp">{{ msg.FormattedTimeSent }}</div>
+          <!-- Display each outgoing timeout message in separate rows -->
+          <template v-for="(msg, msgIndex) in update.TimeoutMessages" :key="'timeout-' + msgIndex">
+            <div class="row row--right">
+              <div class="cell cell--center">
+                <div class="cell-inner cell-inner-line">
+                  <img class="saga-icon saga-icon--center-cell saga-icon--overlap" :src="SagaTimeoutIcon" alt="" />
+                  <a class="timeout-status" href="" aria-label="timeout requested">Timeout Requested = {{ msg.TimeoutFriendly }}</a>
+                </div>
               </div>
-              <div class="message-data-box">
-                <span class="message-data-box-text"><b>Property X</b> =Sample value</span>
+              <div class="cell cell--side"></div>
+              <div class="cell cell--center cell--top-border">
+                <div class="cell-inner cell-inner-top"></div>
+                <div class="cell-inner cell-inner-line"></div>
+              </div>
+              <div class="cell cell--side">
+                <div class="cell-inner cell-inner-right"></div>
+                <div class="cell-inner cell-inner-side cell-inner-side--active">
+                  <img class="saga-icon saga-icon--side-cell" :src="TimeoutIcon" alt="" />
+                  <h2 class="message-title" aria-label="timeout message type">{{ msg.MessageFriendlyTypeName }}</h2>
+                  <div class="timestamp" aria-label="timeout message timestamp">{{ msg.FormattedTimeSent }}</div>
+                </div>
+                <div class="message-data message-data--active">
+                  <div class="message-data-box">
+                    <b class="message-data-box-text">OrderId</b>
+                    <span class="message-data-box-text">=</span>
+                    <span class="message-data-box-text--ellipsis" title="Sample ID">Sample ID</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
         </div>
 
         <!-- Saga Completed section -->
         <div v-if="vm.SagaCompleted" class="block">
           <div class="row row--center">
             <div class="cell cell--center cell--inverted">
-              <div class="cell-inner">
+              <div class="cell-inner cell-inner-center">
                 <img class="saga-icon saga-icon--center-cell" :src="SagaCompletedIcon" alt="" />
                 <h2 class="saga-status-title saga-status-title--inline">Saga Completed</h2>
-                <div class="timestamp" aria-label="saga completion time">{{ vm.FormattedCompletionTime }}</div>
+                <div class="timestamp">{{ vm.FormattedCompletionTime }}</div>
               </div>
             </div>
           </div>
@@ -394,7 +411,8 @@ const vm = computed<SagaViewModel>(() => {
   width: 1.5rem;
 }
 .container {
-  /* width: 66.6667%; */
+  width: 66.6667%;
+  min-width: 50rem;
 }
 .block {
   /* border: solid 1px lightgreen; */
@@ -443,10 +461,11 @@ const vm = computed<SagaViewModel>(() => {
 }
 
 .cell--top-border {
-  /* align-self: flex-start; */
+  display: flex;
+  flex-direction: column;
 }
 .cell-inner {
-  padding: 0.5rem;
+  /* padding: 0.5rem; */
 }
 .cell-inner-top {
   border-top: solid 2px #000000;
@@ -454,16 +473,27 @@ const vm = computed<SagaViewModel>(() => {
 }
 .cell-inner-center {
   padding: 0.5rem;
+}
+.cell-inner-line {
+  flex-grow: 1;
+  padding: 0.25rem 0.5rem;
   border-left: solid 2px #000000;
   margin-left: 1rem;
+}
+.cell-inner-line:first-child {
+  flex-grow: 1;
 }
 .cell-inner-center:first-child {
   flex-grow: 1;
 }
 .cell-inner-side {
+  margin-top: 1rem;
   padding: 0.25rem 0.25rem 0;
   border: solid 2px #cccccc;
   background-color: #cccccc;
+}
+.cell-inner-side:nth-child(-n + 2) {
+  margin-top: 0;
 }
 .cell-inner-side--active {
   border: solid 2px #000000;
@@ -494,6 +524,10 @@ const vm = computed<SagaViewModel>(() => {
 }
 
 /* Content styles */
+
+* {
+  /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+}
 
 .saga-top-logo {
   margin-bottom: 0.5rem;
@@ -605,23 +639,35 @@ const vm = computed<SagaViewModel>(() => {
   display: inline-block;
   text-overflow: ellipsis;
 }
+.saga-properties-list-text:last-child {
+  padding-right: 0;
+  text-overflow: ellipsis;
+}
 
 .timeout-status {
   display: inline-block;
-  margin-top: 0.7rem;
   font-size: 1rem;
   font-weight: 900;
 }
 
-.message-data-box {
-  display: flex;
-  margin-bottom: 1rem;
+.message-data {
+  display: none;
   padding: 0.2rem;
   background-color: #ffffff;
   border: solid 1px #cccccc;
   font-size: 0.75rem;
 }
+.message-data--active {
+  display: block;
+}
+.message-data-box {
+  display: flex;
+}
 .message-data-box-text {
+  display: inline-block;
+  margin-right: 0.25rem;
+}
+.message-data-box-text--ellipsis {
   display: inline-block;
   overflow: hidden;
   max-width: 100%;
