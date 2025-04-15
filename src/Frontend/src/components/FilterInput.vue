@@ -34,7 +34,6 @@ watch(localInput, (newValue) => {
 
 div.filter-input {
   position: relative;
-  width: 280px;
   height: 36px;
 }
 

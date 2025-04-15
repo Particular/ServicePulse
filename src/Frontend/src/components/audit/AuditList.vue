@@ -1,20 +1,39 @@
 <script setup lang="ts">
 import routeLinks from "@/router/routeLinks";
-import { ColumnNames, useAuditStore } from "@/stores/AuditStore";
+import { useAuditStore } from "@/stores/AuditStore";
 import { storeToRefs } from "pinia";
-import SortableColumn from "../SortableColumn.vue";
 import { MessageStatus } from "@/resources/Message";
 import moment from "moment";
-import { useFormatTime } from "@/composables/formatter";
-import RefreshConfig from "../RefreshConfig.vue";
-import ItemsPerPage from "../ItemsPerPage.vue";
-import PaginationStrip from "../PaginationStrip.vue";
 import { useRoute } from "vue-router";
+import FilterInput from "@/components/FilterInput.vue";
+import ResultsCount from "@/components/ResultsCount.vue";
+import DropDown from "@/components/DropDown.vue";
+import { computed } from "vue";
+import { formatDotNetTimespan, formatTypeName } from "@/composables/formatUtils.ts";
 
 const store = useAuditStore();
-const { messages, sortByInstances, itemsPerPage, selectedPage, totalCount } = storeToRefs(store);
+const { messages, sortBy, totalCount, messageFilterString, selectedEndpointName, endpoints, itemsPerPage } = storeToRefs(store);
 const route = useRoute();
 
+const endpointNames = computed(() => {
+  return endpoints.value.map((endpoint) => ({
+    text: endpoint.name,
+    value: endpoint.name,
+  }));
+});
+const selectedEndpointItem = computed(() => ({ text: selectedEndpointName.value, value: selectedEndpointName.value }));
+const sortByItems = [
+  { text: "Latest sent", value: "time_sent,desc" },
+  { text: "Oldest sent", value: "time_sent,asc" },
+  { text: "Fastest processing", value: "processing_time,asc" },
+  { text: "Slowest processing", value: "processing_time,desc" },
+];
+const selectedSortByItem = computed(() => sortByItems.find((item) => item.value === `${sortBy.value.property},${sortBy.value.isAscending ? "asc" : "desc"}`));
+
+function setSortBy(item: { text: string; value: string }) {
+  const strings = item.value.split(",");
+  sortBy.value = { isAscending: strings[1] === "asc", property: strings[0] };
+}
 function statusToName(messageStatus: MessageStatus) {
   switch (messageStatus) {
     case MessageStatus.Successful:
@@ -48,97 +67,106 @@ function statusToIcon(messageStatus: MessageStatus) {
       return "fa retry-issued";
   }
 }
-
-function friendlyTypeName(messageType: string) {
-  if (messageType == null) return null;
-
-  const typeClass = messageType.split(",")[0];
-  const typeName = typeClass.split(".").reverse()[0];
-  return typeName.replace(/\+/g, ".");
-}
-
-function formatDotNetTimespan(timespan: string) {
-  //assuming if we have days in the timespan then something is very, very wrong
-  const [hh, mm, ss] = timespan.split(":");
-  const time = useFormatTime(((parseInt(hh) * 60 + parseInt(mm)) * 60 + parseFloat(ss)) * 1000);
-  return `${time.value} ${time.unit}`;
-}
 </script>
 
 <template>
-  <section class="section-table" role="table" aria-label="endpoint-instances">
-    <div class="header">
-      <RefreshConfig id="auditListRefresh" @change="store.updateRefreshTimer" @manual-refresh="store.refresh" />
-      <!--Table headings-->
-      <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
-        <div role="columnheader" :aria-label="ColumnNames.Status" class="status">
-          <SortableColumn :sort-by="ColumnNames.Status" v-model="sortByInstances" :default-ascending="true">Status</SortableColumn>
+  <div>
+    <div class="row">
+      <div class="filters">
+        <div class="text-search-container">
+          <FilterInput v-model="messageFilterString" placeholder="Search messages..." aria-label="Search messages" />
         </div>
-        <div role="columnheader" :aria-label="ColumnNames.MessageId" class="col-3">
-          <SortableColumn :sort-by="ColumnNames.MessageId" v-model="sortByInstances" :default-ascending="true">Message Id</SortableColumn>
+        <div>
+          <DropDown
+            label="Filter by endpoint"
+            :callback="
+              (item) => {
+                selectedEndpointName = item.value;
+              }
+            "
+            :select-item="selectedEndpointItem"
+            :items="endpointNames"
+          />
         </div>
-        <div role="columnheader" :aria-label="ColumnNames.MessageType" class="col-3">
-          <SortableColumn :sort-by="ColumnNames.MessageType" v-model="sortByInstances" :default-ascending="true">Type</SortableColumn>
+        <div>
+          <DropDown
+            label="Show"
+            :callback="
+              (item) => {
+                itemsPerPage = parseInt(item.value, 10);
+              }
+            "
+            :select-item="{ text: itemsPerPage.toString(), value: itemsPerPage.toString() }"
+            :items="[
+              { text: '50', value: '50' },
+              { text: '100', value: '100' },
+              { text: '250', value: '250' },
+              { text: '500', value: '500' },
+            ]"
+          />
         </div>
-        <div role="columnheader" :aria-label="ColumnNames.TimeSent" class="col-2">
-          <SortableColumn :sort-by="ColumnNames.TimeSent" v-model="sortByInstances">Time Sent</SortableColumn>
-        </div>
-        <div role="columnheader" :aria-label="ColumnNames.ProcessingTime" class="col-2">
-          <SortableColumn :sort-by="ColumnNames.ProcessingTime" v-model="sortByInstances">Processing Time</SortableColumn>
-        </div>
-      </div>
-    </div>
-    <!--Table rows-->
-    <!--NOTE: currently the DataView pages on the client only: we need to make it server data aware (i.e. the total will be the count from the server, not the length of the data we have locally)-->
-    <div class="messages" role="rowgroup" aria-label="messages">
-      <div role="row" :aria-label="message.message_id" class="row grid-row" v-for="message in messages" :key="message.id">
-        <div role="cell" aria-label="status" class="status" :title="statusToName(message.status)">
-          <div class="status-icon" :class="statusToIcon(message.status)"></div>
-        </div>
-        <div role="cell" aria-label="message-id" class="col-3 message-id">
-          <div class="box-header">
-            <tippy :aria-label="message.message_id" :delay="[700, 0]" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
-              <template #content>
-                <p :style="{ overflowWrap: 'break-word' }">{{ message.message_id }}</p>
-              </template>
-              <RouterLink
-                v-if="message.status === MessageStatus.Successful"
-                class="hackToPreventSafariFromShowingTooltip"
-                aria-label="details-link"
-                :to="{ path: routeLinks.messages.successMessage.link(message.message_id, message.id), query: { back: route.path } }"
-              >
-                {{ message.message_id }}
-              </RouterLink>
-              <RouterLink v-else class="hackToPreventSafariFromShowingTooltip" aria-label="details-link" :to="{ path: routeLinks.messages.failedMessage.link(message.id), query: { back: route.path } }">
-                {{ message.message_id }}
-              </RouterLink>
-            </tippy>
-          </div>
-        </div>
-        <div role="cell" aria-label="message-type" class="col-3 message-type">
-          {{ friendlyTypeName(message.message_type) }}
-        </div>
-        <div role="cell" aria-label="time-sent" class="col-2 time-sent">
-          {{ moment(message.time_sent).local().format("LLLL") }}
-        </div>
-        <div role="cell" aria-label="processing-time" class="col-2 processing-time">
-          {{ formatDotNetTimespan(message.processing_time) }}
+        <div>
+          <DropDown label="Sort by" :callback="setSortBy" :select-item="selectedSortByItem" :items="sortByItems" />
         </div>
       </div>
     </div>
     <div class="row">
-      <ItemsPerPage v-model="itemsPerPage" />
-      <PaginationStrip v-model="selectedPage" :totalCount="totalCount" :itemsPerPage="itemsPerPage" />
+      <ResultsCount :displayed="messages.length" :total="totalCount" />
     </div>
-  </section>
+    <div class="row results-table">
+      <section class="section-table" role="table" aria-label="endpoint-instances">
+        <!--Table rows-->
+        <!--NOTE: currently the DataView pages on the client only: we need to make it server data aware (i.e. the total will be the count from the server, not the length of the data we have locally)-->
+        <div class="messages" role="rowgroup" aria-label="messages">
+          <div role="row" :aria-label="message.message_id" class="row grid-row" v-for="message in messages" :key="message.id">
+            <div role="cell" aria-label="status" class="status" :title="statusToName(message.status)">
+              <div class="status-icon" :class="statusToIcon(message.status)"></div>
+            </div>
+            <div role="cell" aria-label="message-id" class="col-3 message-id">
+              <div class="box-header">
+                <RouterLink v-if="message.status === MessageStatus.Successful" aria-label="details-link" :to="{ path: routeLinks.messages.successMessage.link(message.message_id, message.id), query: { back: route.path } }">
+                  {{ message.message_id }}
+                </RouterLink>
+                <RouterLink v-else aria-label="details-link" :to="{ path: routeLinks.messages.failedMessage.link(message.id), query: { back: route.path } }">
+                  {{ message.message_id }}
+                </RouterLink>
+              </div>
+            </div>
+            <div role="cell" aria-label="message-type" class="col-3 message-type">
+              {{ formatTypeName(message.message_type) }}
+            </div>
+            <div role="cell" aria-label="time-sent" class="col-2 time-sent">
+              {{ moment(message.time_sent).local().format("LLLL") }}
+            </div>
+            <div role="cell" aria-label="processing-time" class="col-2 processing-time">
+              {{ formatDotNetTimespan(message.processing_time) }}
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
 </template>
 
 <style scoped>
 @import "../list.css";
+.results-table {
+  margin-top: 1rem;
+  margin-bottom: 5rem;
+}
 
-.hackToPreventSafariFromShowingTooltip::after {
-  content: "";
-  display: block;
+.text-search-container {
+  width: 25rem;
+}
+
+.filters {
+  background-color: #f3f3f3;
+  margin-top: 0.3125rem;
+  border: #8c8c8c 1px solid;
+  border-radius: 3px;
+  padding: 0.3125rem;
+  display: flex;
+  gap: 1.1rem;
 }
 
 .section-table {
