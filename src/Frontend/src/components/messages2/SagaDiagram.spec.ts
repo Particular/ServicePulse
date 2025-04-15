@@ -1,9 +1,9 @@
 import { render, describe, test, screen, expect, within } from "@component-test-utils";
 import sut from "../messages2/SagaDiagram.vue";
-import Message, { SagaInfo } from "@/resources/Message";
 import { SagaHistory } from "@/resources/SagaHistory";
 import makeRouter from "@/router";
 import { createTestingPinia } from "@pinia/testing";
+import { MessageStore } from "@/stores/MessageStore";
 
 //Defines a domain-specific language (DSL) for interacting with the system under test (sut)
 interface componentDSL {
@@ -25,10 +25,22 @@ interface componentDSLAssertions {
 describe("Feature: Message not involved in Saga", () => {
   describe("Rule: When the selected message has not participated in a Saga, display a legend indicating it.​", () => {
     test("EXAMPLE: A message that has not participated in a saga is selected", () => {
-      const message = {} as Message;
-      message.invoked_sagas = [];
+      const messageStore = {} as MessageStore;
+      messageStore.state = {} as MessageStore["state"];
+      messageStore.state.data = {} as MessageStore["state"]["data"];
+      messageStore.state.data.invoked_saga = {
+        has_saga: false,
+        saga_id: undefined,
+        saga_type: undefined,
+      };
 
-      const componentDriver = rendercomponent({ message: message });
+      // No need to manually set up the store - it will be empty by default
+      const componentDriver = rendercomponent({
+        initialState: {
+          MessageStore: messageStore,
+          sagaHistory: undefined, // Lets pass undefined to simulate no saga data available
+        },
+      });
 
       componentDriver.assert.NoSagaDataAvailableMessageIsShownWithMessage(/no saga data/i);
     });
@@ -38,15 +50,21 @@ describe("Feature: Message not involved in Saga", () => {
 describe("Feature: Detecting no Audited Saga Data Available", () => {
   describe("Rule: When a message participates in a Saga, but the Saga data is unavailable, display a legend indicating that the Saga audit plugin is needed to visualize the saga.", () => {
     test("EXAMPLE: A message that was participated in a Saga without the Saga audit plugin being active gets selected", () => {
-      const message = {} as Message;
-      const invokedSaga = {} as SagaInfo;
-      invokedSaga.saga_id = "saga_id";
-      message.invoked_sagas = [invokedSaga];
+      const messageStore = {} as MessageStore;
+      messageStore.state = {} as MessageStore["state"];
+      messageStore.state.data = {} as MessageStore["state"]["data"];
+      messageStore.state.data.invoked_saga = {
+        has_saga: true,
+        saga_id: "saga-id-123",
+        saga_type: "Shipping.ShipOrderWorkflow",
+      };
 
       // No need to manually set up the store - it will be empty by default
       const componentDriver = rendercomponent({
-        message: message,
-        // No initial state needed - we want an empty saga history
+        initialState: {
+          MessageStore: messageStore,
+          sagaHistory: undefined, // Lets pass undefined to simulate no saga data available
+        },
       });
 
       componentDriver.assert.SagaPlugInNeededIsShownWithTheMessages({
@@ -61,21 +79,24 @@ describe("Feature: Navigation and Contextual Information", () => {
   describe("Rule: Provide clear navigational elements to move between the message flow diagram and the saga view.", () => {
     test("EXAMPLE: A message record with id '123' and with a saga Id '88878' gets selected", () => {
       //A "← Back to Messages" link allows users to easily navigate back to the flow diagram.
-      const message = {} as Message;
-      const invokedSaga = {} as SagaInfo;
-      invokedSaga.saga_id = "88878";
-      message.invoked_sagas = [invokedSaga];
-
       const storedMessageRecordId = "123";
       const message_id = "456";
 
-      message.id = storedMessageRecordId;
-      message.message_id = message_id;
+      const messageStore = {} as MessageStore;
+      messageStore.state = {} as MessageStore["state"];
+      messageStore.state.data = {} as MessageStore["state"]["data"];
+      messageStore.state.data.message_id = message_id;
+      messageStore.state.data.id = storedMessageRecordId;
+      messageStore.state.data.invoked_saga = {
+        has_saga: true,
+        saga_id: "saga-id-123",
+        saga_type: "Shipping.ShipOrderWorkflow",
+      };
 
       // Set initial state with sample saga history
       const componentDriver = rendercomponent({
-        message: message,
         initialState: {
+          MessageStore: messageStore,
           sagaHistory: { sagaHistory: sampleSagaHistory },
         },
       });
@@ -86,16 +107,19 @@ describe("Feature: Navigation and Contextual Information", () => {
 
   describe("Rule: Clearly indicate contextual information like Saga ID and Saga Type.", () => {
     test("EXAMPLE: A message with a Saga Id '123' and a Saga Type 'ServiceControl.SmokeTest.AuditingSaga' gets selected", () => {
-      const message = {} as Message;
-      const invokedSaga = {} as SagaInfo;
-      invokedSaga.saga_id = "123";
-      invokedSaga.saga_type = "ServiceControl.SmokeTest.AuditingSaga";
-      message.invoked_sagas = [invokedSaga];
+      const messageStore = {} as MessageStore;
+      messageStore.state = {} as MessageStore["state"];
+      messageStore.state.data = {} as MessageStore["state"]["data"];
+      messageStore.state.data.invoked_saga = {
+        has_saga: true,
+        saga_id: "123",
+        saga_type: "ServiceControl.SmokeTest.AuditingSaga",
+      };
 
       // Set initial state with sample saga history
       const componentDriver = rendercomponent({
-        message: message,
         initialState: {
+          MessageStore: messageStore,
           sagaHistory: { sagaHistory: sampleSagaHistory },
         },
       });
@@ -120,11 +144,14 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
 
       //arragement
       //sampleSagaHistory already not sorted TODO: Make this more clear so the reader of this test doesn't have to go arround and figure out the preconditions
-      const message = {} as Message;
-      const invokedSaga = {} as SagaInfo;
-      invokedSaga.saga_id = "123";
-      invokedSaga.saga_type = "ServiceControl.SmokeTest.AuditingSaga";
-      message.invoked_sagas = [invokedSaga];
+      const messageStore = {} as MessageStore;
+      messageStore.state = {} as MessageStore["state"];
+      messageStore.state.data = {} as MessageStore["state"]["data"];
+      messageStore.state.data.invoked_saga = {
+        has_saga: true,
+        saga_id: "123",
+        saga_type: "ServiceControl.SmokeTest.AuditingSaga",
+      };
 
       // Set the environment to a fixed timezone
       // JSDOM, used by Vitest, defaults to UTC timezone
@@ -152,8 +179,8 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
 
       // Set up the store with sample saga history
       const componentDriver = rendercomponent({
-        message: message,
         initialState: {
+          MessageStore: messageStore,
           sagaHistory: { sagaHistory: sampleSagaHistory },
         },
       });
@@ -183,11 +210,14 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
 
       //arragement
       //sampleSagaHistory already not sorted TODO: Make this more clear so the reader of this test doesn't have to go arround and figure out the preconditions
-      const message = {} as Message;
-      const invokedSaga = {} as SagaInfo;
-      invokedSaga.saga_id = "123";
-      invokedSaga.saga_type = "ServiceControl.SmokeTest.AuditingSaga";
-      message.invoked_sagas = [invokedSaga];
+      const messageStore = {} as MessageStore;
+      messageStore.state = {} as MessageStore["state"];
+      messageStore.state.data = {} as MessageStore["state"]["data"];
+      messageStore.state.data.invoked_saga = {
+        has_saga: true,
+        saga_id: "123",
+        saga_type: "ServiceControl.SmokeTest.AuditingSaga",
+      };
 
       // Set the environment to a fixed timezone
       // JSDOM, used by Vitest, defaults to PST timezone
@@ -215,8 +245,8 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
 
       // Set up the store with sample saga history
       const componentDriver = rendercomponent({
-        message: message,
         initialState: {
+          MessageStore: messageStore,
           sagaHistory: { sagaHistory: sampleSagaHistory },
         },
       });
@@ -241,14 +271,11 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
   });
 });
 
-function rendercomponent({ message, initialState = {} }: { message: Message; initialState?: { sagaHistory?: { sagaHistory: SagaHistory } } }): componentDSL {
+function rendercomponent({ initialState = {} }: { initialState?: { MessageStore?: MessageStore; sagaHistory?: { sagaHistory: SagaHistory } } }): componentDSL {
   const router = makeRouter();
 
   // Render with createTestingPinia
   render(sut, {
-    props: {
-      message,
-    },
     global: {
       plugins: [
         router,
