@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Message from "@/resources/Message";
 import { computed, onUnmounted, watch } from "vue";
 import { RouterLink } from "vue-router";
 import routeLinks from "@/router/routeLinks";
@@ -19,24 +18,20 @@ import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";
 import ToolbarEndpointIcon from "@/assets/Shell_ToolbarEndpoint.svg";
 import NoSagaIcon from "@/assets/NoSaga.svg";
 import CopyClipboardIcon from "@/assets/Shell_CopyClipboard.svg";
+import { useMessageStore } from "@/stores/MessageStore";
+import { storeToRefs } from "pinia";
 
-const props = withDefaults(
-  defineProps<{
-    message: Message;
-  }>(),
-  {
-    message: () => ({}) as Message,
-  }
-);
+const store = useMessageStore();
+const { state: messageState } = storeToRefs(store);
 
 const sagaDiagramStore = useSagaDiagramStore();
 
 //Watch for message and set saga ID when component mounts or message changes
 watch(
-  () => props.message?.invoked_sagas,
+  () => messageState.value.data.invoked_saga,
   (newSagas) => {
-    if (newSagas && newSagas?.length > 0) {
-      sagaDiagramStore.setSagaId(newSagas[0].saga_id);
+    if (newSagas.has_saga) {
+      sagaDiagramStore.setSagaId(newSagas.saga_id || "");
     } else {
       sagaDiagramStore.clearSagaHistory();
     }
@@ -150,7 +145,7 @@ interface SagaViewModel {
   MessageIdUrl: string;
   ParticipatedInSaga: boolean;
   HasSagaData: boolean;
-  ShowNoPluginActiveLeged: boolean;
+  ShowNoPluginActiveLegend: boolean;
   SagaCompleted: boolean;
   FormattedCompletionTime: string;
   SagaUpdates: SagaUpdateViewModel[];
@@ -160,15 +155,13 @@ const vm = computed<SagaViewModel>(() => {
   const completedUpdate = sagaDiagramStore.sagaHistory?.changes.find((update) => update.status === "completed");
   const completionTime = completedUpdate ? new Date(completedUpdate.finish_time) : null;
 
-  const invokedSaga = props.message?.invoked_sagas?.[0];
-
   return {
-    SagaTitle: typeToName(invokedSaga?.saga_type) || "Unknown saga",
-    SagaGuid: invokedSaga?.saga_id || "Missing guid",
-    MessageIdUrl: routeLinks.messages.successMessage.link(props.message.message_id, props.message.id),
-    ParticipatedInSaga: invokedSaga !== undefined,
+    SagaTitle: typeToName(messageState.value.data.invoked_saga.saga_type) || "Unknown saga",
+    SagaGuid: messageState.value.data.invoked_saga.saga_id || "Missing guid",
+    MessageIdUrl: messageState.value && routeLinks.messages.successMessage.link(messageState.value.data.message_id || "", messageState.value.data.id || ""),
+    ParticipatedInSaga: messageState.value.data.invoked_saga.has_saga || false,
     HasSagaData: !!sagaDiagramStore.sagaHistory,
-    ShowNoPluginActiveLeged: !sagaDiagramStore.sagaHistory && invokedSaga !== undefined,
+    ShowNoPluginActiveLegend: (!sagaDiagramStore.sagaHistory && messageState.value.data.invoked_saga.has_saga) || false,
     SagaCompleted: !!completedUpdate,
     FormattedCompletionTime: completionTime ? `${completionTime.toLocaleDateString()} ${completionTime.toLocaleTimeString()}` : "",
     SagaUpdates: parseSagaUpdates(sagaDiagramStore.sagaHistory),
@@ -194,7 +187,7 @@ const vm = computed<SagaViewModel>(() => {
     </div>
 
     <!-- Saga Audit Plugin Needed container -->
-    <div v-if="vm.ShowNoPluginActiveLeged" class="body" role="status" aria-label="saga-plugin-needed">
+    <div v-if="vm.ShowNoPluginActiveLegend" class="body" role="status" aria-label="saga-plugin-needed">
       <div class="saga-message">
         <div class="saga-message-container">
           <img class="saga-message-image" :src="NoSagaIcon" alt="" />
