@@ -18,7 +18,7 @@ onMounted(() => store.refreshConversation());
 </script>
 
 <template>
-  <a class="help-link" target="_blank" href="https://docs.particular.net/serviceinsight/sequence-diagram/#what-is-on-the-diagram"><i class="fa fa-info-circle" /> Sequence Diagram Help</a>
+  <a class="help-link" target="_blank" href="https://docs.particular.net/servicepulse/sequence-diagram"><i class="fa fa-info-circle" /> Sequence Diagram Help</a>
   <div class="outer" @scroll="(ev) => (endpointYOffset = (ev.target as Element).scrollTop)">
     <svg class="sequence-diagram" :style="{ width: `max(100%, ${isNaN(maxWidth) ? 0 : maxWidth}px)` }" :height="maxHeight + 20">
       <Timeline />
