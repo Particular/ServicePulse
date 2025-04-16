@@ -6,8 +6,12 @@ export function formatTypeName(type: string) {
 }
 
 export function formatDotNetTimespan(timespan: string) {
+  const time = useFormatTime(dotNetTimespanToMilliseconds(timespan));
+  return `${time.value} ${time.unit}`;
+}
+
+export function dotNetTimespanToMilliseconds(timespan: string) {
   //assuming if we have days in the timespan then something is very, very wrong
   const [hh, mm, ss] = timespan.split(":");
-  const time = useFormatTime(((parseInt(hh) * 60 + parseInt(mm)) * 60 + parseFloat(ss)) * 1000);
-  return `${time.value} ${time.unit}`;
+  return ((parseInt(hh) * 60 + parseInt(mm)) * 60 + parseFloat(ss)) * 1000;
 }

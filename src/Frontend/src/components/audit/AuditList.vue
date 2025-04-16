@@ -2,38 +2,43 @@
 import routeLinks from "@/router/routeLinks";
 import { useAuditStore } from "@/stores/AuditStore";
 import { storeToRefs } from "pinia";
-import { MessageStatus } from "@/resources/Message";
+import Message, { MessageStatus } from "@/resources/Message";
 import moment from "moment";
 import { useRoute } from "vue-router";
 import FilterInput from "@/components/FilterInput.vue";
 import ResultsCount from "@/components/ResultsCount.vue";
 import DropDown from "@/components/DropDown.vue";
-import { computed } from "vue";
-import { formatDotNetTimespan, formatTypeName } from "@/composables/formatUtils.ts";
+import { computed, ref, watch } from "vue";
+import { dotNetTimespanToMilliseconds, formatDotNetTimespan, formatTypeName } from "@/composables/formatUtils.ts";
+import EndpointSelector from "@/components/audit/EndpointSelector.vue";
 
 const store = useAuditStore();
 const { messages, sortBy, totalCount, messageFilterString, selectedEndpointName, endpoints, itemsPerPage } = storeToRefs(store);
 const route = useRoute();
 
 const endpointNames = computed(() => {
-  return endpoints.value.map((endpoint) => ({
-    text: endpoint.name,
-    value: endpoint.name,
-  }));
+  return [...new Set(endpoints.value.map((endpoint) => endpoint.name))];
 });
-const selectedEndpointItem = computed(() => ({ text: selectedEndpointName.value, value: selectedEndpointName.value }));
+
 const sortByItems = [
   { text: "Latest sent", value: "time_sent,desc" },
   { text: "Oldest sent", value: "time_sent,asc" },
   { text: "Fastest processing", value: "processing_time,asc" },
   { text: "Slowest processing", value: "processing_time,desc" },
 ];
+const numberOfItemsPerPage = ["50", "100", "250", "500"];
 const selectedSortByItem = computed(() => sortByItems.find((item) => item.value === `${sortBy.value.property},${sortBy.value.isAscending ? "asc" : "desc"}`));
+const selectedItemsPerPage = ref(itemsPerPage.value.toString());
+
+watch(selectedItemsPerPage, (newValue) => {
+  itemsPerPage.value = Number(newValue);
+});
 
 function setSortBy(item: { text: string; value: string }) {
   const strings = item.value.split(",");
   sortBy.value = { isAscending: strings[1] === "asc", property: strings[0] };
 }
+
 function statusToName(messageStatus: MessageStatus) {
   switch (messageStatus) {
     case MessageStatus.Successful:
@@ -67,6 +72,26 @@ function statusToIcon(messageStatus: MessageStatus) {
       return "fa retry-issued";
   }
 }
+
+function hasWarning(message: Message) {
+  if (message.status === MessageStatus.ResolvedSuccessfully) {
+    return true;
+  }
+
+  if (dotNetTimespanToMilliseconds(message.critical_time) < 0) {
+    return true;
+  }
+
+  if (dotNetTimespanToMilliseconds(message.processing_time) < 0) {
+    return true;
+  }
+
+  if (dotNetTimespanToMilliseconds(message.delivery_time) < 0) {
+    return true;
+  }
+
+  return false;
+}
 </script>
 
 <template>
@@ -77,33 +102,10 @@ function statusToIcon(messageStatus: MessageStatus) {
           <FilterInput v-model="messageFilterString" placeholder="Search messages..." aria-label="Search messages" />
         </div>
         <div>
-          <DropDown
-            label="Filter by endpoint"
-            :callback="
-              (item) => {
-                selectedEndpointName = item.value;
-              }
-            "
-            :select-item="selectedEndpointItem"
-            :items="endpointNames"
-          />
+          <EndpointSelector :items="numberOfItemsPerPage" instructions="Select how many result to display" v-model="selectedItemsPerPage" item-name="result" label="Show" default-empty-text="Any" :show-clear="false" :show-filter="false" />
         </div>
         <div>
-          <DropDown
-            label="Show"
-            :callback="
-              (item) => {
-                itemsPerPage = parseInt(item.value, 10);
-              }
-            "
-            :select-item="{ text: itemsPerPage.toString(), value: itemsPerPage.toString() }"
-            :items="[
-              { text: '50', value: '50' },
-              { text: '100', value: '100' },
-              { text: '250', value: '250' },
-              { text: '500', value: '500' },
-            ]"
-          />
+          <EndpointSelector :items="endpointNames" instructions="Select an endpoint" v-model="selectedEndpointName" item-name="endpoint" label="Endpoint" default-empty-text="Any" :show-clear="true" :show-filter="true" />
         </div>
         <div>
           <DropDown label="Sort by" :callback="setSortBy" :select-item="selectedSortByItem" :items="sortByItems" />
@@ -114,13 +116,16 @@ function statusToIcon(messageStatus: MessageStatus) {
       <ResultsCount :displayed="messages.length" :total="totalCount" />
     </div>
     <div class="row results-table">
-      <section class="section-table" role="table" aria-label="endpoint-instances">
+      <section role="table" aria-label="endpoint-instances">
         <!--Table rows-->
         <!--NOTE: currently the DataView pages on the client only: we need to make it server data aware (i.e. the total will be the count from the server, not the length of the data we have locally)-->
-        <div class="messages" role="rowgroup" aria-label="messages">
+        <div role="rowgroup" aria-label="messages">
           <div role="row" :aria-label="message.message_id" class="row grid-row" v-for="message in messages" :key="message.id">
             <div role="cell" aria-label="status" class="status" :title="statusToName(message.status)">
-              <div class="status-icon" :class="statusToIcon(message.status)"></div>
+              <div class="status-container">
+                <div class="status-icon" :class="statusToIcon(message.status)"></div>
+                <div v-if="hasWarning(message)" class="warning"></div>
+              </div>
             </div>
             <div role="cell" aria-label="message-id" class="col-3 message-id">
               <div class="box-header">
@@ -169,78 +174,58 @@ function statusToIcon(messageStatus: MessageStatus) {
   gap: 1.1rem;
 }
 
-.section-table {
-  overflow: auto;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.messages {
-  flex: 1;
-  overflow: auto;
-}
-
 .status {
   width: 5em;
   text-align: center;
 }
 
-.status-icon {
+.status-container {
   color: white;
-  border-radius: 0.75em;
-  width: 1.2em;
-  height: 1.2em;
+  width: 20px;
+  height: 20px;
+  position: relative;
 }
 
-.status-icon::before {
-  vertical-align: middle;
-  font-size: 0.85em;
+.status-icon {
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 20px;
+  width: 20px;
+}
+
+.warning {
+  background-image: url("@/assets/warning.svg");
+  background-position: bottom;
+  background-repeat: no-repeat;
+  height: 13px;
+  width: 13px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
 .successful {
-  background: #6cc63f;
-}
-.successful::before {
-  content: "\f00c";
+  background-image: url("@/assets/status_successful.svg");
 }
 
 .resolved-successfully {
-  background: #3f881b;
-}
-.resolved-successfully::before {
-  content: "\f01e";
+  background-image: url("@/assets/status_resolved.svg");
 }
 
 .failed {
-  background: #c63f3f;
-}
-.failed::before {
-  content: "\f00d";
+  background-image: url("@/assets/status_failed.svg");
 }
 
 .archived {
-  background: #000000;
-}
-.archived::before {
-  content: "\f187";
-  font-size: 0.85em;
+  background-image: url("@/assets/status_archived.svg");
 }
 
 .repeated-failure {
-  background: #c63f3f;
-}
-.repeated-failure::before {
-  content: "\f00d\f00d";
-  font-size: 0.6em;
+  background-image: url("@/assets/status_repeated_failed.svg");
 }
 
 .retry-issued {
-  background: #cccccc;
-  color: #000000;
-}
-.retry-issued::before {
-  content: "\f01e";
+  background-image: url("@/assets/status_retry_issued.svg");
 }
 
 .grid-row {
