@@ -3,7 +3,7 @@ import FilterInput from "@/components/FilterInput.vue";
 import { ref, watch } from "vue";
 
 const selected = defineModel<string>({ required: true });
-const props = defineProps<{ items: string[]; instructions: string; itemName: string; label: string; defaultEmptyText: string; showClear: boolean; showFilter: boolean }>();
+const props = defineProps<{ items: string[]; instructions: string; itemName: string; defaultEmptyText: string; showClear: boolean; showFilter: boolean }>();
 const filter = ref("");
 const filteredItems = ref(props.items);
 
@@ -26,8 +26,7 @@ function onclick(item: string, isSelected: boolean) {
 
 <template>
   <div class="dropdown">
-    <label v-if="label" class="control-label" style="float: inherit">{{ label }}:</label>
-    <button type="button" :aria-label="label ?? 'open dropdown menu'" class="btn btn-dropdown dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" aria-label="open dropdown menu" class="btn btn-dropdown dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       {{ selected ? selected : defaultEmptyText }}
     </button>
     <div class="dropdown-menu wrapper">

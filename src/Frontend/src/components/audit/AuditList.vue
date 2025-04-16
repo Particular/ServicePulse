@@ -5,41 +5,14 @@ import { storeToRefs } from "pinia";
 import Message, { MessageStatus } from "@/resources/Message";
 import moment from "moment";
 import { useRoute } from "vue-router";
-import FilterInput from "@/components/FilterInput.vue";
 import ResultsCount from "@/components/ResultsCount.vue";
-import DropDown from "@/components/DropDown.vue";
-import { computed, ref, watch } from "vue";
 import { dotNetTimespanToMilliseconds, formatDotNetTimespan, formatTypeName } from "@/composables/formatUtils.ts";
-import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
 import "@vuepic/vue-datepicker/dist/main.css";
-import DatePickerRange from "@/components/audit/DatePickerRange.vue";
+import FiltersPanel from "@/components/audit/FiltersPanel.vue";
 
 const store = useAuditStore();
-const { messages, sortBy, totalCount, messageFilterString, selectedEndpointName, endpoints, itemsPerPage, dateRange } = storeToRefs(store);
+const { messages, totalCount } = storeToRefs(store);
 const route = useRoute();
-
-const endpointNames = computed(() => {
-  return [...new Set(endpoints.value.map((endpoint) => endpoint.name))];
-});
-
-const sortByItems = [
-  { text: "Latest sent", value: "time_sent,desc" },
-  { text: "Oldest sent", value: "time_sent,asc" },
-  { text: "Fastest processing", value: "processing_time,asc" },
-  { text: "Slowest processing", value: "processing_time,desc" },
-];
-const numberOfItemsPerPage = ["50", "100", "250", "500"];
-const selectedSortByItem = computed(() => sortByItems.find((item) => item.value === `${sortBy.value.property},${sortBy.value.isAscending ? "asc" : "desc"}`));
-const selectedItemsPerPage = ref(itemsPerPage.value.toString());
-
-watch(selectedItemsPerPage, (newValue) => {
-  itemsPerPage.value = Number(newValue);
-});
-
-function setSortBy(item: { text: string; value: string }) {
-  const strings = item.value.split(",");
-  sortBy.value = { isAscending: strings[1] === "asc", property: strings[0] };
-}
 
 function statusToName(messageStatus: MessageStatus) {
   switch (messageStatus) {
@@ -99,23 +72,7 @@ function hasWarning(message: Message) {
 <template>
   <div>
     <div class="row">
-      <div class="filters">
-        <div class="text-search-container">
-          <FilterInput v-model="messageFilterString" placeholder="Search messages..." aria-label="Search messages" />
-        </div>
-        <div>
-          <ListFilterSelector :items="numberOfItemsPerPage" instructions="Select how many result to display" v-model="selectedItemsPerPage" item-name="result" label="Show" default-empty-text="Any" :show-clear="false" :show-filter="false" />
-        </div>
-        <div>
-          <ListFilterSelector :items="endpointNames" instructions="Select an endpoint" v-model="selectedEndpointName" item-name="endpoint" label="Endpoint" default-empty-text="Any" :show-clear="true" :show-filter="true" />
-        </div>
-        <div>
-          <DatePickerRange v-model="dateRange" />
-        </div>
-        <div>
-          <DropDown label="Sort by" :callback="setSortBy" :select-item="selectedSortByItem" :items="sortByItems" />
-        </div>
-      </div>
+      <FiltersPanel />
     </div>
     <div class="row">
       <ResultsCount :displayed="messages.length" :total="totalCount" />
@@ -163,20 +120,6 @@ function hasWarning(message: Message) {
 .results-table {
   margin-top: 1rem;
   margin-bottom: 5rem;
-}
-
-.text-search-container {
-  width: 25rem;
-}
-
-.filters {
-  background-color: #f3f3f3;
-  margin-top: 0.3125rem;
-  border: #8c8c8c 1px solid;
-  border-radius: 3px;
-  padding: 0.3125rem;
-  display: flex;
-  gap: 1.1rem;
 }
 
 .status {

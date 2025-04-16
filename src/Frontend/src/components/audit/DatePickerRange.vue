@@ -17,24 +17,11 @@ watch(internalModel, () => {
 </script>
 
 <template>
-  <div class="date-picker-range">
-    <label>Dates:</label>
-    <VueDatePicker v-model="internalModel" :range="{ partialRange: false }" :enable-seconds="true" :max-date="new Date()">
-      <template #trigger>
-        <a class="triggerLink">{{ displayDataRange }}</a>
-      </template>
-    </VueDatePicker>
-  </div>
+  <VueDatePicker v-model="internalModel" :range="{ partialRange: false }" :enable-seconds="true" :max-date="new Date()">
+    <template #trigger>
+      <button type="button" class="btn btn-dropdown dropdown-toggle">
+        {{ displayDataRange }}
+      </button>
+    </template>
+  </VueDatePicker>
 </template>
-
-<style scoped>
-.triggerLink {
-  margin-left: 0.3em;
-  cursor: pointer;
-}
-.date-picker-range {
-  display: flex;
-  align-items: center;
-  margin-left: 1em;
-}
-</style>
