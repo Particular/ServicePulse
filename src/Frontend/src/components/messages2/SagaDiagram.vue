@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onUnmounted, watch } from "vue";
+import { computed, onUnmounted, watch, ref } from "vue";
 import routeLinks from "@/router/routeLinks";
 import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { useMessageStore } from "@/stores/MessageStore";
@@ -12,6 +12,12 @@ import SagaPluginNeeded from "./SagaDiagram/SagaPluginNeeded.vue";
 import SagaHeader from "./SagaDiagram/SagaHeader.vue";
 import SagaUpdateNode from "./SagaDiagram/SagaUpdateNode.vue";
 import SagaCompletedNode from "./SagaDiagram/SagaCompletedNode.vue";
+
+const showMessageData = ref(false);
+
+const toggleMessageData = () => {
+  showMessageData.value = !showMessageData.value;
+};
 
 const store = useMessageStore();
 const { state: messageState } = storeToRefs(store);
@@ -49,6 +55,7 @@ const vm = computed<SagaViewModel>(() => {
     SagaCompleted: !!completedUpdate,
     FormattedCompletionTime: completionTime ? `${completionTime.toLocaleDateString()} ${completionTime.toLocaleTimeString()}` : "",
     SagaUpdates: parseSagaUpdates(sagaDiagramStore.sagaHistory),
+    ShowMessageData: showMessageData.value,
   };
 });
 
@@ -60,7 +67,10 @@ import { typeToName } from "@/composables/typeHumanizer";
   <div class="saga-container">
     <!-- Toolbar header -->
     <div v-if="vm.HasSagaData" class="header">
-      <button class="saga-button" aria-label="message-not-involved-in-saga"><img class="saga-button-icon" :src="ToolbarEndpointIcon" alt="" />Show Message Data</button>
+      <button :class="['saga-button', { 'saga-button--active': vm.ShowMessageData }]" aria-label="show-message-data-button" @click="toggleMessageData">
+        <img class="saga-button-icon" :src="ToolbarEndpointIcon" alt="" />
+        {{ vm.ShowMessageData ? "Hide Message Data" : "Show Message Data" }}
+      </button>
     </div>
 
     <!-- No saga Data Available container -->
@@ -76,7 +86,7 @@ import { typeToName } from "@/composables/typeHumanizer";
         <SagaHeader :saga-title="vm.SagaTitle" :saga-guid="vm.SagaGuid" :message-id-url="vm.MessageIdUrl" />
 
         <!-- Iterate through each saga update -->
-        <SagaUpdateNode v-for="(update, index) in vm.SagaUpdates" :key="index" :update="update" />
+        <SagaUpdateNode v-for="(update, index) in vm.SagaUpdates" :key="index" :update="update" :show-message-data="vm.ShowMessageData" />
 
         <!-- Saga Completed section -->
         <SagaCompletedNode v-if="vm.SagaCompleted" :completion-time="vm.FormattedCompletionTime" />

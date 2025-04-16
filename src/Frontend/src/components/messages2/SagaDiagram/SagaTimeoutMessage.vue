@@ -7,6 +7,7 @@ import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";
 defineProps<{
   message: SagaTimeoutMessage;
   isLastMessage: boolean;
+  showMessageData?: boolean;
 }>();
 </script>
 
@@ -30,7 +31,7 @@ defineProps<{
         <h2 class="message-title" aria-label="timeout message type">{{ message.MessageFriendlyTypeName }}</h2>
         <div class="timestamp" aria-label="timeout message timestamp">{{ message.FormattedTimeSent }}</div>
       </div>
-      <div class="message-data message-data--active">
+      <div v-if="showMessageData" class="message-data message-data--active">
         <MessageDataBox />
       </div>
     </div>

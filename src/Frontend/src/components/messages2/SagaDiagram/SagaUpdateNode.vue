@@ -11,6 +11,7 @@ import SagaUpdatedIcon from "@/assets/SagaUpdatedIcon.svg";
 
 defineProps<{
   update: SagaUpdateViewModel;
+  showMessageData?: boolean;
 }>();
 </script>
 
@@ -38,7 +39,7 @@ defineProps<{
     <div class="row">
       <!-- Left side - Message Data box -->
       <div class="cell cell--side cell--left-border cell--aling-top">
-        <div class="message-data message-data--active">
+        <div v-if="showMessageData" class="message-data message-data--active">
           <!-- Generic message data box -->
           <MessageDataBox v-if="update.InitiatingMessageType" />
         </div>
@@ -72,7 +73,7 @@ defineProps<{
             <h2 class="message-title">{{ msg.MessageFriendlyTypeName }}</h2>
             <div class="timestamp">{{ msg.FormattedTimeSent }}</div>
           </div>
-          <div class="message-data message-data--active">
+          <div v-if="showMessageData" class="message-data message-data--active">
             <MessageDataBox />
           </div>
         </template>
@@ -80,7 +81,7 @@ defineProps<{
     </div>
 
     <!-- Display each outgoing timeout message in separate rows -->
-    <SagaTimeoutMessage v-for="(msg, msgIndex) in update.TimeoutMessages" :key="'timeout-' + msgIndex" :message="msg" :isLastMessage="msgIndex === update.TimeoutMessages.length - 1" />
+    <SagaTimeoutMessage v-for="(msg, msgIndex) in update.TimeoutMessages" :key="'timeout-' + msgIndex" :message="msg" :isLastMessage="msgIndex === update.TimeoutMessages.length - 1" :showMessageData="showMessageData" />
   </div>
 </template>
 

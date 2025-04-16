@@ -44,6 +44,7 @@ export interface SagaViewModel {
   SagaCompleted: boolean;
   FormattedCompletionTime: string;
   SagaUpdates: SagaUpdateViewModel[];
+  ShowMessageData: boolean;
 }
 
 export function parseSagaUpdates(sagaHistory: SagaHistory | null): SagaUpdateViewModel[] {
