@@ -10,7 +10,6 @@ import { SagaHistory } from "@/resources/SagaHistory";
 import CommandIcon from "@/assets/command.svg";
 import EventIcon from "@/assets/event.svg";
 import TimeoutIcon from "@/assets/TimeoutIcon.svg";
-import SagaIcon from "@/assets/SagaIcon.svg";
 import SagaInitiatedIcon from "@/assets/SagaInitiatedIcon.svg";
 import SagaUpdatedIcon from "@/assets/SagaUpdatedIcon.svg";
 import SagaCompletedIcon from "@/assets/SagaCompletedIcon.svg";
@@ -124,7 +123,7 @@ function parseSagaUpdates(sagaHistory: SagaHistory | null): SagaUpdateViewModel[
         FinishTime: finishTime,
         FormattedStartTime: `${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`,
         Status: update.status,
-        StatusDisplay: update.status === "new" ? "Saga Initiated" : update.status === "completed" ? "Saga Completed" : "Saga Updated",
+        StatusDisplay: update.status === "new" ? "Saga Initiated" : "Saga Updated",
         InitiatingMessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
         FormattedInitiatingMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
         HasTimeout: hasTimeout,
@@ -171,8 +170,7 @@ const vm = computed<SagaViewModel>(() => {
 
 <template>
   <div class="saga-container">
-    <div class="header">
-      <div class="saga-top-logo"><img class="saga-top-logo-image" :src="SagaIcon" alt="" />Saga</div>
+    <div v-if="vm.HasSagaData" class="header">
       <button class="saga-button" aria-label="message-not-involved-in-saga"><img class="saga-button-icon" :src="ToolbarEndpointIcon" alt="" />Show Message Data</button>
     </div>
 
@@ -254,14 +252,14 @@ const vm = computed<SagaViewModel>(() => {
 
             <!-- Center - Saga properties -->
             <div class="cell cell--center cell--center--border">
-              <div class="cell-inner cell-inner-line">
+              <div :class="{ 'cell-inner': true, 'cell-inner-line': update.HasTimeout, 'cell-inner-center': !update.HasTimeout }">
                 <div class="saga-properties">
                   <a class="saga-properties-link" href="">All Properties</a> /
                   <a class="saga-properties-link saga-properties-link--active" href="">Updated Properties</a>
                 </div>
 
                 <!-- Display saga properties if available -->
-                <ul v-if="update.Status !== 'completed'" class="saga-properties-list">
+                <ul class="saga-properties-list">
                   <li class="saga-properties-list-item">
                     <span class="saga-properties-list-text" title="Property (new)">Property (new)</span>
                     <span class="saga-properties-list-text">=</span>
@@ -303,7 +301,7 @@ const vm = computed<SagaViewModel>(() => {
               <div class="cell cell--side"></div>
               <div class="cell cell--center cell--top-border">
                 <div class="cell-inner cell-inner-top"></div>
-                <div class="cell-inner cell-inner-line"></div>
+                <div v-if="msgIndex < update.TimeoutMessages.length - 1" class="cell-inner cell-inner-line"></div>
               </div>
               <div class="cell cell--side">
                 <div class="cell-inner cell-inner-right"></div>
