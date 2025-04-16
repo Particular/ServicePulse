@@ -10,10 +10,12 @@ import ResultsCount from "@/components/ResultsCount.vue";
 import DropDown from "@/components/DropDown.vue";
 import { computed, ref, watch } from "vue";
 import { dotNetTimespanToMilliseconds, formatDotNetTimespan, formatTypeName } from "@/composables/formatUtils.ts";
-import EndpointSelector from "@/components/audit/EndpointSelector.vue";
+import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
+import "@vuepic/vue-datepicker/dist/main.css";
+import DatePickerRange from "@/components/audit/DatePickerRange.vue";
 
 const store = useAuditStore();
-const { messages, sortBy, totalCount, messageFilterString, selectedEndpointName, endpoints, itemsPerPage } = storeToRefs(store);
+const { messages, sortBy, totalCount, messageFilterString, selectedEndpointName, endpoints, itemsPerPage, dateRange } = storeToRefs(store);
 const route = useRoute();
 
 const endpointNames = computed(() => {
@@ -102,10 +104,13 @@ function hasWarning(message: Message) {
           <FilterInput v-model="messageFilterString" placeholder="Search messages..." aria-label="Search messages" />
         </div>
         <div>
-          <EndpointSelector :items="numberOfItemsPerPage" instructions="Select how many result to display" v-model="selectedItemsPerPage" item-name="result" label="Show" default-empty-text="Any" :show-clear="false" :show-filter="false" />
+          <ListFilterSelector :items="numberOfItemsPerPage" instructions="Select how many result to display" v-model="selectedItemsPerPage" item-name="result" label="Show" default-empty-text="Any" :show-clear="false" :show-filter="false" />
         </div>
         <div>
-          <EndpointSelector :items="endpointNames" instructions="Select an endpoint" v-model="selectedEndpointName" item-name="endpoint" label="Endpoint" default-empty-text="Any" :show-clear="true" :show-filter="true" />
+          <ListFilterSelector :items="endpointNames" instructions="Select an endpoint" v-model="selectedEndpointName" item-name="endpoint" label="Endpoint" default-empty-text="Any" :show-clear="true" :show-filter="true" />
+        </div>
+        <div>
+          <DatePickerRange v-model="dateRange" />
         </div>
         <div>
           <DropDown label="Sort by" :callback="setSortBy" :select-item="selectedSortByItem" :items="sortByItems" />

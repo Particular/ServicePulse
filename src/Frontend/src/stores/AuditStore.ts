@@ -12,6 +12,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
     isAscending: false,
   });
 
+  const dateRange = ref<Date[]>([]);
   const messageFilterString = ref("");
   const itemsPerPage = ref(100);
   const totalCount = ref(0);
@@ -36,8 +37,16 @@ export const useAuditStore = defineStore("AuditStore", () => {
   const dataRetriever = useAutoRefresh(
     async () => {
       try {
+        let from = "",
+          to = "";
+        if (dateRange.value.length === 2) {
+          console.log(dateRange.value);
+          from = dateRange.value[0].toISOString();
+          to = dateRange.value[1].toISOString();
+        }
+
         const [response, data] = await useTypedFetchFromServiceControl<Message[]>(
-          `messages2/?endpoint_name=${selectedEndpointName.value}&q=${messageFilterString.value}&page_size=${itemsPerPage.value}&sort=${sortByInstances.value.property}&direction=${sortByInstances.value.isAscending ? "asc" : "desc"}`
+          `messages2/?endpoint_name=${selectedEndpointName.value}&from=${from}&to=${to}&q=${messageFilterString.value}&page_size=${itemsPerPage.value}&sort=${sortByInstances.value.property}&direction=${sortByInstances.value.isAscending ? "asc" : "desc"}`
         );
         totalCount.value = parseInt(response.headers.get("total-count") ?? "0");
         messages.value = data;
@@ -51,7 +60,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
   );
 
   const refresh = dataRetriever.executeAndResetTimer;
-  watch([itemsPerPage, sortByInstances, messageFilterString, selectedEndpointName], () => refresh());
+  watch([itemsPerPage, sortByInstances, messageFilterString, selectedEndpointName, dateRange], () => refresh());
 
   return {
     refresh,
@@ -62,6 +71,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
     itemsPerPage,
     totalCount,
     endpoints,
+    dateRange,
   };
 });
 

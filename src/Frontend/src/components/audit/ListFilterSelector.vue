@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import FilterInput from "@/components/FilterInput.vue";
 import { ref, watch } from "vue";
+
 const selected = defineModel<string>({ required: true });
 const props = defineProps<{ items: string[]; instructions: string; itemName: string; label: string; defaultEmptyText: string; showClear: boolean; showFilter: boolean }>();
 const filter = ref("");
