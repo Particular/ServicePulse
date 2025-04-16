@@ -6,7 +6,9 @@ import { useMessageStore } from "@/stores/MessageStore";
 import { storeToRefs } from "pinia";
 import ToolbarEndpointIcon from "@/assets/Shell_ToolbarEndpoint.svg";
 import { SagaViewModel, parseSagaUpdates } from "./SagaDiagram/useSagaDiagramParser";
+import { typeToName } from "@/composables/typeHumanizer";
 
+//Subcomponents
 import NoSagaData from "./SagaDiagram/NoSagaData.vue";
 import SagaPluginNeeded from "./SagaDiagram/SagaPluginNeeded.vue";
 import SagaHeader from "./SagaDiagram/SagaHeader.vue";
@@ -45,22 +47,30 @@ const vm = computed<SagaViewModel>(() => {
   const completedUpdate = sagaDiagramStore.sagaHistory?.changes.find((update) => update.status === "completed");
   const completionTime = completedUpdate ? new Date(completedUpdate.finish_time) : null;
 
+  const { data } = messageState.value;
+  const { invoked_saga: saga } = data;
+  const sagaHistory = sagaDiagramStore.sagaHistory;
+
   return {
-    SagaTitle: typeToName(messageState.value.data.invoked_saga.saga_type) || "Unknown saga",
-    SagaGuid: messageState.value.data.invoked_saga.saga_id || "Missing guid",
-    MessageIdUrl: messageState.value && routeLinks.messages.successMessage.link(messageState.value.data.message_id || "", messageState.value.data.id || ""),
-    ParticipatedInSaga: messageState.value.data.invoked_saga.has_saga || false,
-    HasSagaData: !!sagaDiagramStore.sagaHistory,
-    ShowNoPluginActiveLegend: (!sagaDiagramStore.sagaHistory && messageState.value.data.invoked_saga.has_saga) || false,
+    // Saga metadata
+    SagaTitle: typeToName(saga.saga_type) || "Unknown saga",
+    SagaGuid: saga.saga_id || "Missing guid",
+
+    // Navigation
+    MessageIdUrl: routeLinks.messages.successMessage.link(data.message_id || "", data.id || ""),
+
+    // Status flags
+    ParticipatedInSaga: saga.has_saga || false,
+    HasSagaData: !!sagaHistory,
+    ShowNoPluginActiveLegend: (!sagaHistory && saga.has_saga) || false,
     SagaCompleted: !!completedUpdate,
+
+    // Display data
     FormattedCompletionTime: completionTime ? `${completionTime.toLocaleDateString()} ${completionTime.toLocaleTimeString()}` : "",
-    SagaUpdates: parseSagaUpdates(sagaDiagramStore.sagaHistory),
+    SagaUpdates: parseSagaUpdates(sagaHistory),
     ShowMessageData: showMessageData.value,
   };
 });
-
-// Import typeToName for saga title
-import { typeToName } from "@/composables/typeHumanizer";
 </script>
 
 <template>
