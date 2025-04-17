@@ -1,6 +1,6 @@
 import { useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import useAutoRefresh from "@/composables/autoRefresh";
 import type { SortInfo } from "@/components/SortInfo";
 import Message from "@/resources/Message";
@@ -34,35 +34,24 @@ export const useAuditStore = defineStore("AuditStore", () => {
     true
   );
 
-  const dataRetriever = useAutoRefresh(
-    async () => {
-      try {
-        let from = "",
-          to = "";
-        if (dateRange.value.length === 2) {
-          from = dateRange.value[0].toISOString();
-          to = dateRange.value[1].toISOString();
-        }
-        console.log("retrieveing messages2");
-        const [response, data] = await useTypedFetchFromServiceControl<Message[]>(
-          `messages2/?endpoint_name=${selectedEndpointName.value}&from=${from}&to=${to}&q=${messageFilterString.value}&page_size=${itemsPerPage.value}&sort=${sortByInstances.value.property}&direction=${sortByInstances.value.isAscending ? "asc" : "desc"}`
-        );
-        totalCount.value = parseInt(response.headers.get("total-count") ?? "0");
-        messages.value = data;
-      } catch (e) {
-        messages.value = [];
-        throw e;
+  async function refresh() {
+    try {
+      let from = "",
+        to = "";
+      if (dateRange.value.length === 2) {
+        from = dateRange.value[0].toISOString();
+        to = dateRange.value[1].toISOString();
       }
-    },
-    null,
-    true
-  );
-
-  const refresh = dataRetriever.executeAndResetTimer;
-  watch([itemsPerPage, sortByInstances, messageFilterString, selectedEndpointName, dateRange], async () => {
-    console.log("watch triggered");
-    await refresh();
-  });
+      const [response, data] = await useTypedFetchFromServiceControl<Message[]>(
+        `messages2/?endpoint_name=${selectedEndpointName.value}&from=${from}&to=${to}&q=${messageFilterString.value}&page_size=${itemsPerPage.value}&sort=${sortByInstances.value.property}&direction=${sortByInstances.value.isAscending ? "asc" : "desc"}`
+      );
+      totalCount.value = parseInt(response.headers.get("total-count") ?? "0");
+      messages.value = data;
+    } catch (e) {
+      messages.value = [];
+      throw e;
+    }
+  }
 
   return {
     refresh,

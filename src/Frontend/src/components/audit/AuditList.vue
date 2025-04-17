@@ -9,9 +9,10 @@ import ResultsCount from "@/components/ResultsCount.vue";
 import { dotNetTimespanToMilliseconds, formatDotNetTimespan } from "@/composables/formatUtils.ts";
 import "@vuepic/vue-datepicker/dist/main.css";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
+import { onBeforeMount, watch } from "vue";
 
 const store = useAuditStore();
-const { messages, totalCount } = storeToRefs(store);
+const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange } = storeToRefs(store);
 const route = useRoute();
 const router = useRouter();
 
@@ -81,6 +82,54 @@ function navigateToMessage(message: Message) {
     router.push({ path: routeLinks.messages.failedMessage.link(message.id), query: { ...query, ...{ back: route.path } } });
   }
 }
+
+onBeforeMount(async () => {
+  const query = router.currentRoute.value.query;
+
+  watchHandle.pause();
+
+  if (query.filter) {
+    messageFilterString.value = query.filter as string;
+  }
+  if (query.sortBy && query.sortDir) {
+    sortBy.value = { isAscending: query.sortDir === "asc", property: query.sortBy as string };
+  }
+  if (query.pageSize) {
+    itemsPerPage.value = Number(query.pageSize as string);
+  }
+  if (query.from && query.to) {
+    dateRange.value = [new Date(query.from as string), new Date(query.to as string)];
+  }
+  if (query.endpoint) {
+    selectedEndpointName.value = query.endpoint as string;
+  }
+
+  watchHandle.resume();
+
+  await store.refresh();
+});
+
+const watchHandle = watch([itemsPerPage, sortBy, messageFilterString, selectedEndpointName, dateRange], async () => {
+  let from = "",
+    to = "";
+  if (dateRange.value.length === 2) {
+    from = dateRange.value[0].toISOString();
+    to = dateRange.value[1].toISOString();
+  }
+  await router.push({
+    query: {
+      sortBy: sortBy.value.property,
+      sortDir: sortBy.value.isAscending ? "asc" : "desc",
+      filter: messageFilterString.value,
+      endpoint: selectedEndpointName.value,
+      from,
+      to,
+      pageSize: itemsPerPage.value,
+    },
+  });
+
+  await store.refresh();
+});
 </script>
 
 <template>
