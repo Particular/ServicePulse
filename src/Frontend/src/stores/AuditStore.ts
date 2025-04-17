@@ -1,7 +1,6 @@
 import { useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref } from "vue";
-import useAutoRefresh from "@/composables/autoRefresh";
 import type { SortInfo } from "@/components/SortInfo";
 import Message from "@/resources/Message";
 import { EndpointsView } from "@/resources/EndpointView.ts";
@@ -20,19 +19,15 @@ export const useAuditStore = defineStore("AuditStore", () => {
   const selectedEndpointName = ref<string>("");
   const endpoints = ref<EndpointsView[]>([]);
 
-  useAutoRefresh(
-    async () => {
-      try {
-        const [, data] = await useTypedFetchFromServiceControl<EndpointsView[]>(`endpoints`);
-        endpoints.value = data;
-      } catch (e) {
-        endpoints.value = [];
-        throw e;
-      }
-    },
-    30000,
-    true
-  );
+  async function loadEndpoints() {
+    try {
+      const [, data] = await useTypedFetchFromServiceControl<EndpointsView[]>(`endpoints`);
+      endpoints.value = data;
+    } catch (e) {
+      endpoints.value = [];
+      throw e;
+    }
+  }
 
   async function refresh() {
     try {
@@ -55,6 +50,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
 
   return {
     refresh,
+    loadEndpoints,
     sortBy: sortByInstances,
     messages,
     messageFilterString,

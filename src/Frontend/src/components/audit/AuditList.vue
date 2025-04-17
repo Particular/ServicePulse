@@ -108,7 +108,7 @@ onBeforeMount(async () => {
 
   watchHandle.resume();
 
-  await store.refresh();
+  await Promise.all([store.refresh(), store.loadEndpoints()]);
 
   firstLoad = false;
 });
