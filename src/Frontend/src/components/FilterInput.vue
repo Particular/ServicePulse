@@ -10,6 +10,10 @@ const debounceUpdateModel = debounce((value: string) => {
   model.value = value;
 }, 600);
 
+watch(model, (newValue) => {
+  localInput.value = newValue;
+});
+
 watch(localInput, (newValue) => {
   debounceUpdateModel(newValue);
 });

@@ -18,6 +18,10 @@ watch(internalModel, () => {
   }
 });
 
+watch(model, () => {
+  internalModel.value = model.value;
+});
+
 function clearCurrentDate() {
   internalModel.value = [];
   datePicker.value?.closeMenu();

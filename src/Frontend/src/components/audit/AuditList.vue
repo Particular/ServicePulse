@@ -83,37 +83,60 @@ function navigateToMessage(message: Message) {
   }
 }
 
-let firstLoad = true;
-
-onBeforeMount(async () => {
+function setQuery() {
   const query = router.currentRoute.value.query;
 
   watchHandle.pause();
 
   if (query.filter) {
     messageFilterString.value = query.filter as string;
+  } else {
+    messageFilterString.value = "";
   }
   if (query.sortBy && query.sortDir) {
     sortBy.value = { isAscending: query.sortDir === "asc", property: query.sortBy as string };
+  } else {
+    sortBy.value = { isAscending: false, property: "time_sent" };
   }
   if (query.pageSize) {
-    itemsPerPage.value = Number(query.pageSize as string);
+    itemsPerPage.value = parseInt(query.pageSize as string, 10);
+  } else {
+    itemsPerPage.value = 100;
   }
   if (query.from && query.to) {
     dateRange.value = [new Date(query.from as string), new Date(query.to as string)];
+  } else {
+    dateRange.value = [];
   }
   if (query.endpoint) {
     selectedEndpointName.value = query.endpoint as string;
+  } else {
+    selectedEndpointName.value = "";
   }
 
   watchHandle.resume();
+}
+
+let firstLoad = true;
+
+onBeforeMount(async () => {
+  setQuery();
 
   await Promise.all([store.refresh(), store.loadEndpoints()]);
 
   firstLoad = false;
 });
 
-const watchHandle = watch([itemsPerPage, sortBy, messageFilterString, selectedEndpointName, dateRange], async () => {
+watch(
+  () => router.currentRoute.value.query,
+  async () => {
+    setQuery();
+    await store.refresh();
+  },
+  { deep: true }
+);
+
+const watchHandle = watch([() => route.query, itemsPerPage, sortBy, messageFilterString, selectedEndpointName, dateRange], async () => {
   if (firstLoad) {
     return;
   }
@@ -124,6 +147,7 @@ const watchHandle = watch([itemsPerPage, sortBy, messageFilterString, selectedEn
     from = dateRange.value[0].toISOString();
     to = dateRange.value[1].toISOString();
   }
+
   await router.push({
     query: {
       sortBy: sortBy.value.property,

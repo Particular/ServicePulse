@@ -32,8 +32,16 @@ function findKeyByValue(searchValue: string) {
   return "";
 }
 
+watch(itemsPerPage, (newValue) => {
+  selectedItemsPerPage.value = newValue.toString();
+});
+
+watch(sortBy, (newValue) => {
+  selectedSortByItem.value = findKeyByValue(`${newValue.property},${newValue.isAscending ? "asc" : "desc"}`);
+});
+
 watch(selectedItemsPerPage, (newValue) => {
-  itemsPerPage.value = Number(newValue);
+  itemsPerPage.value = parseInt(newValue, 10);
 });
 
 watch(selectedSortByItem, (newValue) => {
