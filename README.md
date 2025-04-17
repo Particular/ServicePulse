@@ -131,7 +131,7 @@ Build and run the `ServicePulse.Host` project in the IDE.
 ServicePulse is supported on the following desktop browser versions:
 
 - Chrome [latest major version](https://chromereleases.googleblog.com/)
-- Edge with EdgeHTML v17+
+- Edge [latest stable version](https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnote-stable-channel)
 - Firefox ESR [current version](https://www.mozilla.org/en-US/firefox/enterprise/)
 - Safari [latest major version](https://developer.apple.com/safari/)
 
