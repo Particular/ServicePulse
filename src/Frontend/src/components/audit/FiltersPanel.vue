@@ -3,8 +3,9 @@ import FilterInput from "@/components/FilterInput.vue";
 import { storeToRefs } from "pinia";
 import { useAuditStore } from "@/stores/AuditStore.ts";
 import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
-import { computed, ref, watch } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import DatePickerRange from "@/components/audit/DatePickerRange.vue";
+import { useRouter } from "vue-router";
 
 const store = useAuditStore();
 const { sortBy, messageFilterString, selectedEndpointName, endpoints, itemsPerPage, dateRange } = storeToRefs(store);
@@ -19,6 +20,9 @@ const sortByItemsMap = new Map([
 ]);
 const numberOfItemsPerPage = ["50", "100", "250", "500"];
 const sortByItems = computed(() => [...sortByItemsMap.keys()]);
+const selectedSortByItem = ref(findKeyByValue(`${sortBy.value.property},${sortBy.value.isAscending ? "asc" : "desc"}`));
+const selectedItemsPerPage = ref(itemsPerPage.value.toString());
+const router = useRouter();
 
 function findKeyByValue(searchValue: string) {
   for (const [key, value] of sortByItemsMap.entries()) {
@@ -29,14 +33,44 @@ function findKeyByValue(searchValue: string) {
   return "";
 }
 
-const r = `${sortBy.value.property},${sortBy.value.isAscending ? "asc" : "desc"}`;
+onBeforeMount(() => {
+  const query = router.currentRoute.value.query;
 
-const selectedSortByItem = ref(findKeyByValue(r)); //computed(() => sortByItemsMap.get(`${sortBy.value.property},${sortBy.value.isAscending ? "asc" : "desc"}`) || "time_sent,desc");
-const selectedItemsPerPage = ref(itemsPerPage.value.toString());
+  watchHandle.pause();
+
+  if (query.filter) {
+    messageFilterString.value = query.filter as string;
+  }
+  if (query.sortBy && query.sortDir) {
+    sortBy.value = { isAscending: query.sortDir === "asc", property: query.sortBy as string };
+  }
+  if (query.pageSize) {
+    itemsPerPage.value = Number(query.pageSize as string);
+  }
+  if (query.from && query.to) {
+    dateRange.value = [new Date(query.from as string), new Date(query.to as string)];
+  }
+  if (query.endpoint) {
+    selectedEndpointName.value = query.endpoint as string;
+  }
+
+  watchHandle.resume();
+});
+
+const watchHandle = watch([sortBy, messageFilterString, selectedEndpointName, dateRange, itemsPerPage], () => {
+  let from = "",
+    to = "";
+  if (dateRange.value.length === 2) {
+    from = dateRange.value[0].toISOString();
+    to = dateRange.value[1].toISOString();
+  }
+  router.push({ query: { sortBy: sortBy.value.property, sortDir: sortBy.value.isAscending ? "asc" : "desc", filter: messageFilterString.value, endpoint: selectedEndpointName.value, from, to, pageSize: itemsPerPage.value } });
+});
 
 watch(selectedItemsPerPage, (newValue) => {
   itemsPerPage.value = Number(newValue);
 });
+
 watch(selectedSortByItem, (newValue) => {
   const item = sortByItemsMap.get(newValue);
   if (item) {

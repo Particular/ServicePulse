@@ -27,7 +27,7 @@ function onclick(item: string, isSelected: boolean) {
 <template>
   <div class="dropdown">
     <button type="button" aria-label="open dropdown menu" class="btn btn-dropdown dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      {{ selected ? selected : defaultEmptyText }}
+      <span class="wrap-text">{{ selected ? selected : defaultEmptyText }}</span>
     </button>
     <div class="dropdown-menu wrapper">
       <div class="instructions">{{ instructions }}</div>
@@ -54,6 +54,10 @@ function onclick(item: string, isSelected: boolean) {
 </template>
 
 <style scoped>
+.wrap-text {
+  max-width: 250px;
+  word-wrap: break-word;
+}
 .wrapper {
   padding: 0.5em;
   min-width: 200px;
@@ -64,6 +68,7 @@ function onclick(item: string, isSelected: boolean) {
 }
 .items-container {
   max-height: 300px;
+  max-width: 400px;
   overflow-y: auto;
 }
 .item {
@@ -72,10 +77,14 @@ function onclick(item: string, isSelected: boolean) {
   font-weight: 400;
   cursor: pointer;
   color: #262626;
+  word-wrap: break-word;
   text-decoration: none;
+  width: 100%;
 }
 .item-container {
   padding: 0.3em 0;
+  display: flex;
+  place-items: center;
 }
 
 .item-container:hover {
@@ -92,6 +101,7 @@ function onclick(item: string, isSelected: boolean) {
   font-weight: 400;
   cursor: pointer;
   text-decoration: none;
+  margin-left: 6px;
 }
 
 .selected {
@@ -99,7 +109,7 @@ function onclick(item: string, isSelected: boolean) {
 }
 
 .fa-cross {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 </style>

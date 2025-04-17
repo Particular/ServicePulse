@@ -40,11 +40,10 @@ export const useAuditStore = defineStore("AuditStore", () => {
         let from = "",
           to = "";
         if (dateRange.value.length === 2) {
-          console.log(dateRange.value);
           from = dateRange.value[0].toISOString();
           to = dateRange.value[1].toISOString();
         }
-
+        console.log("retrieveing messages2");
         const [response, data] = await useTypedFetchFromServiceControl<Message[]>(
           `messages2/?endpoint_name=${selectedEndpointName.value}&from=${from}&to=${to}&q=${messageFilterString.value}&page_size=${itemsPerPage.value}&sort=${sortByInstances.value.property}&direction=${sortByInstances.value.isAscending ? "asc" : "desc"}`
         );
@@ -60,7 +59,10 @@ export const useAuditStore = defineStore("AuditStore", () => {
   );
 
   const refresh = dataRetriever.executeAndResetTimer;
-  watch([itemsPerPage, sortByInstances, messageFilterString, selectedEndpointName, dateRange], () => refresh());
+  watch([itemsPerPage, sortByInstances, messageFilterString, selectedEndpointName, dateRange], async () => {
+    console.log("watch triggered");
+    await refresh();
+  });
 
   return {
     refresh,

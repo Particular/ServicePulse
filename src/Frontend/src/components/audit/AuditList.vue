@@ -4,15 +4,16 @@ import { useAuditStore } from "@/stores/AuditStore";
 import { storeToRefs } from "pinia";
 import Message, { MessageStatus } from "@/resources/Message";
 import moment from "moment";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import ResultsCount from "@/components/ResultsCount.vue";
-import { dotNetTimespanToMilliseconds, formatDotNetTimespan, formatTypeName } from "@/composables/formatUtils.ts";
+import { dotNetTimespanToMilliseconds, formatDotNetTimespan } from "@/composables/formatUtils.ts";
 import "@vuepic/vue-datepicker/dist/main.css";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
 
 const store = useAuditStore();
 const { messages, totalCount } = storeToRefs(store);
 const route = useRoute();
+const router = useRouter();
 
 function statusToName(messageStatus: MessageStatus) {
   switch (messageStatus) {
@@ -67,6 +68,19 @@ function hasWarning(message: Message) {
 
   return false;
 }
+
+function navigateToMessage(message: Message) {
+  const query = router.currentRoute.value.query;
+
+  if (message.status === MessageStatus.Successful) {
+    router.push({
+      path: routeLinks.messages.successMessage.link(message.message_id, message.id),
+      query: { ...query, ...{ back: route.path } },
+    });
+  } else {
+    router.push({ path: routeLinks.messages.failedMessage.link(message.id), query: { ...query, ...{ back: route.path } } });
+  }
+}
 </script>
 
 <template>
@@ -78,39 +92,23 @@ function hasWarning(message: Message) {
       <ResultsCount :displayed="messages.length" :total="totalCount" />
     </div>
     <div class="row results-table">
-      <section role="table" aria-label="endpoint-instances">
-        <!--Table rows-->
-        <!--NOTE: currently the DataView pages on the client only: we need to make it server data aware (i.e. the total will be the count from the server, not the length of the data we have locally)-->
-        <div role="rowgroup" aria-label="messages">
-          <div role="row" :aria-label="message.message_id" class="row grid-row" v-for="message in messages" :key="message.id">
-            <div role="cell" aria-label="status" class="status" :title="statusToName(message.status)">
-              <div class="status-container">
-                <div class="status-icon" :class="statusToIcon(message.status)"></div>
-                <div v-if="hasWarning(message)" class="warning"></div>
-              </div>
-            </div>
-            <div role="cell" aria-label="message-id" class="col-3 message-id">
-              <div class="box-header">
-                <RouterLink v-if="message.status === MessageStatus.Successful" aria-label="details-link" :to="{ path: routeLinks.messages.successMessage.link(message.message_id, message.id), query: { back: route.path } }">
-                  {{ message.message_id }}
-                </RouterLink>
-                <RouterLink v-else aria-label="details-link" :to="{ path: routeLinks.messages.failedMessage.link(message.id), query: { back: route.path } }">
-                  {{ message.message_id }}
-                </RouterLink>
-              </div>
-            </div>
-            <div role="cell" aria-label="message-type" class="col-3 message-type">
-              {{ formatTypeName(message.message_type) }}
-            </div>
-            <div role="cell" aria-label="time-sent" class="col-2 time-sent">
-              {{ moment(message.time_sent).local().format("LLLL") }}
-            </div>
-            <div role="cell" aria-label="processing-time" class="col-2 processing-time">
-              {{ formatDotNetTimespan(message.processing_time) }}
+      <template v-for="message in messages" :key="message.id">
+        <div class="item" @click="navigateToMessage(message)">
+          <div class="status">
+            <div class="status-container" v-tippy="{ content: statusToName(message.status) }">
+              <div class="status-icon" :class="statusToIcon(message.status)"></div>
+              <div v-if="hasWarning(message)" class="warning"></div>
             </div>
           </div>
+          <div class="message-id">{{ message.message_id }}</div>
+          <div class="message-type">{{ message.message_type }}</div>
+          <div class="time-sent"><span class="label-name">Time Sent:</span>{{ moment(message.time_sent).local().format("LLLL") }}</div>
+          <div class="critical-time"><span class="label-name">Critical Time:</span>{{ formatDotNetTimespan(message.critical_time) }}</div>
+          <div class="processing-time"><span class="label-name">Processing Time:</span>{{ formatDotNetTimespan(message.processing_time) }}</div>
+          <div class="delivery-time"><span class="label-name">Delivery Time:</span>{{ formatDotNetTimespan(message.delivery_time) }}</div>
         </div>
-      </section>
+        <div class="spacer"></div>
+      </template>
     </div>
   </div>
 </template>
@@ -120,13 +118,56 @@ function hasWarning(message: Message) {
 .results-table {
   margin-top: 1rem;
   margin-bottom: 5rem;
+  padding: 10px 0;
+  background-color: #ffffff;
 }
-
+.spacer {
+  border-bottom: 1px solid #b1afaf;
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+}
+.item {
+  padding: 3px;
+  border: 1px solid #ffffff;
+  display: grid;
+  grid-template-columns: 25px 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 6px;
+  grid-template-areas:
+    "status message-type message-type message-type time-sent"
+    "status message-id processing-time critical-time delivery-time";
+}
+.item:hover {
+  border: 1px solid #00a3c4;
+  background-color: #edf6f7;
+  cursor: pointer;
+}
+.label-name {
+  margin-right: 4px;
+  color: #777f7f;
+}
 .status {
-  width: 5em;
-  text-align: center;
+  grid-area: status;
 }
-
+.message-id {
+  grid-area: message-id;
+}
+.time-sent {
+  grid-area: time-sent;
+}
+.message-type {
+  grid-area: message-type;
+  font-weight: bold;
+}
+.processing-time {
+  grid-area: processing-time;
+}
+.critical-time {
+  grid-area: critical-time;
+}
+.delivery-time {
+  grid-area: delivery-time;
+}
 .status-container {
   color: white;
   width: 20px;
