@@ -14,8 +14,9 @@ const endpointNames = computed(() => {
 const sortByItemsMap = new Map([
   ["Latest sent", "time_sent,desc"],
   ["Oldest sent", "time_sent,asc"],
-  ["Fastest processing", "processing_time,asc"],
   ["Slowest processing", "processing_time,desc"],
+  ["Highest critical time", "critical_time,desc"],
+  ["Longest delivery", "delivery_time,desc"],
 ]);
 const numberOfItemsPerPage = ["50", "100", "250", "500"];
 const sortByItems = computed(() => [...sortByItemsMap.keys()]);

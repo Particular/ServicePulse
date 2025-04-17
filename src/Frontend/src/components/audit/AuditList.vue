@@ -83,6 +83,8 @@ function navigateToMessage(message: Message) {
   }
 }
 
+let firstLoad = true;
+
 onBeforeMount(async () => {
   const query = router.currentRoute.value.query;
 
@@ -107,9 +109,15 @@ onBeforeMount(async () => {
   watchHandle.resume();
 
   await store.refresh();
+
+  firstLoad = false;
 });
 
 const watchHandle = watch([itemsPerPage, sortBy, messageFilterString, selectedEndpointName, dateRange], async () => {
+  if (firstLoad) {
+    return;
+  }
+
   let from = "",
     to = "";
   if (dateRange.value.length === 2) {
