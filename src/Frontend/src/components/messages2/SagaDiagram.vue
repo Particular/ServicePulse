@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onUnmounted, watch, ref } from "vue";
+import { computed, onUnmounted, watch } from "vue";
 import routeLinks from "@/router/routeLinks";
 import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { useMessageStore } from "@/stores/MessageStore";
@@ -15,16 +15,11 @@ import SagaHeader from "./SagaDiagram/SagaHeader.vue";
 import SagaUpdateNode from "./SagaDiagram/SagaUpdateNode.vue";
 import SagaCompletedNode from "./SagaDiagram/SagaCompletedNode.vue";
 
-const showMessageData = ref(false);
-
-const toggleMessageData = () => {
-  showMessageData.value = !showMessageData.value;
-};
+const sagaDiagramStore = useSagaDiagramStore();
+const { showMessageData } = storeToRefs(sagaDiagramStore);
 
 const store = useMessageStore();
 const { state: messageState } = storeToRefs(store);
-
-const sagaDiagramStore = useSagaDiagramStore();
 
 //Watch for message and set saga ID when component mounts or message changes
 watch(
@@ -67,7 +62,7 @@ const vm = computed<SagaViewModel>(() => {
 
     // Display data
     FormattedCompletionTime: completionTime ? `${completionTime.toLocaleDateString()} ${completionTime.toLocaleTimeString()}` : "",
-    SagaUpdates: parseSagaUpdates(sagaHistory),
+    SagaUpdates: parseSagaUpdates(sagaHistory, sagaDiagramStore.messagesData),
     ShowMessageData: showMessageData.value,
   };
 });
@@ -77,7 +72,7 @@ const vm = computed<SagaViewModel>(() => {
   <div class="saga-container">
     <!-- Toolbar header -->
     <div v-if="vm.HasSagaData" class="header">
-      <button :class="['saga-button', { 'saga-button--active': vm.ShowMessageData }]" aria-label="show-message-data-button" @click="toggleMessageData">
+      <button :class="['saga-button', { 'saga-button--active': vm.ShowMessageData }]" aria-label="show-message-data-button" @click="sagaDiagramStore.toggleMessageData">
         <img class="saga-button-icon" :src="ToolbarEndpointIcon" alt="" />
         {{ vm.ShowMessageData ? "Hide Message Data" : "Show Message Data" }}
       </button>

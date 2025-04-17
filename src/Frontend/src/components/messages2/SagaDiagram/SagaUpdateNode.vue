@@ -9,10 +9,16 @@ import EventIcon from "@/assets/event.svg";
 import SagaInitiatedIcon from "@/assets/SagaInitiatedIcon.svg";
 import SagaUpdatedIcon from "@/assets/SagaUpdatedIcon.svg";
 
-defineProps<{
+const props = defineProps<{
   update: SagaUpdateViewModel;
   showMessageData?: boolean;
 }>();
+console.log("NonTimeoutMessages :");
+console.log(props.update.NonTimeoutMessages);
+console.log("TIMEOUT MESSAGES:");
+console.log(props.update.TimeoutMessages);
+console.log("Initaiteing MESSAGES:");
+console.log(props.update.InitiatingMessageData);
 </script>
 
 <template>
@@ -22,14 +28,14 @@ defineProps<{
       <div class="cell cell--side">
         <div class="cell-inner cell-inner-side">
           <img class="saga-icon saga-icon--side-cell" :src="CommandIcon" alt="" />
-          <h2 class="message-title" aria-label="initiating message type">{{ update.InitiatingMessageType }}</h2>
+          <h2 class="message-title" aria-label="initiating message type">FIRST:{{ update.InitiatingMessageType }}</h2>
           <div class="timestamp" aria-label="initiating message timestamp">{{ update.FormattedInitiatingMessageTimestamp }}</div>
         </div>
       </div>
       <div class="cell cell--center cell-flex">
         <div class="cell-inner cell-inner-center cell-inner--align-bottom">
           <img class="saga-icon saga-icon--center-cell" :src="update.IsFirstNode ? SagaInitiatedIcon : SagaUpdatedIcon" alt="" />
-          <h2 class="saga-status-title saga-status-title--inline">{{ update.StatusDisplay }}</h2>
+          <h2 class="saga-status-title saga-status-title--inline">SECOND:{{ update.StatusDisplay }}</h2>
           <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.FormattedStartTime }}</div>
         </div>
       </div>
@@ -70,7 +76,7 @@ defineProps<{
         <template v-for="(msg, msgIndex) in update.NonTimeoutMessages" :key="msgIndex">
           <div class="cell-inner cell-inner-side">
             <img class="saga-icon saga-icon--side-cell" :src="msg.IsEventMessage ? EventIcon : CommandIcon" :alt="msg.IsEventMessage ? 'Event' : 'Command'" />
-            <h2 class="message-title">{{ msg.MessageFriendlyTypeName }}</h2>
+            <h2 class="message-title">THIRD:{{ msg.MessageFriendlyTypeName }}</h2>
             <div class="timestamp">{{ msg.FormattedTimeSent }}</div>
           </div>
           <div v-if="showMessageData" class="message-data message-data--active">

@@ -1,10 +1,6 @@
 import { SagaHistory } from "@/resources/SagaHistory";
 import { typeToName } from "@/composables/typeHumanizer";
-
-export interface SagaMessageDataItem {
-  Key: string;
-  Value: string;
-}
+import { SagaMessageData, SagaMessageDataItem } from "@/stores/SagaDiagramStore";
 
 export interface SagaMessage {
   MessageFriendlyTypeName: string;
@@ -32,6 +28,7 @@ export interface SagaUpdateViewModel {
   TimeoutMessages: SagaTimeoutMessage[];
   HasNonTimeoutMessages: boolean;
   HasTimeoutMessages: boolean;
+  InitiatingMessageData: SagaMessageDataItem[];
 }
 
 export interface SagaViewModel {
@@ -47,7 +44,7 @@ export interface SagaViewModel {
   ShowMessageData: boolean;
 }
 
-export function parseSagaUpdates(sagaHistory: SagaHistory | null): SagaUpdateViewModel[] {
+export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: SagaMessageData[]): SagaUpdateViewModel[] {
   if (!sagaHistory || !sagaHistory.changes || !sagaHistory.changes.length) return [];
 
   return sagaHistory.changes
@@ -55,6 +52,9 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null): SagaUpdateVie
       const startTime = new Date(update.start_time);
       const finishTime = new Date(update.finish_time);
       const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
+
+      // Find message data for initiating message
+      const initiatingMessageData = update.initiating_message ? messagesData.find((m) => m.message_id === update.initiating_message.message_id)?.data || [] : [];
 
       // Create common base message objects with shared properties
       const outgoingMessages = update.outgoing_messages.map((msg) => {
@@ -64,6 +64,9 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null): SagaUpdateVie
         const timeoutSeconds = delivery_delay.split(":")[2] || "0";
         const isEventMessage = msg.intent === "Publish";
 
+        // Find corresponding message data
+        const messageData = messagesData.find((m) => m.message_id === msg.message_id)?.data || [];
+
         return {
           MessageType: msg.message_type || "",
           MessageId: msg.message_id,
@@ -71,7 +74,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null): SagaUpdateVie
           HasTimeout: hasTimeout,
           TimeoutSeconds: timeoutSeconds,
           MessageFriendlyTypeName: typeToName(msg.message_type || ""),
-          Data: [] as SagaMessageDataItem[],
+          Data: messageData,
           IsEventMessage: isEventMessage,
           IsCommandMessage: !isEventMessage,
         };
@@ -83,7 +86,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null): SagaUpdateVie
           (msg) =>
             ({
               ...msg,
-              TimeoutFriendly: `${msg.TimeoutSeconds}s`, //TODO: Update with logic from ServiceInsight
+              TimeoutFriendly: `${msg.TimeoutSeconds}s`,
             }) as SagaTimeoutMessage
         );
 
@@ -99,6 +102,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null): SagaUpdateVie
         StatusDisplay: update.status === "new" ? "Saga Initiated" : "Saga Updated",
         InitiatingMessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
         FormattedInitiatingMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
+        InitiatingMessageData: initiatingMessageData,
         HasTimeout: hasTimeout,
         IsFirstNode: update.status === "new",
         TimeoutMessages: timeoutMessages,
