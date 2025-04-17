@@ -1,16 +1,16 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
-import { ModelCreator } from "@/resources/SequenceDiagram/SequenceModel";
-import { Endpoint } from "@/resources/SequenceDiagram/Endpoint";
-import { Handler } from "@/resources/SequenceDiagram/Handler";
-import { MessageProcessingRoute } from "@/resources/SequenceDiagram/RoutedMessage";
+import { ModelCreator } from "@/components/messages2/SequenceDiagram/SequenceModel";
+import { Endpoint } from "@/components/messages2/SequenceDiagram/Endpoint";
+import { Handler } from "@/components/messages2/SequenceDiagram/Handler";
+import { MessageProcessingRoute } from "@/components/messages2/SequenceDiagram/RoutedMessage";
 import { useMessageStore } from "./MessageStore";
 import { useRouter } from "vue-router";
 import routeLinks from "@/router/routeLinks";
 
 export interface EndpointCentrePoint {
   name: string;
-  centre: number;
+  centre?: number;
   top: number;
 }
 

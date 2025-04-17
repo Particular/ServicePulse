@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RoutedMessage, RoutedMessageType } from "@/resources/SequenceDiagram/RoutedMessage";
+import { RoutedMessage, RoutedMessageType } from "@/components/messages2/SequenceDiagram/RoutedMessage";
 
 defineProps<{ routedMessage: RoutedMessage }>();
 </script>

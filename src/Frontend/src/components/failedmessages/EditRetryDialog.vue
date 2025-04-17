@@ -4,7 +4,7 @@ import { useRetryEditedMessage } from "@/composables/serviceFailedMessage";
 import MessageHeader from "./EditMessageHeader.vue";
 import { EditAndRetryConfig } from "@/resources/Configuration";
 import type Header from "@/resources/Header";
-import { ExtendedFailedMessage } from "@/resources/FailedMessage";
+import { ExtendedFailedMessage } from "../messages2/FailedMessage";
 import parseContentType from "@/composables/contentTypeParser";
 import { CodeLanguage } from "@/components/codeEditorTypes";
 import CodeEditor from "@/components/CodeEditor.vue";

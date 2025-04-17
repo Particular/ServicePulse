@@ -7,7 +7,7 @@ import routeLinks from "@/router/routeLinks";
 import Message from "@/resources/Message";
 import { NServiceBusHeaders } from "@/resources/Header";
 import { useRoute } from "vue-router";
-import { ExtendedFailedMessage } from "@/resources/FailedMessage";
+import { ExtendedFailedMessage } from "../messages2/FailedMessage";
 import { Controls } from "@vue-flow/controls";
 
 const props = defineProps<{

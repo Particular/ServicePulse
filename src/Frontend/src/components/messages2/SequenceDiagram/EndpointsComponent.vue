@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Endpoint } from "@/resources/SequenceDiagram/Endpoint";
+import { Endpoint } from "@/components/messages2/SequenceDiagram/Endpoint";
 import { Endpoint_Width, EndpointCentrePoint, useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
@@ -67,7 +67,7 @@ const endpointItems = computed(() =>
 );
 
 watch(endpointItems, () => {
-  store.setEndpointCentrePoints(endpointItems.value.map((endpoint) => ({ name: endpoint.name, centre: endpoint.x ?? 0, top: (endpoint.surround?.y ?? 0) + (endpoint.surround?.height ?? 0) + 15 }) as EndpointCentrePoint));
+  store.setEndpointCentrePoints(endpointItems.value.map((endpoint) => ({ name: endpoint.name, centre: endpoint.x, top: (endpoint.surround?.y ?? 0) + (endpoint.surround?.height ?? 0) + 15 }) as EndpointCentrePoint));
   const lastEndpoint = endpointItems.value[endpointItems.value.length - 1];
   store.setMaxWidth((lastEndpoint.x ?? 0) + lastEndpoint.width);
 });

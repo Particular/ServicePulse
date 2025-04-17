@@ -1,8 +1,8 @@
-import { NServiceBusHeaders } from "../Header";
-import Message, { MessageStatus } from "../Message";
+import { NServiceBusHeaders } from "../../../resources/Header";
+import Message, { MessageStatus } from "../../../resources/Message";
 import { Direction, MessageProcessingRoute, RoutedMessage } from "./RoutedMessage";
 import { Endpoint } from "./Endpoint";
-import { friendlyTypeName } from "./SequenceModel";
+import { formatDotNetTimespan, friendlyTypeName } from "../utils";
 
 export interface Handler {
   readonly id: string;
@@ -16,7 +16,7 @@ export interface Handler {
   readonly outMessages: RoutedMessage[];
   processedAt?: Date;
   readonly handledAt?: Date;
-  processingTime?: number;
+  processingTime?: string;
   readonly direction: Direction;
   route?: MessageProcessingRoute;
   readonly selectedMessage?: Message;
@@ -58,10 +58,7 @@ export class HandlerRegistry {
 
 export function updateProcessingHandler(handler: Handler, message: Message) {
   handler.processedAt = new Date(message.processed_at);
-  //assuming if we have days in the timespan then something is very, very wrong
-  //TODO: extract logic since it's also currently used in AuditList
-  const [hh, mm, ss] = message.processing_time.split(":");
-  handler.processingTime = ((parseInt(hh) * 60 + parseInt(mm)) * 60 + parseFloat(ss)) * 1000;
+  handler.processingTime = formatDotNetTimespan(message.processing_time);
   handler.name = message.message_type;
   handler.friendlyName = friendlyTypeName(message.message_type);
 
@@ -90,7 +87,7 @@ class HandlerItem implements Handler {
   inMessage?: RoutedMessage;
   state: HandlerState = HandlerState.Unknown;
   processedAt?: Date;
-  processingTime?: number;
+  processingTime?: string;
   route?: MessageProcessingRoute;
   uiRef?: SVGElement;
 

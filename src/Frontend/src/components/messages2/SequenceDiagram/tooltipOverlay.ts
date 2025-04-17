@@ -5,7 +5,7 @@ import { useTippy } from "vue-tippy";
 import EndpointTooltip from "./EndpointTooltip.vue";
 import HandlerTooltip from "./HandlerTooltip.vue";
 import RouteTooltip from "./RouteTooltip.vue";
-import { HandlerState } from "@/resources/SequenceDiagram/Handler";
+import { HandlerState } from "@/components/messages2/SequenceDiagram/Handler";
 
 export default function useTooltips() {
   const store = useSequenceDiagramStore();

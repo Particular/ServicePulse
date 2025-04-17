@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import { useFormatTime } from "@/composables/formatter";
-import { Handler } from "@/resources/SequenceDiagram/Handler";
+import { Handler } from "@/components/messages2/SequenceDiagram/Handler";
 
 defineProps<{ handler: Handler }>();
-
-function formatTime(milliseconds: number) {
-  const time = useFormatTime(milliseconds);
-  return `${time.value} ${time.unit}`;
-}
 </script>
 
 <template>
@@ -16,7 +10,7 @@ function formatTime(milliseconds: number) {
     <div class="title">Processing of Message</div>
     <div class="details">
       <label>Processing Time:</label>
-      <span>{{ formatTime(handler.processingTime ?? 0) }}</span>
+      <span>{{ handler.processingTime }}</span>
       <label>Processing Of:</label>
       <span>{{ handler.friendlyName }}</span>
       <label v-if="handler.partOfSaga">Sagas Invoked:</label>

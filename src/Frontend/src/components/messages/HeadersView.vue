@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ExtendedFailedMessage } from "@/resources/FailedMessage";
+import { ExtendedFailedMessage } from "../messages2/FailedMessage";
 import CopyToClipboard from "@/components/CopyToClipboard.vue";
 import FilterInput from "@/components/FilterInput.vue";
 import { computed, ref } from "vue";

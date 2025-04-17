@@ -12,7 +12,7 @@ import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
 import moment from "moment";
-import { ExtendedFailedMessage } from "@/resources/FailedMessage";
+import { ExtendedFailedMessage } from "../messages2/FailedMessage";
 import { TYPE } from "vue-toastification";
 import FailureGroup from "@/resources/FailureGroup";
 import { useConfiguration } from "@/composables/configuration";

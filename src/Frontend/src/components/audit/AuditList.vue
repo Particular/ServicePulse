@@ -5,11 +5,11 @@ import { storeToRefs } from "pinia";
 import SortableColumn from "../SortableColumn.vue";
 import { MessageStatus } from "@/resources/Message";
 import moment from "moment";
-import { useFormatTime } from "@/composables/formatter";
 import RefreshConfig from "../RefreshConfig.vue";
 import ItemsPerPage from "../ItemsPerPage.vue";
 import PaginationStrip from "../PaginationStrip.vue";
 import { useRoute } from "vue-router";
+import { friendlyTypeName, formatDotNetTimespan } from "../messages2/utils";
 
 const store = useAuditStore();
 const { messages, sortByInstances, itemsPerPage, selectedPage, totalCount } = storeToRefs(store);
@@ -47,21 +47,6 @@ function statusToIcon(messageStatus: MessageStatus) {
     case MessageStatus.RetryIssued:
       return "fa retry-issued";
   }
-}
-
-function friendlyTypeName(messageType: string) {
-  if (messageType == null) return null;
-
-  const typeClass = messageType.split(",")[0];
-  const typeName = typeClass.split(".").reverse()[0];
-  return typeName.replace(/\+/g, ".");
-}
-
-function formatDotNetTimespan(timespan: string) {
-  //assuming if we have days in the timespan then something is very, very wrong
-  const [hh, mm, ss] = timespan.split(":");
-  const time = useFormatTime(((parseInt(hh) * 60 + parseInt(mm)) * 60 + parseFloat(ss)) * 1000);
-  return `${time.value} ${time.unit}`;
 }
 </script>
 

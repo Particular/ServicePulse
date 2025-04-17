@@ -1,20 +1,11 @@
-import { NServiceBusHeaders } from "../Header";
-import Message from "../Message";
+import { NServiceBusHeaders } from "../../../resources/Header";
+import Message from "../../../resources/Message";
 import { createRoutedMessage, createRoute, MessageProcessingRoute } from "./RoutedMessage";
 import { createProcessingEndpoint, createSendingEndpoint, Endpoint, EndpointRegistry } from "./Endpoint";
 import { ConversationStartHandlerName, createProcessingHandler, createSendingHandler, Handler, HandlerRegistry, updateProcessingHandler } from "./Handler";
 
 export interface ConversationModel {
   endpoints: Endpoint[];
-}
-
-//TODO: extract to common area if this continues to be used in AuditList
-export function friendlyTypeName(messageType: string) {
-  if (messageType == null) return undefined;
-
-  const typeClass = messageType.split(",")[0];
-  const typeName = typeClass.split(".").reverse()[0];
-  return typeName.replace(/\+/g, ".");
 }
 
 export class ModelCreator implements ConversationModel {
@@ -136,7 +127,6 @@ class MessageTreeNode {
   }
 
   walk(): Message[] {
-    //TODO: check performance of this. We may need to pre-calculate the processed_at as a date on the message object
     return [this.#message, ...this.children.sort((a, b) => new Date(a.message.processed_at).getTime() - new Date(b.message.processed_at).getTime()).flatMap((child) => child.walk())];
   }
 }
