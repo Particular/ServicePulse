@@ -1,3 +1,5 @@
+import { MessageStatus } from "./Message";
+
 export interface SagaHistory {
   id: string;
   saga_id: string;
@@ -5,31 +7,32 @@ export interface SagaHistory {
   changes: SagaStateChange[];
 }
 
+
+
 export interface SagaStateChange {
   start_time: Date;
   finish_time: Date;
   status: string;
   state_after_change: string;
-  initiating_message: InitiatingMessage;
+  initiating_message: SagaMessage;
   outgoing_messages: OutgoingMessage[];
   endpoint: string;
 }
 
-export interface InitiatingMessage {
+export interface SagaMessage {
   message_id: string;
   is_saga_timeout_message: boolean;
   originating_endpoint: string;
-  originating_machine: string;
+  receiving_endpoint: string;
   time_sent: Date;
   message_type: string;
   intent: string;
+  body_url: string;
+  message_status: MessageStatus;
 }
 
-export interface OutgoingMessage {
+export interface OutgoingMessage extends SagaMessage {
   delivery_delay?: string;
   destination: string;
-  message_id: string;
-  time_sent: Date;
-  message_type: string;
-  intent: string;
+  deliver_at: Date;
 }
