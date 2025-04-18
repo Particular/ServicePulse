@@ -2,7 +2,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref, watch } from "vue";
 import { SagaHistory, SagaMessage } from "@/resources/SagaHistory";
 import { useFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
-import { MessageStatus } from "@/resources/Message";
+import Message from "@/resources/Message";
 const StandardKeys = ["$type", "Id", "Originator", "OriginalMessageId"];
 export interface SagaMessageDataItem {
   key: string;
@@ -55,7 +55,7 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
       if (needsBodyUrl && messagesToFetch.length > 0) {
         const auditMessages = await getAuditMessages(sagaId.value!);
         messagesToFetch.forEach((message) => {
-          const auditMessage = auditMessages.find((x) => x.message_id === message.message_id);
+          const auditMessage = auditMessages.find((x: Message) => x.message_id === message.message_id);
           if (auditMessage) {
             message.body_url = auditMessage.body_url;
           }
@@ -198,24 +198,26 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
   }
 
   // Replace or modify the existing processJsonValues function
-  function processJsonValues(jsonBody: any): SagaMessageDataItem[] {
+  function processJsonValues(jsonBody: string | Record<string, unknown>): SagaMessageDataItem[] {
+    let parsedBody: Record<string, unknown>;
     if (typeof jsonBody === "string") {
       try {
-        jsonBody = JSON.parse(jsonBody);
+        parsedBody = JSON.parse(jsonBody);
       } catch (e) {
         console.error("Error parsing JSON:", e);
         return [];
       }
+    } else {
+      parsedBody = jsonBody;
     }
 
     const items: SagaMessageDataItem[] = [];
 
-    // Filter out standard keys and convert to KeyValuePairs
-    for (const key in jsonBody) {
+    for (const key in parsedBody) {
       if (!StandardKeys.includes(key)) {
         items.push({
           key: key,
-          value: String(jsonBody[key] ?? ""),
+          value: String(parsedBody[key] ?? ""),
         });
       }
     }
