@@ -121,16 +121,9 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
     const bodyUrl = (message.body_url ?? formatUrl(MessageBodyEndpoint, message.message_id)).replace(/^\//, "");
     loading.value = true;
     error.value = null;
-    // const headers = {
-    //   //"Cache-Control": message.message_status === MessageStatus.Successful ? "no-cache" : "no-cache",
-    //   "Cache-Control": "no-cache",
-    // };
+
     try {
-      console.log("MessageBodyEndpoint:", MessageBodyEndpoint);
-      console.log("message.body_url:", message.body_url);
-      console.log("message.message_id:", message.message_id);
-      console.log("bodyUrl:", bodyUrl);
-      const response = await useFetchFromServiceControl(bodyUrl);
+      const response = await useFetchFromServiceControl(bodyUrl, { cache: "no-store" });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -156,7 +149,6 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
       };
     } catch (e) {
       error.value = e instanceof Error ? e.message : "Unknown error occurred";
-      console.log("InCATCH" + error.value);
       return createEmptyMessageData(message.message_id);
     } finally {
       loading.value = false;
