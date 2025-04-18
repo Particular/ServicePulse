@@ -1,16 +1,16 @@
 <script setup lang="ts">
+import { SagaMessageDataItem } from "@/stores/SagaDiagramStore";
+
 defineProps<{
-  propertyKey?: string;
-  propertyValue?: string;
-  title?: string;
+  messageData: SagaMessageDataItem[];
 }>();
 </script>
 
 <template>
-  <div class="message-data-box">
-    <b class="message-data-box-text">{{ propertyKey || "OrderId" }}</b>
+  <div v-for="(item, index) in messageData" :key="index" class="message-data-box">
+    <b class="message-data-box-text">{{ item.key }}</b>
     <span class="message-data-box-text">=</span>
-    <span class="message-data-box-text--ellipsis" :title="title || propertyValue || 'Sample ID'">{{ propertyValue || "Sample ID" }}</span>
+    <span class="message-data-box-text--ellipsis" :title="item.value">{{ item.value }}</span>
   </div>
 </template>
 
