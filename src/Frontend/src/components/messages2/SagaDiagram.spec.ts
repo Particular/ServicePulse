@@ -4,6 +4,7 @@ import { SagaHistory } from "@/resources/SagaHistory";
 import makeRouter from "@/router";
 import { createTestingPinia } from "@pinia/testing";
 import { MessageStore } from "@/stores/MessageStore";
+import { MessageStatus } from "@/resources/Message";
 
 //Defines a domain-specific language (DSL) for interacting with the system under test (sut)
 interface componentDSL {
@@ -377,9 +378,12 @@ const sampleSagaHistory: SagaHistory = {
         is_saga_timeout_message: true,
         originating_endpoint: "Endpoint1",
         originating_machine: "mobvm2",
+        receiving_endpoint: "receiving endpoint",
         time_sent: new Date("2025-03-28T03:04:06.321561Z"),
         message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
         intent: "Send",
+        body_url: "body_url",
+        message_status: MessageStatus.Successful,
       },
       outgoing_messages: [],
       endpoint: "Endpoint1",
@@ -394,9 +398,12 @@ const sampleSagaHistory: SagaHistory = {
         is_saga_timeout_message: true,
         originating_endpoint: "Endpoint1",
         originating_machine: "mobvm2",
+        receiving_endpoint: "receiving endpoint",
         time_sent: new Date("2025-03-28T03:04:05.37723Z"),
         message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
         intent: "Send",
+        body_url: "body_url",
+        message_status: MessageStatus.Successful,
       },
       outgoing_messages: [],
       endpoint: "Endpoint1",
@@ -411,9 +418,12 @@ const sampleSagaHistory: SagaHistory = {
         is_saga_timeout_message: false,
         originating_endpoint: "Sender",
         originating_machine: "mobvm2",
+        receiving_endpoint: "receiving endpoint",
         time_sent: new Date("2025-03-28T03:04:06.293765Z"),
         message_type: "ServiceControl.SmokeTest.SagaMessage2",
         intent: "Send",
+        body_url: "body_url",
+        message_status: MessageStatus.Successful,
       },
       outgoing_messages: [
         {
@@ -423,6 +433,13 @@ const sampleSagaHistory: SagaHistory = {
           time_sent: new Date("2025-03-28T03:04:06.3214397Z"),
           message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
           intent: "Send",
+          deliver_at: new Date("2025-03-28T03:04:06.293765Z"),
+          is_saga_timeout_message: false,
+          originating_endpoint: "Sender",
+          originating_machine: "mobvm2",
+          receiving_endpoint: "receiving endpoint",
+          body_url: "body_url",
+          message_status: MessageStatus.Successful,
         },
       ],
       endpoint: "Endpoint1",
@@ -437,9 +454,12 @@ const sampleSagaHistory: SagaHistory = {
         is_saga_timeout_message: false,
         originating_endpoint: "Sender",
         originating_machine: "mobvm2",
+        receiving_endpoint: "receiving endpoint",
         time_sent: new Date("2025-03-28T03:04:05.235534Z"),
         message_type: "ServiceControl.SmokeTest.SagaMessage1",
         intent: "Send",
+        body_url: "body_url",
+        message_status: MessageStatus.Successful,
       },
       outgoing_messages: [
         {
@@ -449,6 +469,13 @@ const sampleSagaHistory: SagaHistory = {
           time_sent: new Date("2025-03-28T03:04:05.3715034Z"),
           message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
           intent: "Send",
+          deliver_at: new Date("2025-03-28T03:04:06.293765Z"),
+          is_saga_timeout_message: false,
+          originating_endpoint: "Sender",
+          originating_machine: "mobvm2",
+          receiving_endpoint: "receiving endpoint",
+          body_url: "body_url",
+          message_status: MessageStatus.Successful,
         },
       ],
       endpoint: "Endpoint1",

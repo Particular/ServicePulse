@@ -9,7 +9,7 @@ import EventIcon from "@/assets/event.svg";
 import SagaInitiatedIcon from "@/assets/SagaInitiatedIcon.svg";
 import SagaUpdatedIcon from "@/assets/SagaUpdatedIcon.svg";
 
-const props = defineProps<{
+defineProps<{
   update: SagaUpdateViewModel;
   showMessageData?: boolean;
 }>();
