@@ -23,8 +23,7 @@ const props = defineProps<{
         <div class="cell-inner cell-inner-side">
           <img class="saga-icon saga-icon--side-cell" :src="CommandIcon" alt="" />
           <h2 class="message-title" aria-label="initiating message type">
-            FIRST:{{ update.InitiatingMessageType }}<br />
-            {{ update.MessageId }}
+            {{ update.InitiatingMessageType }}
           </h2>
           <div class="timestamp" aria-label="initiating message timestamp">{{ update.FormattedInitiatingMessageTimestamp }}</div>
         </div>
@@ -32,7 +31,7 @@ const props = defineProps<{
       <div class="cell cell--center cell-flex">
         <div class="cell-inner cell-inner-center cell-inner--align-bottom">
           <img class="saga-icon saga-icon--center-cell" :src="update.IsFirstNode ? SagaInitiatedIcon : SagaUpdatedIcon" alt="" />
-          <h2 class="saga-status-title saga-status-title--inline">SECOND:{{ update.StatusDisplay }}<br />{{ update.MessageId }}</h2>
+          <h2 class="saga-status-title saga-status-title--inline">{{ update.StatusDisplay }}</h2>
           <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.FormattedStartTime }}</div>
         </div>
       </div>
@@ -73,7 +72,7 @@ const props = defineProps<{
         <template v-for="(msg, msgIndex) in update.NonTimeoutMessages" :key="msgIndex">
           <div class="cell-inner cell-inner-side">
             <img class="saga-icon saga-icon--side-cell" :src="msg.IsEventMessage ? EventIcon : CommandIcon" :alt="msg.IsEventMessage ? 'Event' : 'Command'" />
-            <h2 class="message-title">THIRD:{{ msg.MessageFriendlyTypeName }}<br />{{ msg.MessageId }}</h2>
+            <h2 class="message-title">{{ msg.MessageFriendlyTypeName }}</h2>
             <div class="timestamp">{{ msg.FormattedTimeSent }}</div>
           </div>
           <div v-if="showMessageData" class="message-data message-data--active">
