@@ -47,10 +47,15 @@ export function useIsMonitoringEnabled() {
   return !useIsMonitoringDisabled();
 }
 
-export function useFetchFromServiceControl(suffix: string) {
-  return fetch(serviceControlUrl.value + suffix);
+// export function useFetchFromServiceControl(suffix: string) {
+//   return fetch(serviceControlUrl.value + suffix);
+// }
+export function useFetchFromServiceControl(suffix: string, headers?: HeadersInit) {
+  const requestOptions: RequestInit = {
+    headers,
+  };
+  return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
-
 export async function useTypedFetchFromServiceControl<T>(suffix: string): Promise<[Response, T]> {
   const response = await fetch(`${serviceControlUrl.value}${suffix}`);
   if (!response.ok) throw new Error(response.statusText ?? "No response");

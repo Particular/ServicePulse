@@ -3,6 +3,7 @@ import { typeToName } from "@/composables/typeHumanizer";
 import { SagaMessageData, SagaMessageDataItem } from "@/stores/SagaDiagramStore";
 
 export interface SagaMessage {
+  MessageId: string;
   MessageFriendlyTypeName: string;
   FormattedTimeSent: string;
   Data: SagaMessageDataItem[];
@@ -15,6 +16,7 @@ export interface SagaTimeoutMessage extends SagaMessage {
 }
 
 export interface SagaUpdateViewModel {
+  MessageId: string;
   StartTime: Date;
   FinishTime: Date;
   FormattedStartTime: string;
@@ -95,6 +97,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
       const hasTimeout = timeoutMessages.length > 0;
 
       return {
+        MessageId: update.initiating_message?.message_id || "",
         StartTime: startTime,
         FinishTime: finishTime,
         FormattedStartTime: `${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`,

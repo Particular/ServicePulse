@@ -2,8 +2,8 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref, watch } from "vue";
 import { SagaHistory, SagaMessage } from "@/resources/SagaHistory";
 import { useFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
-// import { MessageStatus } from "@/resources/Message";
-
+import { MessageStatus } from "@/resources/Message";
+const StandardKeys = ["$type", "Id", "Originator", "OriginalMessageId"];
 export interface SagaMessageDataItem {
   key: string;
   value: string;
@@ -21,7 +21,6 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
   const fetchedMessages = ref(new Set<string>());
   const messagesData = ref<SagaMessageData[]>([]);
   const MessageBodyEndpoint = "messages/{0}/body";
-
   // Watch for changes to sagaId and fetch saga history data
   watch(sagaId, async (newSagaId) => {
     if (!newSagaId) {
@@ -48,9 +47,20 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
         if (change.outgoing_messages) {
           messages.push(...change.outgoing_messages.filter((msg) => !fetchedMessages.value.has(msg.message_id)));
         }
-
         return messages;
       });
+
+      // Check if any messages need body_url
+      const needsBodyUrl = messagesToFetch.every((msg) => !msg.body_url);
+      if (needsBodyUrl && messagesToFetch.length > 0) {
+        const auditMessages = await getAuditMessages(sagaId.value!);
+        messagesToFetch.forEach((message) => {
+          const auditMessage = auditMessages.find((x) => x.message_id === message.message_id);
+          if (auditMessage) {
+            message.body_url = auditMessage.body_url;
+          }
+        });
+      }
 
       // Fetch data for each unfetched message in parallel and store results
       const fetchPromises = messagesToFetch.map(async (message) => {
@@ -86,7 +96,7 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
         error.value = "Failed to fetch saga history";
       } else {
         const data = await response.json();
-
+        console.log("Saga history data for sis" + id, data);
         sagaHistory.value = data;
       }
     } catch (e) {
@@ -96,49 +106,129 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
       loading.value = false;
     }
   }
-
+  function createEmptyMessageData(message_id: string): SagaMessageData {
+    return {
+      message_id,
+      data: [
+        {
+          key: "Content",
+          value: "EMPTY",
+        },
+      ],
+    };
+  }
   async function fetchSagaMessageData(message: SagaMessage): Promise<SagaMessageData> {
-    const bodyUrl = message.body_url ?? formatUrl(MessageBodyEndpoint, message.message_id);
+    const bodyUrl = (message.body_url ?? formatUrl(MessageBodyEndpoint, message.message_id)).replace(/^\//, "");
     loading.value = true;
     error.value = null;
     // const headers = {
-    //   "Cache-Control": message.message_status === MessageStatus.Successful ? "no-cache" : "no-cache",
+    //   //"Cache-Control": message.message_status === MessageStatus.Successful ? "no-cache" : "no-cache",
+    //   "Cache-Control": "no-cache",
     // };
     try {
+      console.log("MessageBodyEndpoint:", MessageBodyEndpoint);
+      console.log("message.body_url:", message.body_url);
+      console.log("message.message_id:", message.message_id);
+      console.log("bodyUrl:", bodyUrl);
       const response = await useFetchFromServiceControl(bodyUrl);
-      const body = response;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const body = await response.json();
 
       if (!body) {
-        return {
-          message_id: message.message_id,
-          data: [],
-        };
+        return createEmptyMessageData(message.message_id);
       }
 
-      // if (typeof body === "string" && body.trim().startsWith("<?xml")) {
-      //   // return getXmlData(body); // Implement XML parsing below
-      // } else {
-      //   // return processJsonValues(body); // Implement JSON property extraction
-      // }
-
-      // Return dummy data for now
+      let data: SagaMessageDataItem[];
+      if (typeof body === "string" && body.trim().startsWith("<?xml")) {
+        data = getXmlData(body);
+      } else {
+        data = processJsonValues(body);
+      }
+      // Check if parsed data is empty
+      if (!data || data.length === 0) {
+        return createEmptyMessageData(message.message_id);
+      }
       return {
         message_id: message.message_id,
-        data: [
-          { key: "Property1", value: "Test Value 1" },
-          { key: "Property2", value: "Test Value 2" },
-          { key: "Timestamp", value: new Date().toISOString() },
-        ],
+        data,
       };
     } catch (e) {
       error.value = e instanceof Error ? e.message : "Unknown error occurred";
-      return {
-        message_id: message.message_id,
-        data: [],
-      };
+      console.log("InCATCH" + error.value);
+      return createEmptyMessageData(message.message_id);
     } finally {
       loading.value = false;
     }
+  }
+
+  async function getAuditMessages(sagaId: string) {
+    try {
+      const response = await useFetchFromServiceControl(`messages/search?q=${sagaId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching audit messages:", error);
+      return { result: [] };
+    }
+  }
+
+  function getXmlData(xmlString: string): SagaMessageDataItem[] {
+    try {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+
+      // Get the root element
+      const rootElement = xmlDoc.documentElement;
+      if (!rootElement) {
+        return [];
+      }
+
+      // Handle both v5 and pre-v5 message formats
+      const messageRoot = rootElement.nodeName === "Messages" ? Array.from(rootElement.children)[0] : rootElement;
+
+      if (!messageRoot) {
+        return [];
+      }
+
+      // Convert child elements to SagaMessageDataItems
+      return Array.from(messageRoot.children).map((node) => ({
+        key: node.nodeName,
+        value: node.textContent?.trim() || "",
+      }));
+    } catch (error) {
+      console.error("Error parsing message data:", error);
+      return [];
+    }
+  }
+
+  // Replace or modify the existing processJsonValues function
+  function processJsonValues(jsonBody: any): SagaMessageDataItem[] {
+    if (typeof jsonBody === "string") {
+      try {
+        jsonBody = JSON.parse(jsonBody);
+      } catch (e) {
+        console.error("Error parsing JSON:", e);
+        return [];
+      }
+    }
+
+    const items: SagaMessageDataItem[] = [];
+
+    // Filter out standard keys and convert to KeyValuePairs
+    for (const key in jsonBody) {
+      if (!StandardKeys.includes(key)) {
+        items.push({
+          key: key,
+          value: String(jsonBody[key] ?? ""),
+        });
+      }
+    }
+
+    return items;
   }
 
   function clearSagaHistory() {

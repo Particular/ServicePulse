@@ -7,8 +7,6 @@ export interface SagaHistory {
   changes: SagaStateChange[];
 }
 
-
-
 export interface SagaStateChange {
   start_time: Date;
   finish_time: Date;

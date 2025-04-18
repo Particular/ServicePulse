@@ -28,11 +28,11 @@ defineProps<{
       <div class="cell-inner cell-inner-right"></div>
       <div class="cell-inner cell-inner-side cell-inner-side--active">
         <img class="saga-icon saga-icon--side-cell" :src="TimeoutIcon" alt="" />
-        <h2 class="message-title" aria-label="timeout message type">FOURTH:{{ message.MessageFriendlyTypeName }}</h2>
+        <h2 class="message-title" aria-label="timeout message type">FOURTH:{{ message.MessageFriendlyTypeName }}<br />{{ message.MessageId }}</h2>
         <div class="timestamp" aria-label="timeout message timestamp">{{ message.FormattedTimeSent }}</div>
       </div>
       <div v-if="showMessageData" class="message-data message-data--active">
-        <MessageDataBox />
+        <MessageDataBox :messageData="message.Data" />
       </div>
     </div>
   </div>
