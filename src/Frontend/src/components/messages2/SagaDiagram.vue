@@ -5,7 +5,7 @@ import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { useMessageStore } from "@/stores/MessageStore";
 import { storeToRefs } from "pinia";
 import ToolbarEndpointIcon from "@/assets/Shell_ToolbarEndpoint.svg";
-import { SagaViewModel, parseSagaUpdates } from "./SagaDiagram/useSagaDiagramParser";
+import { SagaViewModel, parseSagaUpdates } from "./SagaDiagram/SagaDiagramParser";
 import { typeToName } from "@/composables/typeHumanizer";
 
 //Subcomponents
