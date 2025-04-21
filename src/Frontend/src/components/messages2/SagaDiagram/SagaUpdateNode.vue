@@ -8,7 +8,8 @@ import CommandIcon from "@/assets/command.svg";
 import EventIcon from "@/assets/event.svg";
 import SagaInitiatedIcon from "@/assets/SagaInitiatedIcon.svg";
 import SagaUpdatedIcon from "@/assets/SagaUpdatedIcon.svg";
-
+import TimeoutIcon from "@/assets/timeout.svg";
+import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";
 defineProps<{
   update: SagaUpdateViewModel;
   showMessageData?: boolean;
@@ -21,15 +22,18 @@ defineProps<{
     <div class="row">
       <div class="cell cell--side">
         <div class="cell-inner cell-inner-side">
-          <img class="saga-icon saga-icon--side-cell" :src="CommandIcon" alt="" />
-          <h2 class="message-title" aria-label="initiating message type">
-            {{ update.InitiatingMessageType }}
-          </h2>
+          <img class="saga-icon saga-icon--side-cell" :src="update.IsInitiatingMessageTimeOut ? TimeoutIcon : CommandIcon" alt="" />
+          <h2 class="message-title" aria-label="initiating message type">{{ update.InitiatingMessageType }}</h2>
           <div class="timestamp" aria-label="initiating message timestamp">{{ update.FormattedInitiatingMessageTimestamp }}</div>
         </div>
       </div>
       <div class="cell cell--center cell-flex">
         <div class="cell-inner cell-inner-center cell-inner--align-bottom">
+          <template v-if="update.IsInitiatingMessageTimeOut">
+            <img class="saga-icon saga-icon--center-cell" :src="SagaTimeoutIcon" alt="" />
+            <h2 class="saga-status-title saga-status-title--inline timeout-status" aria-label="timeout invoked">Timeout Invoked</h2>
+            <br />
+          </template>
           <img class="saga-icon saga-icon--center-cell" :src="update.IsFirstNode ? SagaInitiatedIcon : SagaUpdatedIcon" alt="" />
           <h2 class="saga-status-title saga-status-title--inline">{{ update.StatusDisplay }}</h2>
           <div class="timestamp timestamp--inline" aria-label="time stamp">{{ update.FormattedStartTime }}</div>
@@ -306,5 +310,11 @@ defineProps<{
   width: 1rem;
   height: 1rem;
   margin-top: -0.3rem;
+}
+.timeout-status {
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 900;
+  color: #00a3c4;
 }
 </style>

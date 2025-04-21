@@ -22,7 +22,6 @@ export interface SagaMessage {
   is_saga_timeout_message: boolean;
   originating_endpoint: string;
   originating_machine: string;
-  receiving_endpoint: string;
   time_sent: Date;
   message_type: string;
   intent: string;

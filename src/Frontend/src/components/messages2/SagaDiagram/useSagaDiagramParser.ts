@@ -21,6 +21,7 @@ export interface SagaUpdateViewModel {
   FinishTime: Date;
   FormattedStartTime: string;
   InitiatingMessageType: string;
+  IsInitiatingMessageTimeOut: boolean;
   FormattedInitiatingMessageTimestamp: string;
   Status: string;
   StatusDisplay: string;
@@ -57,6 +58,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
 
       // Find message data for initiating message
       const initiatingMessageData = update.initiating_message ? messagesData.find((m) => m.message_id === update.initiating_message.message_id)?.data || [] : [];
+      const isInitiatingMessageTimeOut = update.initiating_message?.is_saga_timeout_message || false;
 
       // Create common base message objects with shared properties
       const outgoingMessages = update.outgoing_messages.map((msg) => {
@@ -68,7 +70,6 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
 
         // Find corresponding message data
         const messageData = messagesData.find((m) => m.message_id === msg.message_id)?.data || [];
-
         return {
           MessageType: msg.message_type || "",
           MessageId: msg.message_id,
@@ -106,6 +107,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
         InitiatingMessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
         FormattedInitiatingMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
         InitiatingMessageData: initiatingMessageData,
+        IsInitiatingMessageTimeOut: isInitiatingMessageTimeOut,
         HasTimeout: hasTimeout,
         IsFirstNode: update.status === "new",
         TimeoutMessages: timeoutMessages,
