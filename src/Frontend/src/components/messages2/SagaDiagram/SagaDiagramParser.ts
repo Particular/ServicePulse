@@ -2,7 +2,7 @@ import { SagaHistory } from "@/resources/SagaHistory";
 import { typeToName } from "@/composables/typeHumanizer";
 import { SagaMessageData, SagaMessageDataItem } from "@/stores/SagaDiagramStore";
 
-export interface SagaMessage {
+export interface SagaMessageExt {
   MessageId: string;
   MessageFriendlyTypeName: string;
   FormattedTimeSent: string;
@@ -11,7 +11,7 @@ export interface SagaMessage {
   IsCommandMessage: boolean;
 }
 
-export interface SagaTimeoutMessage extends SagaMessage {
+export interface SagaTimeoutMessage extends SagaMessageExt {
   TimeoutFriendly: string;
 }
 
@@ -27,7 +27,7 @@ export interface SagaUpdateViewModel {
   StatusDisplay: string;
   HasTimeout: boolean;
   IsFirstNode: boolean;
-  NonTimeoutMessages: SagaMessage[];
+  NonTimeoutMessages: SagaMessageExt[];
   TimeoutMessages: SagaTimeoutMessage[];
   HasNonTimeoutMessages: boolean;
   HasTimeoutMessages: boolean;
@@ -93,7 +93,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
             }) as SagaTimeoutMessage
         );
 
-      const nonTimeoutMessages = outgoingMessages.filter((msg) => !msg.HasTimeout) as SagaMessage[];
+      const nonTimeoutMessages = outgoingMessages.filter((msg) => !msg.HasTimeout) as SagaMessageExt[];
 
       const hasTimeout = timeoutMessages.length > 0;
 
