@@ -167,12 +167,14 @@ const watchHandle = watch([() => route.query, itemsPerPage, sortBy, messageFilte
 
 <template>
   <div>
+    <div class="header">
       <RefreshConfig id="auditListRefresh" @change="store.updateRefreshTimer" @manual-refresh="store.refresh" />
-    <div class="row">
-      <FiltersPanel />
-    </div>
-    <div class="row">
-      <ResultsCount :displayed="messages.length" :total="totalCount" />
+      <div class="row">
+        <FiltersPanel />
+      </div>
+      <div class="row">
+        <ResultsCount :displayed="messages.length" :total="totalCount" />
+      </div>
     </div>
     <div class="row results-table">
       <template v-for="message in messages" :key="message.id">
@@ -198,6 +200,14 @@ const watchHandle = watch([() => route.query, itemsPerPage, sortBy, messageFilte
 
 <style scoped>
 @import "../list.css";
+
+.header {
+  position: sticky;
+  top: -3rem;
+  background: #f2f6f7;
+  z-index: 100;
+}
+
 .results-table {
   margin-top: 1rem;
   margin-bottom: 5rem;
