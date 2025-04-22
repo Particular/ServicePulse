@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { SagaUpdateViewModel } from "./SagaDiagramParser";
 import MessageDataBox from "./MessageDataBox.vue";
-import SagaTimeoutOutgoingMessage from "./SagaTimeoutOutgoingMessage.vue";
+import SagaOutgoingTimeoutMessage from "./SagaOutgoingTimeoutMessage.vue";
 import SagaOutgoingMessage from "./SagaOutgoingMessage.vue";
 
 // Import the images directly
@@ -78,7 +78,7 @@ defineProps<{
     </div>
 
     <!-- Display each outgoing timeout message in separate rows -->
-    <SagaTimeoutOutgoingMessage v-for="(msg, msgIndex) in update.TimeoutMessages" :key="'timeout-' + msgIndex" :message="msg" :isLastMessage="msgIndex === update.TimeoutMessages.length - 1" :showMessageData="showMessageData" />
+    <SagaOutgoingTimeoutMessage v-for="(msg, msgIndex) in update.OutgoingTimeoutMessages" :key="'timeout-' + msgIndex" :message="msg" :isLastMessage="msgIndex === update.OutgoingTimeoutMessages.length - 1" :showMessageData="showMessageData" />
   </div>
 </template>
 

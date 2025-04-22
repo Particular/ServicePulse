@@ -31,9 +31,9 @@ export interface SagaUpdateViewModel {
   HasTimeout: boolean;
   IsFirstNode: boolean;
   OutgoingMessages: SagaMessageViewModel[];
-  TimeoutMessages: SagaTimeoutMessageViewModel[];
+  OutgoingTimeoutMessages: SagaTimeoutMessageViewModel[];
   HasOutgoingMessages: boolean;
-  HasTimeoutMessages: boolean;
+  HasOutgoingTimeoutMessages: boolean;
 }
 
 export interface SagaViewModel {
@@ -85,7 +85,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
         };
       });
 
-      const timeoutMessages = outgoingMessages
+      const outgoingTimeoutMessages = outgoingMessages
         .filter((msg) => msg.HasTimeout)
         .map(
           (msg) =>
@@ -97,7 +97,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
 
       const regularMessages = outgoingMessages.filter((msg) => !msg.HasTimeout) as SagaMessageViewModel[];
 
-      const hasTimeout = timeoutMessages.length > 0;
+      const hasTimeout = outgoingTimeoutMessages.length > 0;
 
       return {
         MessageId: update.initiating_message?.message_id || "",
@@ -114,10 +114,10 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
         },
         HasTimeout: hasTimeout,
         IsFirstNode: update.status === "new",
-        TimeoutMessages: timeoutMessages,
+        OutgoingTimeoutMessages: outgoingTimeoutMessages,
         OutgoingMessages: regularMessages,
         HasOutgoingMessages: regularMessages.length > 0,
-        HasTimeoutMessages: timeoutMessages.length > 0,
+        HasOutgoingTimeoutMessages: outgoingTimeoutMessages.length > 0,
       };
     })
     .sort((a, b) => a.StartTime.getTime() - b.StartTime.getTime())
