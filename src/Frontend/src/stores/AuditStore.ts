@@ -4,6 +4,7 @@ import { ref } from "vue";
 import type { SortInfo } from "@/components/SortInfo";
 import Message from "@/resources/Message";
 import { EndpointsView } from "@/resources/EndpointView.ts";
+import useAutoRefresh from "@/composables/autoRefresh";
 
 export const useAuditStore = defineStore("AuditStore", () => {
   const sortByInstances = ref<SortInfo>({
@@ -29,7 +30,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
     }
   }
 
-  async function refresh() {
+  const dataRetriever = useAutoRefresh(async () => {
     try {
       let from = "",
         to = "";
@@ -46,10 +47,11 @@ export const useAuditStore = defineStore("AuditStore", () => {
       messages.value = [];
       throw e;
     }
-  }
+  }, null);
 
   return {
-    refresh,
+    refresh: dataRetriever.executeAndResetTimer,
+    updateRefreshTimer: dataRetriever.updateTimeout,
     loadEndpoints,
     sortBy: sortByInstances,
     messages,

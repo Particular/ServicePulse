@@ -10,6 +10,7 @@ import { dotNetTimespanToMilliseconds, formatDotNetTimespan } from "@/composable
 import "@vuepic/vue-datepicker/dist/main.css";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
 import { onBeforeMount, watch } from "vue";
+import RefreshConfig from "../RefreshConfig.vue";
 
 const store = useAuditStore();
 const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange } = storeToRefs(store);
@@ -166,6 +167,7 @@ const watchHandle = watch([() => route.query, itemsPerPage, sortBy, messageFilte
 
 <template>
   <div>
+      <RefreshConfig id="auditListRefresh" @change="store.updateRefreshTimer" @manual-refresh="store.refresh" />
     <div class="row">
       <FiltersPanel />
     </div>
