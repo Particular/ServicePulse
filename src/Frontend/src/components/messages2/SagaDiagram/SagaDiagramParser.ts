@@ -2,7 +2,7 @@ import { SagaHistory } from "@/resources/SagaHistory";
 import { typeToName } from "@/composables/typeHumanizer";
 import { SagaMessageData, SagaMessageDataItem } from "@/stores/SagaDiagramStore";
 
-export interface SagaMessageExt {
+export interface SagaMessageViewModel {
   MessageId: string;
   MessageFriendlyTypeName: string;
   FormattedTimeSent: string;
@@ -10,8 +10,13 @@ export interface SagaMessageExt {
   IsEventMessage: boolean;
   IsCommandMessage: boolean;
 }
-
-export interface SagaTimeoutMessage extends SagaMessageExt {
+export interface InitiatingMessageViewModel {
+  InitiatingMessageType: string;
+  IsInitiatingMessageTimeOut: boolean;
+  FormattedInitiatingMessageTimestamp: string;
+  InitiatingMessageData: SagaMessageDataItem[];
+}
+export interface SagaTimeoutMessageViewModel extends SagaMessageViewModel {
   TimeoutFriendly: string;
 }
 
@@ -20,18 +25,15 @@ export interface SagaUpdateViewModel {
   StartTime: Date;
   FinishTime: Date;
   FormattedStartTime: string;
-  InitiatingMessageType: string;
-  IsInitiatingMessageTimeOut: boolean;
-  FormattedInitiatingMessageTimestamp: string;
+  InitiatingMessage: InitiatingMessageViewModel;
   Status: string;
   StatusDisplay: string;
   HasTimeout: boolean;
   IsFirstNode: boolean;
-  NonTimeoutMessages: SagaMessageExt[];
-  TimeoutMessages: SagaTimeoutMessage[];
+  NonTimeoutMessages: SagaMessageViewModel[];
+  TimeoutMessages: SagaTimeoutMessageViewModel[];
   HasNonTimeoutMessages: boolean;
   HasTimeoutMessages: boolean;
-  InitiatingMessageData: SagaMessageDataItem[];
 }
 
 export interface SagaViewModel {
@@ -90,10 +92,10 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
             ({
               ...msg,
               TimeoutFriendly: `${msg.TimeoutSeconds}s`,
-            }) as SagaTimeoutMessage
+            }) as SagaTimeoutMessageViewModel
         );
 
-      const nonTimeoutMessages = outgoingMessages.filter((msg) => !msg.HasTimeout) as SagaMessageExt[];
+      const nonTimeoutMessages = outgoingMessages.filter((msg) => !msg.HasTimeout) as SagaMessageViewModel[];
 
       const hasTimeout = timeoutMessages.length > 0;
 
@@ -104,10 +106,12 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
         FormattedStartTime: `${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`,
         Status: update.status,
         StatusDisplay: update.status === "new" ? "Saga Initiated" : "Saga Updated",
-        InitiatingMessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
-        FormattedInitiatingMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
-        InitiatingMessageData: initiatingMessageData,
-        IsInitiatingMessageTimeOut: isInitiatingMessageTimeOut,
+        InitiatingMessage: {
+          InitiatingMessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
+          FormattedInitiatingMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
+          InitiatingMessageData: initiatingMessageData,
+          IsInitiatingMessageTimeOut: isInitiatingMessageTimeOut,
+        },
         HasTimeout: hasTimeout,
         IsFirstNode: update.status === "new",
         TimeoutMessages: timeoutMessages,
