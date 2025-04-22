@@ -11,15 +11,13 @@ defineProps<{
 </script>
 
 <template>
-  <div>
-    <div class="cell-inner cell-inner-side">
-      <img class="saga-icon saga-icon--side-cell" :src="message.IsEventMessage ? EventIcon : CommandIcon" :alt="message.IsEventMessage ? 'Event' : 'Command'" />
-      <h2 class="message-title">{{ message.MessageFriendlyTypeName }}</h2>
-      <div class="timestamp">{{ message.FormattedTimeSent }}</div>
-    </div>
-    <div v-if="showMessageData" class="message-data message-data--active">
-      <MessageDataBox :messageData="message.Data" />
-    </div>
+  <div class="cell-inner cell-inner-side">
+    <img class="saga-icon saga-icon--side-cell" :src="message.IsEventMessage ? EventIcon : CommandIcon" :alt="message.IsEventMessage ? 'Event' : 'Command'" />
+    <h2 class="message-title">{{ message.MessageFriendlyTypeName }}</h2>
+    <div class="timestamp">{{ message.FormattedTimeSent }}</div>
+  </div>
+  <div v-if="showMessageData" class="message-data message-data--active">
+    <MessageDataBox :messageData="message.Data" />
   </div>
 </template>
 
@@ -135,15 +133,15 @@ defineProps<{
   margin-left: -1rem;
 }
 
+.cell-inner-side:nth-child(-n + 2) {
+  margin-top: 0;
+}
+
 .cell-inner-side {
   margin-top: 1rem;
   padding: 0.25rem 0.25rem 0;
   border: solid 2px #cccccc;
   background-color: #cccccc;
-}
-
-.cell-inner-side:nth-child(-n + 2) {
-  margin-top: 0;
 }
 
 .cell-inner-side--active {
