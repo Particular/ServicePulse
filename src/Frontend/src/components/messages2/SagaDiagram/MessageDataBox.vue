@@ -7,15 +7,13 @@ defineProps<{
 </script>
 
 <template>
-  <div v-for="(item, index) in messageData" :key="index" class="message-data-box">
-    <template v-if="item.key === 'Content' && item.value === 'EMPTY'">
-      <span class="message-data-box-text--empty">Empty</span>
-    </template>
-    <template v-else>
-      <b class="message-data-box-text">{{ item.key }}</b>
-      <span class="message-data-box-text">=</span>
-      <span class="message-data-box-text--ellipsis" :title="item.value">{{ item.value }}</span>
-    </template>
+  <div v-if="messageData.length === 0" class="message-data-box">
+    <span class="message-data-box-text--empty">Empty</span>
+  </div>
+  <div v-else v-for="(item, index) in messageData" :key="index" class="message-data-box">
+    <b class="message-data-box-text">{{ item.key }}</b>
+    <span class="message-data-box-text">=</span>
+    <span class="message-data-box-text--ellipsis" :title="item.value">{{ item.value }}</span>
   </div>
 </template>
 

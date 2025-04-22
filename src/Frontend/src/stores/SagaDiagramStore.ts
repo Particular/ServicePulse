@@ -109,12 +109,7 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
   function createEmptyMessageData(message_id: string): SagaMessageData {
     return {
       message_id,
-      data: [
-        {
-          key: "Content",
-          value: "EMPTY",
-        },
-      ],
+      data: [],
     };
   }
   async function fetchSagaMessageData(message: SagaMessage): Promise<SagaMessageData> {
