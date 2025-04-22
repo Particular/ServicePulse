@@ -9,7 +9,7 @@ import DatePickerRange from "@/components/audit/DatePickerRange.vue";
 const store = useAuditStore();
 const { sortBy, messageFilterString, selectedEndpointName, endpoints, itemsPerPage, dateRange } = storeToRefs(store);
 const endpointNames = computed(() => {
-  return [...new Set(endpoints.value.map((endpoint) => endpoint.name))];
+  return [...new Set(endpoints.value.map((endpoint) => endpoint.name))].sort();
 });
 const sortByItemsMap = new Map([
   ["Latest sent", "time_sent,desc"],
@@ -62,7 +62,7 @@ watch(selectedSortByItem, (newValue) => {
       <div class="filter-component text-search-container"><FilterInput v-model="messageFilterString" placeholder="Search messages..." aria-label="Search messages" /></div>
     </div>
     <div class="filter">
-      <div class="filter-label">Endpoints:</div>
+      <div class="filter-label">Endpoint:</div>
       <div class="filter-component">
         <ListFilterSelector :items="endpointNames" instructions="Select an endpoint" v-model="selectedEndpointName" item-name="endpoint" label="Endpoint" default-empty-text="Any" :show-clear="true" :show-filter="true" />
       </div>
@@ -76,13 +76,13 @@ watch(selectedSortByItem, (newValue) => {
     <div class="filter">
       <div class="filter-label">Show:</div>
       <div class="filter-component">
-        <ListFilterSelector :items="numberOfItemsPerPage" instructions="Select how many result to display" v-model="selectedItemsPerPage" item-name="result" default-empty-text="Any" :show-clear="false" :show-filter="false" />
+        <ListFilterSelector :items="numberOfItemsPerPage" instructions="Select how many result to display" v-model="selectedItemsPerPage" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" />
       </div>
     </div>
     <div class="filter last-filter">
       <div class="filter-label">Sort:</div>
       <div class="filter-component">
-        <ListFilterSelector :items="sortByItems" instructions="" v-model="selectedSortByItem" item-name="result" default-empty-text="Any" :show-clear="false" :show-filter="false" />
+        <ListFilterSelector :items="sortByItems" instructions="" v-model="selectedSortByItem" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" />
       </div>
     </div>
   </div>
