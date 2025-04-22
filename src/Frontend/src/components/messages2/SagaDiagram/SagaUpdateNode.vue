@@ -2,7 +2,7 @@
 import { SagaUpdateViewModel } from "./SagaDiagramParser";
 import MessageDataBox from "./MessageDataBox.vue";
 import SagaTimeoutOutgoingMessage from "./SagaTimeoutOutgoingMessage.vue";
-import SagaNonTimeoutOutgoingMessage from "./SagaNonTimeoutOutgoingMessage.vue";
+import SagaOutgoingMessage from "./SagaOutgoingMessage.vue";
 
 // Import the images directly
 import CommandIcon from "@/assets/command.svg";
@@ -71,9 +71,9 @@ defineProps<{
       </div>
 
       <!-- Right side - outgoing messages (non-timeout) -->
-      <div class="cell cell--side cell--aling-top" v-if="update.HasNonTimeoutMessages">
+      <div class="cell cell--side cell--aling-top" v-if="update.HasOutgoingMessages">
         <div class="cell-inner cell-inner-right"></div>
-        <SagaNonTimeoutOutgoingMessage v-for="(msg, msgIndex) in update.NonTimeoutMessages" :key="msgIndex" :message="msg" :showMessageData="showMessageData" />
+        <SagaOutgoingMessage v-for="(msg, msgIndex) in update.OutgoingMessages" :key="msgIndex" :message="msg" :showMessageData="showMessageData" />
       </div>
     </div>
 

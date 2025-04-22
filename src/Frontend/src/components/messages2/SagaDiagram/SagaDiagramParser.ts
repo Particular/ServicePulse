@@ -30,9 +30,9 @@ export interface SagaUpdateViewModel {
   StatusDisplay: string;
   HasTimeout: boolean;
   IsFirstNode: boolean;
-  NonTimeoutMessages: SagaMessageViewModel[];
+  OutgoingMessages: SagaMessageViewModel[];
   TimeoutMessages: SagaTimeoutMessageViewModel[];
-  HasNonTimeoutMessages: boolean;
+  HasOutgoingMessages: boolean;
   HasTimeoutMessages: boolean;
 }
 
@@ -95,7 +95,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
             }) as SagaTimeoutMessageViewModel
         );
 
-      const nonTimeoutMessages = outgoingMessages.filter((msg) => !msg.HasTimeout) as SagaMessageViewModel[];
+      const regularMessages = outgoingMessages.filter((msg) => !msg.HasTimeout) as SagaMessageViewModel[];
 
       const hasTimeout = timeoutMessages.length > 0;
 
@@ -115,8 +115,8 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
         HasTimeout: hasTimeout,
         IsFirstNode: update.status === "new",
         TimeoutMessages: timeoutMessages,
-        NonTimeoutMessages: nonTimeoutMessages,
-        HasNonTimeoutMessages: nonTimeoutMessages.length > 0,
+        OutgoingMessages: regularMessages,
+        HasOutgoingMessages: regularMessages.length > 0,
         HasTimeoutMessages: timeoutMessages.length > 0,
       };
     })
