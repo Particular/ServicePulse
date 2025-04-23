@@ -13,7 +13,7 @@ import { useShowToast } from "@/composables/toast";
 import ResultsCount from "@/components/ResultsCount.vue";
 import { useHiddenFeature } from "./useHiddenFeature";
 import { license } from "@/composables/serviceLicense";
-import FilterInput from "@/components/FilterInput.vue";
+// import FilterInput from "@/components/FilterInput.vue";
 
 enum NameFilterType {
   beginsWith = "Begins with",
