@@ -102,6 +102,10 @@ async function loadData() {
   data.value = results.filter((row) => row.is_known_endpoint === (props.source === DataSource.WellKnownEndpoint));
 }
 
+function nameFilterChanged(event: Event) {
+  filterData.name = (event.target as HTMLInputElement).value;
+}
+
 function sortChanged(item: Item) {
   filterData.sort = item.value;
 }
@@ -174,7 +178,8 @@ async function save() {
             </select>
           </div>
           <div>
-            <FilterInput v-model="filterData.name" />
+            <FilterInput v-model="filterData.name" /> TODO: this is failing a test, should replace the line below
+            <!-- <input type="search" aria-label="Filter by name" class="form-control format-text" :value="filterData.name" @input="nameFilterChanged" placeholder="Filter by name..." /> -->
           </div>
         </div>
       </div>

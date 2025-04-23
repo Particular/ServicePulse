@@ -3,7 +3,7 @@ import { ref, watch } from "vue";
 import debounce from "lodash/debounce";
 
 const model = defineModel<string>({ required: true });
-const props = withDefaults(defineProps<{ placeholder?: string; ariaLabel?: string }>(), { placeholder: "Filter by name...", ariaLabel: "filter by name" });
+const props = withDefaults(defineProps<{ placeholder?: string; ariaLabel?: string }>(), { placeholder: "Filter by name...", ariaLabel: "Filter by name" });
 const localInput = ref<string>(model.value);
 
 const debounceUpdateModel = debounce((value: string) => {
