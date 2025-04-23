@@ -178,8 +178,8 @@ async function save() {
             </select>
           </div>
           <div>
-            <FilterInput v-model="filterData.name" /> TODO: this is failing a test, should replace the line below
-            <!-- <input type="search" aria-label="Filter by name" class="form-control format-text" :value="filterData.name" @input="nameFilterChanged" placeholder="Filter by name..." /> -->
+            <!-- <FilterInput v-model="filterData.name" /> TODO: this is failing a test, should replace the line below -->
+            <input type="search" aria-label="Filter by name" class="form-control format-text" :value="filterData.name" @input="nameFilterChanged" placeholder="Filter by name..." />
           </div>
         </div>
       </div>
