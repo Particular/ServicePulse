@@ -6,13 +6,15 @@ import Message from "@/resources/Message";
 import { EndpointsView } from "@/resources/EndpointView.ts";
 import useAutoRefresh from "@/composables/autoRefresh";
 
+export type DateRange = [fromDate: Date, toDate: Date] | [];
+
 export const useAuditStore = defineStore("AuditStore", () => {
   const sortByInstances = ref<SortInfo>({
     property: "time_sent",
     isAscending: false,
   });
 
-  const dateRange = ref<Date[]>([]);
+  const dateRange = ref<DateRange>([]);
   const messageFilterString = ref("");
   const itemsPerPage = ref(100);
   const totalCount = ref(0);
@@ -32,12 +34,9 @@ export const useAuditStore = defineStore("AuditStore", () => {
 
   const dataRetriever = useAutoRefresh(async () => {
     try {
-      let from = "",
-        to = "";
-      if (dateRange.value.length === 2) {
-        from = dateRange.value[0].toISOString();
-        to = dateRange.value[1].toISOString();
-      }
+      const [fromDate, toDate] = dateRange.value;
+      const from = fromDate?.toISOString() ?? "";
+      const to = toDate?.toISOString() ?? "";
       const [response, data] = await useTypedFetchFromServiceControl<Message[]>(
         `messages2/?endpoint_name=${selectedEndpointName.value}&from=${from}&to=${to}&q=${messageFilterString.value}&page_size=${itemsPerPage.value}&sort=${sortByInstances.value.property}&direction=${sortByInstances.value.isAscending ? "asc" : "desc"}`
       );

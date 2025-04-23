@@ -1,24 +1,28 @@
 <script setup lang="ts">
+import { DateRange } from "@/stores/AuditStore";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import { ref, useTemplateRef, watch } from "vue";
 
-type DateRange = [Date, Date];
-
-const model = defineModel<Date[]>({ required: true });
-const internalModel = ref<Date[]>([]);
+const model = defineModel<DateRange>({ required: true });
+const internalModel = ref<DateRange>([]);
 const displayDataRange = ref<string>("No dates");
 const datePicker = useTemplateRef<typeof VueDatePicker>("datePicker");
 
 watch(internalModel, () => {
-  if (isValidRange(internalModel.value as DateRange)) {
-    model.value = internalModel.value;
-    displayDataRange.value = formatDate(internalModel.value as DateRange);
+  const updatedRange = internalModel.value as DateRange;
+  if (isValidRange(updatedRange)) {
+    model.value = updatedRange;
+    displayDataRange.value = formatDate(updatedRange);
   } else internalModel.value = model.value;
 });
 
-watch(model, () => {
-  internalModel.value = model.value;
-});
+watch(
+  model,
+  () => {
+    internalModel.value = model.value;
+  },
+  { immediate: true }
+);
 
 function isValidRange([fromDate, toDate]: DateRange) {
   return (!fromDate && !toDate) || (toDate && toDate <= new Date());

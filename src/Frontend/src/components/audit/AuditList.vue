@@ -120,10 +120,12 @@ function setQuery() {
 
 let firstLoad = true;
 
-onBeforeMount(async () => {
+onBeforeMount(() => {
   setQuery();
 
-  await Promise.all([store.refresh(), store.loadEndpoints()]);
+  //without setTimeout, this happens before the store is properly initialised, and therefore the query route values aren't applied to the refresh
+  //TODO: is there a better way to achieve this?
+  setTimeout(async () => await Promise.all([store.refresh(), store.loadEndpoints()]), 0);
 
   firstLoad = false;
 });
@@ -142,12 +144,9 @@ const watchHandle = watch([() => route.query, itemsPerPage, sortBy, messageFilte
     return;
   }
 
-  let from = "",
-    to = "";
-  if (dateRange.value.length === 2) {
-    from = dateRange.value[0].toISOString();
-    to = dateRange.value[1].toISOString();
-  }
+  const [fromDate, toDate] = dateRange.value;
+  const from = fromDate?.toISOString() ?? "";
+  const to = toDate?.toISOString() ?? "";
 
   await router.push({
     query: {
