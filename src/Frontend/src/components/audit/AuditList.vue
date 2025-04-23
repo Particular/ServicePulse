@@ -3,7 +3,6 @@ import routeLinks from "@/router/routeLinks";
 import { FieldNames, useAuditStore } from "@/stores/AuditStore";
 import { storeToRefs } from "pinia";
 import Message, { MessageStatus } from "@/resources/Message";
-import moment from "moment";
 import { useRoute, useRouter } from "vue-router";
 import ResultsCount from "@/components/ResultsCount.vue";
 import { dotNetTimespanToMilliseconds, formatDotNetTimespan } from "@/composables/formatUtils.ts";
@@ -157,7 +156,7 @@ function setQuery() {
           </div>
           <div class="message-id">{{ message.message_id }}</div>
           <div class="message-type">{{ message.message_type }}</div>
-          <div class="time-sent"><span class="label-name">Time Sent:</span>{{ moment(message.time_sent).local().format("LLLL") }}</div>
+          <div class="time-sent"><span class="label-name">Time Sent:</span>{{ new Date(message.time_sent).toLocaleString() }}</div>
           <div class="critical-time"><span class="label-name">Critical Time:</span>{{ formatDotNetTimespan(message.critical_time) }}</div>
           <div class="processing-time"><span class="label-name">Processing Time:</span>{{ formatDotNetTimespan(message.processing_time) }}</div>
           <div class="delivery-time"><span class="label-name">Delivery Time:</span>{{ formatDotNetTimespan(message.delivery_time) }}</div>
