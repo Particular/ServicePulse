@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import { SagaHistory, SagaMessage } from "@/resources/SagaHistory";
 import { useFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import Message from "@/resources/Message";
+import { useMessageStore } from "@/stores/MessageStore";
 const StandardKeys = ["$type", "Id", "Originator", "OriginalMessageId"];
 export interface SagaMessageDataItem {
   key: string;
@@ -21,15 +22,22 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
   const fetchedMessages = ref(new Set<string>());
   const messagesData = ref<SagaMessageData[]>([]);
   const MessageBodyEndpoint = "messages/{0}/body";
-  // Watch for changes to sagaId and fetch saga history data
-  watch(sagaId, async (newSagaId) => {
-    if (!newSagaId) {
-      sagaHistory.value = null;
-      return;
-    }
 
-    await fetchSagaHistory(newSagaId);
-  });
+  const messageStore = useMessageStore();
+
+  //Watch for changes to messageStore.state.data.invoked_saga.has_saga
+  watch(
+    () => messageStore.state.data.invoked_saga.has_saga,
+    async (newValue) => {
+      if (newValue) {
+        sagaId.value = messageStore.state.data.invoked_saga.saga_id || "";
+        await fetchSagaHistory(sagaId.value);
+      } else {
+        clearSagaHistory();
+      }
+    },
+    { immediate: true }
+  );
 
   // Watch for changes to showMessageData
   watch([showMessageData, sagaHistory], async ([show, history]) => {
@@ -244,7 +252,6 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
     showMessageData,
     messagesData,
     setSagaId,
-    fetchSagaHistory,
     clearSagaHistory,
     toggleMessageData,
   };

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onUnmounted, watch } from "vue";
+import { computed, onUnmounted } from "vue";
 import routeLinks from "@/router/routeLinks";
 import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { useMessageStore } from "@/stores/MessageStore";
@@ -19,17 +19,6 @@ const sagaDiagramStore = useSagaDiagramStore();
 const { showMessageData } = storeToRefs(sagaDiagramStore);
 
 const messageStore = useMessageStore();
-
-//Watch for message and set saga ID when component mounts or message changes
-watch(
-  () => messageStore.state,
-  (newState) => {
-    if (newState.data.invoked_saga.saga_id !== sagaDiagramStore.sagaId) {
-      sagaDiagramStore.setSagaId(newState.data.invoked_saga.saga_id || "");
-    }
-  },
-  { immediate: true }
-);
 
 onUnmounted(() => {
   sagaDiagramStore.clearSagaHistory();
