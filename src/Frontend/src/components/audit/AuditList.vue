@@ -175,12 +175,14 @@ function setQuery() {
   top: -3rem;
   background: #f2f6f7;
   z-index: 100;
+  /* set padding/margin so that the sticky version is offset, but not the non-sticky version */
+  padding-top: 0.5rem;
+  margin-top: -0.5rem;
 }
 
 .results-table {
   margin-top: 1rem;
   margin-bottom: 5rem;
-  padding: 10px 0;
   background-color: #ffffff;
 }
 .spacer {
@@ -192,9 +194,9 @@ function setQuery() {
   padding: 3px;
   border: 1px solid #ffffff;
   display: grid;
-  grid-template-columns: 25px 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1.8em 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 6px;
+  gap: 0.375rem;
   grid-template-areas:
     "status message-type message-type message-type time-sent"
     "status message-id processing-time critical-time delivery-time";
@@ -205,7 +207,7 @@ function setQuery() {
   cursor: pointer;
 }
 .label-name {
-  margin-right: 4px;
+  margin-right: 0.25rem;
   color: #777f7f;
 }
 .status {
@@ -220,6 +222,7 @@ function setQuery() {
 .message-type {
   grid-area: message-type;
   font-weight: bold;
+  overflow-wrap: break-word;
 }
 .processing-time {
   grid-area: processing-time;
@@ -232,24 +235,24 @@ function setQuery() {
 }
 .status-container {
   color: white;
-  width: 20px;
-  height: 20px;
+  width: 1.4em;
+  height: 1.4em;
   position: relative;
 }
 
 .status-icon {
   background-position: center;
   background-repeat: no-repeat;
-  height: 20px;
-  width: 20px;
+  height: 1.4em;
+  width: 1.4em;
 }
 
 .warning {
   background-image: url("@/assets/warning.svg");
   background-position: bottom;
   background-repeat: no-repeat;
-  height: 13px;
-  width: 13px;
+  height: 0.93em;
+  width: 0.93em;
   position: absolute;
   right: 0;
   bottom: 0;
@@ -277,20 +280,5 @@ function setQuery() {
 
 .retry-issued {
   background-image: url("@/assets/status_retry_issued.svg");
-}
-
-.grid-row {
-  display: flex;
-  position: relative;
-  border-top: 1px solid #eee;
-  border-right: 1px solid #fff;
-  border-bottom: 1px solid #eee;
-  border-left: 1px solid #fff;
-  background-color: #fff;
-  margin: 0;
-}
-
-.grid-row:nth-child(even) {
-  background-color: #eee;
 }
 </style>

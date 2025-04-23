@@ -79,7 +79,7 @@ watch(selectedSortByItem, (newValue) => {
         <ListFilterSelector :items="numberOfItemsPerPage" instructions="Select how many result to display" v-model="selectedItemsPerPage" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" />
       </div>
     </div>
-    <div class="filter last-filter">
+    <div class="filter">
       <div class="filter-label">Sort:</div>
       <div class="filter-component">
         <ListFilterSelector :items="sortByItems" v-model="selectedSortByItem" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" />
@@ -89,10 +89,6 @@ watch(selectedSortByItem, (newValue) => {
 </template>
 
 <style scoped>
-.last-filter {
-  flex-grow: 1;
-  place-content: flex-end;
-}
 .filters {
   background-color: #f3f3f3;
   border: #8c8c8c 1px solid;
@@ -100,11 +96,19 @@ watch(selectedSortByItem, (newValue) => {
   padding: 0.3125rem;
   display: flex;
   gap: 1.1rem;
+  flex-wrap: wrap;
 }
+
 .filter {
   display: flex;
   align-items: center;
 }
+
+.filter:last-child {
+  flex-grow: 1;
+  place-content: flex-end;
+}
+
 .filter-label {
   font-weight: bold;
 }
