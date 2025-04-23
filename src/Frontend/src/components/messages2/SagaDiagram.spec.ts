@@ -39,7 +39,7 @@ describe("Feature: Message not involved in Saga", () => {
       const componentDriver = rendercomponent({
         initialState: {
           MessageStore: messageStore,
-          sagaHistory: undefined, // Lets pass undefined to simulate no saga data available
+          SagaDiagramStore: undefined, // Lets pass undefined to simulate no saga data available
         },
       });
 
@@ -64,7 +64,7 @@ describe("Feature: Detecting no Audited Saga Data Available", () => {
       const componentDriver = rendercomponent({
         initialState: {
           MessageStore: messageStore,
-          sagaHistory: undefined, // Lets pass undefined to simulate no saga data available
+          SagaDiagramStore: undefined, // Lets pass undefined to simulate no saga data available
         },
       });
 
@@ -98,7 +98,7 @@ describe("Feature: Navigation and Contextual Information", () => {
       const componentDriver = rendercomponent({
         initialState: {
           MessageStore: messageStore,
-          sagaHistory: { sagaHistory: sampleSagaHistory },
+          SagaDiagramStore: { sagaHistory: sampleSagaHistory },
         },
       });
 
@@ -121,7 +121,7 @@ describe("Feature: Navigation and Contextual Information", () => {
       const componentDriver = rendercomponent({
         initialState: {
           MessageStore: messageStore,
-          sagaHistory: { sagaHistory: sampleSagaHistory },
+          SagaDiagramStore: { sagaHistory: sampleSagaHistory },
         },
       });
 
@@ -182,7 +182,7 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
       const componentDriver = rendercomponent({
         initialState: {
           MessageStore: messageStore,
-          sagaHistory: { sagaHistory: sampleSagaHistory },
+          SagaDiagramStore: { sagaHistory: sampleSagaHistory },
         },
       });
 
@@ -248,7 +248,7 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
       const componentDriver = rendercomponent({
         initialState: {
           MessageStore: messageStore,
-          sagaHistory: { sagaHistory: sampleSagaHistory },
+          SagaDiagramStore: { sagaHistory: sampleSagaHistory },
         },
       });
 
@@ -272,7 +272,7 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
   });
 });
 
-function rendercomponent({ initialState = {} }: { initialState?: { MessageStore?: MessageStore; sagaHistory?: { sagaHistory: SagaHistory } } }): componentDSL {
+function rendercomponent({ initialState = {} }: { initialState?: { MessageStore?: MessageStore; SagaDiagramStore?: { sagaHistory: SagaHistory } } }): componentDSL {
   const router = makeRouter();
 
   // Render with createTestingPinia

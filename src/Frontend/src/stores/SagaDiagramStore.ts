@@ -3,7 +3,7 @@ import { ref, watch } from "vue";
 import { SagaHistory, SagaMessage } from "@/resources/SagaHistory";
 import { useFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import Message from "@/resources/Message";
-import { useMessageStore } from "@/stores/MessageStore";
+
 const StandardKeys = ["$type", "Id", "Originator", "OriginalMessageId"];
 export interface SagaMessageDataItem {
   key: string;
@@ -13,7 +13,7 @@ export interface SagaMessageData {
   message_id: string;
   data: SagaMessageDataItem[];
 }
-export const useSagaDiagramStore = defineStore("sagaHistory", () => {
+export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
   const sagaHistory = ref<SagaHistory | null>(null);
   const sagaId = ref<string | null>(null);
   const loading = ref(false);
@@ -23,63 +23,17 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
   const messagesData = ref<SagaMessageData[]>([]);
   const MessageBodyEndpoint = "messages/{0}/body";
 
-  const messageStore = useMessageStore();
+  // Watch the sagaId and trigger fetches when it changes
+  watch(sagaId, async (newSagaId) => {
+    if (newSagaId) {
+      await fetchSagaHistory(newSagaId);
 
-  //Watch for changes to messageStore.state.data.invoked_saga.has_saga
-  watch(
-    () => messageStore.state.data.invoked_saga.has_saga,
-    async (newValue) => {
-      if (newValue) {
-        sagaId.value = messageStore.state.data.invoked_saga.saga_id || "";
-        await fetchSagaHistory(sagaId.value);
-      } else {
-        clearSagaHistory();
+      // If saga history was successfully fetched, fetch message data
+      if (sagaHistory.value) {
+        await fetchMessagesData(sagaHistory.value);
       }
-    },
-    { immediate: true }
-  );
-
-  // Watch for changes to showMessageData
-  watch([showMessageData, sagaHistory], async ([show, history]) => {
-    if (show && history) {
-      // Get all messages from changes array - both initiating and outgoing
-      const messagesToFetch = history.changes.flatMap((change) => {
-        const messages: SagaMessage[] = [];
-
-        // Add initiating message if it exists and hasn't been fetched
-        if (change.initiating_message && !fetchedMessages.value.has(change.initiating_message.message_id)) {
-          messages.push(change.initiating_message);
-        }
-
-        // Add all unfetched outgoing messages
-        if (change.outgoing_messages) {
-          messages.push(...change.outgoing_messages.filter((msg) => !fetchedMessages.value.has(msg.message_id)));
-        }
-        return messages;
-      });
-
-      // Check if any messages need body_url
-      const needsBodyUrl = messagesToFetch.every((msg) => !msg.body_url);
-      if (needsBodyUrl && messagesToFetch.length > 0) {
-        const auditMessages = await getAuditMessages(sagaId.value!);
-        messagesToFetch.forEach((message) => {
-          const auditMessage = auditMessages.find((x: Message) => x.message_id === message.message_id);
-          if (auditMessage) {
-            message.body_url = auditMessage.body_url;
-          }
-        });
-      }
-
-      // Fetch data for each unfetched message in parallel and store results
-      const fetchPromises = messagesToFetch.map(async (message) => {
-        const data = await fetchSagaMessageData(message);
-        fetchedMessages.value.add(message.message_id);
-        return data;
-      });
-
-      const newMessageData = await Promise.all(fetchPromises);
-      // Add new message data to the existing array
-      messagesData.value = [...messagesData.value, ...newMessageData];
+    } else {
+      clearSagaHistory();
     }
   });
 
@@ -114,12 +68,14 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
       loading.value = false;
     }
   }
+
   function createEmptyMessageData(message_id: string): SagaMessageData {
     return {
       message_id,
       data: [],
     };
   }
+
   async function fetchSagaMessageData(message: SagaMessage): Promise<SagaMessageData> {
     const bodyUrl = (message.body_url ?? formatUrl(MessageBodyEndpoint, message.message_id)).replace(/^\//, "");
     loading.value = true;
@@ -242,6 +198,47 @@ export const useSagaDiagramStore = defineStore("sagaHistory", () => {
 
   function toggleMessageData() {
     showMessageData.value = !showMessageData.value;
+  }
+
+  async function fetchMessagesData(history: SagaHistory) {
+    // Get all messages from changes array - both initiating and outgoing
+    const messagesToFetch = history.changes.flatMap((change) => {
+      const messages: SagaMessage[] = [];
+
+      // Add initiating message if it exists and hasn't been fetched
+      if (change.initiating_message && !fetchedMessages.value.has(change.initiating_message.message_id)) {
+        messages.push(change.initiating_message);
+      }
+
+      // Add all unfetched outgoing messages
+      if (change.outgoing_messages) {
+        messages.push(...change.outgoing_messages.filter((msg) => !fetchedMessages.value.has(msg.message_id)));
+      }
+      return messages;
+    });
+
+    // Check if any messages need body_url
+    const needsBodyUrl = messagesToFetch.every((msg) => !msg.body_url);
+    if (needsBodyUrl && messagesToFetch.length > 0) {
+      const auditMessages = await getAuditMessages(sagaId.value!);
+      messagesToFetch.forEach((message) => {
+        const auditMessage = auditMessages.find((x: Message) => x.message_id === message.message_id);
+        if (auditMessage) {
+          message.body_url = auditMessage.body_url;
+        }
+      });
+    }
+
+    // Fetch data for each unfetched message in parallel and store results
+    const fetchPromises = messagesToFetch.map(async (message) => {
+      const data = await fetchSagaMessageData(message);
+      fetchedMessages.value.add(message.message_id);
+      return data;
+    });
+
+    const newMessageData = await Promise.all(fetchPromises);
+    // Add new message data to the existing array
+    messagesData.value = [...messagesData.value, ...newMessageData];
   }
 
   return {
