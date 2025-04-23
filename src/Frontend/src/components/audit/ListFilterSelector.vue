@@ -33,7 +33,7 @@ function setFilter(item: string, isSelected: boolean) {
 
 <template>
   <div class="dropdown">
-    <button type="button" aria-label="open dropdown menu" class="btn btn-dropdown dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" aria-label="open dropdown menu" class="btn btn-dropdown dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <span class="wrap-text">{{ selected || defaultEmptyText }}</span>
     </button>
     <div class="dropdown-menu wrapper">
@@ -105,5 +105,9 @@ function setFilter(item: string, isSelected: boolean) {
 
 .selected {
   margin-left: 0.375rem;
+}
+
+.dropdown .btn {
+  padding-left: 0.5rem;
 }
 </style>

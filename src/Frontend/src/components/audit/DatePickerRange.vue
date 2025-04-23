@@ -42,9 +42,9 @@ function formatDate([fromDate, toDate]: DateRange) {
 </script>
 
 <template>
-  <VueDatePicker ref="datePicker" v-model="internalModel" :format="formatDate" :range="{ partialRange: false }" :enable-seconds="true" :action-row="{ showNow: false, showCancel: false, showSelect: true }">
+  <VueDatePicker ref="datePicker" class="dropdown" v-model="internalModel" :format="formatDate" :range="{ partialRange: false }" :enable-seconds="true" :action-row="{ showNow: false, showCancel: false, showSelect: true }">
     <template #trigger>
-      <button type="button" class="btn btn-dropdown dropdown-toggle">
+      <button type="button" class="btn btn-dropdown dropdown-toggle sp-btn-menu">
         {{ displayDataRange }}
       </button>
     </template>
@@ -53,3 +53,9 @@ function formatDate([fromDate, toDate]: DateRange) {
     </template>
   </VueDatePicker>
 </template>
+
+<style>
+.dropdown .btn {
+  padding-left: 0.5rem;
+}
+</style>
