@@ -21,7 +21,7 @@ watch(localInput, (newValue) => {
 
 <template>
   <div role="search" aria-label="filter" class="filter-input">
-    <input type="search" :placeholder="props.placeholder" :aria-label="props.ariaLabel" class="form-control-static filter-input" v-model="localInput" />
+    <input type="search" :placeholder="props.placeholder" :aria-label="props.ariaLabel" class="form-control filter-input" v-model="localInput" />
   </div>
 </template>
 

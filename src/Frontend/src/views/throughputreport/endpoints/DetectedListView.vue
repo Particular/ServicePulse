@@ -13,6 +13,7 @@ import { useShowToast } from "@/composables/toast";
 import ResultsCount from "@/components/ResultsCount.vue";
 import { useHiddenFeature } from "./useHiddenFeature";
 import { license } from "@/composables/serviceLicense";
+import FilterInput from "@/components/FilterInput.vue";
 
 enum NameFilterType {
   beginsWith = "Begins with",
@@ -101,10 +102,6 @@ async function loadData() {
   data.value = results.filter((row) => row.is_known_endpoint === (props.source === DataSource.WellKnownEndpoint));
 }
 
-function nameFilterChanged(event: Event) {
-  filterData.name = (event.target as HTMLInputElement).value;
-}
-
 function sortChanged(item: Item) {
   filterData.sort = item.value;
 }
@@ -177,7 +174,7 @@ async function save() {
             </select>
           </div>
           <div>
-            <input type="search" aria-label="Filter by name" class="form-control format-text" :value="filterData.name" @input="nameFilterChanged" placeholder="Filter by name..." />
+            <FilterInput v-model="filterData.name" />
           </div>
         </div>
       </div>
