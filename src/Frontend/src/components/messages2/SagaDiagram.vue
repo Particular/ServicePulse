@@ -18,17 +18,14 @@ import SagaCompletedNode from "./SagaDiagram/SagaCompletedNode.vue";
 const sagaDiagramStore = useSagaDiagramStore();
 const { showMessageData } = storeToRefs(sagaDiagramStore);
 
-const store = useMessageStore();
-const { state: messageState } = storeToRefs(store);
+const messageStore = useMessageStore();
 
 //Watch for message and set saga ID when component mounts or message changes
 watch(
-  () => messageState.value.data.invoked_saga,
-  (newSagas) => {
-    if (newSagas.has_saga) {
-      sagaDiagramStore.setSagaId(newSagas.saga_id || "");
-    } else {
-      sagaDiagramStore.clearSagaHistory();
+  () => messageStore.state,
+  (newState) => {
+    if (newState.data.invoked_saga.saga_id !== sagaDiagramStore.sagaId) {
+      sagaDiagramStore.setSagaId(newState.data.invoked_saga.saga_id || "");
     }
   },
   { immediate: true }
@@ -42,7 +39,7 @@ const vm = computed<SagaViewModel>(() => {
   const completedUpdate = sagaDiagramStore.sagaHistory?.changes.find((update) => update.status === "completed");
   const completionTime = completedUpdate ? new Date(completedUpdate.finish_time) : null;
 
-  const { data } = messageState.value;
+  const { data } = messageStore.state;
   const { invoked_saga: saga } = data;
   const sagaHistory = sagaDiagramStore.sagaHistory;
 
