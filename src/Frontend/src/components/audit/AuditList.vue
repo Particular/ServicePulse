@@ -52,70 +52,24 @@ function statusToIcon(messageStatus: MessageStatus) {
 }
 
 function hasWarning(message: Message) {
-  if (message.status === MessageStatus.ResolvedSuccessfully) {
-    return true;
-  }
-
-  if (dotNetTimespanToMilliseconds(message.critical_time) < 0) {
-    return true;
-  }
-
-  if (dotNetTimespanToMilliseconds(message.processing_time) < 0) {
-    return true;
-  }
-
-  if (dotNetTimespanToMilliseconds(message.delivery_time) < 0) {
-    return true;
-  }
-
-  return false;
+  return (
+    message.status === MessageStatus.ResolvedSuccessfully || //
+    dotNetTimespanToMilliseconds(message.critical_time) < 0 ||
+    dotNetTimespanToMilliseconds(message.processing_time) < 0 ||
+    dotNetTimespanToMilliseconds(message.delivery_time) < 0
+  );
 }
 
 function navigateToMessage(message: Message) {
   const query = router.currentRoute.value.query;
 
-  if (message.status === MessageStatus.Successful) {
-    router.push({
-      path: routeLinks.messages.successMessage.link(message.message_id, message.id),
-      query: { ...query, ...{ back: route.path } },
-    });
-  } else {
-    router.push({ path: routeLinks.messages.failedMessage.link(message.id), query: { ...query, ...{ back: route.path } } });
-  }
-}
-
-function setQuery() {
-  const query = router.currentRoute.value.query;
-
-  watchHandle.pause();
-
-  if (query.filter) {
-    messageFilterString.value = query.filter as string;
-  } else {
-    messageFilterString.value = "";
-  }
-  if (query.sortBy && query.sortDir) {
-    sortBy.value = { isAscending: query.sortDir === "asc", property: query.sortBy as string };
-  } else {
-    sortBy.value = { isAscending: false, property: FieldNames.TimeSent };
-  }
-  if (query.pageSize) {
-    itemsPerPage.value = parseInt(query.pageSize as string, 10);
-  } else {
-    itemsPerPage.value = 100;
-  }
-  if (query.from && query.to) {
-    dateRange.value = [new Date(query.from as string), new Date(query.to as string)];
-  } else {
-    dateRange.value = [];
-  }
-  if (query.endpoint) {
-    selectedEndpointName.value = query.endpoint as string;
-  } else {
-    selectedEndpointName.value = "";
-  }
-
-  watchHandle.resume();
+  router.push({
+    path:
+      message.status === MessageStatus.Successful //
+        ? routeLinks.messages.successMessage.link(message.message_id, message.id)
+        : routeLinks.messages.failedMessage.link(message.id),
+    query: { ...query, ...{ back: route.path } },
+  });
 }
 
 let firstLoad = true;
@@ -162,6 +116,23 @@ const watchHandle = watch([() => route.query, itemsPerPage, sortBy, messageFilte
 
   await store.refresh();
 });
+
+function setQuery() {
+  const query = router.currentRoute.value.query;
+
+  watchHandle.pause();
+
+  messageFilterString.value = query.filter ? (query.filter as string) : "";
+  sortBy.value =
+    query.sortBy && query.sortDir //
+      ? { isAscending: query.sortDir === "asc", property: query.sortBy as string }
+      : (sortBy.value = { isAscending: false, property: FieldNames.TimeSent });
+  itemsPerPage.value = query.pageSize ? parseInt(query.pageSize as string) : 100;
+  dateRange.value = query.from && query.to ? [new Date(query.from as string), new Date(query.to as string)] : [];
+  selectedEndpointName.value = (query.endpoint ?? "") as string;
+
+  watchHandle.resume();
+}
 </script>
 
 <template>

@@ -2,7 +2,9 @@ import { useFormatTime } from "@/composables/formatter.ts";
 
 export function formatTypeName(type: string) {
   const clazz = type.split(",")[0];
-  return clazz;
+  let objectName = clazz.split(".").pop() ?? "";
+  objectName = objectName.replace("+", ".");
+  return objectName;
 }
 
 export function formatDotNetTimespan(timespan: string) {
