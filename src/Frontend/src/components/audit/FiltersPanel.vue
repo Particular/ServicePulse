@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import FilterInput from "@/components/FilterInput.vue";
 import { storeToRefs } from "pinia";
-import { useAuditStore } from "@/stores/AuditStore.ts";
+import { FieldNames, useAuditStore } from "@/stores/AuditStore.ts";
 import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
 import { computed, ref, watch } from "vue";
 import DatePickerRange from "@/components/audit/DatePickerRange.vue";
@@ -12,11 +12,11 @@ const endpointNames = computed(() => {
   return [...new Set(endpoints.value.map((endpoint) => endpoint.name))].sort();
 });
 const sortByItemsMap = new Map([
-  ["Latest sent", "time_sent,desc"],
-  ["Oldest sent", "time_sent,asc"],
-  ["Slowest processing", "processing_time,desc"],
-  ["Highest critical time", "critical_time,desc"],
-  ["Longest delivery", "delivery_time,desc"],
+  ["Latest sent", `${FieldNames.TimeSent},desc`],
+  ["Oldest sent", `${FieldNames.TimeSent},asc`],
+  ["Slowest processing time", `${FieldNames.ProcessingTime},desc`],
+  ["Highest critical time", `${FieldNames.CriticalTime},desc`],
+  ["Longest delivery time", `${FieldNames.DeliveryTime},desc`],
 ]);
 const numberOfItemsPerPage = ["50", "100", "250", "500"];
 const sortByItems = computed(() => [...sortByItemsMap.keys()]);
@@ -50,7 +50,7 @@ watch(selectedSortByItem, (newValue) => {
     const strings = item.split(",");
     sortBy.value = { isAscending: strings[1] === "asc", property: strings[0] };
   } else {
-    sortBy.value = { isAscending: true, property: "time_sent" };
+    sortBy.value = { isAscending: true, property: FieldNames.TimeSent };
   }
 });
 </script>
@@ -82,7 +82,7 @@ watch(selectedSortByItem, (newValue) => {
     <div class="filter last-filter">
       <div class="filter-label">Sort:</div>
       <div class="filter-component">
-        <ListFilterSelector :items="sortByItems" instructions="" v-model="selectedSortByItem" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" />
+        <ListFilterSelector :items="sortByItems" v-model="selectedSortByItem" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" />
       </div>
     </div>
   </div>
@@ -109,8 +109,6 @@ watch(selectedSortByItem, (newValue) => {
   font-weight: bold;
 }
 
-.filter-component {
-}
 .text-search-container {
   width: 25rem;
 }

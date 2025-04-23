@@ -8,9 +8,16 @@ import useAutoRefresh from "@/composables/autoRefresh";
 
 export type DateRange = [fromDate: Date, toDate: Date] | [];
 
+export enum FieldNames {
+  TimeSent = "time_sent",
+  ProcessingTime = "processing_time",
+  CriticalTime = "critical_time",
+  DeliveryTime = "delivery_time",
+}
+
 export const useAuditStore = defineStore("AuditStore", () => {
   const sortByInstances = ref<SortInfo>({
-    property: "time_sent",
+    property: FieldNames.TimeSent,
     isAscending: false,
   });
 

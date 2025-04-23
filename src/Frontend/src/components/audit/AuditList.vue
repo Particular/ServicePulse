@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import routeLinks from "@/router/routeLinks";
-import { useAuditStore } from "@/stores/AuditStore";
+import { FieldNames, useAuditStore } from "@/stores/AuditStore";
 import { storeToRefs } from "pinia";
 import Message, { MessageStatus } from "@/resources/Message";
 import moment from "moment";
@@ -97,7 +97,7 @@ function setQuery() {
   if (query.sortBy && query.sortDir) {
     sortBy.value = { isAscending: query.sortDir === "asc", property: query.sortBy as string };
   } else {
-    sortBy.value = { isAscending: false, property: "time_sent" };
+    sortBy.value = { isAscending: false, property: FieldNames.TimeSent };
   }
   if (query.pageSize) {
     itemsPerPage.value = parseInt(query.pageSize as string, 10);
