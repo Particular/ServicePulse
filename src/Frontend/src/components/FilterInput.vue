@@ -1,22 +1,21 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed } from "vue";
 import debounce from "lodash/debounce";
 
 const model = defineModel<string>({ required: true });
 const props = withDefaults(defineProps<{ placeholder?: string; ariaLabel?: string }>(), { placeholder: "Filter by name...", ariaLabel: "Filter by name" });
-const localInput = ref<string>(model.value);
+const localInput = computed({
+  get() {
+    return model.value;
+  },
+  set(newValue) {
+    debounceUpdateModel(newValue);
+  },
+});
 
 const debounceUpdateModel = debounce((value: string) => {
   model.value = value;
 }, 600);
-
-watch(model, (newValue) => {
-  localInput.value = newValue;
-});
-
-watch(localInput, (newValue) => {
-  debounceUpdateModel(newValue);
-});
 </script>
 
 <template>
