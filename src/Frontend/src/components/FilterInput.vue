@@ -28,8 +28,8 @@ const debounceUpdateModel = debounce((value: string) => {
 .filter-input input {
   display: inline-block;
   width: 100%;
-  padding-right: 10px;
-  padding-left: 30px;
+  padding-right: 0.625rem;
+  padding-left: 2em;
   border: 1px solid #aaa;
   border-radius: 4px;
   height: 100%;
@@ -37,7 +37,7 @@ const debounceUpdateModel = debounce((value: string) => {
 
 div.filter-input {
   position: relative;
-  height: 36px;
+  height: 2.6em;
 }
 
 .filter-input:before {
