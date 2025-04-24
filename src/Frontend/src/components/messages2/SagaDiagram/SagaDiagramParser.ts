@@ -1,6 +1,7 @@
 import { SagaHistory } from "@/resources/SagaHistory";
 import { typeToName } from "@/composables/typeHumanizer";
 import { SagaMessageData, SagaMessageDataItem } from "@/stores/SagaDiagramStore";
+import { getTimeoutFriendly } from "@/composables/deliveryDelayParser";
 
 export interface SagaMessageViewModel {
   MessageId: string;
@@ -78,6 +79,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
           FormattedTimeSent: `${timeSent.toLocaleDateString()} ${timeSent.toLocaleTimeString()}`,
           HasTimeout: hasTimeout,
           TimeoutSeconds: timeoutSeconds,
+          TimeoutFriendly: getTimeoutFriendly(delivery_delay),
           MessageFriendlyTypeName: typeToName(msg.message_type || ""),
           Data: messageData,
           IsEventMessage: isEventMessage,
@@ -91,7 +93,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
           (msg) =>
             ({
               ...msg,
-              TimeoutFriendly: `${msg.TimeoutSeconds}s`,
+              TimeoutFriendly: `${msg.TimeoutFriendly}`,
             }) as SagaTimeoutMessageViewModel
         );
 
