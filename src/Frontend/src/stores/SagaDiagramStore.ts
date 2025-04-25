@@ -60,7 +60,6 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
         error.value = "Failed to fetch saga history";
       } else {
         const data = await response.json();
-        console.log("Saga history data for" + id, data);
         sagaHistory.value = data;
       }
     } catch (e) {
