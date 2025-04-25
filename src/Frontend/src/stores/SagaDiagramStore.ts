@@ -23,17 +23,19 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
   const messagesData = ref<SagaMessageData[]>([]);
   const MessageBodyEndpoint = "messages/{0}/body";
 
-  // Watch the sagaId and trigger fetches when it changes
+  // Watch the sagaId and fetch saga history when it changes
   watch(sagaId, async (newSagaId) => {
     if (newSagaId) {
       await fetchSagaHistory(newSagaId);
-
-      // If saga history was successfully fetched, fetch message data
-      if (sagaHistory.value) {
-        await fetchMessagesData(sagaHistory.value);
-      }
     } else {
       clearSagaHistory();
+    }
+  });
+
+  // Watch both showMessageData and sagaHistory together
+  watch([showMessageData, sagaHistory], async ([show, history]) => {
+    if (show && history) {
+      await fetchMessagesData(history);
     }
   });
 
