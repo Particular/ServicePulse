@@ -22,14 +22,14 @@ defineProps<{
     <div class="row">
       <div class="cell cell--side">
         <div class="cell-inner cell-inner-side">
-          <img class="saga-icon saga-icon--side-cell" :src="update.InitiatingMessage.IsInitiatingMessageTimeOut ? TimeoutIcon : CommandIcon" alt="" />
-          <h2 class="message-title" aria-label="initiating message type">{{ update.InitiatingMessage.InitiatingMessageType }}</h2>
-          <div class="timestamp" aria-label="initiating message timestamp">{{ update.InitiatingMessage.FormattedInitiatingMessageTimestamp }}</div>
+          <img class="saga-icon saga-icon--side-cell" :src="update.InitiatingMessage.IsSagaTimeoutMessage ? TimeoutIcon : CommandIcon" alt="" />
+          <h2 class="message-title" aria-label="initiating message type">{{ update.InitiatingMessage.MessageType }}</h2>
+          <div class="timestamp" aria-label="initiating message timestamp">{{ update.InitiatingMessage.FormattedMessageTimestamp }}</div>
         </div>
       </div>
       <div class="cell cell--center cell-flex">
         <div class="cell-inner cell-inner-center cell-inner--align-bottom">
-          <template v-if="update.InitiatingMessage.IsInitiatingMessageTimeOut">
+          <template v-if="update.InitiatingMessage.IsSagaTimeoutMessage">
             <img class="saga-icon saga-icon--center-cell" :src="SagaTimeoutIcon" alt="" />
             <h2 class="saga-status-title saga-status-title--inline timeout-status" aria-label="timeout invoked">Timeout Invoked</h2>
             <br />
@@ -47,7 +47,7 @@ defineProps<{
       <div class="cell cell--side cell--left-border cell--aling-top">
         <div v-if="showMessageData" class="message-data message-data--active">
           <!-- Generic message data box -->
-          <MessageDataBox v-if="update.InitiatingMessage.InitiatingMessageType" :messageData="update.InitiatingMessage.InitiatingMessageData" />
+          <MessageDataBox v-if="update.InitiatingMessage.MessageType" :messageData="update.InitiatingMessage.MessageData" />
         </div>
       </div>
 
