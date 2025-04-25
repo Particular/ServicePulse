@@ -202,7 +202,6 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
     messageDataLoading.value = true;
     error.value = null;
 
-    await new Promise((resolve) => setTimeout(resolve, 5000));
 
     try {
       // Get all messages from changes array - both initiating and outgoing
