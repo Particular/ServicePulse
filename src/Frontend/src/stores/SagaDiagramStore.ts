@@ -202,7 +202,6 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
     messageDataLoading.value = true;
     error.value = null;
 
-
     try {
       // Get all messages from changes array - both initiating and outgoing
       const messagesToFetch = history.changes.flatMap((change) => {
