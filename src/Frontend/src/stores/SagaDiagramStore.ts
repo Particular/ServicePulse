@@ -17,6 +17,7 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
   const sagaHistory = ref<SagaHistory | null>(null);
   const sagaId = ref<string | null>(null);
   const loading = ref(false);
+  const messageDataLoading = ref(false);
   const error = ref<string | null>(null);
   const showMessageData = ref(false);
   const fetchedMessages = ref(new Set<string>());
@@ -51,6 +52,8 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
 
     try {
       const response = await useFetchFromServiceControl(`sagas/${id}`);
+      //sleep the tread for 1 second
+      await new Promise((resolve) => setTimeout(resolve, 5000));
 
       if (response.status === 404) {
         sagaHistory.value = null;
@@ -79,8 +82,6 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
 
   async function fetchSagaMessageData(message: SagaMessage): Promise<SagaMessageData> {
     const bodyUrl = (message.body_url ?? formatUrl(MessageBodyEndpoint, message.message_id)).replace(/^\//, "");
-    loading.value = true;
-    error.value = null;
 
     try {
       const response = await useFetchFromServiceControl(bodyUrl, { cache: "no-store" });
@@ -110,8 +111,6 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
     } catch (e) {
       error.value = e instanceof Error ? e.message : "Unknown error occurred";
       return createEmptyMessageData(message.message_id);
-    } finally {
-      loading.value = false;
     }
   }
 
@@ -202,50 +201,62 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
   }
 
   async function fetchMessagesData(history: SagaHistory) {
-    // Get all messages from changes array - both initiating and outgoing
-    const messagesToFetch = history.changes.flatMap((change) => {
-      const messages: SagaMessage[] = [];
+    messageDataLoading.value = true;
+    error.value = null;
 
-      // Add initiating message if it exists and hasn't been fetched
-      if (change.initiating_message && !fetchedMessages.value.has(change.initiating_message.message_id)) {
-        messages.push(change.initiating_message);
-      }
+    await new Promise((resolve) => setTimeout(resolve, 5000));
 
-      // Add all unfetched outgoing messages
-      if (change.outgoing_messages) {
-        messages.push(...change.outgoing_messages.filter((msg) => !fetchedMessages.value.has(msg.message_id)));
-      }
-      return messages;
-    });
+    try {
+      // Get all messages from changes array - both initiating and outgoing
+      const messagesToFetch = history.changes.flatMap((change) => {
+        const messages: SagaMessage[] = [];
 
-    // Check if any messages need body_url
-    const needsBodyUrl = messagesToFetch.every((msg) => !msg.body_url);
-    if (needsBodyUrl && messagesToFetch.length > 0) {
-      const auditMessages = await getAuditMessages(sagaId.value!);
-      messagesToFetch.forEach((message) => {
-        const auditMessage = auditMessages.find((x: Message) => x.message_id === message.message_id);
-        if (auditMessage) {
-          message.body_url = auditMessage.body_url;
+        // Add initiating message if it exists and hasn't been fetched
+        if (change.initiating_message && !fetchedMessages.value.has(change.initiating_message.message_id)) {
+          messages.push(change.initiating_message);
         }
+
+        // Add all unfetched outgoing messages
+        if (change.outgoing_messages) {
+          messages.push(...change.outgoing_messages.filter((msg) => !fetchedMessages.value.has(msg.message_id)));
+        }
+        return messages;
       });
+
+      // Check if any messages need body_url
+      const needsBodyUrl = messagesToFetch.every((msg) => !msg.body_url);
+      if (needsBodyUrl && messagesToFetch.length > 0) {
+        const auditMessages = await getAuditMessages(sagaId.value!);
+        messagesToFetch.forEach((message) => {
+          const auditMessage = auditMessages.find((x: Message) => x.message_id === message.message_id);
+          if (auditMessage) {
+            message.body_url = auditMessage.body_url;
+          }
+        });
+      }
+
+      // Fetch data for each unfetched message in parallel and store results
+      const fetchPromises = messagesToFetch.map(async (message) => {
+        const data = await fetchSagaMessageData(message);
+        fetchedMessages.value.add(message.message_id);
+        return data;
+      });
+
+      const newMessageData = await Promise.all(fetchPromises);
+      // Add new message data to the existing array
+      messagesData.value = [...messagesData.value, ...newMessageData];
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : "Unknown error occurred";
+    } finally {
+      messageDataLoading.value = false;
     }
-
-    // Fetch data for each unfetched message in parallel and store results
-    const fetchPromises = messagesToFetch.map(async (message) => {
-      const data = await fetchSagaMessageData(message);
-      fetchedMessages.value.add(message.message_id);
-      return data;
-    });
-
-    const newMessageData = await Promise.all(fetchPromises);
-    // Add new message data to the existing array
-    messagesData.value = [...messagesData.value, ...newMessageData];
   }
 
   return {
     sagaHistory,
     sagaId,
     loading,
+    messageDataLoading,
     error,
     showMessageData,
     messagesData,

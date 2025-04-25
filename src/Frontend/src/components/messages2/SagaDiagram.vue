@@ -7,6 +7,7 @@ import { storeToRefs } from "pinia";
 import ToolbarEndpointIcon from "@/assets/Shell_ToolbarEndpoint.svg";
 import { SagaViewModel, parseSagaUpdates } from "./SagaDiagram/SagaDiagramParser";
 import { typeToName } from "@/composables/typeHumanizer";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
 //Subcomponents
 import NoSagaData from "./SagaDiagram/NoSagaData.vue";
@@ -16,7 +17,7 @@ import SagaUpdateNode from "./SagaDiagram/SagaUpdateNode.vue";
 import SagaCompletedNode from "./SagaDiagram/SagaCompletedNode.vue";
 
 const sagaDiagramStore = useSagaDiagramStore();
-const { showMessageData } = storeToRefs(sagaDiagramStore);
+const { showMessageData, loading } = storeToRefs(sagaDiagramStore);
 
 const messageStore = useMessageStore();
 
@@ -77,14 +78,19 @@ const vm = computed<SagaViewModel>(() => {
       </button>
     </div>
 
+    <!-- Loading Spinner -->
+    <div v-if="loading" class="loading-container">
+      <LoadingSpinner />
+    </div>
+
     <!-- No saga Data Available container -->
-    <NoSagaData v-if="!vm.ParticipatedInSaga" />
+    <NoSagaData v-else-if="!vm.ParticipatedInSaga" />
 
     <!-- Saga Audit Plugin Needed container -->
-    <SagaPluginNeeded v-if="vm.ShowNoPluginActiveLegend" />
+    <SagaPluginNeeded v-else-if="vm.ShowNoPluginActiveLegend" />
 
     <!-- Main Saga Data container -->
-    <div v-if="vm.HasSagaData" role="table" aria-label="saga-sequence-list" class="body" style="display: flex">
+    <div v-else-if="vm.HasSagaData" role="table" aria-label="saga-sequence-list" class="body" style="display: flex">
       <div class="container">
         <!-- Saga header with title and navigation -->
         <SagaHeader :saga-title="vm.SagaTitle" :saga-guid="vm.SagaGuid" :message-id-url="vm.MessageIdUrl" />
@@ -125,6 +131,14 @@ const vm = computed<SagaViewModel>(() => {
 .container {
   width: 66.6667%;
   min-width: 50rem;
+}
+
+.loading-container {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
 }
 
 /* Button styles */
