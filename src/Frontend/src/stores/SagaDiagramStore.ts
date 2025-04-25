@@ -52,8 +52,6 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
 
     try {
       const response = await useFetchFromServiceControl(`sagas/${id}`);
-      //sleep the tread for 1 second
-      await new Promise((resolve) => setTimeout(resolve, 5000));
 
       if (response.status === 404) {
         sagaHistory.value = null;
