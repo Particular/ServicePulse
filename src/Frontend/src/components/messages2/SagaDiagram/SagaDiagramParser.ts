@@ -2,6 +2,7 @@ import { SagaHistory } from "@/resources/SagaHistory";
 import { typeToName } from "@/composables/typeHumanizer";
 import { SagaMessageData, SagaMessageDataItem } from "@/stores/SagaDiagramStore";
 import { getTimeoutFriendly } from "@/composables/deliveryDelayParser";
+import { processArray } from "@/composables/jsonPropertiesHelper";
 
 export interface SagaMessageViewModel {
   MessageId: string;
@@ -20,11 +21,17 @@ export interface InitiatingMessageViewModel {
 export interface SagaTimeoutMessageViewModel extends SagaMessageViewModel {
   TimeoutFriendly: string;
 }
-
+export interface SagaPropertyDataItem {
+  SagaName: string;
+  Key: string;
+  Value: string;
+}
 export interface SagaUpdateViewModel {
   MessageId: string;
   StartTime: Date;
   FinishTime: Date;
+  AllProperties: SagaPropertyDataItem[];
+  UpdatedProperties: SagaPropertyDataItem[];
   FormattedStartTime: string;
   InitiatingMessage: InitiatingMessageViewModel;
   Status: string;
@@ -49,7 +56,17 @@ export interface SagaViewModel {
   SagaUpdates: SagaUpdateViewModel[];
   ShowMessageData: boolean;
 }
+function processStateValues(stateAfterChange: string, messageType: string): SagaPropertyDataItem[] {
+  if (!stateAfterChange || !messageType) {
+    return [];
+  }
 
+  return processArray(stateAfterChange).map((v) => ({
+    SagaName: messageType,
+    Key: v.key,
+    Value: v.value,
+  }));
+}
 export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: SagaMessageData[]): SagaUpdateViewModel[] {
   if (!sagaHistory || !sagaHistory.changes || !sagaHistory.changes.length) return [];
 
@@ -57,6 +74,9 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
     .map((update) => {
       const startTime = new Date(update.start_time);
       const finishTime = new Date(update.finish_time);
+      // Process state values
+      const stateValues = processStateValues(update.state_after_change, update.initiating_message?.message_type || "");
+      console.log("State Values", stateValues);
       const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
 
       // Find message data for initiating message
@@ -104,6 +124,8 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
         MessageId: update.initiating_message?.message_id || "",
         StartTime: startTime,
         FinishTime: finishTime,
+        AllProperties: stateValues,
+        UpdatedProperties: stateValues,
         FormattedStartTime: `${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`,
         Status: update.status,
         StatusDisplay: update.status === "new" ? "Saga Initiated" : "Saga Updated",

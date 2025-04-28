@@ -3,8 +3,8 @@ import { ref, watch } from "vue";
 import { SagaHistory, SagaMessage } from "@/resources/SagaHistory";
 import { useFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import Message from "@/resources/Message";
+import { processValues } from "@/composables/jsonPropertiesHelper";
 
-const StandardKeys = ["$type", "Id", "Originator", "OriginalMessageId"];
 export interface SagaMessageDataItem {
   key: string;
   value: string;
@@ -93,10 +93,11 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
       }
 
       let data: SagaMessageDataItem[];
+
       if (typeof body === "string" && body.trim().startsWith("<?xml")) {
         data = getXmlData(body);
       } else {
-        data = processJsonValues(body);
+        data = processValues(typeof body === "string" ? body : JSON.stringify(body));
       }
       // Check if parsed data is empty
       if (!data || data.length === 0) {
@@ -152,34 +153,6 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
       console.error("Error parsing message data:", error);
       return [];
     }
-  }
-
-  // Replace or modify the existing processJsonValues function
-  function processJsonValues(jsonBody: string | Record<string, unknown>): SagaMessageDataItem[] {
-    let parsedBody: Record<string, unknown>;
-    if (typeof jsonBody === "string") {
-      try {
-        parsedBody = JSON.parse(jsonBody);
-      } catch (e) {
-        console.error("Error parsing JSON:", e);
-        return [];
-      }
-    } else {
-      parsedBody = jsonBody;
-    }
-
-    const items: SagaMessageDataItem[] = [];
-
-    for (const key in parsedBody) {
-      if (!StandardKeys.includes(key)) {
-        items.push({
-          key: key,
-          value: String(parsedBody[key] ?? ""),
-        });
-      }
-    }
-
-    return items;
   }
 
   function clearSagaHistory() {

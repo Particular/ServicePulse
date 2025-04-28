@@ -3,14 +3,34 @@ import { SagaUpdateViewModel } from "./SagaDiagramParser";
 import MessageDataBox from "./MessageDataBox.vue";
 import SagaOutgoingTimeoutMessage from "./SagaOutgoingTimeoutMessage.vue";
 import SagaOutgoingMessage from "./SagaOutgoingMessage.vue";
-
+import { ref, onMounted } from "vue";
+import PropertyDataBox from "./PropertyDataBox.vue";
 // Import the images directly
 import CommandIcon from "@/assets/command.svg";
 import SagaInitiatedIcon from "@/assets/SagaInitiatedIcon.svg";
 import SagaUpdatedIcon from "@/assets/SagaUpdatedIcon.svg";
 import TimeoutIcon from "@/assets/timeout.svg";
 import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";
-defineProps<{
+
+const activeView = ref("none"); // 'none', 'all' or 'updated'
+const nodeId = ref<string | null>(null);
+onMounted(() => {
+  // Set initial state to show all properties
+  activeView.value = "all";
+  nodeId.value = props.update.MessageId;
+});
+const showProperties = (view: "all" | "updated", id: string) => {
+  if (activeView.value === view && nodeId.value === id) {
+    // If clicking same link for same node, hide it
+    activeView.value = "none";
+    nodeId.value = null;
+  } else {
+    // Show properties for this specific node
+    activeView.value = view;
+    nodeId.value = id;
+  }
+};
+const props = defineProps<{
   update: SagaUpdateViewModel;
   showMessageData?: boolean;
 }>();
@@ -55,18 +75,17 @@ defineProps<{
       <div class="cell cell--center cell--center--border">
         <div :class="{ 'cell-inner': true, 'cell-inner-line': update.HasTimeout, 'cell-inner-center': !update.HasTimeout }">
           <div class="saga-properties">
-            <a class="saga-properties-link" href="">All Properties</a> /
-            <a class="saga-properties-link saga-properties-link--active" href="">Updated Properties</a>
+            <a class="saga-properties-link" :class="{ 'saga-properties-link--active': activeView === 'all' && nodeId === update.MessageId }" @click.prevent="showProperties('all', update.MessageId)" href="">All Properties</a> /
+            <a class="saga-properties-link" :class="{ 'saga-properties-link--active': activeView === 'updated' && nodeId === update.MessageId }" @click.prevent="showProperties('updated', update.MessageId)" href="">Updated Properties</a>
           </div>
 
           <!-- Display saga properties if available -->
-          <ul class="saga-properties-list">
-            <li class="saga-properties-list-item">
-              <span class="saga-properties-list-text" title="Property (new)">Property (new)</span>
-              <span class="saga-properties-list-text">=</span>
-              <span class="saga-properties-list-text" title="Sample Value"> Sample Value</span>
-            </li>
-          </ul>
+          <div v-if="activeView === 'all' && nodeId === update.MessageId" class="message-data message-data--active">
+            <PropertyDataBox :messageData="update.AllProperties.map((prop) => ({ key: prop.Key, value: prop.Value }))" />
+          </div>
+          <div v-if="activeView === 'updated' && nodeId === update.MessageId" class="message-data message-data--active">
+            <PropertyDataBox :messageData="update.UpdatedProperties.map((prop) => ({ key: prop.Key, value: prop.Value }))" />
+          </div>
         </div>
       </div>
 
@@ -238,37 +257,6 @@ defineProps<{
 .saga-properties-link--active {
   font-weight: 900;
   color: #000000;
-}
-
-.saga-properties-list {
-  margin: 0;
-  padding-left: 0.25rem;
-  list-style: none;
-}
-
-.saga-properties-list-item {
-  display: flex;
-}
-
-.saga-properties-list-text {
-  display: inline-block;
-  padding-top: 0.25rem;
-  padding-right: 0.75rem;
-  overflow: hidden;
-  font-size: 0.75rem;
-  white-space: nowrap;
-}
-
-.saga-properties-list-text:first-child {
-  min-width: 8rem;
-  max-width: 8rem;
-  display: inline-block;
-  text-overflow: ellipsis;
-}
-
-.saga-properties-list-text:last-child {
-  padding-right: 0;
-  text-overflow: ellipsis;
 }
 
 .message-data {
