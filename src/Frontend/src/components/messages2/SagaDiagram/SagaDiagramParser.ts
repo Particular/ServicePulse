@@ -16,6 +16,7 @@ export interface InitiatingMessageViewModel {
   MessageType: string;
   IsSagaTimeoutMessage: boolean;
   FormattedMessageTimestamp: string;
+  IsEventMessage: boolean;
   MessageData: SagaMessageDataItem[];
 }
 export interface SagaTimeoutMessageViewModel extends SagaMessageViewModel {
@@ -67,6 +68,7 @@ function processStateValues(stateAfterChange: string, messageType: string): Saga
     Value: v.value,
   }));
 }
+
 export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: SagaMessageData[]): SagaUpdateViewModel[] {
   if (!sagaHistory || !sagaHistory.changes || !sagaHistory.changes.length) return [];
 
@@ -78,7 +80,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
       const stateValues = processStateValues(update.state_after_change, update.initiating_message?.message_type || "");
       console.log("State Values", stateValues);
       const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
-
+      const isInitiatingMessageEventMessage = update.initiating_message.intent === "Publish";
       // Find message data for initiating message
       const initiatingMessageData = update.initiating_message ? messagesData.find((m) => m.message_id === update.initiating_message.message_id)?.data || [] : [];
 
@@ -134,6 +136,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
           FormattedMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
           MessageData: initiatingMessageData,
           IsSagaTimeoutMessage: update.initiating_message?.is_saga_timeout_message || false,
+          IsEventMessage: isInitiatingMessageEventMessage,
         },
         HasTimeout: hasTimeout,
         IsFirstNode: update.status === "new",
