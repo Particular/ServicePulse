@@ -4,6 +4,14 @@ import { SagaMessageData, SagaMessageDataItem } from "@/stores/SagaDiagramStore"
 import { getTimeoutFriendly } from "@/composables/deliveryDelayParser";
 import { processArray } from "@/composables/jsonPropertiesHelper";
 
+function toTitleCase(str: string): string {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 export interface SagaMessageViewModel {
   MessageId: string;
   MessageFriendlyTypeName: string;
@@ -86,8 +94,6 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
     return aFinish - bFinish;
   });
   return sortedChanges.map((update) => {
-    // Store original ISO strings for precise sorting
-
     const startTime = new Date(update.start_time);
     const finishTime = new Date(update.finish_time);
 
@@ -99,6 +105,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
       return {
         ...value,
         Key: isNewKey ? `${value.Key} (new)` : value.Key,
+        Value: toTitleCase(value.Value),
       };
     });
     // Initialize oldStateValues if empty
@@ -107,10 +114,18 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
       updatedStateValues = allStateValues;
     } else {
       // Compare and get updated values
-      updatedStateValues = stateValues.filter((currentValue) => {
-        const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
-        return !oldValue || oldValue.Value !== currentValue.Value;
-      });
+      updatedStateValues = stateValues
+        .filter((currentValue) => {
+          const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
+          return !oldValue || oldValue.Value !== currentValue.Value;
+        })
+        .map((currentValue) => {
+          const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
+          return {
+            ...currentValue,
+            Value: `${toTitleCase(oldValue?.Value || "null")} -> ${toTitleCase(currentValue.Value)}`,
+          };
+        });
     }
     // Store current state values for next iteration
     oldStateValues = stateValues;
