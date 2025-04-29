@@ -40,7 +40,7 @@ const filteredHeaders = computed(() => {
       <div class="header-key">{{ header.key }}</div>
       <div class="header-value" @mouseover="toggleHover(index, true)" @mouseleave="toggleHover(index, false)">
         <pre>{{ header.value }}</pre>
-        <div class="header-value-copy"><CopyToClipboard v-if="hoverStates[index] && header.value" :value="header.value" :isIconOnly="true" /></div>
+        <div class="clippy-button"><CopyToClipboard v-if="header.value && hoverStates[index]" :value="header.value" :isIconOnly="true" /></div>
       </div>
     </template>
   </div>
@@ -69,11 +69,6 @@ const filteredHeaders = computed(() => {
   width: 100%;
   max-width: 40rem;
 }
-.format-text {
-  font-weight: unset;
-  font-size: 14px;
-  min-width: 120px;
-}
 .filters {
   background-color: #f3f3f3;
   margin-top: 5px;
@@ -83,28 +78,20 @@ const filteredHeaders = computed(() => {
 }
 
 .header-list {
+  margin-bottom: 1rem;
   margin-top: 0.5rem;
   display: grid;
-  grid-template-columns: fit-content(30%) [key] fit-content(70%) [value];
+  grid-template-columns: 20rem 1fr;
   align-items: center;
   column-gap: 0.5rem;
-}
-
-.header-key {
-  grid-column: key;
-  display: contents;
+  justify-content: center;
 }
 
 .header-value {
-  grid-column: value;
-  position: relative;
+  display: flex;
 }
 
-.header-value-copy {
-  position: absolute;
-  right: 0.5rem;
-  right: 0.5rem;
-  top: 0.2rem;
-  z-index: 1;
+.clippy-button {
+  width: 3.5rem;
 }
 </style>
