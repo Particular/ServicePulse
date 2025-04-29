@@ -35,19 +35,15 @@ const filteredHeaders = computed(() => {
       </div>
     </div>
   </div>
-  <table class="table" v-if="filteredHeaders.length > 0 && !headers.not_found">
-    <tbody>
-      <tr class="interactiveList" v-for="(header, index) in filteredHeaders" :key="index">
-        <td nowrap="nowrap">{{ header.key }}</td>
-        <td>
-          <div class="headercopy" @mouseover="toggleHover(index, true)" @mouseleave="toggleHover(index, false)">
-            <pre>{{ header.value }}</pre>
-            <CopyToClipboard v-if="hoverStates[index] && header.value" :value="header.value" :isIconOnly="true" />
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="header-list" v-if="filteredHeaders.length > 0 && !headers.not_found">
+    <template v-for="(header, index) in filteredHeaders" :key="index">
+      <div class="header-key">{{ header.key }}</div>
+      <div class="header-value" @mouseover="toggleHover(index, true)" @mouseleave="toggleHover(index, false)">
+        <pre>{{ header.value }}</pre>
+        <div class="header-value-copy"><CopyToClipboard v-if="hoverStates[index] && header.value" :value="header.value" :isIconOnly="true" /></div>
+      </div>
+    </template>
+  </div>
 
   <!-- Message if filtered list is empty -->
   <div v-if="filteredHeaders.length <= 0 && !headers.not_found" class="alert alert-warning">No headers found matching the search term.</div>
@@ -55,11 +51,6 @@ const filteredHeaders = computed(() => {
 </template>
 
 <style scoped>
-.headercopy {
-  display: flex;
-  gap: 0.4rem;
-}
-
 /*  empty filtered list message */
 .alert-warning {
   margin-top: 10px;
@@ -89,5 +80,31 @@ const filteredHeaders = computed(() => {
   border: #8c8c8c 1px solid;
   border-radius: 3px;
   padding: 5px;
+}
+
+.header-list {
+  margin-top: 0.5rem;
+  display: grid;
+  grid-template-columns: fit-content(30%) [key] fit-content(70%) [value];
+  align-items: center;
+  column-gap: 0.5rem;
+}
+
+.header-key {
+  grid-column: key;
+  display: contents;
+}
+
+.header-value {
+  grid-column: value;
+  position: relative;
+}
+
+.header-value-copy {
+  position: absolute;
+  right: 0.5rem;
+  right: 0.5rem;
+  top: 0.2rem;
+  z-index: 1;
 }
 </style>
