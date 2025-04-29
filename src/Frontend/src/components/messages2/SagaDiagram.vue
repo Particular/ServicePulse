@@ -4,7 +4,6 @@ import routeLinks from "@/router/routeLinks";
 import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { useMessageStore } from "@/stores/MessageStore";
 import { storeToRefs } from "pinia";
-import ToolbarEndpointIcon from "@/assets/Shell_ToolbarEndpoint.svg";
 import { SagaViewModel, parseSagaUpdates } from "./SagaDiagram/SagaDiagramParser";
 import { typeToName } from "@/composables/typeHumanizer";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
@@ -73,7 +72,7 @@ const vm = computed<SagaViewModel>(() => {
     <!-- Toolbar header -->
     <div v-if="vm.HasSagaData" class="header">
       <button :class="['saga-button', { 'saga-button--active': vm.ShowMessageData }]" aria-label="show-message-data-button" @click="sagaDiagramStore.toggleMessageData">
-        <img class="saga-button-icon" :src="ToolbarEndpointIcon" alt="" />
+        <i class="fa fa-list-ul icon-white" alt="" />
         {{ vm.ShowMessageData ? "Hide Message Data" : "Show Message Data" }}
       </button>
     </div>
