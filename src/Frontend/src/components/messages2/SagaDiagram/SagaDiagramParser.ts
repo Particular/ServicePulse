@@ -100,14 +100,14 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
     // Process state values
     const stateValues = processStateValues(update.state_after_change, update.initiating_message?.message_type || "");
 
-    allStateValues = stateValues.map((value) => {
-      const isNewKey = !oldStateValues.some((old) => old.Key === value.Key);
-      const oldValue = oldStateValues.find((old) => old.Key === value.Key);
+    allStateValues = stateValues.map((currentValue) => {
+      const isNewKey = !oldStateValues.some((old) => old.Key === currentValue.Key);
+      const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
 
       return {
-        ...value,
-        Key: isNewKey ? `${value.Key} (new)` : value.Key,
-        Value: oldValue?.Value ? `${toTitleCase(oldValue.Value)} → ${toTitleCase(value.Value)}` : toTitleCase(value.Value),
+        ...currentValue,
+        Key: isNewKey ? `${currentValue.Key} (new)` : currentValue.Key,
+        Value: oldValue?.Value !== undefined && oldValue.Value !== currentValue.Value ? `${toTitleCase(oldValue.Value)} → ${toTitleCase(currentValue.Value)}` : toTitleCase(currentValue.Value),
       };
     });
     // Initialize oldStateValues if empty
