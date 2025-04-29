@@ -3,6 +3,8 @@ import { SagaUpdateViewModel } from "./SagaDiagramParser";
 import MessageDataBox from "./MessageDataBox.vue";
 import SagaOutgoingTimeoutMessage from "./SagaOutgoingTimeoutMessage.vue";
 import SagaOutgoingMessage from "./SagaOutgoingMessage.vue";
+import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
+import { ref, watch } from "vue";
 
 // Import the images directly
 import CommandIcon from "@/assets/command.svg";
@@ -10,10 +12,35 @@ import SagaInitiatedIcon from "@/assets/SagaInitiatedIcon.svg";
 import SagaUpdatedIcon from "@/assets/SagaUpdatedIcon.svg";
 import TimeoutIcon from "@/assets/timeout.svg";
 import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";
-defineProps<{
+
+const props = defineProps<{
   update: SagaUpdateViewModel;
   showMessageData?: boolean;
 }>();
+
+const store = useSagaDiagramStore();
+const initiatingMessageRef = ref<HTMLElement | null>(null);
+const isActive = ref(false);
+
+// Watch for changes to selectedMessageId
+watch(
+  () => store.selectedMessageId,
+  (newMessageId) => {
+    // Check if this node contains the selected message
+    const isSelected = props.update.InitiatingMessage.IsSagaTimeoutMessage && newMessageId === props.update.MessageId;
+
+    // Update active state
+    isActive.value = isSelected;
+
+    // If this is the selected message, scroll to it
+    if (isSelected && initiatingMessageRef.value) {
+      initiatingMessageRef.value.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }
+);
 </script>
 
 <template>
@@ -21,7 +48,15 @@ defineProps<{
     <!-- Initiating message and saga status header -->
     <div class="row">
       <div class="cell cell--side">
-        <div class="cell-inner cell-inner-side">
+        <div
+          ref="initiatingMessageRef"
+          :class="{
+            'cell-inner': true,
+            'cell-inner-side': true,
+            'cell-inner-side--active': isActive || (update.InitiatingMessage.IsSagaTimeoutMessage && update.MessageId === store.selectedMessageId),
+          }"
+          :data-message-id="update.InitiatingMessage.IsSagaTimeoutMessage ? update.MessageId : ''"
+        >
           <img class="saga-icon saga-icon--side-cell" :src="update.InitiatingMessage.IsSagaTimeoutMessage ? TimeoutIcon : CommandIcon" alt="" />
           <h2 class="message-title" aria-label="initiating message type">{{ update.InitiatingMessage.MessageType }}</h2>
           <div class="timestamp" aria-label="initiating message timestamp">{{ update.InitiatingMessage.FormattedMessageTimestamp }}</div>
