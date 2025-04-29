@@ -123,7 +123,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
           const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
           return {
             ...currentValue,
-            Value: `${toTitleCase(oldValue?.Value || "null")} -> ${toTitleCase(currentValue.Value)}`,
+            Value: oldValue?.Value ? `${toTitleCase(oldValue.Value)} → ${toTitleCase(currentValue.Value)}` : toTitleCase(currentValue.Value),
           };
         });
     }
