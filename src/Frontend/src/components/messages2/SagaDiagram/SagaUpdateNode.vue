@@ -199,7 +199,7 @@ watch(
 }
 
 .cell-inner-side--active {
-  border: solid 2px #00a3c4;
+  border: solid 5px #00a3c4;
   -webkit-animation: blink-border 1.8s ease-in-out;
   -moz-animation: blink-border 1.8s ease-in-out;
   -o-animation: blink-border 1.8s ease-in-out;
