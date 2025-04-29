@@ -141,36 +141,6 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
     // Process state values
     const stateValues = processStateValues(update.state_after_change, update.initiating_message?.message_type || "");
 
-    //get all state values
-    // allStateValues = stateValues.map((currentValue) => {
-    //   const isNewKey = !oldStateValues.some((old) => old.Key === currentValue.Key);
-    //   const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
-
-    //   return {
-    //     ...currentValue,
-    //     Key: isNewKey ? `${currentValue.Key} (new)` : currentValue.Key,
-    //     Value: formatStateValue(currentValue, oldValue),
-    //   };
-    // });
-
-    // //get updated state values
-    // if (!oldStateValues.length) {
-    //   oldStateValues = stateValues;
-    //   updatedStateValues = allStateValues;
-    // } else {
-    //   updatedStateValues = stateValues
-    //     .filter((currentValue) => {
-    //       const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
-    //       return !oldValue || oldValue.Value !== currentValue.Value;
-    //     })
-    //     .map((currentValue) => {
-    //       const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
-    //       return {
-    //         ...currentValue,
-    //         Value: formatStateValue(currentValue, oldValue),
-    //       };
-    //     });
-    // }
     const { allValues, updatedValues } = getAllAndUpdatedStateValues(stateValues, oldStateValues);
     allStateValues = allValues;
     updatedStateValues = updatedValues;
