@@ -31,8 +31,6 @@ export interface SagaUpdateViewModel {
   MessageId: string;
   StartTime: Date;
   FinishTime: Date;
-  StartTimeIso: Date;
-  FinishTimeIso: Date;
   AllProperties: SagaPropertyDataItem[];
   UpdatedProperties: SagaPropertyDataItem[];
   FormattedStartTime: string;
@@ -87,118 +85,101 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
     const bFinish = new Date(b.finish_time).getTime();
     return aFinish - bFinish;
   });
-  return sortedChanges
-    .map((update) => {
-      // Store original ISO strings for precise sorting
-      const startTimeIso = update.start_time;
-      const finishTimeIso = update.finish_time;
-      const startTime = new Date(update.start_time);
-      const finishTime = new Date(update.finish_time);
+  return sortedChanges.map((update) => {
+    // Store original ISO strings for precise sorting
 
-      // Process state values
-      const stateValues = processStateValues(update.state_after_change, update.initiating_message?.message_type || "");
+    const startTime = new Date(update.start_time);
+    const finishTime = new Date(update.finish_time);
 
-      allStateValues = stateValues.map((value) => {
-        const isNewKey = !oldStateValues.some((old) => old.Key === value.Key);
-        return {
-          ...value,
-          Key: isNewKey ? `${value.Key} (new)` : value.Key,
-        };
-      });
-      // Initialize oldStateValues if empty
-      if (!oldStateValues.length) {
-        oldStateValues = stateValues;
-        updatedStateValues = allStateValues;
-      } else {
-        // Compare and get updated values
-        updatedStateValues = stateValues.filter((currentValue) => {
-          const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
-          return !oldValue || oldValue.Value !== currentValue.Value;
-        });
-      }
-      // Store current state values for next iteration
-      oldStateValues = stateValues;
+    // Process state values
+    const stateValues = processStateValues(update.state_after_change, update.initiating_message?.message_type || "");
 
-      console.log("allStateValues", allStateValues);
-      console.log("updatedStateValues", updatedStateValues);
-      console.log("startTime", startTime + ":" + update.start_time);
-      console.log("finishTime", finishTime + ":" + update.finish_time);
-      //InitiatingMessage
-      const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
-      const isInitiatingMessageEventMessage = update.initiating_message.intent === "Publish";
-      const initiatingMessageData = update.initiating_message ? messagesData.find((m) => m.message_id === update.initiating_message.message_id)?.data || [] : [];
-
-      // OutgoingMessages
-      const outgoingMessages = update.outgoing_messages.map((msg) => {
-        const delivery_delay = msg.delivery_delay || "00:00:00";
-        const timeSent = new Date(msg.time_sent);
-        const hasTimeout = !!delivery_delay && delivery_delay !== "00:00:00";
-        const timeoutSeconds = delivery_delay.split(":")[2] || "0";
-        const isEventMessage = msg.intent === "Publish";
-
-        // Find corresponding message data
-        const messageData = messagesData.find((m) => m.message_id === msg.message_id)?.data || [];
-        return {
-          MessageType: msg.message_type || "",
-          MessageId: msg.message_id,
-          FormattedTimeSent: `${timeSent.toLocaleDateString()} ${timeSent.toLocaleTimeString()}`,
-          HasTimeout: hasTimeout,
-          TimeoutSeconds: timeoutSeconds,
-          TimeoutFriendly: getTimeoutFriendly(delivery_delay),
-          MessageFriendlyTypeName: typeToName(msg.message_type || ""),
-          Data: messageData,
-          IsEventMessage: isEventMessage,
-          IsCommandMessage: !isEventMessage,
-        };
-      });
-
-      const outgoingTimeoutMessages = outgoingMessages
-        .filter((msg) => msg.HasTimeout)
-        .map(
-          (msg) =>
-            ({
-              ...msg,
-              TimeoutFriendly: `${msg.TimeoutFriendly}`,
-            }) as SagaTimeoutMessageViewModel
-        );
-
-      const regularMessages = outgoingMessages.filter((msg) => !msg.HasTimeout) as SagaMessageViewModel[];
-
-      const hasTimeout = outgoingTimeoutMessages.length > 0;
-
+    allStateValues = stateValues.map((value) => {
+      const isNewKey = !oldStateValues.some((old) => old.Key === value.Key);
       return {
-        MessageId: update.initiating_message?.message_id || "",
-        StartTimeIso: startTimeIso, // Add this new property
-        FinishTimeIso: finishTimeIso, // Add this new property
-        StartTime: startTime,
-        FinishTime: finishTime,
-        AllProperties: allStateValues,
-        UpdatedProperties: updatedStateValues,
-        FormattedStartTime: `${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`,
-        Status: update.status,
-        StatusDisplay: update.status === "new" ? "Saga Initiated" : "Saga Updated",
-        InitiatingMessage: <InitiatingMessageViewModel>{
-          MessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
-          FormattedMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
-          MessageData: initiatingMessageData,
-          IsSagaTimeoutMessage: update.initiating_message?.is_saga_timeout_message || false,
-          IsEventMessage: isInitiatingMessageEventMessage,
-        },
-        HasTimeout: hasTimeout,
-        IsFirstNode: update.status === "new",
-        OutgoingTimeoutMessages: outgoingTimeoutMessages,
-        OutgoingMessages: regularMessages,
-        HasOutgoingMessages: regularMessages.length > 0,
-        HasOutgoingTimeoutMessages: outgoingTimeoutMessages.length > 0,
+        ...value,
+        Key: isNewKey ? `${value.Key} (new)` : value.Key,
       };
-    })
-
-    .sort((a, b) => {
-      if (!a.StartTime || !b.StartTime) return 0;
-      return a.StartTime.getTime() - b.StartTime.getTime();
-    })
-    .sort((a, b) => {
-      if (!a.FinishTime || !b.FinishTime) return 0;
-      return a.FinishTime.getTime() - b.FinishTime.getTime();
     });
+    // Initialize oldStateValues if empty
+    if (!oldStateValues.length) {
+      oldStateValues = stateValues;
+      updatedStateValues = allStateValues;
+    } else {
+      // Compare and get updated values
+      updatedStateValues = stateValues.filter((currentValue) => {
+        const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
+        return !oldValue || oldValue.Value !== currentValue.Value;
+      });
+    }
+    // Store current state values for next iteration
+    oldStateValues = stateValues;
+
+    //InitiatingMessage
+    const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
+    const isInitiatingMessageEventMessage = update.initiating_message.intent === "Publish";
+    const initiatingMessageData = update.initiating_message ? messagesData.find((m) => m.message_id === update.initiating_message.message_id)?.data || [] : [];
+
+    // OutgoingMessages
+    const outgoingMessages = update.outgoing_messages.map((msg) => {
+      const delivery_delay = msg.delivery_delay || "00:00:00";
+      const timeSent = new Date(msg.time_sent);
+      const hasTimeout = !!delivery_delay && delivery_delay !== "00:00:00";
+      const timeoutSeconds = delivery_delay.split(":")[2] || "0";
+      const isEventMessage = msg.intent === "Publish";
+
+      // Find corresponding message data
+      const messageData = messagesData.find((m) => m.message_id === msg.message_id)?.data || [];
+      return {
+        MessageType: msg.message_type || "",
+        MessageId: msg.message_id,
+        FormattedTimeSent: `${timeSent.toLocaleDateString()} ${timeSent.toLocaleTimeString()}`,
+        HasTimeout: hasTimeout,
+        TimeoutSeconds: timeoutSeconds,
+        TimeoutFriendly: getTimeoutFriendly(delivery_delay),
+        MessageFriendlyTypeName: typeToName(msg.message_type || ""),
+        Data: messageData,
+        IsEventMessage: isEventMessage,
+        IsCommandMessage: !isEventMessage,
+      };
+    });
+
+    const outgoingTimeoutMessages = outgoingMessages
+      .filter((msg) => msg.HasTimeout)
+      .map(
+        (msg) =>
+          ({
+            ...msg,
+            TimeoutFriendly: `${msg.TimeoutFriendly}`,
+          }) as SagaTimeoutMessageViewModel
+      );
+
+    const regularMessages = outgoingMessages.filter((msg) => !msg.HasTimeout) as SagaMessageViewModel[];
+
+    const hasTimeout = outgoingTimeoutMessages.length > 0;
+
+    return {
+      MessageId: update.initiating_message?.message_id || "",
+      StartTime: startTime,
+      FinishTime: finishTime,
+      AllProperties: allStateValues,
+      UpdatedProperties: updatedStateValues,
+      FormattedStartTime: `${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`,
+      Status: update.status,
+      StatusDisplay: update.status === "new" ? "Saga Initiated" : "Saga Updated",
+      InitiatingMessage: <InitiatingMessageViewModel>{
+        MessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
+        FormattedMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
+        MessageData: initiatingMessageData,
+        IsSagaTimeoutMessage: update.initiating_message?.is_saga_timeout_message || false,
+        IsEventMessage: isInitiatingMessageEventMessage,
+      },
+      HasTimeout: hasTimeout,
+      IsFirstNode: update.status === "new",
+      OutgoingTimeoutMessages: outgoingTimeoutMessages,
+      OutgoingMessages: regularMessages,
+      HasOutgoingMessages: regularMessages.length > 0,
+      HasOutgoingTimeoutMessages: outgoingTimeoutMessages.length > 0,
+    };
+  });
 }
