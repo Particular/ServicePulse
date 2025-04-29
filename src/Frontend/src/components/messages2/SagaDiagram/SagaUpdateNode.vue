@@ -396,7 +396,7 @@ watch(
 @keyframes blink-border {
   0%,
   100% {
-    border-color: #000000;
+    border-color: #00a3c4;
   }
   20%,
   60% {
@@ -404,7 +404,7 @@ watch(
   }
   40%,
   80% {
-    border-color: #000000;
+    border-color: #00a3c4;
   }
 }
 
