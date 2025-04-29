@@ -83,6 +83,7 @@ const filteredHeaders = computed(() => {
 }
 
 .header-list {
+  overflow: auto;
   margin-top: 0.5rem;
   display: grid;
   grid-template-columns: fit-content(30%) [key] fit-content(70%) [value];

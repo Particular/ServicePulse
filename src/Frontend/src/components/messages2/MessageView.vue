@@ -155,7 +155,7 @@ onMounted(() => {
             </div>
           </div>
         </div>
-        <div class="row">
+        <div class="row tab-contents">
           <div class="col-sm-12 no-side-padding">
             <TabsLayout :tabs="tabs" />
           </div>
@@ -167,6 +167,17 @@ onMounted(() => {
 
 <style scoped>
 @import "../list.css";
+
+.container,
+section,
+.tab-contents,
+.tab-contents > div {
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
 
 h1.message-type-title {
   margin: 0 0 8px;
