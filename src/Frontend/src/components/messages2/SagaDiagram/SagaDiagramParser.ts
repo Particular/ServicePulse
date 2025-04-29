@@ -69,6 +69,9 @@ function processStateValues(stateAfterChange: string, messageType: string): Saga
   }));
 }
 
+let oldStateValues: SagaPropertyDataItem[] = [];
+let allStateValues: SagaPropertyDataItem[] = [];
+let updatedStateValues: SagaPropertyDataItem[] = [];
 export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: SagaMessageData[]): SagaUpdateViewModel[] {
   if (!sagaHistory || !sagaHistory.changes || !sagaHistory.changes.length) return [];
 
@@ -76,9 +79,31 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
     .map((update) => {
       const startTime = new Date(update.start_time);
       const finishTime = new Date(update.finish_time);
+
       // Process state values
       const stateValues = processStateValues(update.state_after_change, update.initiating_message?.message_type || "");
-      console.log("State Values", stateValues);
+
+      allStateValues = stateValues.map((value) => {
+        const isNewKey = !oldStateValues.some((old) => old.Key === value.Key);
+        return {
+          ...value,
+          Key: isNewKey ? `${value.Key} (new)` : value.Key,
+        };
+      });
+      // Initialize oldStateValues if empty
+      if (!oldStateValues.length) {
+        oldStateValues = stateValues;
+        updatedStateValues = allStateValues;
+      } else {
+        // Compare and get updated values
+        updatedStateValues = stateValues.filter((currentValue) => {
+          const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
+          return !oldValue || oldValue.Value !== currentValue.Value;
+        });
+      }
+      // Store current state values for next iteration
+      oldStateValues = stateValues;
+
       const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
       const isInitiatingMessageEventMessage = update.initiating_message.intent === "Publish";
       // Find message data for initiating message
@@ -126,8 +151,8 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
         MessageId: update.initiating_message?.message_id || "",
         StartTime: startTime,
         FinishTime: finishTime,
-        AllProperties: stateValues,
-        UpdatedProperties: stateValues,
+        AllProperties: allStateValues,
+        UpdatedProperties: updatedStateValues,
         FormattedStartTime: `${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}`,
         Status: update.status,
         StatusDisplay: update.status === "new" ? "Saga Initiated" : "Saga Updated",
@@ -146,6 +171,13 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
         HasOutgoingTimeoutMessages: outgoingTimeoutMessages.length > 0,
       };
     })
-    .sort((a, b) => a.StartTime.getTime() - b.StartTime.getTime())
-    .sort((a, b) => a.FinishTime.getTime() - b.FinishTime.getTime());
+
+    .sort((a, b) => {
+      if (!a.StartTime || !b.StartTime) return 0;
+      return a.StartTime.getTime() - b.StartTime.getTime();
+    })
+    .sort((a, b) => {
+      if (!a.FinishTime || !b.FinishTime) return 0;
+      return a.FinishTime.getTime() - b.FinishTime.getTime();
+    });
 }

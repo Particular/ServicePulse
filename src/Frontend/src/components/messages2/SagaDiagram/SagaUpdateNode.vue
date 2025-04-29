@@ -15,8 +15,8 @@ import EventIcon from "@/assets/event.svg";
 const activeView = ref("none"); // 'none', 'all' or 'updated'
 const nodeId = ref<string | null>(null);
 onMounted(() => {
-  // Set initial state to show all properties
-  activeView.value = "all";
+  // Set initial state to show updated properties
+  activeView.value = "updated";
   nodeId.value = props.update.MessageId;
 });
 const showProperties = (view: "all" | "updated", id: string) => {
