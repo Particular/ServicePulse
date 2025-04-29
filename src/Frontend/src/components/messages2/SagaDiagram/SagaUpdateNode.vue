@@ -12,23 +12,17 @@ import SagaUpdatedIcon from "@/assets/SagaUpdatedIcon.svg";
 import TimeoutIcon from "@/assets/timeout.svg";
 import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";
 import EventIcon from "@/assets/event.svg";
-const activeView = ref("none"); // 'none', 'all' or 'updated'
+
+const isShowAllProperties = ref(false);
 const nodeId = ref<string | null>(null);
 onMounted(() => {
   // Set initial state to show updated properties
-  activeView.value = "updated";
+  isShowAllProperties.value = false;
   nodeId.value = props.update.MessageId;
 });
-const showProperties = (view: "all" | "updated", id: string) => {
-  if (activeView.value === view && nodeId.value === id) {
-    // If clicking same link for same node, hide it
-    activeView.value = "none";
-    nodeId.value = null;
-  } else {
-    // Show properties for this specific node
-    activeView.value = view;
-    nodeId.value = id;
-  }
+const showProperties = (showAll: boolean, id: string) => {
+  isShowAllProperties.value = showAll;
+  nodeId.value = id;
 };
 const props = defineProps<{
   update: SagaUpdateViewModel;
@@ -75,15 +69,15 @@ const props = defineProps<{
       <div class="cell cell--center cell--center--border">
         <div :class="{ 'cell-inner': true, 'cell-inner-line': update.HasTimeout, 'cell-inner-center': !update.HasTimeout }">
           <div class="saga-properties">
-            <a class="saga-properties-link" :class="{ 'saga-properties-link--active': activeView === 'all' && nodeId === update.MessageId }" @click.prevent="showProperties('all', update.MessageId)" href="">All Properties</a> /
-            <a class="saga-properties-link" :class="{ 'saga-properties-link--active': activeView === 'updated' && nodeId === update.MessageId }" @click.prevent="showProperties('updated', update.MessageId)" href="">Updated Properties</a>
+            <a class="saga-properties-link" :class="{ 'saga-properties-link--active': isShowAllProperties && nodeId === update.MessageId }" @click.prevent="showProperties(true, update.MessageId)" href="">All Properties</a> /
+            <a class="saga-properties-link" :class="{ 'saga-properties-link--active': !isShowAllProperties && nodeId === update.MessageId }" @click.prevent="showProperties(false, update.MessageId)" href="">Updated Properties</a>
           </div>
 
           <!-- Display saga properties if available -->
-          <div v-if="activeView === 'all' && nodeId === update.MessageId" class="message-data message-data--active">
+          <div v-if="isShowAllProperties && nodeId === update.MessageId" class="message-data message-data--active">
             <PropertyDataBox :messageData="update.AllProperties.map((prop) => ({ key: prop.Key, value: prop.Value }))" />
           </div>
-          <div v-if="activeView === 'updated' && nodeId === update.MessageId" class="message-data message-data--active">
+          <div v-if="!isShowAllProperties && nodeId === update.MessageId" class="message-data message-data--active">
             <PropertyDataBox :messageData="update.UpdatedProperties.map((prop) => ({ key: prop.Key, value: prop.Value }))" />
           </div>
         </div>

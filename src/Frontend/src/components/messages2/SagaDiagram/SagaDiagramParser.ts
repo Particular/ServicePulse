@@ -175,7 +175,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
 
     const hasTimeout = outgoingTimeoutMessages.length > 0;
 
-    return {
+    return <SagaUpdateViewModel>{
       MessageId: update.initiating_message?.message_id || "",
       StartTime: startTime,
       FinishTime: finishTime,
