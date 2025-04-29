@@ -83,7 +83,41 @@ function formatStateValue(currentValue: SagaPropertyDataItem, oldValue: SagaProp
   }
   return `${toTitleCase(oldValue.Value)} → ${toTitleCase(currentValue.Value)}`;
 }
+function getAllAndUpdatedStateValues(
+  stateValues: SagaPropertyDataItem[],
+  oldStateValues: SagaPropertyDataItem[]
+): {
+  allValues: SagaPropertyDataItem[];
+  updatedValues: SagaPropertyDataItem[];
+} {
+  const allValues = stateValues.map((currentValue) => {
+    const isNewKey = !oldStateValues.some((old) => old.Key === currentValue.Key);
+    const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
 
+    return {
+      ...currentValue,
+      Key: isNewKey ? `${currentValue.Key} (new)` : currentValue.Key,
+      Value: formatStateValue(currentValue, oldValue),
+    };
+  });
+
+  const updatedValues = !oldStateValues.length
+    ? allValues
+    : stateValues
+        .filter((currentValue) => {
+          const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
+          return !oldValue || oldValue.Value !== currentValue.Value;
+        })
+        .map((currentValue) => {
+          const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
+          return {
+            ...currentValue,
+            Value: formatStateValue(currentValue, oldValue),
+          };
+        });
+
+  return { allValues, updatedValues };
+}
 let oldStateValues: SagaPropertyDataItem[] = [];
 let allStateValues: SagaPropertyDataItem[] = [];
 let updatedStateValues: SagaPropertyDataItem[] = [];
@@ -108,35 +142,39 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
     const stateValues = processStateValues(update.state_after_change, update.initiating_message?.message_type || "");
 
     //get all state values
-    allStateValues = stateValues.map((currentValue) => {
-      const isNewKey = !oldStateValues.some((old) => old.Key === currentValue.Key);
-      const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
+    // allStateValues = stateValues.map((currentValue) => {
+    //   const isNewKey = !oldStateValues.some((old) => old.Key === currentValue.Key);
+    //   const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
 
-      return {
-        ...currentValue,
-        Key: isNewKey ? `${currentValue.Key} (new)` : currentValue.Key,
-        Value: formatStateValue(currentValue, oldValue),
-      };
-    });
+    //   return {
+    //     ...currentValue,
+    //     Key: isNewKey ? `${currentValue.Key} (new)` : currentValue.Key,
+    //     Value: formatStateValue(currentValue, oldValue),
+    //   };
+    // });
 
-    //get updated state values
-    if (!oldStateValues.length) {
-      oldStateValues = stateValues;
-      updatedStateValues = allStateValues;
-    } else {
-      updatedStateValues = stateValues
-        .filter((currentValue) => {
-          const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
-          return !oldValue || oldValue.Value !== currentValue.Value;
-        })
-        .map((currentValue) => {
-          const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
-          return {
-            ...currentValue,
-            Value: formatStateValue(currentValue, oldValue),
-          };
-        });
-    }
+    // //get updated state values
+    // if (!oldStateValues.length) {
+    //   oldStateValues = stateValues;
+    //   updatedStateValues = allStateValues;
+    // } else {
+    //   updatedStateValues = stateValues
+    //     .filter((currentValue) => {
+    //       const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
+    //       return !oldValue || oldValue.Value !== currentValue.Value;
+    //     })
+    //     .map((currentValue) => {
+    //       const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
+    //       return {
+    //         ...currentValue,
+    //         Value: formatStateValue(currentValue, oldValue),
+    //       };
+    //     });
+    // }
+    const { allValues, updatedValues } = getAllAndUpdatedStateValues(stateValues, oldStateValues);
+    allStateValues = allValues;
+    updatedStateValues = updatedValues;
+
     // Store current state values for next iteration
     oldStateValues = stateValues;
 
