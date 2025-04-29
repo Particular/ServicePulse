@@ -31,6 +31,8 @@ export interface SagaUpdateViewModel {
   MessageId: string;
   StartTime: Date;
   FinishTime: Date;
+  StartTimeIso: Date;
+  FinishTimeIso: Date;
   AllProperties: SagaPropertyDataItem[];
   UpdatedProperties: SagaPropertyDataItem[];
   FormattedStartTime: string;
@@ -75,8 +77,21 @@ let updatedStateValues: SagaPropertyDataItem[] = [];
 export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: SagaMessageData[]): SagaUpdateViewModel[] {
   if (!sagaHistory || !sagaHistory.changes || !sagaHistory.changes.length) return [];
 
-  return sagaHistory.changes
+  // Sort the changes first
+  const sortedChanges = [...sagaHistory.changes].sort((a, b) => {
+    const aStart = new Date(a.start_time).getTime();
+    const bStart = new Date(b.start_time).getTime();
+    if (aStart !== bStart) return aStart - bStart;
+
+    const aFinish = new Date(a.finish_time).getTime();
+    const bFinish = new Date(b.finish_time).getTime();
+    return aFinish - bFinish;
+  });
+  return sortedChanges
     .map((update) => {
+      // Store original ISO strings for precise sorting
+      const startTimeIso = update.start_time;
+      const finishTimeIso = update.finish_time;
       const startTime = new Date(update.start_time);
       const finishTime = new Date(update.finish_time);
 
@@ -104,12 +119,16 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
       // Store current state values for next iteration
       oldStateValues = stateValues;
 
+      console.log("allStateValues", allStateValues);
+      console.log("updatedStateValues", updatedStateValues);
+      console.log("startTime", startTime + ":" + update.start_time);
+      console.log("finishTime", finishTime + ":" + update.finish_time);
+      //InitiatingMessage
       const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
       const isInitiatingMessageEventMessage = update.initiating_message.intent === "Publish";
-      // Find message data for initiating message
       const initiatingMessageData = update.initiating_message ? messagesData.find((m) => m.message_id === update.initiating_message.message_id)?.data || [] : [];
 
-      // Create common base message objects with shared properties
+      // OutgoingMessages
       const outgoingMessages = update.outgoing_messages.map((msg) => {
         const delivery_delay = msg.delivery_delay || "00:00:00";
         const timeSent = new Date(msg.time_sent);
@@ -149,6 +168,8 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
 
       return {
         MessageId: update.initiating_message?.message_id || "",
+        StartTimeIso: startTimeIso, // Add this new property
+        FinishTimeIso: finishTimeIso, // Add this new property
         StartTime: startTime,
         FinishTime: finishTime,
         AllProperties: allStateValues,
