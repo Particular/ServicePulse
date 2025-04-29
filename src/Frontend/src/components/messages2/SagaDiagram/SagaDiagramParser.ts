@@ -102,10 +102,12 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
 
     allStateValues = stateValues.map((value) => {
       const isNewKey = !oldStateValues.some((old) => old.Key === value.Key);
+      const oldValue = oldStateValues.find((old) => old.Key === value.Key);
+
       return {
         ...value,
         Key: isNewKey ? `${value.Key} (new)` : value.Key,
-        Value: toTitleCase(value.Value),
+        Value: oldValue?.Value ? `${toTitleCase(oldValue.Value)} → ${toTitleCase(value.Value)}` : toTitleCase(value.Value),
       };
     });
     // Initialize oldStateValues if empty
