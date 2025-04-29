@@ -77,6 +77,13 @@ function processStateValues(stateAfterChange: string, messageType: string): Saga
   }));
 }
 
+function formatStateValue(currentValue: SagaPropertyDataItem, oldValue: SagaPropertyDataItem | undefined): string {
+  if (!oldValue?.Value || oldValue.Value === currentValue.Value) {
+    return toTitleCase(currentValue.Value);
+  }
+  return `${toTitleCase(oldValue.Value)} → ${toTitleCase(currentValue.Value)}`;
+}
+
 let oldStateValues: SagaPropertyDataItem[] = [];
 let allStateValues: SagaPropertyDataItem[] = [];
 let updatedStateValues: SagaPropertyDataItem[] = [];
@@ -100,6 +107,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
     // Process state values
     const stateValues = processStateValues(update.state_after_change, update.initiating_message?.message_type || "");
 
+    //get all state values
     allStateValues = stateValues.map((currentValue) => {
       const isNewKey = !oldStateValues.some((old) => old.Key === currentValue.Key);
       const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
@@ -107,15 +115,15 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
       return {
         ...currentValue,
         Key: isNewKey ? `${currentValue.Key} (new)` : currentValue.Key,
-        Value: oldValue?.Value !== undefined && oldValue.Value !== currentValue.Value ? `${toTitleCase(oldValue.Value)} → ${toTitleCase(currentValue.Value)}` : toTitleCase(currentValue.Value),
+        Value: formatStateValue(currentValue, oldValue),
       };
     });
-    // Initialize oldStateValues if empty
+
+    //get updated state values
     if (!oldStateValues.length) {
       oldStateValues = stateValues;
       updatedStateValues = allStateValues;
     } else {
-      // Compare and get updated values
       updatedStateValues = stateValues
         .filter((currentValue) => {
           const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
@@ -125,7 +133,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
           const oldValue = oldStateValues.find((old) => old.Key === currentValue.Key);
           return {
             ...currentValue,
-            Value: oldValue?.Value ? `${toTitleCase(oldValue.Value)} → ${toTitleCase(currentValue.Value)}` : toTitleCase(currentValue.Value),
+            Value: formatStateValue(currentValue, oldValue),
           };
         });
     }
