@@ -199,7 +199,7 @@ watch(
 }
 
 .cell-inner-side--active {
-  border: solid 2px #000000;
+  border: solid 2px #00a3c4;
   -webkit-animation: blink-border 1.8s ease-in-out;
   -moz-animation: blink-border 1.8s ease-in-out;
   -o-animation: blink-border 1.8s ease-in-out;
@@ -396,7 +396,7 @@ watch(
 @keyframes blink-border {
   0%,
   100% {
-    border-color: #000000;
+    border-color: #00a3c4;
   }
   20%,
   60% {
@@ -404,7 +404,7 @@ watch(
   }
   40%,
   80% {
-    border-color: #000000;
+    border-color: #00a3c4;
   }
 }
 </style>
