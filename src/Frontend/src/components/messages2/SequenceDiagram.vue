@@ -31,7 +31,7 @@ onMounted(() => store.refreshConversation());
 <style scoped>
 .outer {
   max-width: 100%;
-  max-height: calc(100vh - 27em);
+  max-height: 100%;
   overflow: auto;
 }
 

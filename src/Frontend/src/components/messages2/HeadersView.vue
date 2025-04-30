@@ -85,13 +85,13 @@ const filteredHeaders = computed(() => {
 }
 
 .header-list {
-  margin-bottom: 1rem;
   margin-top: 0.5rem;
   display: grid;
   grid-template-columns: 20rem 1fr;
   align-items: flex-start;
   justify-content: center;
   row-gap: 2px;
+  overflow: auto;
 }
 
 .header-value,
@@ -99,7 +99,6 @@ const filteredHeaders = computed(() => {
   padding: 1rem;
   display: flex;
   height: 100%;
-  min-height: 2rem;
   position: relative;
   background: white;
 }
