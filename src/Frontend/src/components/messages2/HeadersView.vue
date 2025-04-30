@@ -91,16 +91,17 @@ const filteredHeaders = computed(() => {
   grid-template-columns: 20rem 1fr;
   align-items: flex-start;
   justify-content: center;
+  row-gap: 2px;
 }
 
 .header-value,
 .header-key {
-  padding: 1rem 0;
+  padding: 1rem;
   display: flex;
-  height: fit-content;
+  height: 100%;
   min-height: 2rem;
-  border-top: 1px solid #ccc9c9;
   position: relative;
+  background: white;
 }
 
 .header-value {
