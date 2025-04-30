@@ -4,7 +4,7 @@ import MessageDataBox from "./MessageDataBox.vue";
 import SagaOutgoingTimeoutMessage from "./SagaOutgoingTimeoutMessage.vue";
 import SagaOutgoingMessage from "./SagaOutgoingMessage.vue";
 import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 
 // Import the images directly
 import CommandIcon from "@/assets/command.svg";
@@ -21,6 +21,7 @@ const props = defineProps<{
 const store = useSagaDiagramStore();
 const initiatingMessageRef = ref<HTMLElement | null>(null);
 const isActive = ref(false);
+const showAllProperties = ref(!props.update.showUpdatedPropertiesOnly);
 
 // Watch for changes to selectedMessageId
 watch(
@@ -41,6 +42,63 @@ watch(
     }
   }
 );
+
+// Function to toggle between showing all properties and only updated properties
+const togglePropertyView = (event: Event, showAll: boolean) => {
+  event.preventDefault();
+  showAllProperties.value = showAll;
+  // Instead of directly modifying the prop, we update our local view state
+  // props.update.showUpdatedPropertiesOnly = !showAll;
+};
+
+// Compute the properties to display based on the current state
+const displayProperties = computed(() => {
+  const properties: { name: string; value: string; isNew: boolean }[] = [];
+  const state = props.update.stateAfterChange;
+  const previousState = props.update.previousStateAfterChange || {};
+  const isFirstNode = props.update.IsFirstNode;
+
+  // Function to check if a property has changed
+  const hasPropertyChanged = (key: string) => {
+    if (isFirstNode) return true; // For the first node, all properties are "new"
+    return JSON.stringify(state[key]) !== JSON.stringify(previousState[key]);
+  };
+
+  // Function to format value differences
+  const formatValue = (key: string) => {
+    const currentValue = state[key];
+    if (isFirstNode || !props.update.previousStateAfterChange) {
+      return String(currentValue);
+    }
+
+    const prevValue = previousState[key];
+    if (JSON.stringify(currentValue) !== JSON.stringify(prevValue)) {
+      return `${prevValue} → ${currentValue}`;
+    }
+    return String(currentValue);
+  };
+
+  // Filter out standard keys like $type, Id, Originator, OriginalMessageId
+  const standardKeys = ["$type", "Id", "Originator", "OriginalMessageId"];
+
+  // Add all properties that should be displayed
+  for (const key in state) {
+    if (standardKeys.includes(key)) continue;
+
+    const propertyChanged = hasPropertyChanged(key);
+
+    // Skip unchanged properties when showing only updated properties
+    if (!showAllProperties.value && !propertyChanged && !isFirstNode) continue;
+
+    properties.push({
+      name: isFirstNode ? `${key} (new)` : key, // Add "(new)" suffix for first node
+      value: formatValue(key),
+      isNew: isFirstNode || propertyChanged,
+    });
+  }
+
+  return properties;
+});
 </script>
 
 <template>
@@ -90,18 +148,19 @@ watch(
       <div class="cell cell--center cell--center--border">
         <div :class="{ 'cell-inner': true, 'cell-inner-line': update.HasTimeout, 'cell-inner-center': !update.HasTimeout }">
           <div class="saga-properties">
-            <a class="saga-properties-link" href="">All Properties</a> /
-            <a class="saga-properties-link saga-properties-link--active" href="">Updated Properties</a>
+            <a class="saga-properties-link" :class="{ 'saga-properties-link--active': showAllProperties }" href="" @click="(e) => togglePropertyView(e, true)">All Properties</a> /
+            <a class="saga-properties-link" :class="{ 'saga-properties-link--active': !showAllProperties }" href="" @click="(e) => togglePropertyView(e, false)">Updated Properties</a>
           </div>
 
           <!-- Display saga properties if available -->
-          <ul class="saga-properties-list">
-            <li class="saga-properties-list-item">
-              <span class="saga-properties-list-text" title="Property (new)">Property (new)</span>
+          <ul class="saga-properties-list" v-if="displayProperties.length > 0">
+            <li class="saga-properties-list-item" v-for="(prop, index) in displayProperties" :key="index">
+              <span class="saga-properties-list-text" :title="prop.name">{{ prop.name }}</span>
               <span class="saga-properties-list-text">=</span>
-              <span class="saga-properties-list-text" title="Sample Value"> Sample Value</span>
+              <span class="saga-properties-list-text" :title="prop.value">{{ prop.value }}</span>
             </li>
           </ul>
+          <div v-else class="no-properties">No properties to display</div>
         </div>
       </div>
 
@@ -118,10 +177,6 @@ watch(
 </template>
 
 <style scoped>
-.block {
-  /* block container style */
-}
-
 .row {
   display: flex;
 }
@@ -162,10 +217,6 @@ watch(
   display: flex;
   flex-direction: column;
   border-top: solid 2px #000000;
-}
-
-.cell-inner {
-  /* padding: 0.5rem; */
 }
 
 .cell-inner-center {
@@ -320,6 +371,13 @@ watch(
 
 .message-data--active {
   display: block;
+}
+
+.no-properties {
+  padding: 0.25rem;
+  font-style: italic;
+  font-size: 0.8rem;
+  color: #666;
 }
 
 .saga-icon {

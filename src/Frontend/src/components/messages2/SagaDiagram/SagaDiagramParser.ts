@@ -36,6 +36,9 @@ export interface SagaUpdateViewModel {
   OutgoingTimeoutMessages: SagaTimeoutMessageViewModel[];
   HasOutgoingMessages: boolean;
   HasOutgoingTimeoutMessages: boolean;
+  showUpdatedPropertiesOnly: boolean;
+  stateAfterChange: Record<string, unknown>;
+  previousStateAfterChange?: Record<string, unknown>;
 }
 
 export interface SagaViewModel {
@@ -54,11 +57,19 @@ export interface SagaViewModel {
 export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: SagaMessageData[]): SagaUpdateViewModel[] {
   if (!sagaHistory || !sagaHistory.changes || !sagaHistory.changes.length) return [];
 
-  return sagaHistory.changes
+  const updates = sagaHistory.changes
     .map((update) => {
       const startTime = new Date(update.start_time);
       const finishTime = new Date(update.finish_time);
       const initiatingMessageTimestamp = new Date(update.initiating_message?.time_sent || Date.now());
+
+      // Parse the state_after_change JSON
+      let stateAfterChange: Record<string, unknown> = {};
+      try {
+        stateAfterChange = JSON.parse(update.state_after_change || "{}");
+      } catch (e) {
+        console.error("Error parsing state_after_change:", e);
+      }
 
       // Find message data for initiating message
       const initiatingMessageData = update.initiating_message ? messagesData.find((m) => m.message_id === update.initiating_message.message_id)?.data || [] : [];
@@ -123,8 +134,17 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
         OutgoingMessages: regularMessages,
         HasOutgoingMessages: regularMessages.length > 0,
         HasOutgoingTimeoutMessages: outgoingTimeoutMessages.length > 0,
+        showUpdatedPropertiesOnly: true, // Default to showing only updated properties
+        stateAfterChange: stateAfterChange,
       };
     })
     .sort((a, b) => a.StartTime.getTime() - b.StartTime.getTime())
     .sort((a, b) => a.FinishTime.getTime() - b.FinishTime.getTime());
+
+  // Add reference to previous state for each update except the first one
+  for (let i = 1; i < updates.length; i++) {
+    updates[i].previousStateAfterChange = updates[i - 1].stateAfterChange;
+  }
+
+  return updates;
 }
