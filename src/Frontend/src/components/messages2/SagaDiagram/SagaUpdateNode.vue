@@ -74,12 +74,8 @@ const props = defineProps<{
           </div>
 
           <!-- Display saga properties if available -->
-          <div v-if="isShowAllProperties && nodeId === update.MessageId" class="message-data message-data--active">
-            <PropertyDataBox :messageData="update.AllProperties.map((prop) => ({ key: prop.Key, value: prop.Value }))" />
-          </div>
-          <div v-if="!isShowAllProperties && nodeId === update.MessageId" class="message-data message-data--active">
-            <PropertyDataBox :messageData="update.UpdatedProperties.map((prop) => ({ key: prop.Key, value: prop.Value }))" />
-          </div>
+          <PropertyDataBox v-if="isShowAllProperties && nodeId === update.MessageId" :messageData="update.AllProperties.map((prop) => ({ key: prop.Key, value: prop.Value }))" />
+          <PropertyDataBox v-if="!isShowAllProperties && nodeId === update.MessageId" :messageData="update.UpdatedProperties.map((prop) => ({ key: prop.Key, value: prop.Value }))" />
         </div>
       </div>
 
