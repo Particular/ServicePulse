@@ -39,7 +39,7 @@ const filteredHeaders = computed(() => {
     <template v-for="(header, index) in filteredHeaders" :key="index">
       <div class="header-key">{{ header.key }}</div>
       <div class="header-value" @mouseover="toggleHover(index, true)" @mouseleave="toggleHover(index, false)">
-        <pre>{{ header.value }}</pre>
+        <pre class="removeBootStrap">{{ header.value }}</pre>
         <div class="clippy-button"><CopyToClipboard v-if="header.value && hoverStates[index]" :value="header.value" :isIconOnly="true" /></div>
       </div>
     </template>
@@ -51,6 +51,13 @@ const filteredHeaders = computed(() => {
 </template>
 
 <style scoped>
+.removeBootStrap {
+  background: initial;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
 /*  empty filtered list message */
 .alert-warning {
   margin-top: 10px;
@@ -82,16 +89,27 @@ const filteredHeaders = computed(() => {
   margin-top: 0.5rem;
   display: grid;
   grid-template-columns: 20rem 1fr;
-  align-items: center;
-  column-gap: 0.5rem;
+  align-items: flex-start;
   justify-content: center;
 }
 
-.header-value {
+.header-value,
+.header-key {
+  padding: 1rem 0;
   display: flex;
+  height: fit-content;
+  min-height: 2rem;
+  border-top: 1px solid #ccc9c9;
+  position: relative;
+}
+
+.header-value {
+  padding-left: 2.7rem;
 }
 
 .clippy-button {
-  width: 3.5rem;
+  position: absolute;
+  left: 0;
+  top: 0.3rem;
 }
 </style>
