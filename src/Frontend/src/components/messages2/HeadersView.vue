@@ -39,8 +39,8 @@ const filteredHeaders = computed(() => {
     <template v-for="(header, index) in filteredHeaders" :key="index">
       <div class="header-key">{{ header.key }}</div>
       <div class="header-value" @mouseover="toggleHover(index, true)" @mouseleave="toggleHover(index, false)">
-        <pre>{{ header.value }}</pre>
-        <div class="header-value-copy"><CopyToClipboard v-if="hoverStates[index] && header.value" :value="header.value" :isIconOnly="true" /></div>
+        <pre class="removeBootStrap">{{ header.value }}</pre>
+        <div class="clippy-button"><CopyToClipboard v-if="header.value && hoverStates[index]" :value="header.value" :isIconOnly="true" /></div>
       </div>
     </template>
   </div>
@@ -51,6 +51,13 @@ const filteredHeaders = computed(() => {
 </template>
 
 <style scoped>
+.removeBootStrap {
+  background: initial;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
 /*  empty filtered list message */
 .alert-warning {
   margin-top: 10px;
@@ -69,11 +76,6 @@ const filteredHeaders = computed(() => {
   width: 100%;
   max-width: 40rem;
 }
-.format-text {
-  font-weight: unset;
-  font-size: 14px;
-  min-width: 120px;
-}
 .filters {
   background-color: #f3f3f3;
   margin-top: 5px;
@@ -83,29 +85,32 @@ const filteredHeaders = computed(() => {
 }
 
 .header-list {
-  overflow: auto;
+  margin-bottom: 1rem;
   margin-top: 0.5rem;
   display: grid;
-  grid-template-columns: fit-content(30%) [key] fit-content(70%) [value];
-  align-items: center;
-  column-gap: 0.5rem;
+  grid-template-columns: 20rem 1fr;
+  align-items: flex-start;
+  justify-content: center;
+  row-gap: 2px;
 }
 
+.header-value,
 .header-key {
-  grid-column: key;
-  display: contents;
+  padding: 1rem;
+  display: flex;
+  height: 100%;
+  min-height: 2rem;
+  position: relative;
+  background: white;
 }
 
 .header-value {
-  grid-column: value;
-  position: relative;
+  padding-left: 2.7rem;
 }
 
-.header-value-copy {
+.clippy-button {
   position: absolute;
-  right: 0.5rem;
-  right: 0.5rem;
-  top: 0.2rem;
-  z-index: 1;
+  left: 0;
+  top: 0.3rem;
 }
 </style>
