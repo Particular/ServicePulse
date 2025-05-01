@@ -69,16 +69,23 @@ const props = withDefaults(defineProps<Props>(), {
   showMaximizeIcon: false,
 });
 
-// Component state
+// Component state for normal view
 const lineInformation = ref<LineInformation[]>([]);
 const diffLines = ref<number[]>([]);
 const expandedBlocks = ref<number[]>([]);
 const showMaximizeModal = ref(false);
 const showMaximizeButton = ref(false);
 
+// Separate state for maximized view
+const maxLineInformation = ref<LineInformation[]>([]);
+const maxDiffLines = ref<number[]>([]);
+const maxExpandedBlocks = ref<number[]>([]);
+
 // Compute diff when inputs change
-const computeDiff = (): void => {
+const computeDiff = (forMaximizedView: boolean = false): void => {
   const { oldValue, newValue, compareMethod } = props;
+  const targetLineInfo = forMaximizedView ? maxLineInformation : lineInformation;
+  const targetDiffLines = forMaximizedView ? maxDiffLines : diffLines;
 
   // Skip processing if values are identical
   if (oldValue === newValue) {
@@ -97,8 +104,8 @@ const computeDiff = (): void => {
       });
     });
 
-    lineInformation.value = result;
-    diffLines.value = [];
+    targetLineInfo.value = result;
+    targetDiffLines.value = [];
     return;
   }
 
@@ -175,23 +182,44 @@ const computeDiff = (): void => {
     }
   });
 
-  lineInformation.value = result;
-  diffLines.value = diffLinesArray;
+  targetLineInfo.value = result;
+  targetDiffLines.value = diffLinesArray;
 
   // Reset expanded blocks when diff changes
-  expandedBlocks.value = [];
+  if (!forMaximizedView) {
+    expandedBlocks.value = [];
+  } else {
+    maxExpandedBlocks.value = [];
+  }
 };
 
-// Toggle a code fold block
+// Toggle a code fold block in regular view
 const onBlockExpand = (id: number): void => {
   if (!expandedBlocks.value.includes(id)) {
     expandedBlocks.value.push(id);
   }
 };
 
-// Render the diff with code folding for unchanged lines
+// Toggle a code fold block in maximized view
+const onMaxBlockExpand = (id: number): void => {
+  if (!maxExpandedBlocks.value.includes(id)) {
+    maxExpandedBlocks.value.push(id);
+  }
+};
+
+// Render the diff with code folding for unchanged lines - Regular view
 const renderDiff = computed<DiffItem[]>(() => {
-  if (!lineInformation.value.length) return [];
+  return renderDiffItems(lineInformation.value, diffLines.value, expandedBlocks.value);
+});
+
+// Render the diff with code folding for unchanged lines - Maximized view
+const renderMaxDiff = computed<DiffItem[]>(() => {
+  return renderDiffItems(maxLineInformation.value, maxDiffLines.value, maxExpandedBlocks.value);
+});
+
+// Helper function to render diff items with folding
+function renderDiffItems(lineInfo: LineInformation[], dLines: number[], expandedBlocks: number[]): DiffItem[] {
+  if (!lineInfo.length) return [];
 
   const { showDiffOnly, extraLinesSurroundingDiff } = props;
   const extraLines = extraLinesSurroundingDiff < 0 ? 0 : extraLinesSurroundingDiff;
@@ -200,9 +228,9 @@ const renderDiff = computed<DiffItem[]>(() => {
   const result: DiffItem[] = [];
 
   // Create a mutable copy of diffLines for manipulation in the loop
-  const currentDiffLines = [...diffLines.value];
+  const currentDiffLines = [...dLines];
 
-  lineInformation.value.forEach((line, i) => {
+  lineInfo.forEach((line, i) => {
     const diffBlockStart = currentDiffLines[0];
     const currentPosition = diffBlockStart !== undefined ? diffBlockStart - i : undefined;
 
@@ -215,11 +243,11 @@ const renderDiff = computed<DiffItem[]>(() => {
       }
 
       // If this is a default line far from changes and not in an expanded block, accumulate it
-      if (line.left.type === DiffType.DEFAULT && ((currentPosition !== undefined && currentPosition > extraLines) || typeof diffBlockStart === "undefined") && !expandedBlocks.value.includes(diffBlockStart)) {
+      if (line.left.type === DiffType.DEFAULT && ((currentPosition !== undefined && currentPosition > extraLines) || typeof diffBlockStart === "undefined") && !expandedBlocks.includes(diffBlockStart)) {
         skippedLines.push(i + 1);
 
         // If we're at the end and have accumulated skipped lines, render the fold indicator
-        if (i === lineInformation.value.length - 1 && skippedLines.length > 1) {
+        if (i === lineInfo.length - 1 && skippedLines.length > 1) {
           result.push({
             type: "fold",
             count: skippedLines.length,
@@ -255,19 +283,23 @@ const renderDiff = computed<DiffItem[]>(() => {
   });
 
   return result;
-});
+}
 
 // Compute the diff on initial load and when inputs change
 watch(
   () => [props.oldValue, props.newValue, props.compareMethod, props.showDiffOnly, props.extraLinesSurroundingDiff],
   () => {
-    computeDiff();
+    computeDiff(false);
   },
   { immediate: true }
 );
 
 // Handle maximize functionality
 const toggleMaximizeModal = () => {
+  if (!showMaximizeModal.value) {
+    // When opening the maximized view, compute a fresh diff for it
+    computeDiff(true);
+  }
   showMaximizeModal.value = !showMaximizeModal.value;
 };
 
@@ -317,7 +349,7 @@ onBeforeUnmount(() => {
         <img :src="DiffMaximizeIcon" alt="Maximize" width="14" height="14" />
       </button>
 
-      <!-- Diff content -->
+      <!-- Diff content - Regular view -->
       <div class="diff-content">
         <!-- Left side (old) -->
         <div v-if="splitView" class="diff-column">
@@ -361,7 +393,7 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <!-- Maximize Modal -->
+    <!-- Maximize Modal with separate rendering -->
     <div v-if="showMaximizeModal" class="maximize-modal">
       <div class="maximize-modal-content">
         <div class="maximize-modal-toolbar">
@@ -378,15 +410,15 @@ onBeforeUnmount(() => {
               <div v-if="splitView" class="diff-header">{{ rightTitle }}</div>
             </div>
 
-            <!-- Diff content in Modal -->
+            <!-- Diff content in Modal - Using separate rendering with fold capability -->
             <div class="diff-content">
               <!-- Left side (old) in Modal -->
               <div v-if="splitView" class="diff-column">
                 <div class="diff-lines">
-                  <template v-for="(item, itemIndex) in renderDiff" :key="`modal-diff-left-${itemIndex}`">
-                    <!-- Code fold indicator -->
+                  <template v-for="(item, itemIndex) in renderMaxDiff" :key="`modal-diff-left-${itemIndex}`">
+                    <!-- Code fold indicator for maximized view -->
                     <div v-if="item.type === 'fold'" class="diff-fold">
-                      <button @click="onBlockExpand(item.blockNumber)" class="diff-fold-button">
+                      <button @click="onMaxBlockExpand(item.blockNumber)" class="diff-fold-button">
                         {{ `⟨ Expand ${item.count} lines... ⟩` }}
                       </button>
                     </div>
@@ -403,10 +435,10 @@ onBeforeUnmount(() => {
               <!-- Right side (new) in Modal -->
               <div class="diff-column">
                 <div class="diff-lines">
-                  <template v-for="(item, itemIndex) in renderDiff" :key="`modal-diff-right-${itemIndex}`">
-                    <!-- Code fold indicator -->
+                  <template v-for="(item, itemIndex) in renderMaxDiff" :key="`modal-diff-right-${itemIndex}`">
+                    <!-- Code fold indicator for maximized view -->
                     <div v-if="item.type === 'fold'" class="diff-fold">
-                      <button @click="onBlockExpand(item.blockNumber)" class="diff-fold-button">
+                      <button @click="onMaxBlockExpand(item.blockNumber)" class="diff-fold-button">
                         {{ `⟨ Expand ${item.count} lines... ⟩` }}
                       </button>
                     </div>
