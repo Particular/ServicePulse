@@ -425,11 +425,17 @@ const hasStateChanges = computed(() => {
 :deep(.monospace-code) {
   border-radius: 0;
   border: none;
+  background-color: #f2f2f2;
 }
 
 :deep(.monospace-code) .cm-editor {
   font-family: monospace;
   font-size: 0.75rem;
+  background-color: #f2f2f2;
+}
+
+:deep(.monospace-code) .cm-scroller {
+  background-color: #f2f2f2;
 }
 
 @-webkit-keyframes blink-border {
