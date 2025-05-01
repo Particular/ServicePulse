@@ -135,7 +135,6 @@ onBeforeUnmount(() => {
 /* Maximize button styles */
 .maximize-button {
   position: absolute;
-  top: 6px;
   right: 6px;
   z-index: 10;
   background-color: rgba(255, 255, 255, 0.7);
