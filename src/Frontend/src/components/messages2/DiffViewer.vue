@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import * as diff from "diff";
 
 // Types needed for the diff viewer
@@ -269,6 +269,13 @@ const toggleMaximizeModal = () => {
   showMaximizeModal.value = !showMaximizeModal.value;
 };
 
+// Handle ESC key to close modal
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key === "Escape" && showMaximizeModal.value) {
+    showMaximizeModal.value = false;
+  }
+};
+
 // Handle mouse enter/leave for showing maximize button
 const onDiffMouseEnter = () => {
   if (props.showMaximizeIcon) {
@@ -279,6 +286,19 @@ const onDiffMouseEnter = () => {
 const onDiffMouseLeave = () => {
   showMaximizeButton.value = false;
 };
+
+// Ensure modal resizes with window and setup keyboard events
+onMounted(() => {
+  if (props.showMaximizeIcon) {
+    // Add keyboard event listener for ESC key
+    window.addEventListener("keydown", handleKeyDown);
+  }
+});
+
+// Clean up event listeners when component is destroyed
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", handleKeyDown);
+});
 </script>
 
 <template>
