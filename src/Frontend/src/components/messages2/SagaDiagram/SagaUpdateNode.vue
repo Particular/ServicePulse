@@ -3,7 +3,8 @@ import { SagaUpdateViewModel } from "./SagaDiagramParser";
 import MessageDataBox from "./MessageDataBox.vue";
 import SagaOutgoingTimeoutMessage from "./SagaOutgoingTimeoutMessage.vue";
 import SagaOutgoingMessage from "./SagaOutgoingMessage.vue";
-import DiffViewer from "@/components/messages2/DiffViewerV2.vue";
+import DiffViewer from "@/components/messages2/DiffViewer.vue";
+import CodeEditor from "@/components/CodeEditor.vue";
 import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { ref, watch, computed } from "vue";
 
@@ -176,7 +177,7 @@ const hasStateChanges = computed(() => {
 
             <!-- Initial state display -->
             <div v-if="update.IsFirstNode" class="json-container">
-              <pre class="json-view">{{ stateDiff.formattedState }}</pre>
+              <CodeEditor css="monospace-code" :model-value="stateDiff.formattedState || ''" language="json" :showCopyToClipboard="false" :showGutter="false" />
             </div>
 
             <!-- No changes message -->
@@ -392,17 +393,7 @@ const hasStateChanges = computed(() => {
 }
 
 .json-container {
-  max-height: 300px;
-  overflow-y: auto;
-  background-color: #f8f8f8;
-}
-.json-view {
-  margin: 0;
-  padding: 8px;
-  white-space: pre-wrap;
-  font-family: monospace;
-  font-size: 0.75rem;
-  line-height: 1.4;
+  background-color: transparent;
 }
 
 .no-changes-message {
@@ -410,6 +401,12 @@ const hasStateChanges = computed(() => {
   text-align: center;
   font-style: italic;
   color: #666;
+}
+
+/* Monospace font styling that matches DiffViewer */
+:deep(.monospace-code) .cm-editor {
+  font-family: monospace;
+  font-size: 0.75rem;
 }
 
 @-webkit-keyframes blink-border {

@@ -62,7 +62,7 @@ const props = withDefaults(defineProps<Props>(), {
   extraLinesSurroundingDiff: 3,
   leftTitle: "Previous",
   rightTitle: "Current",
-  compareMethod: "diffWords",
+  compareMethod: "diffLines",
 });
 
 // Component state
