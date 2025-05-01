@@ -3,6 +3,7 @@ import { SagaUpdateViewModel } from "./SagaDiagramParser";
 import MessageDataBox from "./MessageDataBox.vue";
 import SagaOutgoingTimeoutMessage from "./SagaOutgoingTimeoutMessage.vue";
 import SagaOutgoingMessage from "./SagaOutgoingMessage.vue";
+import DiffViewer from "@/components/messages2/DiffViewerV2.vue";
 import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { ref, watch, computed } from "vue";
 
@@ -13,6 +14,13 @@ import SagaUpdatedIcon from "@/assets/SagaUpdatedIcon.svg";
 import TimeoutIcon from "@/assets/timeout.svg";
 import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";
 
+// Define types for JSON values and properties
+type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
+interface JsonObject {
+  [key: string]: JsonValue;
+}
+type JsonArray = Array<JsonValue>;
+
 const props = defineProps<{
   update: SagaUpdateViewModel;
   showMessageData?: boolean;
@@ -21,7 +29,6 @@ const props = defineProps<{
 const store = useSagaDiagramStore();
 const initiatingMessageRef = ref<HTMLElement | null>(null);
 const isActive = ref(false);
-const showAllProperties = ref(!props.update.showUpdatedPropertiesOnly);
 
 // Watch for changes to selectedMessageId
 watch(
@@ -43,61 +50,77 @@ watch(
   }
 );
 
-// Function to toggle between showing all properties and only updated properties
-const togglePropertyView = (event: Event, showAll: boolean) => {
-  event.preventDefault();
-  showAllProperties.value = showAll;
-  // Instead of directly modifying the prop, we update our local view state
-  // props.update.showUpdatedPropertiesOnly = !showAll;
+// Format a JSON value for display
+const formatJsonValue = (value: unknown): string => {
+  if (value === null || value === undefined) return "null";
+  if (typeof value === "object") {
+    return JSON.stringify(value, null, 2);
+  }
+  return String(value);
 };
 
-// Compute the properties to display based on the current state
-const displayProperties = computed(() => {
-  const properties: { name: string; value: string; isNew: boolean }[] = [];
-  const state = props.update.stateAfterChange;
-  const previousState = props.update.previousStateAfterChange || {};
-  const isFirstNode = props.update.IsFirstNode;
+// Process JSON state and remove standard properties
+const processState = (state: unknown): Record<string, JsonValue> => {
+  if (!state) return {};
 
-  // Function to check if a property has changed
-  const hasPropertyChanged = (key: string) => {
-    if (isFirstNode) return true; // For the first node, all properties are "new"
-    return JSON.stringify(state[key]) !== JSON.stringify(previousState[key]);
-  };
-
-  // Function to format value differences
-  const formatValue = (key: string) => {
-    const currentValue = state[key];
-    if (isFirstNode || !props.update.previousStateAfterChange) {
-      return String(currentValue);
-    }
-
-    const prevValue = previousState[key];
-    if (JSON.stringify(currentValue) !== JSON.stringify(prevValue)) {
-      return `${prevValue} → ${currentValue}`;
-    }
-    return String(currentValue);
-  };
-
-  // Filter out standard keys like $type, Id, Originator, OriginalMessageId
-  const standardKeys = ["$type", "Id", "Originator", "OriginalMessageId"];
-
-  // Add all properties that should be displayed
-  for (const key in state) {
-    if (standardKeys.includes(key)) continue;
-
-    const propertyChanged = hasPropertyChanged(key);
-
-    // Skip unchanged properties when showing only updated properties
-    if (!showAllProperties.value && !propertyChanged && !isFirstNode) continue;
-
-    properties.push({
-      name: isFirstNode ? `${key} (new)` : key, // Add "(new)" suffix for first node
-      value: formatValue(key),
-      isNew: isFirstNode || propertyChanged,
-    });
+  let stateObj: Record<string, unknown>;
+  try {
+    stateObj = typeof state === "string" ? JSON.parse(state) : (state as Record<string, unknown>);
+  } catch (e) {
+    console.error("Error parsing state:", e);
+    return {};
   }
 
-  return properties;
+  // Filter out standard properties
+  const standardKeys = ["$type", "Id", "Originator", "OriginalMessageId"];
+  const filteredState: Record<string, JsonValue> = {};
+
+  Object.keys(stateObj).forEach((key) => {
+    if (!standardKeys.includes(key)) {
+      // Type assertion here since we can't guarantee the type exactly matches JsonValue
+      filteredState[key] = stateObj[key] as JsonValue;
+    }
+  });
+
+  return filteredState;
+};
+
+// Compute the diff between current and previous states
+const stateDiff = computed(() => {
+  const currentState = processState(props.update.stateAfterChange);
+  const previousState = processState(props.update.previousStateAfterChange);
+  const isFirstNode = props.update.IsFirstNode;
+
+  // Format the current state
+  const currentFormatted = formatJsonValue(currentState);
+
+  // If it's the first node, just return the current state
+  if (isFirstNode) {
+    return {
+      formattedState: currentFormatted,
+      // Provide default empty strings for diff view to prevent type errors
+      previousFormatted: "",
+      currentFormatted: currentFormatted,
+    };
+  }
+
+  // Format the JSON state objects
+  const previousFormatted = formatJsonValue(previousState);
+
+  return {
+    previousFormatted,
+    currentFormatted,
+  };
+});
+
+// Determine if there are changes to display
+const hasStateChanges = computed(() => {
+  if (props.update.IsFirstNode) return true;
+
+  const currentState = processState(props.update.stateAfterChange);
+  const previousState = processState(props.update.previousStateAfterChange);
+
+  return JSON.stringify(currentState) !== JSON.stringify(previousState);
 });
 </script>
 
@@ -147,20 +170,25 @@ const displayProperties = computed(() => {
       <!-- Center - Saga properties -->
       <div class="cell cell--center cell--center--border">
         <div :class="{ 'cell-inner': true, 'cell-inner-line': update.HasTimeout, 'cell-inner-center': !update.HasTimeout }">
-          <div class="saga-properties">
-            <a class="saga-properties-link" :class="{ 'saga-properties-link--active': showAllProperties }" href="" @click="(e) => togglePropertyView(e, true)">All Properties</a> /
-            <a class="saga-properties-link" :class="{ 'saga-properties-link--active': !showAllProperties }" href="" @click="(e) => togglePropertyView(e, false)">Updated Properties</a>
-          </div>
+          <div class="saga-state-container">
+            <h3 class="saga-state-title" v-if="update.IsFirstNode">Initial Saga State</h3>
+            <h3 class="saga-state-title" v-else>State Changes</h3>
 
-          <!-- Display saga properties if available -->
-          <ul class="saga-properties-list" v-if="displayProperties.length > 0">
-            <li class="saga-properties-list-item" v-for="(prop, index) in displayProperties" :key="index">
-              <span class="saga-properties-list-text" :title="prop.name">{{ prop.name }}</span>
-              <span class="saga-properties-list-text">=</span>
-              <span class="saga-properties-list-text" :title="prop.value">{{ prop.value }}</span>
-            </li>
-          </ul>
-          <div v-else class="no-properties">No properties to display</div>
+            <!-- Initial state display -->
+            <div v-if="update.IsFirstNode" class="json-container">
+              <pre class="json-view">{{ stateDiff.formattedState }}</pre>
+            </div>
+
+            <!-- No changes message -->
+            <div v-else-if="!hasStateChanges" class="json-container">
+              <div class="no-changes-message">No state changes in this update</div>
+            </div>
+
+            <!-- Side-by-side diff view for state changes -->
+            <div v-else-if="hasStateChanges && !update.IsFirstNode">
+              <DiffViewer :hide-line-numbers="true" :showDiffOnly="true" :oldValue="stateDiff.previousFormatted" :newValue="stateDiff.currentFormatted" leftTitle="Previous State" rightTitle="Updated State" />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -313,54 +341,6 @@ const displayProperties = computed(() => {
   font-size: 0.8rem;
 }
 
-.saga-properties {
-  margin: 0 -0.25rem;
-  padding: 0.25rem;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-}
-
-.saga-properties-link {
-  padding: 0 0.25rem;
-  text-decoration: underline;
-}
-
-.saga-properties-link--active {
-  font-weight: 900;
-  color: #000000;
-}
-
-.saga-properties-list {
-  margin: 0;
-  padding-left: 0.25rem;
-  list-style: none;
-}
-
-.saga-properties-list-item {
-  display: flex;
-}
-
-.saga-properties-list-text {
-  display: inline-block;
-  padding-top: 0.25rem;
-  padding-right: 0.75rem;
-  overflow: hidden;
-  font-size: 0.75rem;
-  white-space: nowrap;
-}
-
-.saga-properties-list-text:first-child {
-  min-width: 8rem;
-  max-width: 8rem;
-  display: inline-block;
-  text-overflow: ellipsis;
-}
-
-.saga-properties-list-text:last-child {
-  padding-right: 0;
-  text-overflow: ellipsis;
-}
-
 .message-data {
   display: none;
   padding: 0.2rem;
@@ -371,13 +351,6 @@ const displayProperties = computed(() => {
 
 .message-data--active {
   display: block;
-}
-
-.no-properties {
-  padding: 0.25rem;
-  font-style: italic;
-  font-size: 0.8rem;
-  color: #666;
 }
 
 .saga-icon {
@@ -399,6 +372,7 @@ const displayProperties = computed(() => {
   height: 1rem;
   margin-top: -0.3rem;
 }
+
 .timeout-status {
   display: inline-block;
   font-size: 1rem;
@@ -406,10 +380,42 @@ const displayProperties = computed(() => {
   color: #00a3c4;
 }
 
+/* Styles for DiffViewer integration */
+.saga-state-container {
+  padding: 0.5rem;
+}
+
+.saga-state-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.json-container {
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: #f8f8f8;
+}
+.json-view {
+  margin: 0;
+  padding: 8px;
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.no-changes-message {
+  padding: 1rem;
+  text-align: center;
+  font-style: italic;
+  color: #666;
+}
+
 @-webkit-keyframes blink-border {
   0%,
   100% {
-    border-color: #000000;
+    border-color: #00a3c4;
   }
   20%,
   60% {
@@ -417,14 +423,14 @@ const displayProperties = computed(() => {
   }
   40%,
   80% {
-    border-color: #000000;
+    border-color: #00a3c4;
   }
 }
 
 @-moz-keyframes blink-border {
   0%,
   100% {
-    border-color: #000000;
+    border-color: #00a3c4;
   }
   20%,
   60% {
@@ -432,14 +438,14 @@ const displayProperties = computed(() => {
   }
   40%,
   80% {
-    border-color: #000000;
+    border-color: #00a3c4;
   }
 }
 
 @-o-keyframes blink-border {
   0%,
   100% {
-    border-color: #000000;
+    border-color: #00a3c4;
   }
   20%,
   60% {
@@ -447,7 +453,7 @@ const displayProperties = computed(() => {
   }
   40%,
   80% {
-    border-color: #000000;
+    border-color: #00a3c4;
   }
 }
 
