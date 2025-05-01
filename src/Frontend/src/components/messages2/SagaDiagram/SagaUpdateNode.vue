@@ -190,7 +190,15 @@ const hasStateChanges = computed(() => {
 
             <!-- Side-by-side diff view for state changes -->
             <div v-else-if="hasStateChanges && !update.IsFirstNode">
-              <DiffViewer :hide-line-numbers="true" :showDiffOnly="true" :oldValue="sagaUpdateStateChanges.previousFormatted" :newValue="sagaUpdateStateChanges.currentFormatted" leftTitle="Previous State" rightTitle="Updated State" />
+              <DiffViewer
+                :hide-line-numbers="true"
+                :showDiffOnly="true"
+                :oldValue="sagaUpdateStateChanges.previousFormatted"
+                :newValue="sagaUpdateStateChanges.currentFormatted"
+                leftTitle="Previous State"
+                rightTitle="Updated State"
+                :showMaximizeIcon="true"
+              />
             </div>
           </div>
         </div>

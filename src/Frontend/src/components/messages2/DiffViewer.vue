@@ -53,6 +53,7 @@ interface Props {
   leftTitle?: string;
   rightTitle?: string;
   compareMethod?: "diffChars" | "diffWords" | "diffWordsWithSpace" | "diffLines" | "diffTrimmedLines" | "diffSentences" | "diffCss";
+  showMaximizeIcon?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -63,12 +64,15 @@ const props = withDefaults(defineProps<Props>(), {
   leftTitle: "Previous",
   rightTitle: "Current",
   compareMethod: "diffLines",
+  showMaximizeIcon: false,
 });
 
 // Component state
 const lineInformation = ref<LineInformation[]>([]);
 const diffLines = ref<number[]>([]);
 const expandedBlocks = ref<number[]>([]);
+const showMaximizeModal = ref(false);
+const showMaximizeButton = ref(false);
 
 // Compute diff when inputs change
 const computeDiff = (): void => {
@@ -259,16 +263,39 @@ watch(
   },
   { immediate: true }
 );
+
+// Handle maximize functionality
+const toggleMaximizeModal = () => {
+  showMaximizeModal.value = !showMaximizeModal.value;
+};
+
+// Handle mouse enter/leave for showing maximize button
+const onDiffMouseEnter = () => {
+  if (props.showMaximizeIcon) {
+    showMaximizeButton.value = true;
+  }
+};
+
+const onDiffMouseLeave = () => {
+  showMaximizeButton.value = false;
+};
 </script>
 
 <template>
-  <div class="diff-viewer">
+  <div class="diff-viewer" @mouseenter="onDiffMouseEnter" @mouseleave="onDiffMouseLeave">
     <div class="diff-container" :class="{ 'split-view': splitView }">
       <!-- Headers -->
       <div v-if="leftTitle || rightTitle" class="diff-headers">
         <div class="diff-header">{{ leftTitle }}</div>
         <div v-if="splitView" class="diff-header">{{ rightTitle }}</div>
       </div>
+
+      <!-- Maximize Button -->
+      <button v-if="showMaximizeIcon && showMaximizeButton" @click="toggleMaximizeModal" class="maximize-button" title="Maximize diff view">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 3V9H5V5H9V3H3ZM3 21H9V19H5V15H3V21ZM21 3H15V5H19V9H21V3ZM15 21H21V15H19V19H15V21Z" fill="currentColor" />
+        </svg>
+      </button>
 
       <!-- Diff content -->
       <div class="diff-content">
@@ -313,6 +340,72 @@ watch(
         </div>
       </div>
     </div>
+
+    <!-- Maximize Modal -->
+    <div v-if="showMaximizeModal" class="maximize-modal">
+      <div class="maximize-modal-content">
+        <div class="maximize-modal-toolbar">
+          <span class="maximize-modal-title">{{ leftTitle }} vs {{ rightTitle }}</span>
+          <button @click="toggleMaximizeModal" class="maximize-modal-close" title="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+        <div class="maximize-modal-body">
+          <div class="diff-container" :class="{ 'split-view': splitView }">
+            <!-- Headers in Modal -->
+            <div v-if="leftTitle || rightTitle" class="diff-headers">
+              <div class="diff-header">{{ leftTitle }}</div>
+              <div v-if="splitView" class="diff-header">{{ rightTitle }}</div>
+            </div>
+
+            <!-- Diff content in Modal -->
+            <div class="diff-content">
+              <!-- Left side (old) in Modal -->
+              <div v-if="splitView" class="diff-column">
+                <div class="diff-lines">
+                  <template v-for="(item, itemIndex) in renderDiff" :key="`modal-diff-left-${itemIndex}`">
+                    <!-- Code fold indicator -->
+                    <div v-if="item.type === 'fold'" class="diff-fold">
+                      <button @click="onBlockExpand(item.blockNumber)" class="diff-fold-button">
+                        {{ `⟨ Expand ${item.count} lines... ⟩` }}
+                      </button>
+                    </div>
+
+                    <!-- Regular line content -->
+                    <div v-else-if="item.type === 'line'" :class="['diff-line', { 'diff-line-removed': item.lineInfo.left.type === DiffType.REMOVED }]">
+                      <span v-if="!hideLineNumbers" class="diff-line-number">{{ item.lineInfo.left.lineNumber }}</span>
+                      <span class="diff-line-content">{{ item.lineInfo.left.value }}</span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Right side (new) in Modal -->
+              <div class="diff-column">
+                <div class="diff-lines">
+                  <template v-for="(item, itemIndex) in renderDiff" :key="`modal-diff-right-${itemIndex}`">
+                    <!-- Code fold indicator -->
+                    <div v-if="item.type === 'fold'" class="diff-fold">
+                      <button @click="onBlockExpand(item.blockNumber)" class="diff-fold-button">
+                        {{ `⟨ Expand ${item.count} lines... ⟩` }}
+                      </button>
+                    </div>
+
+                    <!-- Regular line content -->
+                    <div v-else-if="item.type === 'line'" :class="['diff-line', { 'diff-line-added': item.lineInfo.right.type === DiffType.ADDED }]">
+                      <span v-if="!hideLineNumbers" class="diff-line-number">{{ item.lineInfo.right.lineNumber }}</span>
+                      <span class="diff-line-content">{{ item.lineInfo.right.value }}</span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -322,6 +415,7 @@ watch(
   overflow: hidden;
   font-family: monospace;
   font-size: 0.75rem;
+  position: relative;
 }
 
 .diff-container {
@@ -406,5 +500,93 @@ watch(
 
 .diff-fold-button:hover {
   text-decoration: underline;
+}
+
+/* Maximize button styles */
+.maximize-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 4px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.maximize-button:hover {
+  opacity: 1;
+}
+
+/* Modal styles */
+.maximize-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.maximize-modal-content {
+  background-color: white;
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.maximize-modal-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+}
+
+.maximize-modal-title {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.maximize-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
+.maximize-modal-close:hover {
+  color: #000;
+}
+
+.maximize-modal-body {
+  flex: 1;
+  overflow: auto;
+  padding: 0;
+}
+
+.maximize-modal-body .diff-container {
+  height: 100%;
+}
+
+.maximize-modal-body .diff-content {
+  max-height: calc(100% - 35px);
+  overflow: auto;
 }
 </style>
