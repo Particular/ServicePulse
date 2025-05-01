@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import * as diff from "diff";
+import DiffMaximizeIcon from "@/assets/diff-maximize.svg";
+import DiffCloseIcon from "@/assets/diff-close.svg";
 
 // Types needed for the diff viewer
 interface DiffChange {
@@ -312,9 +314,7 @@ onBeforeUnmount(() => {
 
       <!-- Maximize Button -->
       <button v-if="showMaximizeIcon && showMaximizeButton" @click="toggleMaximizeModal" class="maximize-button" title="Maximize diff view">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3 3V9H5V5H9V3H3ZM3 21H9V19H5V15H3V21ZM21 3H15V5H19V9H21V3ZM15 21H21V15H19V19H15V21Z" fill="currentColor" />
-        </svg>
+        <img :src="DiffMaximizeIcon" alt="Maximize" width="14" height="14" />
       </button>
 
       <!-- Diff content -->
@@ -367,9 +367,7 @@ onBeforeUnmount(() => {
         <div class="maximize-modal-toolbar">
           <span class="maximize-modal-title">{{ leftTitle }} vs {{ rightTitle }}</span>
           <button @click="toggleMaximizeModal" class="maximize-modal-close" title="Close">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
+            <img :src="DiffCloseIcon" alt="Close" width="16" height="16" />
           </button>
         </div>
         <div class="maximize-modal-body">
