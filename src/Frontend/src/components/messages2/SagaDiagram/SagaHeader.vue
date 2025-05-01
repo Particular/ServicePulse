@@ -2,7 +2,6 @@
 defineProps<{
   sagaTitle: string;
   sagaGuid: string;
-  messageIdUrl: string;
 }>();
 </script>
 
