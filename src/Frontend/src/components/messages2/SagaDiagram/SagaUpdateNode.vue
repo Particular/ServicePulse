@@ -30,6 +30,7 @@ const props = defineProps<{
 const store = useSagaDiagramStore();
 const initiatingMessageRef = ref<HTMLElement | null>(null);
 const isActive = ref(false);
+const hasParsingError = ref(false);
 
 // Watch for changes to selectedMessageId
 watch(
@@ -61,33 +62,30 @@ const formatJsonValue = (value: unknown): string => {
 };
 
 // Process JSON state and remove standard properties
-const processState = (state: unknown): Record<string, JsonValue> => {
+const processState = (state: string | undefined): Record<string, JsonValue> => {
   if (!state) return {};
 
   let stateObj: Record<string, unknown>;
   try {
-    stateObj = typeof state === "string" ? JSON.parse(state) : (state as Record<string, unknown>);
+    stateObj = JSON.parse(state);
   } catch (e) {
     console.error("Error parsing state:", e);
+    hasParsingError.value = true;
     return {};
   }
 
-  // Filter out standard properties
+  // Filter out standard properties using delete
   const standardKeys = ["$type", "Id", "Originator", "OriginalMessageId"];
-  const filteredState: Record<string, JsonValue> = {};
-
-  Object.keys(stateObj).forEach((key) => {
-    if (!standardKeys.includes(key)) {
-      // Type assertion here since we can't guarantee the type exactly matches JsonValue
-      filteredState[key] = stateObj[key] as JsonValue;
+  standardKeys.forEach((key) => {
+    if (key in stateObj) {
+      delete stateObj[key];
     }
   });
 
-  return filteredState;
+  return stateObj as Record<string, JsonValue>;
 };
 
-// Compute the diff between current and previous states
-const stateDiff = computed(() => {
+const sagaUpdateStateChanges = computed(() => {
   const currentState = processState(props.update.stateAfterChange);
   const previousState = processState(props.update.previousStateAfterChange);
   const isFirstNode = props.update.IsFirstNode;
@@ -175,9 +173,14 @@ const hasStateChanges = computed(() => {
             <h3 class="saga-state-title" v-if="update.IsFirstNode">Initial Saga State</h3>
             <h3 class="saga-state-title" v-else>State Changes</h3>
 
+            <!-- Error message when parsing fails -->
+            <div v-if="hasParsingError" class="json-container">
+              <div class="parsing-error-message">An error occurred while parsing and displaying the saga state for this update</div>
+            </div>
+
             <!-- Initial state display -->
-            <div v-if="update.IsFirstNode" class="json-container">
-              <CodeEditor css="monospace-code" :model-value="stateDiff.formattedState || ''" language="json" :showCopyToClipboard="false" :showGutter="false" />
+            <div v-else-if="update.IsFirstNode" class="json-container">
+              <CodeEditor css="monospace-code" :model-value="sagaUpdateStateChanges.formattedState || ''" language="json" :showCopyToClipboard="false" :showGutter="false" />
             </div>
 
             <!-- No changes message -->
@@ -187,7 +190,7 @@ const hasStateChanges = computed(() => {
 
             <!-- Side-by-side diff view for state changes -->
             <div v-else-if="hasStateChanges && !update.IsFirstNode">
-              <DiffViewer :hide-line-numbers="true" :showDiffOnly="true" :oldValue="stateDiff.previousFormatted" :newValue="stateDiff.currentFormatted" leftTitle="Previous State" rightTitle="Updated State" />
+              <DiffViewer :hide-line-numbers="true" :showDiffOnly="true" :oldValue="sagaUpdateStateChanges.previousFormatted" :newValue="sagaUpdateStateChanges.currentFormatted" leftTitle="Previous State" rightTitle="Updated State" />
             </div>
           </div>
         </div>
@@ -401,6 +404,13 @@ const hasStateChanges = computed(() => {
   text-align: center;
   font-style: italic;
   color: #666;
+}
+
+.parsing-error-message {
+  padding: 1rem;
+  text-align: center;
+  font-style: italic;
+  color: #a94442;
 }
 
 /* Monospace font styling that matches DiffViewer */
