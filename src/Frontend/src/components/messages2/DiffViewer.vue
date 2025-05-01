@@ -319,12 +319,9 @@ watch(
 <style scoped>
 .diff-viewer {
   width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 3px;
   overflow: hidden;
   font-family: monospace;
   font-size: 0.75rem;
-  background-color: #f8f8f8;
 }
 
 .diff-container {

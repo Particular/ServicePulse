@@ -404,6 +404,11 @@ const hasStateChanges = computed(() => {
 }
 
 /* Monospace font styling that matches DiffViewer */
+:deep(.monospace-code) {
+  border-radius: 0;
+  border: none;
+}
+
 :deep(.monospace-code) .cm-editor {
   font-family: monospace;
   font-size: 0.75rem;
