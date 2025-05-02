@@ -60,7 +60,6 @@ function findKeyByValue(searchValue: string) {
       <div class="filter-label"></div>
       <div class="filter-component text-search-container">
         <FilterInput v-model="messageFilterString" placeholder="Search messages..." aria-label="Search messages" />
-        <p><i>Use * as a wildcard. Eg: *World! or Hello* finds Hello World!</i></p>
       </div>
     </div>
     <div class="filter">
@@ -99,7 +98,6 @@ function findKeyByValue(searchValue: string) {
   display: flex;
   gap: 1.1rem;
   flex-wrap: wrap;
-  align-items: flex-start;
 }
 
 .filter {
@@ -117,7 +115,6 @@ function findKeyByValue(searchValue: string) {
 }
 
 .text-search-container {
-  max-width: 25rem;
-  flex: 1;
+  width: 25rem;
 }
 </style>
