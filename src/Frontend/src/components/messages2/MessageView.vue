@@ -172,6 +172,18 @@ onMounted(() => {
 section,
 .tab-contents,
 .tab-contents > div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.container {
+  height: auto;
+}
+
+section,
+.tab-contents,
+.tab-contents > div {
   max-height: 100%;
   display: flex;
   flex-direction: column;
