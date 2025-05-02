@@ -27,7 +27,7 @@ export const Endpoint_Width = 260;
 
 export const useSequenceDiagramStore = defineStore("SequenceDiagramStore", () => {
   const messageStore = useMessageStore();
-  const { state } = storeToRefs(messageStore);
+  const { state, conversationData } = storeToRefs(messageStore);
   const router = useRouter();
 
   const startX = ref(Endpoint_Width / 2);
@@ -43,7 +43,7 @@ export const useSequenceDiagramStore = defineStore("SequenceDiagramStore", () =>
   const selectedId = computed(() => `${state.value.data.message_type ?? ""}(${state.value.data.id})`);
 
   watch(
-    () => messageStore.conversationData.data,
+    () => conversationData.value.data,
     (conversationData) => {
       if (conversationData.length) {
         startX.value = Endpoint_Width / 2;
