@@ -313,9 +313,6 @@ const hasStateChanges = computed(() => {
 
 .cell-inner-side--active {
   border: solid 5px #00a3c4;
-  -webkit-animation: blink-border 1.8s ease-in-out;
-  -moz-animation: blink-border 1.8s ease-in-out;
-  -o-animation: blink-border 1.8s ease-in-out;
   animation: blink-border 1.8s ease-in-out;
 }
 
@@ -449,96 +446,6 @@ const hasStateChanges = computed(() => {
   text-align: center;
   font-style: italic;
   color: #a94442;
-}
-
-@-webkit-keyframes blink-border {
-  0%,
-  100% {
-    border-color: #00a3c4;
-  }
-  20%,
-  60% {
-    border-color: #cccccc;
-  }
-  40%,
-  80% {
-    border-color: #00a3c4;
-  }
-}
-
-@-moz-keyframes blink-border {
-  0%,
-  100% {
-    border-color: #00a3c4;
-  }
-  20%,
-  60% {
-    border-color: #cccccc;
-  }
-  40%,
-  80% {
-    border-color: #00a3c4;
-  }
-}
-
-@-o-keyframes blink-border {
-  0%,
-  100% {
-    border-color: #00a3c4;
-  }
-  20%,
-  60% {
-    border-color: #cccccc;
-  }
-  40%,
-  80% {
-    border-color: #00a3c4;
-  }
-}
-
-@keyframes blink-border {
-  0%,
-  100% {
-    border-color: #00a3c4;
-  }
-  20%,
-  60% {
-    border-color: #cccccc;
-  }
-  40%,
-  80% {
-    border-color: #00a3c4;
-  }
-}
-
-@-moz-keyframes blink-border {
-  0%,
-  100% {
-    border-color: #000000;
-  }
-  20%,
-  60% {
-    border-color: #cccccc;
-  }
-  40%,
-  80% {
-    border-color: #000000;
-  }
-}
-
-@-o-keyframes blink-border {
-  0%,
-  100% {
-    border-color: #000000;
-  }
-  20%,
-  60% {
-    border-color: #cccccc;
-  }
-  40%,
-  80% {
-    border-color: #000000;
-  }
 }
 
 @keyframes blink-border {
