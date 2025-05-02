@@ -7,6 +7,7 @@ import DiffViewer from "@/components/messages2/DiffViewer.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
 import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { ref, watch, computed } from "vue";
+import { EditorView } from "@codemirror/view";
 import { parse, stringify } from "lossless-json";
 
 // Import the images directly
@@ -16,6 +17,30 @@ import SagaUpdatedIcon from "@/assets/SagaUpdatedIcon.svg";
 import TimeoutIcon from "@/assets/timeout.svg";
 import EventIcon from "@/assets/event.svg";
 import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";
+
+// Define the monospace theme for CodeEditor
+const monospaceTheme = EditorView.baseTheme({
+  "&": {
+    fontFamily: "monospace",
+    fontSize: "0.75rem",
+    backgroundColor: "#f2f2f2",
+  },
+  ".cm-editor": {
+    fontFamily: "monospace",
+    fontSize: "0.75rem",
+    backgroundColor: "#f2f2f2",
+  },
+  ".cm-scroller": {
+    backgroundColor: "#f2f2f2",
+  },
+});
+
+// Define types for JSON values and properties
+type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
+interface JsonObject {
+  [key: string]: JsonValue;
+}
+type JsonArray = Array<JsonValue>;
 
 const props = defineProps<{
   update: SagaUpdateViewModel;
@@ -177,7 +202,7 @@ const hasStateChanges = computed(() => {
 
             <!-- Initial state display -->
             <div v-else-if="update.IsFirstNode" class="json-container">
-              <CodeEditor css="monospace-code" :model-value="sagaUpdateStateChanges.formattedState || ''" language="json" :showCopyToClipboard="false" :showGutter="false" />
+              <CodeEditor :model-value="sagaUpdateStateChanges.formattedState || ''" language="json" :showCopyToClipboard="false" :showGutter="false" :extensions="[monospaceTheme]" />
             </div>
 
             <!-- No changes message -->
@@ -404,6 +429,14 @@ const hasStateChanges = computed(() => {
   background-color: transparent;
 }
 
+/* Override CodeEditor wrapper styles */
+.json-container :deep(.wrapper) {
+  border-radius: 0;
+  border: none;
+  background-color: #f2f2f2;
+  margin-top: 0;
+}
+
 .no-changes-message {
   padding: 1rem;
   text-align: center;
@@ -416,23 +449,6 @@ const hasStateChanges = computed(() => {
   text-align: center;
   font-style: italic;
   color: #a94442;
-}
-
-/* Monospace font styling that matches DiffViewer */
-:deep(.monospace-code) {
-  border-radius: 0;
-  border: none;
-  background-color: #f2f2f2;
-}
-
-:deep(.monospace-code) .cm-editor {
-  font-family: monospace;
-  font-size: 0.75rem;
-  background-color: #f2f2f2;
-}
-
-:deep(.monospace-code) .cm-scroller {
-  background-color: #f2f2f2;
 }
 
 @-webkit-keyframes blink-border {
