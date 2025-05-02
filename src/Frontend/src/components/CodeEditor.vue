@@ -19,6 +19,7 @@ const props = withDefaults(
     showGutter?: boolean;
     showCopyToClipboard?: boolean;
     ariaLabel?: string;
+    css?: string;
   }>(),
   { readOnly: true, showGutter: true, showCopyToClipboard: true }
 );
@@ -49,9 +50,13 @@ const extensions = computed(() => {
 </script>
 
 <template>
-  <div class="wrapper" :aria-label="ariaLabel">
-    <div v-if="props.showCopyToClipboard" class="toolbar">
-      <CopyToClipboard :value="code" />
+  <div class="wrapper" :aria-label="ariaLabel" :class="css">
+    <div v-if="props.showCopyToClipboard || $slots.toolbarLeft || $slots.toolbarRight" class="toolbar">
+      <div><slot name="toolbarLeft"></slot></div>
+      <div>
+        <slot name="toolbarRight"></slot>
+        <CopyToClipboard class="clipboard" v-if="props.showCopyToClipboard" :value="code" />
+      </div>
     </div>
     <CodeMirror v-model="code" :extensions="extensions" :basic="props.showGutter" :minimal="!props.showGutter" :readonly="props.readOnly" :gutter="!props.readOnly" :wrap="true"></CodeMirror>
   </div>
@@ -59,18 +64,26 @@ const extensions = computed(() => {
 
 <style scoped>
 .wrapper {
+  margin-top: 5px;
   border-radius: 0.5rem;
   padding: 0.5rem;
   border: 1px solid #ccc;
+  background: white;
   display: flex;
   flex-direction: column;
 }
 .toolbar {
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 0.5rem;
+  background-color: #f3f3f3;
+  border: #8c8c8c 1px solid;
+  border-radius: 3px;
+  padding: 5px;
   margin-bottom: 0.5rem;
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: space-between;
+  align-items: center;
+}
+.clipboard {
+  margin-left: 0.5rem;
 }
 </style>

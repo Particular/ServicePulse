@@ -7,13 +7,33 @@ import { useRoute, useRouter } from "vue-router";
 import ResultsCount from "@/components/ResultsCount.vue";
 import { dotNetTimespanToMilliseconds, formatDotNetTimespan } from "@/composables/formatUtils.ts";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
-import { onBeforeMount, watch } from "vue";
+import { onBeforeMount, onUnmounted, ref, watch } from "vue";
 import RefreshConfig from "../RefreshConfig.vue";
+import useAutoRefresh from "@/composables/autoRefresh.ts";
+import throttle from "lodash/throttle";
 
 const store = useAuditStore();
 const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange } = storeToRefs(store);
 const route = useRoute();
 const router = useRouter();
+const autoRefreshValue = ref<number | null>(null);
+const isLoading = ref(false);
+
+const dataRetriever = useAutoRefresh(
+  throttle(async () => {
+    isLoading.value = true;
+    try {
+      await store.refresh();
+    } finally {
+      isLoading.value = false;
+    }
+  }, 2000),
+  null
+);
+
+onUnmounted(() => {
+  dataRetriever.updateTimeout(null);
+});
 
 function statusToName(messageStatus: MessageStatus) {
   switch (messageStatus) {
@@ -62,10 +82,7 @@ function navigateToMessage(message: Message) {
   const query = router.currentRoute.value.query;
 
   router.push({
-    path:
-      message.status === MessageStatus.Successful //
-        ? routeLinks.messages.successMessage.link(message.message_id, message.id)
-        : routeLinks.messages.failedMessage.link(message.id),
+    path: message.status === MessageStatus.Successful || message.status === MessageStatus.ResolvedSuccessfully ? routeLinks.messages.successMessage.link(message.message_id, message.id) : routeLinks.messages.failedMessage.link(message.id),
     query: { ...query, ...{ back: route.path } },
   });
 }
@@ -77,7 +94,7 @@ onBeforeMount(() => {
 
   //without setTimeout, this happens before the store is properly initialised, and therefore the query route values aren't applied to the refresh
   //TODO: is there a better way to achieve this?
-  setTimeout(async () => await Promise.all([store.refresh(), store.loadEndpoints()]), 0);
+  setTimeout(async () => await Promise.all([dataRetriever.executeAndResetTimer(), store.loadEndpoints()]), 0);
 
   firstLoad = false;
 });
@@ -86,7 +103,7 @@ watch(
   () => router.currentRoute.value.query,
   async () => {
     setQuery();
-    await store.refresh();
+    await dataRetriever.executeAndResetTimer();
   },
   { deep: true }
 );
@@ -112,7 +129,7 @@ const watchHandle = watch([() => route.query, itemsPerPage, sortBy, messageFilte
     },
   });
 
-  await store.refresh();
+  await dataRetriever.executeAndResetTimer();
 });
 
 function setQuery() {
@@ -131,12 +148,14 @@ function setQuery() {
 
   watchHandle.resume();
 }
+
+watch(autoRefreshValue, (newValue) => dataRetriever.updateTimeout(newValue));
 </script>
 
 <template>
   <div>
     <div class="header">
-      <RefreshConfig id="auditListRefresh" @change="store.updateRefreshTimer" @manual-refresh="store.refresh" />
+      <RefreshConfig v-model="autoRefreshValue" :isLoading="isLoading" @manual-refresh="dataRetriever.executeAndResetTimer()" />
       <div class="row">
         <FiltersPanel />
       </div>
