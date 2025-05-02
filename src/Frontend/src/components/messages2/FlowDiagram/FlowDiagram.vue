@@ -289,7 +289,7 @@ const errorColor = hexToCSSFilter("#be514a").filter;
 
 #tree-container {
   width: 92vw;
-  height: 70vh;
+  height: 100%;
 }
 
 .sagas {
