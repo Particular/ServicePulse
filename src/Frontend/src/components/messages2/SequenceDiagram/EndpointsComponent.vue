@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Endpoint } from "@/resources/SequenceDiagram/Endpoint";
 import { Endpoint_Width, EndpointCentrePoint, useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
+import { hexToCSSFilter } from "hex-to-css-filter";
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 
@@ -52,6 +53,9 @@ watch(startX, () => {
 function setEndpointTextRef(el: Element, index: number) {
   if (el) epTextRefs.value[index] = el;
 }
+
+//#666666 = gray40 - can't set colour in CSS since that requires using mask-image which safari messes up the position of
+const endpointColor = hexToCSSFilter("#666666").filter;
 </script>
 
 <template>
@@ -59,7 +63,7 @@ function setEndpointTextRef(el: Element, index: number) {
     <g :transform="`translate(${(endpoint.x ?? Endpoint_Width / 2) - ((endpoint.textWidth ?? 0) + Endpoint_Image_Width) / 2}, 0)`">
       <foreignObject :x="Endpoint_Image_Width" y="10" :width="Endpoint_Width" height="100%" style="pointer-events: none">
         <div class="endpoint-surround" :ref="(el) => setEndpointTextRef(el as Element, i)">
-          <i class="endpoint-icon"></i>
+          <i class="endpoint-icon" :style="{ filter: endpointColor }" />
           <div class="endpoint-name">{{ endpoint.name }}</div>
         </div>
       </foreignObject>
@@ -82,12 +86,11 @@ function setEndpointTextRef(el: Element, index: number) {
 
 .endpoint-icon {
   flex-shrink: 0;
-  mask-image: url("@/assets/endpoint.svg");
-  mask-position: center;
-  mask-repeat: no-repeat;
+  background-image: url("@/assets/endpoint.svg");
+  background-position: center;
+  background-repeat: no-repeat;
   height: 18px;
   width: 18px;
-  background-color: var(--gray40);
 }
 
 .endpoint-name {
