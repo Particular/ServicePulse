@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, useTemplateRef } from "vue";
+import { computed, onMounted, useTemplateRef } from "vue";
 import debounce from "lodash/debounce";
 
 const model = defineModel<string>({ required: true });
-const props = withDefaults(defineProps<{ placeholder?: string; ariaLabel?: string }>(), { placeholder: "Filter by name...", ariaLabel: "Filter by name" });
+const props = withDefaults(defineProps<{ placeholder?: string; ariaLabel?: string; autoFocus?: boolean }>(), { placeholder: "Filter by name...", ariaLabel: "Filter by name" });
 const localInput = computed({
   get() {
     return model.value;
@@ -22,6 +22,13 @@ defineExpose({ focus });
 function focus() {
   textField.value?.focus();
 }
+onMounted(() => {
+  if (props.autoFocus) {
+    window.setTimeout(() => {
+      focus();
+    }, 0);
+  }
+});
 </script>
 
 <template>
