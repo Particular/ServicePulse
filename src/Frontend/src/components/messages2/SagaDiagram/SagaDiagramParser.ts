@@ -19,6 +19,7 @@ export interface InitiatingMessageViewModel {
 }
 export interface SagaTimeoutMessageViewModel extends SagaMessageViewModel {
   TimeoutFriendly: string;
+  HasBeenProcessed: boolean;
 }
 
 export interface SagaUpdateViewModel {
@@ -35,12 +36,14 @@ export interface SagaUpdateViewModel {
   OutgoingTimeoutMessages: SagaTimeoutMessageViewModel[];
   HasOutgoingMessages: boolean;
   HasOutgoingTimeoutMessages: boolean;
+  showUpdatedPropertiesOnly: boolean;
+  stateAfterChange: string;
+  previousStateAfterChange?: string;
 }
 
 export interface SagaViewModel {
   SagaTitle: string;
   SagaGuid: string;
-  MessageIdUrl: string;
   ParticipatedInSaga: boolean;
   HasSagaData: boolean;
   ShowNoPluginActiveLegend: boolean;
@@ -53,7 +56,7 @@ export interface SagaViewModel {
 export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: SagaMessageData[]): SagaUpdateViewModel[] {
   if (!sagaHistory || !sagaHistory.changes || !sagaHistory.changes.length) return [];
 
-  return sagaHistory.changes
+  const updates = sagaHistory.changes
     .map((update) => {
       const startTime = new Date(update.start_time);
       const finishTime = new Date(update.finish_time);
@@ -88,19 +91,22 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
 
       const outgoingTimeoutMessages = outgoingMessages
         .filter((msg) => msg.HasTimeout)
-        .map(
-          (msg) =>
-            ({
-              ...msg,
-              TimeoutFriendly: `${msg.TimeoutFriendly}`,
-            }) as SagaTimeoutMessageViewModel
-        );
+        .map((msg) => {
+          // Check if this timeout message has been processed by checking if there's an initiating message with matching ID
+          const hasBeenProcessed = sagaHistory.changes.some((update) => update.initiating_message?.message_id === msg.MessageId);
+
+          return {
+            ...msg,
+            TimeoutFriendly: `${msg.TimeoutFriendly}`,
+            HasBeenProcessed: hasBeenProcessed,
+          } as SagaTimeoutMessageViewModel;
+        });
 
       const regularMessages = outgoingMessages.filter((msg) => !msg.HasTimeout) as SagaMessageViewModel[];
 
       const hasTimeout = outgoingTimeoutMessages.length > 0;
 
-      return {
+      return <SagaUpdateViewModel>{
         MessageId: update.initiating_message?.message_id || "",
         StartTime: startTime,
         FinishTime: finishTime,
@@ -119,8 +125,17 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
         OutgoingMessages: regularMessages,
         HasOutgoingMessages: regularMessages.length > 0,
         HasOutgoingTimeoutMessages: outgoingTimeoutMessages.length > 0,
+        showUpdatedPropertiesOnly: true, // Default to showing only updated properties
+        stateAfterChange: update.state_after_change || "{}",
       };
     })
     .sort((a, b) => a.StartTime.getTime() - b.StartTime.getTime())
     .sort((a, b) => a.FinishTime.getTime() - b.FinishTime.getTime());
+
+  // Add reference to previous state for each update except the first one
+  for (let i = 1; i < updates.length; i++) {
+    updates[i].previousStateAfterChange = updates[i - 1].stateAfterChange;
+  }
+
+  return updates;
 }

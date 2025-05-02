@@ -3,12 +3,20 @@ import { SagaTimeoutMessageViewModel } from "./SagaDiagramParser";
 import MessageDataBox from "./MessageDataBox.vue";
 import TimeoutIcon from "@/assets/TimeoutIcon.svg";
 import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";
+import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 
-defineProps<{
+const props = defineProps<{
   message: SagaTimeoutMessageViewModel;
   isLastMessage: boolean;
   showMessageData?: boolean;
 }>();
+
+const store = useSagaDiagramStore();
+
+const navigateToTimeout = () => {
+  // Set the selected message ID in the store
+  store.setSelectedMessageId(props.message.MessageId);
+};
 </script>
 
 <template>
@@ -16,7 +24,8 @@ defineProps<{
     <div class="cell cell--center">
       <div class="cell-inner cell-inner-line">
         <img class="saga-icon saga-icon--center-cell saga-icon--overlap" :src="SagaTimeoutIcon" alt="" />
-        <a class="timeout-status" href="" aria-label="timeout requested">Timeout Requested = {{ message.TimeoutFriendly }}</a>
+        <a v-if="message.HasBeenProcessed" class="timeout-status" href="#" @click.prevent="navigateToTimeout" aria-label="timeout requested">Timeout Requested = {{ message.TimeoutFriendly }}</a>
+        <span v-else class="timeout-status" aria-label="timeout requested">Timeout Requested = {{ message.TimeoutFriendly }}</span>
       </div>
     </div>
     <div class="cell cell--side"></div>
@@ -26,7 +35,7 @@ defineProps<{
     </div>
     <div class="cell cell--side">
       <div class="cell-inner cell-inner-right"></div>
-      <div class="cell-inner cell-inner-side cell-inner-side--active">
+      <div class="cell-inner cell-inner-side">
         <img class="saga-icon saga-icon--side-cell" :src="TimeoutIcon" alt="" />
         <h2 class="message-title" aria-label="timeout message type">{{ message.MessageFriendlyTypeName }}</h2>
         <div class="timestamp" aria-label="timeout message timestamp">{{ message.FormattedTimeSent }}</div>
