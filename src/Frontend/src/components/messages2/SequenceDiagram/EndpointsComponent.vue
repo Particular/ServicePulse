@@ -55,7 +55,9 @@ function setEndpointTextRef(el: Element, index: number) {
 </script>
 
 <template>
-  <g v-for="(endpoint, i) in endpointItems" :key="endpoint.name" :transform="`translate(0,${yOffset + 15})`" style="outline: none">
+  <!-- occlusion for top of diagram so that elements don't show above the endpoint names when scrolling -->
+  <rect width="100%" height="15" :transform="`translate(0,${yOffset})`" fill="white" />
+  <g v-for="(endpoint, i) in endpointItems" :key="endpoint.name" :transform="`translate(0,${yOffset + 5})`" style="outline: none">
     <g :transform="`translate(${(endpoint.x ?? Endpoint_Width / 2) - ((endpoint.textWidth ?? 0) + Endpoint_Image_Width) / 2}, 0)`">
       <foreignObject :x="Endpoint_Image_Width" y="10" :width="Endpoint_Width" height="100%" style="pointer-events: none">
         <div class="endpoint-surround" :ref="(el) => setEndpointTextRef(el as Element, i)">
