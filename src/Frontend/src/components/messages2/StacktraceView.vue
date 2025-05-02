@@ -10,5 +10,5 @@ const { state } = storeToRefs(useMessageStore());
 <template>
   <div v-if="state.failed_to_load" class="alert alert-info">Stacktrace not available.</div>
   <LoadingSpinner v-else-if="state.loading" />
-  <CodeEditor v-else :model-value="state.data.failure_metadata.exception?.stack_trace!" language="powershell" :read-only="true" :show-gutter="false"></CodeEditor>
+  <CodeEditor v-else :model-value="state.data.failure_metadata.exception?.stack_trace!" language="powershell" :read-only="true" :show-gutter="false" toolbar-sticky-height="9.7rem" />
 </template>

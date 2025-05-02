@@ -20,6 +20,7 @@ const props = withDefaults(
     showCopyToClipboard?: boolean;
     ariaLabel?: string;
     css?: string;
+    toolbarStickyHeight?: string;
   }>(),
   { readOnly: true, showGutter: true, showCopyToClipboard: true }
 );
@@ -50,7 +51,7 @@ const extensions = computed(() => {
 </script>
 
 <template>
-  <div v-if="props.showCopyToClipboard || $slots.toolbarLeft || $slots.toolbarRight" class="toolbar">
+  <div v-if="props.showCopyToClipboard || $slots.toolbarLeft || $slots.toolbarRight" :class="{ toolbar: true, sticky: props.toolbarStickyHeight != null }" :style="{ top: props.toolbarStickyHeight }">
     <div><slot name="toolbarLeft"></slot></div>
     <div>
       <slot name="toolbarRight"></slot>
@@ -81,6 +82,10 @@ const extensions = computed(() => {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+.toolbar.sticky {
+  position: sticky;
+  z-index: 1;
 }
 .clipboard {
   margin-left: 0.5rem;
