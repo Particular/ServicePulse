@@ -75,10 +75,13 @@ const filteredHeaders = computed(() => {
   max-width: 40rem;
 }
 .filters {
-  background-color: #f3f3f3;
+  background-color: var(--main-background);
   border: #8c8c8c 1px solid;
   border-radius: 3px;
   padding: 5px;
+  position: sticky;
+  top: 9.7rem;
+  z-index: 1;
 }
 
 .header-list {
@@ -89,7 +92,7 @@ const filteredHeaders = computed(() => {
   align-items: flex-start;
   justify-content: center;
   row-gap: 2px;
-  background-color: #f3f3f3;
+  background-color: var(--main-background);
 }
 
 .header-value,

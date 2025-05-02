@@ -271,7 +271,6 @@ const selectedErrorColor = hexToCSSFilter("#e8e6e8").filter;
 @import "../../list.css";
 
 .gap {
-  margin-top: 5px;
   border-radius: 0.5rem;
   padding: 0.5rem;
   border: 1px solid #ccc;

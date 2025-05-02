@@ -80,6 +80,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  --main-background: #f2f6f7;
 }
 
 h1 {

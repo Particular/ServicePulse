@@ -37,4 +37,12 @@ watch(
   </keep-alive>
 </template>
 
-<style scoped></style>
+<style scoped>
+.tabs {
+  position: sticky;
+  top: 7.7rem;
+  z-index: 1;
+  margin-bottom: 1px;
+  background-color: var(--main-background);
+}
+</style>
