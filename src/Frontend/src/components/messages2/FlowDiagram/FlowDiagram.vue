@@ -276,7 +276,9 @@ const selectedErrorColor = hexToCSSFilter("#e8e6e8").filter;
   padding: 0.5rem;
   border: 1px solid #ccc;
   background: white;
+  flex: 1;
 }
+
 .controls {
   display: flex;
   flex-wrap: wrap;
@@ -284,7 +286,7 @@ const selectedErrorColor = hexToCSSFilter("#e8e6e8").filter;
 }
 
 #tree-container {
-  width: 92vw;
+  width: 100%;
   height: 100%;
 }
 

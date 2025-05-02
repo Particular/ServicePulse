@@ -18,18 +18,16 @@ onMounted(() => store.refreshConversation());
 </script>
 
 <template>
-  <div class="wrapper">
-    <div class="toolbar">
-      <a class="help-link" target="_blank" href="https://docs.particular.net/servicepulse/sequence-diagram"><i class="fa fa-info-circle" /> Sequence Diagram Help</a>
-    </div>
-    <div class="outer" @scroll="(ev) => (endpointYOffset = (ev.target as Element).scrollTop)">
-      <svg class="sequence-diagram" :style="{ width: `max(100%, ${isNaN(maxWidth) ? 0 : maxWidth}px)` }" :height="maxHeight + 20">
-        <Timeline />
-        <Handlers />
-        <Routes />
-        <Endpoints :yOffset="endpointYOffset" />
-      </svg>
-    </div>
+  <div class="toolbar">
+    <a class="help-link" target="_blank" href="https://docs.particular.net/servicepulse/sequence-diagram"><i class="fa fa-info-circle" /> Sequence Diagram Help</a>
+  </div>
+  <div class="outer" @scroll="(ev) => (endpointYOffset = (ev.target as Element).scrollTop)">
+    <svg class="sequence-diagram" :style="{ width: `max(100%, ${isNaN(maxWidth) ? 0 : maxWidth}px)` }" :height="maxHeight + 20">
+      <Timeline />
+      <Handlers />
+      <Routes />
+      <Endpoints :yOffset="endpointYOffset" />
+    </svg>
   </div>
 </template>
 
