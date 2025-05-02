@@ -201,7 +201,7 @@ const hasStateChanges = computed(() => {
             </div>
 
             <!-- Initial state display -->
-            <div v-else-if="update.IsFirstNode" class="json-container">
+            <div v-else-if="update.IsFirstNode" class="json-container json-container--first-node">
               <CodeEditor :model-value="sagaUpdateStateChanges.formattedState || ''" language="json" :showCopyToClipboard="false" :showGutter="false" :extensions="[monospaceTheme]" />
             </div>
 
@@ -424,6 +424,11 @@ const hasStateChanges = computed(() => {
 
 .json-container {
   background-color: transparent;
+}
+
+.json-container--first-node {
+  max-height: 300px;
+  overflow: auto;
 }
 
 /* Override CodeEditor wrapper styles */
