@@ -31,6 +31,9 @@ const isMassTransitConnected = useIsMassTransitConnected();
 const store = useMessageStore();
 const { state } = storeToRefs(store);
 const backLink = ref<RouteLocationAsPathGeneric>({ path: routeLinks.failedMessage.failedMessages.link });
+
+const hasParticiaptedInSaga = computed(() => store.state.data.invoked_saga?.has_saga);
+
 const tabs = computed(() => {
   const currentTabs = [
     {
@@ -59,10 +62,12 @@ const tabs = computed(() => {
       text: "Sequence Diagram",
       component: SequenceDiagram,
     });
-    currentTabs.push({
-      text: "Saga Diagram",
-      component: SagaDiagram,
-    });
+    if (hasParticiaptedInSaga.value) {
+      currentTabs.push({
+        text: "Saga Diagram",
+        component: SagaDiagram,
+      });
+    }
   }
 
   return currentTabs;
