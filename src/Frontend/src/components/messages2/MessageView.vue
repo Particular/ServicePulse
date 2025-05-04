@@ -63,7 +63,7 @@ const tabs = computed(() => {
       component: SequenceDiagram,
     });
     // Add the "Saga Diagram" tab only if the saga has been participated in
-if (hasParticipatedInSaga?.value) {
+    if (hasParticipatedInSaga?.value) {
       currentTabs.push({
         text: "Saga Diagram",
         component: SagaDiagram,
