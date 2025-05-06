@@ -4,7 +4,7 @@ import MessageDataBox from "./MessageDataBox.vue";
 import SagaOutgoingTimeoutMessage from "./SagaOutgoingTimeoutMessage.vue";
 import SagaOutgoingMessage from "./SagaOutgoingMessage.vue";
 import DiffViewer from "@/components/messages2/DiffViewer.vue";
-import CodeEditor from "@/components/CodeEditor.vue";
+import MaximizableCodeEditor from "@/components/MaximizableCodeEditor.vue";
 import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { ref, watch, computed } from "vue";
 import { EditorView } from "@codemirror/view";
@@ -34,13 +34,6 @@ const monospaceTheme = EditorView.baseTheme({
     backgroundColor: "#f2f2f2",
   },
 });
-
-// Define types for JSON values and properties
-type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
-interface JsonObject {
-  [key: string]: JsonValue;
-}
-type JsonArray = Array<JsonValue>;
 
 const props = defineProps<{
   update: SagaUpdateViewModel;
@@ -206,7 +199,7 @@ const hasStateChanges = computed(() => {
 
             <!-- Initial state display -->
             <div v-else-if="update.IsFirstNode" class="json-container json-container--first-node">
-              <CodeEditor :model-value="sagaUpdateStateChanges.formattedState || ''" language="json" :showCopyToClipboard="false" :showGutter="false" :extensions="[monospaceTheme]" />
+              <MaximizableCodeEditor :model-value="sagaUpdateStateChanges.formattedState || ''" language="json" :showCopyToClipboard="false" :showGutter="false" modalTitle="Saga Initialized" :extensions="[monospaceTheme]" />
             </div>
 
             <!-- No changes message -->
