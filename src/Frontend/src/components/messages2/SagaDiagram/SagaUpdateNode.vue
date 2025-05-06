@@ -18,19 +18,14 @@ import TimeoutIcon from "@/assets/timeout.svg";
 import EventIcon from "@/assets/event.svg";
 import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";
 
-// Define the monospace theme for CodeEditor
+// Define monospace theme with specific selectors for this component
 const monospaceTheme = EditorView.baseTheme({
-  "&": {
+  ".maximazable-code-editor--inline-instance .cm-editor": {
     fontFamily: "monospace",
     fontSize: "0.75rem",
     backgroundColor: "#f2f2f2",
   },
-  ".cm-editor": {
-    fontFamily: "monospace",
-    fontSize: "0.75rem",
-    backgroundColor: "#f2f2f2",
-  },
-  ".cm-scroller": {
+  ".maximazable-code-editor--inline-instance .cm-scroller": {
     backgroundColor: "#f2f2f2",
   },
 });
@@ -428,7 +423,7 @@ const hasStateChanges = computed(() => {
 }
 
 /* Override CodeEditor wrapper styles */
-.json-container :deep(.wrapper) {
+.json-container :deep(.wrapper.maximazable-code-editor--inline-instance) {
   border-radius: 0;
   border: none;
   background-color: #f2f2f2;

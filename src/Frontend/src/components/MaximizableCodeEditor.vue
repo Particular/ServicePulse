@@ -58,7 +58,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="code-editor-wrapper">
     <!-- Regular CodeEditor with maximize button in toolbarRight -->
-    <CodeEditor v-model="modelValue" :language="language" :read-only="readOnly" :show-gutter="showGutter" :show-copy-to-clipboard="showCopyToClipboard" :aria-label="ariaLabel" :extensions="extensions">
+    <CodeEditor class="maximazable-code-editor--inline-instance" v-model="modelValue" :language="language" :read-only="readOnly" :show-gutter="showGutter" :show-copy-to-clipboard="showCopyToClipboard" :aria-label="ariaLabel" :extensions="extensions">
       <template #toolbarLeft>
         <slot name="toolbarLeft"></slot>
       </template>
@@ -76,7 +76,7 @@ onBeforeUnmount(() => {
           <img class="maximize-modal-close" :src="DiffCloseIcon" alt="Close" @click="toggleMaximizeModal" title="Close" />
         </div>
         <div class="maximize-modal-body">
-          <CodeEditor v-model="modelValue" :language="language" :read-only="readOnly" :show-copy-to-clipboard="true" :show-gutter="true" :aria-label="ariaLabel" :extensions="[]" />
+          <CodeEditor class="maximazable-code-editor--pop-up-instance" v-model="modelValue" :language="language" :read-only="readOnly" :show-copy-to-clipboard="true" :show-gutter="true" :aria-label="ariaLabel" :extensions="[]" />
         </div>
       </div>
     </div>
