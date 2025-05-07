@@ -3,12 +3,13 @@ import { ref, watch } from "vue";
 import { SagaHistory, SagaMessage } from "@/resources/SagaHistory";
 import { useFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import Message from "@/resources/Message";
+import { parse, stringify } from "lossless-json";
+import xmlFormat from "xml-formatter";
+import { DataContainer } from "./DataContainer";
 
 export interface SagaMessageData {
   message_id: string;
-  data: string;
-  type: "json" | "xml";
-  error: boolean;
+  body: DataContainer<{ value?: string; content_type?: string }>;
 }
 export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
   const sagaHistory = ref<SagaHistory | null>(null);
@@ -87,67 +88,38 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
 
   async function fetchSagaMessageData(message: SagaMessage): Promise<SagaMessageData> {
     const bodyUrl = (message.body_url ?? formatUrl(MessageBodyEndpoint, message.message_id)).replace(/^\//, "");
+    const result: SagaMessageData = {
+      message_id: message.message_id,
+      body: { data: {} },
+    };
+
+    result.body.loading = true;
+    result.body.failed_to_load = false;
 
     try {
-      const response = await useFetchFromServiceControl(bodyUrl, { cache: "no-store" });
-
-      // Treat 404 as empty data, not as an error
+      const response = await useFetchFromServiceControl(bodyUrl);
       if (response.status === 404) {
-        return {
-          message_id: message.message_id,
-          data: "",
-          type: "json",
-          error: false,
-        };
+        result.body.not_found = true;
+        return result;
       }
 
-      // Handle other non-OK responses as errors
-      if (!response.ok) {
-        error.value = `HTTP error! status: ${response.status}`;
-        return {
-          message_id: message.message_id,
-          data: "",
-          type: "json",
-          error: true,
-        };
-      }
+      const contentType = response.headers.get("content-type");
+      result.body.data.content_type = contentType ?? "text/plain";
+      result.body.data.value = await response.text();
 
-      const body = await response.text();
-
-      if (!body) {
-        return {
-          message_id: message.message_id,
-          data: "",
-          type: "json",
-          error: false,
-        };
+      if (contentType === "application/json") {
+        result.body.data.value = stringify(parse(result.body.data.value), null, 2) ?? result.body.data.value;
       }
-
-      // Determine the content type
-      if (body.trim().startsWith("<?xml")) {
-        return {
-          message_id: message.message_id,
-          data: body,
-          type: "xml",
-          error: false,
-        };
-      } else {
-        return {
-          message_id: message.message_id,
-          data: body,
-          type: "json",
-          error: false,
-        };
+      if (contentType === "text/xml") {
+        result.body.data.value = xmlFormat(result.body.data.value, { indentation: "  ", collapseContent: true });
       }
-    } catch (e) {
-      error.value = e instanceof Error ? e.message : "Unknown error occurred";
-      return {
-        message_id: message.message_id,
-        data: "",
-        type: "json",
-        error: true,
-      };
+    } catch {
+      result.body.failed_to_load = true;
+    } finally {
+      result.body.loading = false;
     }
+
+    return result;
   }
 
   async function getAuditMessages(sagaId: string) {

@@ -171,8 +171,11 @@ function findMessageData(messagesData: SagaMessageData[], messageId: string): Sa
 function createEmptyMessageData(): SagaMessageData {
   return {
     message_id: "",
-    data: "",
-    type: "json",
-    error: false,
+    body: {
+      data: {},
+      loading: false,
+      failed_to_load: false,
+      not_found: false,
+    },
   };
 }

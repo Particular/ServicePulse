@@ -4,9 +4,8 @@ import { storeToRefs } from "pinia";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import MaximizableCodeEditor from "@/components/MaximizableCodeEditor.vue";
 import { computed } from "vue";
-import { CodeLanguage } from "@/components/codeEditorTypes";
-import { parse, stringify } from "lossless-json";
 import { EditorView } from "@codemirror/view";
+import parseContentType from "@/composables/contentTypeParser";
 
 const messageDataBoxTheme = EditorView.baseTheme({
   ".maximazable-code-editor--inline-instance .cm-editor": {
@@ -31,37 +30,29 @@ const modalTitle = computed(() => {
 const sagaDiagramStore = useSagaDiagramStore();
 const { messageDataLoading } = storeToRefs(sagaDiagramStore);
 
-const formattedData = computed(() => {
-  if (props.messageData.type === "json" && props.messageData.data) {
-    try {
-      // Parse and then stringify with indentation to ensure proper formatting
-      const parsed = parse(props.messageData.data);
-      return stringify(parsed, null, 2);
-    } catch {
-      return props.messageData.data;
-    }
-  }
-  return props.messageData.data;
-});
+const contentType = computed(() => parseContentType(props.messageData.body.data.content_type));
 
-const editorLanguage = computed<CodeLanguage>(() => {
-  const type = props.messageData.type?.toLowerCase();
-  return (type === "xml" ? "xml" : "json") as CodeLanguage;
-});
+const body = computed(() => props.messageData.body.data.value || "");
 </script>
 
 <template>
   <div v-if="messageDataLoading" class="message-data-loading">
     <LoadingSpinner />
   </div>
-  <div v-else-if="messageData.error" class="message-data-box message-data-box-error">
+  <div v-else-if="messageData.body.failed_to_load" class="message-data-box message-data-box-error">
     <span class="message-data-box-text--error">An error occurred while retrieving the message data</span>
   </div>
-  <div v-else-if="!messageDataLoading && messageData.data === ''" class="message-data-box">
+  <div v-else-if="messageData.body.not_found" class="message-data-box message-data-box-error">
+    <span class="message-data-box-text--error">Message body not found</span>
+  </div>
+  <div v-else-if="!messageDataLoading && !messageData.body.data.value" class="message-data-box">
     <span class="message-data-box-text--empty">Empty</span>
   </div>
-  <div v-else class="message-data-box message-data-box-content">
-    <MaximizableCodeEditor :model-value="formattedData || ''" :language="editorLanguage" :read-only="true" :show-gutter="false" :modalTitle="modalTitle" :extensions="[messageDataBoxTheme]" />
+  <div v-else-if="contentType.isSupported" class="message-data-box message-data-box-content">
+    <MaximizableCodeEditor :model-value="body" :language="contentType.language" :readOnly="true" :showGutter="false" :modalTitle="modalTitle" :extensions="[messageDataBoxTheme]" />
+  </div>
+  <div v-else class="message-data-box message-data-box-error">
+    <span class="message-data-box-text--unsupported">Message body cannot be displayed because content type "{{ messageData.body.data.content_type }}" is not supported.</span>
   </div>
 </template>
 
@@ -101,6 +92,14 @@ const editorLanguage = computed<CodeLanguage>(() => {
   width: 100%;
   text-align: center;
   color: #a94442;
+  font-style: italic;
+}
+
+.message-data-box-text--unsupported {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  color: #8a6d3b;
   font-style: italic;
 }
 
