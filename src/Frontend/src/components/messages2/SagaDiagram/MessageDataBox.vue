@@ -6,6 +6,18 @@ import MaximizableCodeEditor from "@/components/MaximizableCodeEditor.vue";
 import { computed } from "vue";
 import { CodeLanguage } from "@/components/codeEditorTypes";
 import { parse, stringify } from "lossless-json";
+import { EditorView } from "@codemirror/view";
+
+const messageDataBoxTheme = EditorView.baseTheme({
+  ".maximazable-code-editor--inline-instance .cm-editor": {
+    fontFamily: "monospace",
+    fontSize: "0.75rem",
+    backgroundColor: "#ffffff",
+  },
+  ".maximazable-code-editor--inline-instance .cm-scroller": {
+    backgroundColor: "#ffffff",
+  },
+});
 
 const props = defineProps<{
   messageData: SagaMessageData;
@@ -45,7 +57,7 @@ const editorLanguage = computed<CodeLanguage>(() => {
     <span class="message-data-box-text--empty">Empty</span>
   </div>
   <div v-else class="message-data-box message-data-box-content">
-    <MaximizableCodeEditor :model-value="formattedData || ''" :language="editorLanguage" :read-only="true" :show-gutter="false" modalTitle="Message Data" />
+    <MaximizableCodeEditor :model-value="formattedData || ''" :language="editorLanguage" :read-only="true" :show-gutter="false" modalTitle="Message Data" :extensions="[messageDataBoxTheme]" />
   </div>
 </template>
 

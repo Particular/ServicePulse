@@ -29,10 +29,20 @@ withDefaults(
 
 // Component state for maximize functionality
 const showMaximizeModal = ref(false);
+const showMaximizeButton = ref(false);
 
 // Handle maximize functionality
 const toggleMaximizeModal = () => {
   showMaximizeModal.value = !showMaximizeModal.value;
+};
+
+// Handle mouse enter/leave for showing maximize button
+const onEditorMouseEnter = () => {
+  showMaximizeButton.value = true;
+};
+
+const onEditorMouseLeave = () => {
+  showMaximizeButton.value = false;
 };
 
 // Handle ESC key to close modal
@@ -54,24 +64,41 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="code-editor-wrapper">
-    <!-- Regular CodeEditor with maximize button in toolbarRight -->
-    <CodeEditor class="maximazable-code-editor--inline-instance" v-model="modelValue" :language="language" :read-only="readOnly" :show-gutter="showGutter" :show-copy-to-clipboard="showCopyToClipboard" :aria-label="ariaLabel" :extensions="extensions">
-      <template #toolbarLeft>
-        <slot name="toolbarLeft"></slot>
-      </template>
-      <template #toolbarRight>
-        <slot name="toolbarRight"></slot>
-        <img class="maximize-icon-inline" :src="DiffMaximizeIcon" alt="Maximize" @click="toggleMaximizeModal" title="Maximize view" />
-      </template>
-    </CodeEditor>
+  <div class="code-editor-wrapper" @mouseenter="onEditorMouseEnter" @mouseleave="onEditorMouseLeave">
+    <!-- Regular CodeEditor -->
+    <div class="editor-container">
+      <!-- Maximize Button (shown on hover) -->
+      <button v-if="showMaximizeButton" @click="toggleMaximizeModal" class="maximize-button" title="Maximize view">
+        <img :src="DiffMaximizeIcon" alt="Maximize" width="14" height="14" />
+      </button>
+
+      <CodeEditor
+        class="maximazable-code-editor--inline-instance"
+        v-model="modelValue"
+        :language="language"
+        :read-only="readOnly"
+        :show-gutter="showGutter"
+        :show-copy-to-clipboard="showCopyToClipboard"
+        :aria-label="ariaLabel"
+        :extensions="extensions"
+      >
+        <template #toolbarLeft>
+          <slot name="toolbarLeft"></slot>
+        </template>
+        <template #toolbarRight>
+          <slot name="toolbarRight"></slot>
+        </template>
+      </CodeEditor>
+    </div>
 
     <!-- Maximize modal for CodeEditor -->
     <div v-if="showMaximizeModal" class="maximize-modal">
       <div class="maximize-modal-content">
         <div class="maximize-modal-toolbar">
           <span class="maximize-modal-title">{{ modalTitle }}</span>
-          <img class="maximize-modal-close" :src="DiffCloseIcon" alt="Close" @click="toggleMaximizeModal" title="Close" />
+          <button @click="toggleMaximizeModal" class="maximize-modal-close" title="Close">
+            <img :src="DiffCloseIcon" alt="Close" width="16" height="16" />
+          </button>
         </div>
         <div class="maximize-modal-body">
           <CodeEditor class="maximazable-code-editor--pop-up-instance" v-model="modelValue" :language="language" :read-only="readOnly" :show-copy-to-clipboard="true" :show-gutter="true" :aria-label="ariaLabel" :extensions="[]" />
@@ -87,18 +114,41 @@ onBeforeUnmount(() => {
   width: 100%;
 }
 
-/* Maximize icon styles */
-.maximize-icon-inline {
-  width: 14px;
-  height: 14px;
+.maximize-button {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 4px;
   cursor: pointer;
-  opacity: 0.7;
+  opacity: 0.6;
   transition: opacity 0.2s ease;
-  margin-left: 8px;
 }
 
-.maximize-icon-inline:hover {
+.maximize-button:hover {
   opacity: 1;
+}
+
+:deep(.wrapper.maximazable-code-editor--inline-instance) {
+  border: none;
+  border-radius: 0;
+  margin-top: 0;
+}
+
+:deep(.wrapper.maximazable-code-editor--inline-instance .toolbar) {
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+:deep(.wrapper.maximazable-code-editor--inline-instance .cm-editor) {
+  /* Override any borders from the default theme */
+  border: none;
 }
 
 /* Modal styles copied from DiffViewer */
@@ -144,19 +194,22 @@ onBeforeUnmount(() => {
   background: none;
   border: none;
   cursor: pointer;
-  width: 16px;
-  height: 16px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .maximize-modal-body {
   flex: 1;
   overflow: auto;
-  padding: 15px;
+  padding: 0;
 }
 
 /* Ensure the CodeEditor wrapper fills the modal body */
 .maximize-modal-body :deep(.wrapper) {
-  height: calc(100% - 20px);
+  height: 100%;
+  border-radius: 0;
 }
 
 .maximize-modal-body :deep(.cm-editor),
