@@ -24,6 +24,8 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
   const fetchedMessages = ref(new Set<string>());
   const messagesData = ref<SagaMessageData[]>([]);
   const selectedMessageId = ref<string | null>(null);
+  const scrollToTimeoutRequest = ref(false);
+  const scrollToTimeout = ref(false);
   const MessageBodyEndpoint = "messages/{0}/body";
 
   // Watch the sagaId and fetch saga history when it changes
@@ -190,6 +192,7 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
     fetchedMessages.value.clear();
     messagesData.value = [];
     selectedMessageId.value = null;
+    scrollToTimeoutRequest.value = false;
   }
 
   function formatUrl(template: string, id: string): string {
@@ -254,6 +257,22 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
     selectedMessageId.value = messageId;
   }
 
+  watch(scrollToTimeoutRequest, (newValue) => {
+    if (newValue) {
+      setTimeout(() => {
+        scrollToTimeoutRequest.value = false;
+      }, 1000);
+    }
+  });
+
+  watch(scrollToTimeout, (newValue) => {
+    if (newValue) {
+      setTimeout(() => {
+        scrollToTimeout.value = false;
+      }, 1000);
+    }
+  });
+
   return {
     sagaHistory,
     sagaId,
@@ -263,6 +282,8 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
     showMessageData,
     messagesData,
     selectedMessageId,
+    scrollToTimeoutRequest,
+    scrollToTimeout,
     setSagaId,
     clearSagaHistory,
     toggleMessageData,

@@ -3,15 +3,35 @@ import MessageDataBox from "./MessageDataBox.vue";
 import CommandIcon from "@/assets/command.svg";
 import EventIcon from "@/assets/event.svg";
 import { SagaMessageViewModel } from "./SagaDiagramParser";
+import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
+import { ref, watch } from "vue";
+const isActive = ref(false);
 
-defineProps<{
+const store = useSagaDiagramStore();
+
+const props = defineProps<{
   message: SagaMessageViewModel;
   showMessageData?: boolean;
 }>();
+
+watch(
+  () => store.selectedMessageId,
+  (newMessageId) => {
+    // Check if this node contains the selected message
+    isActive.value = newMessageId === props.message.MessageId;
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
-  <div class="cell-inner cell-inner-side">
+  <div
+    :class="{
+      'cell-inner': true,
+      'cell-inner-side': true,
+      'cell-inner-side--active': isActive,
+    }"
+  >
     <img class="saga-icon saga-icon--side-cell" :src="message.IsEventMessage ? EventIcon : CommandIcon" :alt="message.IsEventMessage ? 'Event' : 'Command'" />
     <h2 class="message-title">{{ message.MessageFriendlyTypeName }}</h2>
     <div class="timestamp">{{ message.FormattedTimeSent }}</div>
@@ -61,10 +81,6 @@ defineProps<{
   padding: 0.25rem 0.5rem;
   border-left: solid 2px #000000;
   margin-left: 1rem;
-}
-
-.cell-inner-side--active {
-  border: solid 2px #000000;
 }
 
 .cell-inner-right {
@@ -145,8 +161,10 @@ defineProps<{
 }
 
 .cell-inner-side--active {
-  border: solid 2px #000000;
+  border: solid 5px #00a3c4;
+  animation: blink-border 1.8s ease-in-out;
 }
+
 .saga-icon {
   display: block;
   float: left;
@@ -157,5 +175,19 @@ defineProps<{
   width: 2rem;
   height: 2rem;
   padding: 0.23rem;
+}
+@keyframes blink-border {
+  0%,
+  100% {
+    border-color: #00a3c4;
+  }
+  20%,
+  60% {
+    border-color: #cccccc;
+  }
+  40%,
+  80% {
+    border-color: #00a3c4;
+  }
 }
 </style>

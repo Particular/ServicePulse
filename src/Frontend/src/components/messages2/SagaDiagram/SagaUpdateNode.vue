@@ -52,24 +52,37 @@ const initiatingMessageRef = ref<HTMLElement | null>(null);
 const isActive = ref(false);
 const hasParsingError = ref(false);
 
-// Watch for changes to selectedMessageId
+const shouldHighlightAndScroll = computed(() => {
+  return props.update.MessageId === store.selectedMessageId;
+});
+
+const navigateToTimeoutRequest = () => {
+  store.setSelectedMessageId(props.update.InitiatingMessage.MessageId);
+  store.scrollToTimeoutRequest = true;
+};
+
 watch(
   () => store.selectedMessageId,
   (newMessageId) => {
     // Check if this node contains the selected message
-    const isSelected = props.update.InitiatingMessage.IsSagaTimeoutMessage && newMessageId === props.update.MessageId;
+    isActive.value = newMessageId === props.update.MessageId;
+  },
+  { immediate: true }
+);
 
-    // Update active state
-    isActive.value = isSelected;
-
-    // If this is the selected message, scroll to it
-    if (isSelected && initiatingMessageRef.value) {
+watch(
+  [() => store.scrollToTimeout, () => shouldHighlightAndScroll.value, () => initiatingMessageRef.value !== null],
+  ([scrollTimeout, shouldScroll, refExists]) => {
+    if (scrollTimeout && shouldScroll && refExists && initiatingMessageRef.value) {
       initiatingMessageRef.value.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
+
+      store.scrollToTimeout = false;
     }
-  }
+  },
+  { immediate: true }
 );
 
 // Format a JSON value for display
@@ -168,7 +181,11 @@ const hasStateChanges = computed(() => {
         <div class="cell-inner cell-inner-center cell-inner--align-bottom">
           <template v-if="update.InitiatingMessage.IsSagaTimeoutMessage">
             <img class="saga-icon saga-icon--center-cell" :src="SagaTimeoutIcon" alt="" />
-            <h2 class="saga-status-title saga-status-title--inline timeout-status" aria-label="timeout invoked">Timeout Invoked</h2>
+            <!-- Conditionally make the text a link based on HasRelatedTimeoutRequest -->
+            <a v-if="update.InitiatingMessage.HasRelatedTimeoutRequest" href="#" @click.prevent="navigateToTimeoutRequest" class="saga-status-title saga-status-title--inline timeout-status timeout-status--link" aria-label="timeout invoked">
+              Timeout Invoked
+            </a>
+            <h2 v-else class="saga-status-title saga-status-title--inline timeout-status" aria-label="timeout invoked">Timeout Invoked</h2>
             <br />
           </template>
           <img class="saga-icon saga-icon--center-cell" :src="update.IsFirstNode ? SagaInitiatedIcon : SagaUpdatedIcon" alt="" />
@@ -408,7 +425,16 @@ const hasStateChanges = computed(() => {
   display: inline-block;
   font-size: 1rem;
   font-weight: 900;
-  color: #00a3c4;
+  color: inherit; /* Default to inheriting parent color */
+}
+
+.timeout-status--link {
+  color: #00a3c4; /* Blue color only for links */
+  text-decoration: none;
+}
+
+.timeout-status--link:hover {
+  text-decoration: underline;
 }
 
 /* Styles for DiffViewer integration */
