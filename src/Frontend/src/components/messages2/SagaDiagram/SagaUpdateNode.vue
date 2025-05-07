@@ -181,10 +181,7 @@ const hasStateChanges = computed(() => {
         <div class="cell-inner cell-inner-center cell-inner--align-bottom">
           <template v-if="update.InitiatingMessage.IsSagaTimeoutMessage">
             <img class="saga-icon saga-icon--center-cell" :src="SagaTimeoutIcon" alt="" />
-            <!-- Conditionally make the text a link based on HasRelatedTimeoutRequest -->
-            <a v-if="update.InitiatingMessage.HasRelatedTimeoutRequest" href="#" @click.prevent="navigateToTimeoutRequest" class="saga-status-title saga-status-title--inline timeout-status timeout-status--link" aria-label="timeout invoked">
-              Timeout Invoked
-            </a>
+            <a v-if="update.InitiatingMessage.HasRelatedTimeoutRequest" href="#" @click.prevent="navigateToTimeoutRequest" class="saga-status-title saga-status-title--inline timeout-status" aria-label="timeout invoked"> Timeout Invoked </a>
             <h2 v-else class="saga-status-title saga-status-title--inline timeout-status" aria-label="timeout invoked">Timeout Invoked</h2>
             <br />
           </template>
@@ -329,7 +326,7 @@ const hasStateChanges = computed(() => {
 }
 
 .cell-inner-side--active {
-  border: solid 5px #00a3c4;
+  border: solid 5px #0b6eef;
   animation: blink-border 1.8s ease-in-out;
 }
 
@@ -425,16 +422,6 @@ const hasStateChanges = computed(() => {
   display: inline-block;
   font-size: 1rem;
   font-weight: 900;
-  color: inherit; /* Default to inheriting parent color */
-}
-
-.timeout-status--link {
-  color: #00a3c4; /* Blue color only for links */
-  text-decoration: none;
-}
-
-.timeout-status--link:hover {
-  text-decoration: underline;
 }
 
 /* Styles for DiffViewer integration */
@@ -482,7 +469,7 @@ const hasStateChanges = computed(() => {
 @keyframes blink-border {
   0%,
   100% {
-    border-color: #00a3c4;
+    border-color: #0b6eef;
   }
   20%,
   60% {
@@ -490,7 +477,7 @@ const hasStateChanges = computed(() => {
   }
   40%,
   80% {
-    border-color: #00a3c4;
+    border-color: #0b6eef;
   }
 }
 </style>
