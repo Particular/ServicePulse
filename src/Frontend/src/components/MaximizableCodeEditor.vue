@@ -13,7 +13,6 @@ withDefaults(
     language?: CodeLanguage;
     readOnly?: boolean;
     showGutter?: boolean;
-    showCopyToClipboard?: boolean;
     ariaLabel?: string;
     extensions?: Extension[];
     modalTitle?: string;
@@ -21,7 +20,6 @@ withDefaults(
   {
     readOnly: false,
     showGutter: false,
-    showCopyToClipboard: false,
     extensions: () => [],
     modalTitle: "Code View",
   }
@@ -72,16 +70,7 @@ onBeforeUnmount(() => {
         <img :src="DiffMaximizeIcon" alt="Maximize" width="14" height="14" />
       </button>
 
-      <CodeEditor
-        class="maximazable-code-editor--inline-instance"
-        v-model="modelValue"
-        :language="language"
-        :read-only="readOnly"
-        :show-gutter="showGutter"
-        :show-copy-to-clipboard="showCopyToClipboard"
-        :aria-label="ariaLabel"
-        :extensions="extensions"
-      >
+      <CodeEditor class="maximazable-code-editor--inline-instance" v-model="modelValue" :language="language" :read-only="readOnly" :show-gutter="showGutter" :show-copy-to-clipboard="false" :aria-label="ariaLabel" :extensions="extensions">
         <template #toolbarLeft>
           <slot name="toolbarLeft"></slot>
         </template>
@@ -151,7 +140,6 @@ onBeforeUnmount(() => {
   border: none;
 }
 
-/* Modal styles copied from DiffViewer */
 .maximize-modal {
   position: fixed;
   top: 0;

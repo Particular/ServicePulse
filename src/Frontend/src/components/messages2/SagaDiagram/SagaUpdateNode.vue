@@ -151,7 +151,7 @@ const hasStateChanges = computed(() => {
           :data-message-id="update.InitiatingMessage.IsSagaTimeoutMessage ? update.MessageId : ''"
         >
           <img class="saga-icon saga-icon--side-cell" :src="update.InitiatingMessage.IsSagaTimeoutMessage ? TimeoutIcon : update.InitiatingMessage.IsEventMessage ? EventIcon : CommandIcon" alt="" />
-          <h2 class="message-title" aria-label="initiating message type">{{ update.InitiatingMessage.MessageType }}</h2>
+          <h2 class="message-title" aria-label="initiating message type">{{ update.InitiatingMessage.FriendlyTypeName }}</h2>
           <div class="timestamp" aria-label="initiating message timestamp">{{ update.InitiatingMessage.FormattedMessageTimestamp }}</div>
         </div>
       </div>
@@ -176,7 +176,7 @@ const hasStateChanges = computed(() => {
       <div class="cell cell--side cell--left-border cell--aling-top">
         <div v-if="showMessageData" class="message-data message-data--active">
           <!-- Generic message data box -->
-          <MessageDataBox v-if="update.InitiatingMessage.MessageType" :messageData="update.InitiatingMessage.MessageData" />
+          <MessageDataBox v-if="update.InitiatingMessage" :messageData="update.InitiatingMessage.MessageData" :maximizedTitle="update.InitiatingMessage.FriendlyTypeName" />
         </div>
       </div>
 
@@ -194,7 +194,7 @@ const hasStateChanges = computed(() => {
 
             <!-- Initial state display -->
             <div v-else-if="update.IsFirstNode" class="json-container json-container--first-node">
-              <MaximizableCodeEditor :model-value="sagaUpdateStateChanges.formattedState || ''" language="json" :showCopyToClipboard="false" :showGutter="false" modalTitle="Saga Initialized" :extensions="[monospaceTheme]" />
+              <MaximizableCodeEditor :model-value="sagaUpdateStateChanges.formattedState || ''" language="json" :showGutter="false" modalTitle="Saga Initialized" :extensions="[monospaceTheme]" />
             </div>
 
             <!-- No changes message -->

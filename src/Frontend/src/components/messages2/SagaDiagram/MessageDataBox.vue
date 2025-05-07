@@ -21,7 +21,12 @@ const messageDataBoxTheme = EditorView.baseTheme({
 
 const props = defineProps<{
   messageData: SagaMessageData;
+  maximizedTitle?: string;
 }>();
+
+const modalTitle = computed(() => {
+  return props.maximizedTitle ? `Message Data - ${props.maximizedTitle}` : "Message Data";
+});
 
 const sagaDiagramStore = useSagaDiagramStore();
 const { messageDataLoading } = storeToRefs(sagaDiagramStore);
@@ -39,7 +44,6 @@ const formattedData = computed(() => {
   return props.messageData.data;
 });
 
-// Ensure language is properly typed as CodeLanguage
 const editorLanguage = computed<CodeLanguage>(() => {
   const type = props.messageData.type?.toLowerCase();
   return (type === "xml" ? "xml" : "json") as CodeLanguage;
@@ -51,13 +55,13 @@ const editorLanguage = computed<CodeLanguage>(() => {
     <LoadingSpinner />
   </div>
   <div v-else-if="messageData.error" class="message-data-box message-data-box-error">
-    <span class="message-data-box-text--error">An error occurred while parsing the message data</span>
+    <span class="message-data-box-text--error">An error occurred while retrieving the message data</span>
   </div>
   <div v-else-if="!messageDataLoading && messageData.data === ''" class="message-data-box">
     <span class="message-data-box-text--empty">Empty</span>
   </div>
   <div v-else class="message-data-box message-data-box-content">
-    <MaximizableCodeEditor :model-value="formattedData || ''" :language="editorLanguage" :read-only="true" :show-gutter="false" modalTitle="Message Data" :extensions="[messageDataBoxTheme]" />
+    <MaximizableCodeEditor :model-value="formattedData || ''" :language="editorLanguage" :read-only="true" :show-gutter="false" :modalTitle="modalTitle" :extensions="[messageDataBoxTheme]" />
   </div>
 </template>
 

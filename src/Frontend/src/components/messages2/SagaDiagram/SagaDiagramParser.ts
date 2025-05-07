@@ -5,14 +5,14 @@ import { getTimeoutFriendly } from "@/composables/deliveryDelayParser";
 
 export interface SagaMessageViewModel {
   MessageId: string;
-  MessageFriendlyTypeName: string;
+  FriendlyTypeName: string;
   FormattedTimeSent: string;
   Data: SagaMessageData;
   IsEventMessage: boolean;
   IsCommandMessage: boolean;
 }
 export interface InitiatingMessageViewModel {
-  MessageType: string;
+  FriendlyTypeName: string;
   IsSagaTimeoutMessage: boolean;
   FormattedMessageTimestamp: string;
   IsEventMessage: boolean;
@@ -97,7 +97,7 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
           HasTimeout: hasTimeout,
           TimeoutSeconds: timeoutSeconds,
           TimeoutFriendly: getTimeoutFriendly(delivery_delay),
-          MessageFriendlyTypeName: typeToName(msg.message_type || ""),
+          FriendlyTypeName: typeToName(msg.message_type || ""),
           Data: messageData,
           IsEventMessage: isEventMessage,
           IsCommandMessage: !isEventMessage,
@@ -132,8 +132,8 @@ export function parseSagaUpdates(sagaHistory: SagaHistory | null, messagesData: 
         Status: update.status,
         StatusDisplay: update.status === "new" ? "Saga Initiated" : "Saga Updated",
         InitiatingMessage: <InitiatingMessageViewModel>{
+          FriendlyTypeName: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
           MessageId: update.initiating_message?.message_id || "",
-          MessageType: typeToName(update.initiating_message?.message_type || "Unknown Message") || "",
           FormattedMessageTimestamp: `${initiatingMessageTimestamp.toLocaleDateString()} ${initiatingMessageTimestamp.toLocaleTimeString()}`,
           MessageData: initiatingMessageData,
           IsEventMessage: update.initiating_message?.intent === "Publish",
