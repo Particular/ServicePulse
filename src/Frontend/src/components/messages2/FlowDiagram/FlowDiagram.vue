@@ -222,7 +222,7 @@ const selectedErrorColor = hexToCSSFilter("#e8e6e8").filter;
     <div v-if="store.conversationData.failed_to_load" class="alert alert-info">FlowDiagram data is unavailable.</div>
     <LoadingSpinner v-else-if="store.conversationData.loading" />
     <div v-else id="tree-container">
-      <VueFlow :nodes="nodes" :edges="edges" :min-zoom="0.1" :max-zoom="1.2" :only-render-visible-elements="true" @nodes-initialized="layoutGraph">
+      <VueFlow :nodes="nodes" :edges="edges" :min-zoom="0.1" :max-zoom="1.2" :only-render-visible-elements="true" :zoom-on-scroll="false" @nodes-initialized="layoutGraph">
         <Controls :show-interactive="false" position="top-left" class="controls" />
         <template #node-message="{ id, data }: { id: string; data: NodeData }">
           <TextEllipses class="address" :text="`${data.sendingEndpoint.name}@${data.sendingEndpoint.host}`" />
@@ -284,8 +284,8 @@ const selectedErrorColor = hexToCSSFilter("#e8e6e8").filter;
 }
 
 #tree-container {
-  width: 92vw;
-  height: 70vh;
+  width: 100vw;
+  height: 100vh;
 }
 
 .sagas {
