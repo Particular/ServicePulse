@@ -6,10 +6,8 @@ import DiffCloseIcon from "@/assets/diff-close.svg";
 import { Extension } from "@codemirror/state";
 import { CodeLanguage } from "@/components/codeEditorTypes";
 
-// Define the model value to be passed to CodeEditor
 const modelValue = defineModel<string>({ required: true });
 
-// Define props by extending the CodeEditor props and adding maximize-specific ones
 withDefaults(
   defineProps<{
     language?: CodeLanguage;

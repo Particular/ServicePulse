@@ -1,33 +1,61 @@
 <script setup lang="ts">
-import { SagaMessageDataItem, useSagaDiagramStore } from "@/stores/SagaDiagramStore";
+import { SagaMessageData, useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { storeToRefs } from "pinia";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import MaximizableCodeEditor from "@/components/MaximizableCodeEditor.vue";
+import { computed } from "vue";
+import { CodeLanguage } from "@/components/codeEditorTypes";
+import { parse, stringify } from "lossless-json";
 
-defineProps<{
-  messageData: SagaMessageDataItem[];
+const props = defineProps<{
+  messageData: SagaMessageData;
 }>();
 
 const sagaDiagramStore = useSagaDiagramStore();
 const { messageDataLoading } = storeToRefs(sagaDiagramStore);
+
+const formattedData = computed(() => {
+  if (props.messageData.type === "json" && props.messageData.data) {
+    try {
+      // Parse and then stringify with indentation to ensure proper formatting
+      const parsed = parse(props.messageData.data);
+      return stringify(parsed, null, 2);
+    } catch {
+      return props.messageData.data;
+    }
+  }
+  return props.messageData.data;
+});
+
+// Ensure language is properly typed as CodeLanguage
+const editorLanguage = computed<CodeLanguage>(() => {
+  const type = props.messageData.type?.toLowerCase();
+  return (type === "xml" ? "xml" : "json") as CodeLanguage;
+});
 </script>
 
 <template>
   <div v-if="messageDataLoading" class="message-data-loading">
     <LoadingSpinner />
   </div>
-  <div v-else-if="!messageDataLoading && messageData.length === 0" class="message-data-box">
+  <div v-else-if="messageData.error" class="message-data-box message-data-box-error">
+    <span class="message-data-box-text--error">An error occurred while parsing the message data</span>
+  </div>
+  <div v-else-if="!messageDataLoading && messageData.data === ''" class="message-data-box">
     <span class="message-data-box-text--empty">Empty</span>
   </div>
-  <div v-else-if="messageData.length > 0" v-for="(item, index) in messageData" :key="index" class="message-data-box">
-    <b class="message-data-box-text">{{ item.key }}</b>
-    <span class="message-data-box-text">=</span>
-    <span class="message-data-box-text--ellipsis" :title="item.value">{{ item.value }}</span>
+  <div v-else class="message-data-box message-data-box-content">
+    <MaximizableCodeEditor :model-value="formattedData || ''" :language="editorLanguage" :read-only="true" :show-gutter="false" modalTitle="Message Data" />
   </div>
 </template>
 
 <style scoped>
 .message-data-box {
   display: flex;
+}
+
+.message-data-box-content {
+  display: block;
 }
 
 .message-data-box-text {
@@ -48,11 +76,26 @@ const { messageDataLoading } = storeToRefs(sagaDiagramStore);
   display: inline-block;
   width: 100%;
   text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+.message-data-box-text--error {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  color: #a94442;
+  font-style: italic;
 }
 
 .message-data-loading {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.message-data-box-error {
+  padding: 1rem;
+  justify-content: center;
 }
 </style>

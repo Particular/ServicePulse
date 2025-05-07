@@ -3,17 +3,12 @@ import { ref, watch } from "vue";
 import { SagaHistory, SagaMessage } from "@/resources/SagaHistory";
 import { useFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import Message from "@/resources/Message";
-import { parse } from "lossless-json";
-import { useMessageStore } from "@/stores/MessageStore";
 
-const StandardKeys = ["$type", "Id", "Originator", "OriginalMessageId"];
-export interface SagaMessageDataItem {
-  key: string;
-  value: string;
-}
 export interface SagaMessageData {
   message_id: string;
-  data: SagaMessageDataItem[];
+  data: string;
+  type: "json" | "xml";
+  error: boolean;
 }
 export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
   const sagaHistory = ref<SagaHistory | null>(null);
@@ -90,44 +85,68 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
     }
   }
 
-  function createEmptyMessageData(message_id: string): SagaMessageData {
-    return {
-      message_id,
-      data: [],
-    };
-  }
-
   async function fetchSagaMessageData(message: SagaMessage): Promise<SagaMessageData> {
     const bodyUrl = (message.body_url ?? formatUrl(MessageBodyEndpoint, message.message_id)).replace(/^\//, "");
 
     try {
       const response = await useFetchFromServiceControl(bodyUrl, { cache: "no-store" });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+
+      // Treat 404 as empty data, not as an error
+      if (response.status === 404) {
+        return {
+          message_id: message.message_id,
+          data: "",
+          type: "json",
+          error: false,
+        };
       }
-      const body = await response.json();
+
+      // Handle other non-OK responses as errors
+      if (!response.ok) {
+        error.value = `HTTP error! status: ${response.status}`;
+        return {
+          message_id: message.message_id,
+          data: "",
+          type: "json",
+          error: true,
+        };
+      }
+
+      const body = await response.text();
 
       if (!body) {
-        return createEmptyMessageData(message.message_id);
+        return {
+          message_id: message.message_id,
+          data: "",
+          type: "json",
+          error: false,
+        };
       }
 
-      let data: SagaMessageDataItem[];
-      if (typeof body === "string" && body.trim().startsWith("<?xml")) {
-        data = getXmlData(body);
+      // Determine the content type
+      if (body.trim().startsWith("<?xml")) {
+        return {
+          message_id: message.message_id,
+          data: body,
+          type: "xml",
+          error: false,
+        };
       } else {
-        data = processJsonValues(body);
+        return {
+          message_id: message.message_id,
+          data: body,
+          type: "json",
+          error: false,
+        };
       }
-      // Check if parsed data is empty
-      if (!data || data.length === 0) {
-        return createEmptyMessageData(message.message_id);
-      }
-      return {
-        message_id: message.message_id,
-        data,
-      };
     } catch (e) {
       error.value = e instanceof Error ? e.message : "Unknown error occurred";
-      return createEmptyMessageData(message.message_id);
+      return {
+        message_id: message.message_id,
+        data: "",
+        type: "json",
+        error: true,
+      };
     }
   }
 
@@ -142,62 +161,6 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
       console.error("Error fetching audit messages:", error);
       return { result: [] };
     }
-  }
-
-  function getXmlData(xmlString: string): SagaMessageDataItem[] {
-    try {
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlString, "application/xml");
-
-      // Get the root element
-      const rootElement = xmlDoc.documentElement;
-      if (!rootElement) {
-        return [];
-      }
-
-      // Handle both v5 and pre-v5 message formats
-      const messageRoot = rootElement.nodeName === "Messages" ? Array.from(rootElement.children)[0] : rootElement;
-
-      if (!messageRoot) {
-        return [];
-      }
-
-      // Convert child elements to SagaMessageDataItems
-      return Array.from(messageRoot.children).map((node) => ({
-        key: node.nodeName,
-        value: node.textContent?.trim() || "",
-      }));
-    } catch (error) {
-      console.error("Error parsing message data:", error);
-      return [];
-    }
-  }
-
-  function processJsonValues(jsonBody: string | Record<string, unknown>): SagaMessageDataItem[] {
-    let parsedBody: Record<string, unknown>;
-    if (typeof jsonBody === "string") {
-      try {
-        parsedBody = parse(jsonBody) as Record<string, unknown>;
-      } catch (e) {
-        console.error("Error parsing JSON:", e);
-        return [];
-      }
-    } else {
-      parsedBody = jsonBody;
-    }
-
-    const items: SagaMessageDataItem[] = [];
-
-    for (const key in parsedBody) {
-      if (!StandardKeys.includes(key)) {
-        items.push({
-          key: key,
-          value: String(parsedBody[key] ?? ""),
-        });
-      }
-    }
-
-    return items;
   }
 
   function clearSagaHistory() {
