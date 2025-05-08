@@ -4,19 +4,7 @@ import { storeToRefs } from "pinia";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import MaximizableCodeEditor from "@/components/MaximizableCodeEditor.vue";
 import { computed } from "vue";
-import { EditorView } from "@codemirror/view";
 import parseContentType from "@/composables/contentTypeParser";
-
-const messageDataBoxTheme = EditorView.baseTheme({
-  ".maximazable-code-editor--inline-instance .cm-editor": {
-    fontFamily: "monospace",
-    fontSize: "0.75rem",
-    backgroundColor: "#ffffff",
-  },
-  ".maximazable-code-editor--inline-instance .cm-scroller": {
-    backgroundColor: "#ffffff",
-  },
-});
 
 const props = defineProps<{
   messageData: SagaMessageData;
@@ -46,7 +34,7 @@ const body = computed(() => props.messageData.body.data.value || "");
     <span class="message-data-box-text--empty">Empty</span>
   </div>
   <div v-else-if="contentType.isSupported" class="message-data-box message-data-box-content">
-    <MaximizableCodeEditor :model-value="body" :language="contentType.language" :readOnly="true" :showGutter="false" :modalTitle="modalTitle" :extensions="[messageDataBoxTheme]" />
+    <MaximizableCodeEditor :model-value="body" :language="contentType.language" :readOnly="true" :showGutter="false" :modalTitle="modalTitle" />
   </div>
   <div v-else class="message-data-box message-data-box-error">
     <span class="message-data-box-text--unsupported">Message body cannot be displayed because content type "{{ messageData.body.data.content_type }}" is not supported.</span>
@@ -109,5 +97,24 @@ const body = computed(() => props.messageData.body.data.value || "");
 .message-data-box-error {
   padding: 1rem;
   justify-content: center;
+}
+.message-data-box-content :deep(.wrapper.maximazable-code-editor--inline-instance) {
+  border: none;
+  border-radius: 0;
+  margin-top: 0;
+  font-size: 0.75rem;
+}
+
+.message-data-box-content :deep(.wrapper.maximazable-code-editor--inline-instance .toolbar) {
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.message-data-box-content :deep(.wrapper.maximazable-code-editor--inline-instance .cm-editor) {
+  /* Override any borders from the default theme */
+  border: none;
 }
 </style>

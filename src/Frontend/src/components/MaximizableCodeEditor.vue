@@ -65,17 +65,17 @@ onBeforeUnmount(() => {
   <div class="code-editor-wrapper" @mouseenter="onEditorMouseEnter" @mouseleave="onEditorMouseLeave">
     <!-- Regular CodeEditor -->
     <div class="editor-container">
-      <!-- Maximize Button (shown on hover) -->
-      <button v-if="showMaximizeButton" @click="toggleMaximizeModal" class="maximize-button" title="Maximize view">
-        <img :src="DiffMaximizeIcon" alt="Maximize" width="14" height="14" />
-      </button>
-
       <CodeEditor class="maximazable-code-editor--inline-instance" v-model="modelValue" :language="language" :read-only="readOnly" :show-gutter="showGutter" :show-copy-to-clipboard="false" :aria-label="ariaLabel" :extensions="extensions">
         <template #toolbarLeft>
           <slot name="toolbarLeft"></slot>
         </template>
         <template #toolbarRight>
-          <slot name="toolbarRight"></slot>
+          <slot name="toolbarRight">
+            <!-- Maximize Button (shown on hover) -->
+            <button v-if="showMaximizeButton" @click="toggleMaximizeModal" class="maximize-button" title="Maximize view">
+              <img :src="DiffMaximizeIcon" alt="Maximize" width="14" height="14" />
+            </button>
+          </slot>
         </template>
       </CodeEditor>
     </div>
@@ -119,25 +119,6 @@ onBeforeUnmount(() => {
 
 .maximize-button:hover {
   opacity: 1;
-}
-
-:deep(.wrapper.maximazable-code-editor--inline-instance) {
-  border: none;
-  border-radius: 0;
-  margin-top: 0;
-}
-
-:deep(.wrapper.maximazable-code-editor--inline-instance .toolbar) {
-  border: none;
-  border-radius: 0;
-  background-color: transparent;
-  padding: 0;
-  margin-bottom: 0;
-}
-
-:deep(.wrapper.maximazable-code-editor--inline-instance .cm-editor) {
-  /* Override any borders from the default theme */
-  border: none;
 }
 
 .maximize-modal {

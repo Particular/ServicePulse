@@ -369,7 +369,6 @@ const hasStateChanges = computed(() => {
   padding: 0.2rem;
   background-color: #ffffff;
   border: solid 1px #cccccc;
-  font-size: 0.75rem;
 }
 
 .message-data--active {
@@ -428,7 +427,19 @@ const hasStateChanges = computed(() => {
   border: none;
   background-color: #f2f2f2;
   margin-top: 0;
+  font-size: 0.75rem;
 }
+.json-container :deep(.wrapper.maximazable-code-editor--inline-instance .toolbar) {
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+/* :deep(.maximazable-code-editor--inline-instance .cm-scroller) {
+  background-color: #f2f2f2;
+} */
 
 .no-changes-message {
   padding: 1rem;
