@@ -257,22 +257,6 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
     selectedMessageId.value = messageId;
   }
 
-  watch(scrollToTimeoutRequest, (newValue) => {
-    if (newValue) {
-      setTimeout(() => {
-        scrollToTimeoutRequest.value = false;
-      }, 1000);
-    }
-  });
-
-  watch(scrollToTimeout, (newValue) => {
-    if (newValue) {
-      setTimeout(() => {
-        scrollToTimeout.value = false;
-      }, 1000);
-    }
-  });
-
   return {
     sagaHistory,
     sagaId,
