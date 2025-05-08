@@ -105,11 +105,13 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
       result.body.data.content_type = contentType ?? "text/plain";
       result.body.data.value = await response.text();
 
-      if (contentType === "application/json") {
-        result.body.data.value = stringify(parse(result.body.data.value), null, 2) ?? result.body.data.value;
-      }
-      if (contentType === "text/xml") {
-        result.body.data.value = xmlFormat(result.body.data.value, { indentation: "  ", collapseContent: true });
+      if (contentType === "application/json" && result.body.data.value) {
+        // Only format non-empty JSON objects
+        result.body.data.value = result.body.data.value !== "{}" ? (stringify(parse(result.body.data.value), null, 2) ?? result.body.data.value) : "";
+      } else if (contentType === "text/xml" && result.body.data.value) {
+        // Format XML if it has content in the root element
+        const xmlRootElement = getContentOfXmlRootElement(result.body.data.value);
+        result.body.data.value = xmlRootElement ? xmlFormat(result.body.data.value, { indentation: "  ", collapseContent: true }) : "";
       }
     } catch {
       result.body.failed_to_load = true;
@@ -118,6 +120,19 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
     }
 
     return result;
+  }
+
+  function getContentOfXmlRootElement(xml: string): string {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xml, "text/xml");
+    const rootElement = doc.documentElement;
+    if (rootElement) {
+      const rootElementText = rootElement.textContent;
+      if (rootElementText) {
+        return rootElementText;
+      }
+    }
+    return "";
   }
 
   async function getAuditMessages(sagaId: string) {

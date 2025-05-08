@@ -42,10 +42,7 @@ const body = computed(() => props.messageData.body.data.value || "");
   <div v-else-if="messageData.body.failed_to_load" class="message-data-box message-data-box-error">
     <span class="message-data-box-text--error">An error occurred while retrieving the message data</span>
   </div>
-  <div v-else-if="messageData.body.not_found" class="message-data-box message-data-box-error">
-    <span class="message-data-box-text--error">Message body not found</span>
-  </div>
-  <div v-else-if="!messageDataLoading && !messageData.body.data.value" class="message-data-box">
+  <div v-else-if="!messageDataLoading && (!messageData.body.data.value || messageData.body.not_found)" class="message-data-box">
     <span class="message-data-box-text--empty">Empty</span>
   </div>
   <div v-else-if="contentType.isSupported" class="message-data-box message-data-box-content">
