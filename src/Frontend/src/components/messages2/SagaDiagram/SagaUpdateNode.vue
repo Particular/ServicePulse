@@ -159,7 +159,16 @@ const hasStateChanges = computed(() => {
         <div class="cell-inner cell-inner-center cell-inner--align-bottom">
           <template v-if="update.InitiatingMessage.IsSagaTimeoutMessage">
             <img class="saga-icon saga-icon--center-cell" :src="SagaTimeoutIcon" alt="" />
-            <a v-if="update.InitiatingMessage.HasRelatedTimeoutRequest" href="#" @click.prevent="navigateToTimeoutRequest" class="saga-status-title saga-status-title--inline timeout-status" aria-label="timeout invoked"> Timeout Invoked </a>
+            <a
+              v-if="update.InitiatingMessage.HasRelatedTimeoutRequest"
+              v-tippy="`Scroll to timeout request`"
+              href="#"
+              @click.prevent="navigateToTimeoutRequest"
+              class="saga-status-title saga-status-title--inline timeout-status"
+              aria-label="timeout invoked"
+            >
+              Timeout Invoked
+            </a>
             <h2 v-else class="saga-status-title saga-status-title--inline timeout-status" aria-label="timeout invoked">Timeout Invoked</h2>
             <br />
           </template>

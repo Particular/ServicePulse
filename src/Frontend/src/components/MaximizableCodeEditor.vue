@@ -72,7 +72,7 @@ onBeforeUnmount(() => {
         <template #toolbarRight>
           <slot name="toolbarRight">
             <!-- Maximize Button (shown on hover) -->
-            <button v-if="showMaximizeButton" @click="toggleMaximizeModal" class="maximize-button" title="Maximize view">
+            <button v-if="showMaximizeButton" @click="toggleMaximizeModal" class="maximize-button" v-tippy="`Maximize view`">
               <img :src="DiffMaximizeIcon" alt="Maximize" width="14" height="14" />
             </button>
           </slot>
