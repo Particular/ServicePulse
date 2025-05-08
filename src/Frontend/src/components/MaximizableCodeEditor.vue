@@ -156,7 +156,7 @@ onBeforeUnmount(() => {
 
 .maximize-modal-title {
   font-weight: bold;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .maximize-modal-close {
