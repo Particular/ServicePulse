@@ -14,10 +14,8 @@ const props = defineProps<{
 
 const store = useSagaDiagramStore();
 const timeoutMessageRef = ref<HTMLElement | null>(null);
-const isActive = ref(false);
-
-const shouldHighlightAndScroll = computed(() => {
-  return props.message.MessageId === store.selectedMessageId;
+const shouldBeActive = computed(() => {
+  return store.selectedMessageId === props.message.MessageId;
 });
 
 // This sets the store with the required values so the timeout invocation node exists, it will react by scrolling to the node
@@ -28,7 +26,7 @@ const navigateToTimeout = () => {
 };
 
 watch(
-  [() => store.scrollToTimeoutRequest, () => shouldHighlightAndScroll.value, () => timeoutMessageRef.value !== null],
+  [() => store.scrollToTimeoutRequest, () => shouldBeActive.value, () => timeoutMessageRef.value !== null],
   ([scrollRequest, shouldScroll, refExists]) => {
     if (scrollRequest && shouldScroll && refExists && timeoutMessageRef.value) {
       timeoutMessageRef.value.scrollIntoView({
@@ -38,15 +36,6 @@ watch(
 
       store.scrollToTimeoutRequest = false;
     }
-  },
-  { immediate: true }
-);
-
-watch(
-  () => store.selectedMessageId,
-  (newMessageId) => {
-    // Check if this node contains the selected message
-    isActive.value = newMessageId === props.message.MessageId;
   },
   { immediate: true }
 );
@@ -73,7 +62,7 @@ watch(
         :class="{
           'cell-inner': true,
           'cell-inner-side': true,
-          'cell-inner-side--active': isActive,
+          'cell-inner-side--active': shouldBeActive,
         }"
       >
         <img class="saga-icon saga-icon--side-cell" :src="TimeoutIcon" alt="" />

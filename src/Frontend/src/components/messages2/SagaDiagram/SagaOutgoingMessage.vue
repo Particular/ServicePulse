@@ -4,8 +4,11 @@ import CommandIcon from "@/assets/command.svg";
 import EventIcon from "@/assets/event.svg";
 import { SagaMessageViewModel } from "./SagaDiagramParser";
 import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
-import { ref, watch } from "vue";
-const isActive = ref(false);
+import { computed } from "vue";
+
+const shouldBeActive = computed(() => {
+  return store.selectedMessageId === props.message.MessageId;
+});
 
 const store = useSagaDiagramStore();
 
@@ -13,15 +16,6 @@ const props = defineProps<{
   message: SagaMessageViewModel;
   showMessageData?: boolean;
 }>();
-
-watch(
-  () => store.selectedMessageId,
-  (newMessageId) => {
-    // Check if this node contains the selected message
-    isActive.value = newMessageId === props.message.MessageId;
-  },
-  { immediate: true }
-);
 </script>
 
 <template>
@@ -29,7 +23,7 @@ watch(
     :class="{
       'cell-inner': true,
       'cell-inner-side': true,
-      'cell-inner-side--active': isActive,
+      'cell-inner-side--active': shouldBeActive,
     }"
   >
     <img class="saga-icon saga-icon--side-cell" :src="message.IsEventMessage ? EventIcon : CommandIcon" :alt="message.IsEventMessage ? 'Event' : 'Command'" />

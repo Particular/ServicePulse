@@ -4,6 +4,7 @@ import { SagaHistory, SagaMessage } from "@/resources/SagaHistory";
 import { useFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import Message from "@/resources/Message";
 import { parse } from "lossless-json";
+import { useMessageStore } from "@/stores/MessageStore";
 
 const StandardKeys = ["$type", "Id", "Originator", "OriginalMessageId"];
 export interface SagaMessageDataItem {
@@ -27,6 +28,20 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
   const scrollToTimeoutRequest = ref(false);
   const scrollToTimeout = ref(false);
   const MessageBodyEndpoint = "messages/{0}/body";
+
+  // Get message store to watch for changes
+  const messageStore = useMessageStore();
+
+  // Watch for message_id changes in the MessageStore and update selectedMessageId
+  watch(
+    () => messageStore.state.data.message_id,
+    (newMessageId) => {
+      if (newMessageId) {
+        setSelectedMessageId(newMessageId);
+      }
+    },
+    { immediate: true }
+  );
 
   // Watch the sagaId and fetch saga history when it changes
   watch(sagaId, async (newSagaId) => {

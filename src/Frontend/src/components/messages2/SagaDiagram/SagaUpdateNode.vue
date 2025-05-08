@@ -49,11 +49,10 @@ const props = defineProps<{
 
 const store = useSagaDiagramStore();
 const initiatingMessageRef = ref<HTMLElement | null>(null);
-const isActive = ref(false);
 const hasParsingError = ref(false);
 
-const shouldHighlightAndScroll = computed(() => {
-  return props.update.MessageId === store.selectedMessageId;
+const shouldBeActive = computed(() => {
+  return store.selectedMessageId === props.update.MessageId;
 });
 
 const navigateToTimeoutRequest = () => {
@@ -62,16 +61,7 @@ const navigateToTimeoutRequest = () => {
 };
 
 watch(
-  () => store.selectedMessageId,
-  (newMessageId) => {
-    // Check if this node contains the selected message
-    isActive.value = newMessageId === props.update.MessageId;
-  },
-  { immediate: true }
-);
-
-watch(
-  [() => store.scrollToTimeout, () => shouldHighlightAndScroll.value, () => initiatingMessageRef.value !== null],
+  [() => store.scrollToTimeout, () => shouldBeActive.value, () => initiatingMessageRef.value !== null],
   ([scrollTimeout, shouldScroll, refExists]) => {
     if (scrollTimeout && shouldScroll && refExists && initiatingMessageRef.value) {
       initiatingMessageRef.value.scrollIntoView({
@@ -168,7 +158,7 @@ const hasStateChanges = computed(() => {
           :class="{
             'cell-inner': true,
             'cell-inner-side': true,
-            'cell-inner-side--active': isActive || (update.InitiatingMessage.IsSagaTimeoutMessage && update.MessageId === store.selectedMessageId),
+            'cell-inner-side--active': shouldBeActive || (update.InitiatingMessage.IsSagaTimeoutMessage && update.MessageId === store.selectedMessageId),
           }"
           :data-message-id="update.InitiatingMessage.IsSagaTimeoutMessage ? update.MessageId : ''"
         >
