@@ -6,6 +6,7 @@ import Message from "@/resources/Message";
 import { parse, stringify } from "lossless-json";
 import xmlFormat from "xml-formatter";
 import { DataContainer } from "./DataContainer";
+import { useMessageStore } from "./MessageStore";
 
 export interface SagaMessageData {
   message_id: string;
@@ -24,11 +25,8 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
   const scrollToTimeoutRequest = ref(false);
   const scrollToTimeout = ref(false);
   const MessageBodyEndpoint = "messages/{0}/body";
-
-  // Get message store to watch for changes
   const messageStore = useMessageStore();
 
-  // Watch for message_id changes in the MessageStore and update selectedMessageId
   watch(
     () => messageStore.state.data.message_id,
     (newMessageId) => {

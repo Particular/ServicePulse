@@ -16,7 +16,7 @@ export interface InitiatingMessageViewModel {
   IsSagaTimeoutMessage: boolean;
   FormattedMessageTimestamp: string;
   IsEventMessage: boolean;
-  MessageData: SagaMessageDataItem[];
+  MessageData: SagaMessageData;
   HasRelatedTimeoutRequest?: boolean;
   MessageId: string;
 }
