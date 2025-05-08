@@ -85,7 +85,7 @@ onBeforeUnmount(() => {
       <div class="maximize-modal-content">
         <div class="maximize-modal-toolbar">
           <span class="maximize-modal-title">{{ modalTitle }}</span>
-          <button @click="toggleMaximizeModal" class="maximize-modal-close" title="Close">
+          <button @click="toggleMaximizeModal" class="maximize-modal-close" v-tippy="`Close`">
             <img :src="DiffCloseIcon" alt="Close" width="16" height="16" />
           </button>
         </div>
