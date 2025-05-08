@@ -166,8 +166,8 @@ onBeforeUnmount(() => {
 
 .maximize-modal-content {
   background-color: white;
-  width: calc(100% - 40px);
-  height: calc(100% - 40px);
+  width: 95vw;
+  height: 90vh;
   border-radius: 4px;
   overflow: hidden;
   display: flex;
