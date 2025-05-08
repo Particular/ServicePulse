@@ -105,13 +105,13 @@ onBeforeUnmount(() => {
 
 .maximize-button {
   position: absolute;
-  right: 6px;
-  top: 6px;
+  right: 0.375rem;
+  top: 0.375rem;
   z-index: 10;
   background-color: rgba(255, 255, 255, 0.7);
   border: 1px solid #ddd;
   border-radius: 3px;
-  padding: 4px;
+  padding: 0.25rem;
   cursor: pointer;
   opacity: 0.6;
   transition: opacity 0.2s ease;
@@ -149,7 +149,7 @@ onBeforeUnmount(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
+  padding: 0.625rem 0.9375rem;
   background-color: #f8f8f8;
   border-bottom: 1px solid #ddd;
 }
@@ -163,7 +163,7 @@ onBeforeUnmount(() => {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px;
+  padding: 0.3125rem;
   display: flex;
   align-items: center;
   justify-content: center;
