@@ -246,7 +246,7 @@ const selectedErrorColor = hexToCSSFilter("#e8e6e8").filter;
                 <div class="saga" v-for="saga in data.sagaInvocations" :key="saga.id">
                   <i
                     class="fa"
-                    v-tippy="saga.isSagaInitiated ? 'Message originated from Saga' : !saga.isSagaInitiated && saga.isSagaCompleted ? 'Saga Completed' : 'Saga Initiated / Updated'"
+                    v-tippy="saga.isSagaInitiated ? 'Saga Initiated / Updated' : !saga.isSagaInitiated && saga.isSagaCompleted ? 'Saga Completed' : 'Message originated from Saga'"
                     :class="{ 'pa-flow-saga-initiated': saga.isSagaInitiated, 'pa-flow-saga-completed': !saga.isSagaInitiated && saga.isSagaCompleted, 'pa-flow-saga-trigger': !saga.isSagaInitiated && !saga.isSagaCompleted }"
                   />
                   <div class="sagaName"><TextEllipses style="width: 182px" :text="saga.sagaType" ellipses-style="LeftSide" /></div>
