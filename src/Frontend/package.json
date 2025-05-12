@@ -43,7 +43,7 @@
     "vue-toastification": "^2.0.0-rc.5",
     "vue3-cookies": "^1.0.6",
     "vue3-simple-typeahead": "^1.0.11",
-    "xml-formatter": "^3.6.5"
+    "xml-formatter": "^3.6.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.26.0",
@@ -72,7 +72,7 @@
     "msw": "^2.7.5",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.32.0",
+    "typescript-eslint": "^8.32.1",
     "vite": "^6.3.4",
     "vite-plugin-checker": "^0.9.1",
     "vitest": "^3.1.2",
