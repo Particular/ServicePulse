@@ -12,7 +12,9 @@ const showLegend = ref(true);
 const legendOptions = new Map<UserIndicator, string>([
   [UserIndicator.NServiceBusEndpoint, "Known NServiceBus Endpoint"],
   [UserIndicator.NServiceBusEndpointNoLongerInUse, "NServiceBus Endpoint that is no longer in use, usually this would have zero throughput"],
-  [UserIndicator.SendOnlyOrTransactionSessionEndpoint, "If the endpoint has no throughput or the endpoint has Transactional Session feature enabled"],
+  [UserIndicator.TransactionSessionEndpoint, "If the endpoint has Transactional Session feature enabled"],
+  [UserIndicator.TransactionalSessionProcessorEndpoint, "A processor endpoint that manages the outbox on behalf of send-only endpoints when using transactional sessions"],
+  [UserIndicator.SendOnlyEndpoint, "If the endpoint has no throughput (send-only endpoint)"],
   [UserIndicator.PlannedToDecommission, "If the endpoint is planned to no longer be used in the next 30 days"],
   [UserIndicator.NotNServiceBusEndpoint, "Not an NServiceBus Endpoint"],
 ]);
