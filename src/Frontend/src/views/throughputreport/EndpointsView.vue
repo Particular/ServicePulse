@@ -10,10 +10,12 @@ import { storeToRefs } from "pinia";
 const { isBrokerTransport } = storeToRefs(useThroughputStore());
 const showLegend = ref(true);
 const legendOptions = new Map<UserIndicator, string>([
-  [UserIndicator.NServiceBusEndpoint, "Known NServiceBus Endpoint"],
+  [UserIndicator.NServiceBusEndpoint, 'Known NServiceBus <a href="https://docs.particular.net/nservicebus/endpoints/" target="_blank">Endpoint</a>'],
   [UserIndicator.NServiceBusEndpointNoLongerInUse, "NServiceBus Endpoint that is no longer in use, usually this would have zero throughput"],
-  [UserIndicator.TransactionSessionEndpoint, "If the endpoint has Transactional Session feature enabled"],
-  [UserIndicator.TransactionalSessionProcessorEndpoint, "A processor endpoint that manages the outbox on behalf of send-only endpoints when using transactional sessions"],
+  [
+    UserIndicator.TransactionalSessionProcessorEndpoint,
+    'A processor endpoint that manages the <a href="https://docs.particular.net/nservicebus/outbox/" target="_blank">outbox</a> on behalf of send-only endpoints when using <a href="https://docs.particular.net/nservicebus/transactional-session/" target="_blank">transactional session</a>',
+  ],
   [UserIndicator.SendOnlyEndpoint, "If the endpoint has no throughput (send-only endpoint)"],
   [UserIndicator.PlannedToDecommission, "If the endpoint is planned to no longer be used in the next 30 days"],
   [UserIndicator.NotNServiceBusEndpoint, "Not an NServiceBus Endpoint"],
@@ -35,7 +37,7 @@ function toggleOptionsLegendVisible() {
       </p>
       <div v-show="showLegend" class="alert alert-info">
         <div v-for="[key, value] in legendOptions" :key="key">
-          <strong>{{ userIndicatorMapper.get(key) }}</strong> - {{ value }}.
+          <strong>{{ userIndicatorMapper.get(key) }}</strong> - <span v-html="value"></span>.
         </div>
       </div>
     </div>

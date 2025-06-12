@@ -25,7 +25,6 @@ const { testResults } = storeToRefs(store);
     :indicator-options="[
       UserIndicator.NServiceBusEndpoint,
       UserIndicator.NotNServiceBusEndpoint,
-      UserIndicator.TransactionSessionEndpoint,
       UserIndicator.TransactionalSessionProcessorEndpoint,
       UserIndicator.SendOnlyEndpoint,
       UserIndicator.NServiceBusEndpointNoLongerInUse,
