@@ -14,9 +14,9 @@ const legendOptions = new Map<UserIndicator, string>([
   [UserIndicator.NServiceBusEndpointNoLongerInUse, "NServiceBus Endpoint that is no longer in use, usually this would have zero throughput"],
   [
     UserIndicator.TransactionalSessionProcessorEndpoint,
-    'A processor endpoint that manages the <a href="https://docs.particular.net/nservicebus/outbox/" target="_blank">outbox</a> on behalf of send-only endpoints when using <a href="https://docs.particular.net/nservicebus/transactional-session/" target="_blank">transactional session</a>',
+    'A [processor endpoint](https://docs.particular.net/nservicebus/transactional-session/#remote-processor) that manages the <a href="https://docs.particular.net/nservicebus/outbox/" target="_blank">outbox</a> on behalf of send-only endpoints when using <a href="https://docs.particular.net/nservicebus/transactional-session/" target="_blank">transactional session</a>',
   ],
-  [UserIndicator.SendOnlyEndpoint, "If the endpoint has no throughput (send-only endpoint)"],
+  [UserIndicator.SendOnlyEndpoint, "An endpoint that only sends messages and does not process any messages"],
   [UserIndicator.PlannedToDecommission, "If the endpoint is planned to no longer be used in the next 30 days"],
   [UserIndicator.NotNServiceBusEndpoint, "Not an NServiceBus Endpoint"],
 ]);
