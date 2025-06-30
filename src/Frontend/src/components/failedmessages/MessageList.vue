@@ -173,7 +173,7 @@ pre {
 }
 
 .failed-message:hover {
-  border: 1px solid #00a3c4;
+  border: 1px solid var(--sp-blue);
   background-color: #edf6f7;
 }
 
@@ -213,7 +213,7 @@ div.failed-message-data {
   margin-left: 0;
   width: 18px;
   height: 18px;
-  border: 2px solid #00a3c4;
+  border: 2px solid var(--sp-blue);
 }
 
 label:after .checkbox {
@@ -249,7 +249,7 @@ p.metadata button {
 .failed-message .btn-link,
 .failed-message-group .btn-link,
 .deleted-message-group .btn-link {
-  color: #00a3c4;
+  color: var(--sp-blue);
   font-size: 14px;
   font-weight: bold;
   padding: 0 36px 10px 0;
@@ -331,7 +331,7 @@ p.metadata button {
 }
 
 .btn.btn-sm {
-  color: #00a3c4;
+  color: var(--sp-blue);
   font-size: 14px;
   font-weight: bold;
   padding: 0 36px 10px 0;

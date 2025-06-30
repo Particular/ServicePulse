@@ -197,12 +197,12 @@ p.endpoint-metadata {
 }
 
 .endpoint-metadata button i {
-  color: #00a3c4;
+  color: var(--sp-blue);
   margin-right: 4px;
 }
 
 .btn-sm {
-  color: #00a3c4;
+  color: var(--sp-blue);
   font-size: 14px;
   font-weight: bold;
   padding: 0 36px 10px 0;

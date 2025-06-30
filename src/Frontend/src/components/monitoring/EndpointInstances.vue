@@ -221,7 +221,7 @@ a.remove-endpoint:hover {
 }
 
 a.remove-endpoint i {
-  color: #00a3c4;
+  color: var(--sp-blue);
 }
 
 a.remove-endpoint:hover i {

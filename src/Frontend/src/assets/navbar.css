@@ -76,7 +76,7 @@
 @media (min-width: 768px) {
   .navbar-nav > li.active > a {
     background: transparent !important;
-    border-bottom: 5px solid #00a3c4;
+    border-bottom: 5px solid var(--sp-blue);
   }
 
   .navbar-nav > li > a {
@@ -207,7 +207,7 @@
 
   .navbar-nav > li.active > a {
     background: transparent !important;
-    border-bottom: 5px solid #00a3c4 !important;
+    border-bottom: 5px solid var(--sp-blue) !important;
   }
 
   .tabs h5 {

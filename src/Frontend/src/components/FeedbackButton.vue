@@ -17,7 +17,7 @@ a.btn-feedback,
 a.btn-feedback:visited,
 a.btn-feedback:focus {
   color: #fff !important;
-  background-color: #00a3c4 !important;
+  background-color: var(--sp-blue) !important;
   padding: 6px 16px !important;
   margin: 14px 0 0 0;
   border-radius: 3px;

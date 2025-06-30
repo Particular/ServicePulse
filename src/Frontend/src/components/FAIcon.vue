@@ -2,16 +2,16 @@
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-defineProps<{ icon: IconDefinition; title?: string }>();
+withDefaults(
+  defineProps<{
+    icon: IconDefinition;
+    title?: string;
+    size?: "2xs" | "xs" | "sm" | "lg" | "xl" | "2xl" | "1x" | "2x" | "3x" | "4x" | "5x" | "6x" | "7x" | "8x" | "9x" | "10x";
+  }>(),
+  { size: "1x" }
+);
 </script>
 
 <template>
-  <span class="faIcon" :title="title"><FontAwesomeIcon :icon="icon" /></span>
+  <FontAwesomeIcon :icon="icon" :size="size" :title="title" />
 </template>
-
-<style scoped>
-.faIcon {
-  margin: 0 !important;
-  color: #929e9e;
-}
-</style>

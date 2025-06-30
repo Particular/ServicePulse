@@ -436,7 +436,7 @@ onMounted(async () => {
 .dropdown > button:hover {
   background: none;
   border: none;
-  color: #00a3c4;
+  color: var(--sp-blue);
   text-decoration: underline;
 }
 </style>

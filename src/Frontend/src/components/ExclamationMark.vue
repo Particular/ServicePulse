@@ -1,5 +1,7 @@
 ﻿<script setup lang="ts">
 import { WarningLevel } from "@/components/WarningLevel";
+import FAIcon from "./FAIcon.vue";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 const props = withDefaults(
   defineProps<{
@@ -11,13 +13,22 @@ const props = withDefaults(
 
 <template>
   <template v-if="props.type !== WarningLevel.None">
-    <span class="fa fa-exclamation-triangle" :class="props.type === WarningLevel.Danger ? 'danger' : 'warning'"></span>
+    <FAIcon :icon="faExclamationTriangle" :class="props.type === WarningLevel.Danger ? 'danger' : 'warning'" />
   </template>
 </template>
 
 <style scoped>
+.danger,
+.warning {
+  margin: 0 2px;
+}
+
 .danger {
   color: #ce4844 !important;
   font-weight: normal !important;
+}
+
+.warning {
+  color: #929e9e;
 }
 </style>

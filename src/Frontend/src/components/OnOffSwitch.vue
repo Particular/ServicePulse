@@ -63,7 +63,7 @@ const emit = defineEmits<{ toggle: [] }>();
 }
 
 .onoffswitch-inner:before {
-  background-color: #00a3c4;
+  background-color: var(--sp-blue);
   color: #ffffff;
   content: "ON";
   padding-left: 10px;

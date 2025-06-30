@@ -105,7 +105,7 @@ onMounted(() => {
 .btn.sp-btn-menu {
   background: none;
   border: none;
-  color: #00a3c4;
+  color: var(--sp-blue);
   padding-right: 16px;
   padding-left: 16px;
 }
@@ -113,7 +113,7 @@ onMounted(() => {
 .sp-btn-menu:hover {
   background: none;
   border: none;
-  color: #00a3c4;
+  color: var(--sp-blue);
   text-decoration: underline;
 }
 
@@ -126,14 +126,14 @@ onMounted(() => {
 .btn.sp-btn-menu:active {
   background: none;
   border: none;
-  color: #00a3c4;
+  color: var(--sp-blue);
   text-decoration: underline;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
 
 .sp-btn-menu > i {
-  color: #00a3c4;
+  color: var(--sp-blue);
 }
 
 .dropdown-menu li button {

@@ -121,7 +121,7 @@ td:nth-child(3) i.fa.fa-trash {
 }
 
 td:nth-child(3) i.fa.fa-undo {
-  color: #00a3c4;
+  color: var(--sp-blue);
 }
 
 td:nth-child(3) i.fa:hover {

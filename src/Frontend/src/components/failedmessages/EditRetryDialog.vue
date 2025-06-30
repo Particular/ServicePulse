@@ -283,7 +283,7 @@ onMounted(() => {
 }
 
 .modal-msg-editor .reset-body i.fa.fa-undo {
-  color: #00a3c4;
+  color: var(--sp-blue);
 }
 
 .modal-msg-editor .empty-error {

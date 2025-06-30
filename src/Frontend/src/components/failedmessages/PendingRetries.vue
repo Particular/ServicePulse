@@ -410,6 +410,6 @@ onMounted(() => {
 .dropdown-toggle.btn-default:hover {
   background: none;
   border: none;
-  color: #00a3c4;
+  color: var(--sp-blue);
 }
 </style>
