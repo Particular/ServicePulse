@@ -73,27 +73,6 @@
   border-color: #fa5833;
 }
 
-a.btn-feedback,
-a.btn-feedback:visited,
-a.btn-feedback:focus {
-  color: #fff !important;
-  background-color: #00a3c4 !important;
-  padding: 6px 16px !important;
-  margin: 14px 0 0 0;
-  border-radius: 3px;
-  font-weight: bold;
-}
-
-a.btn-feedback:hover,
-a.btn-feedback:focus {
-  background-color: hsl(194, 95%, 61%) !important;
-  font-weight: bold;
-}
-
-.navbar-nav > li > .btn-feedback > .fa {
-  color: #fff;
-}
-
 @media (min-width: 768px) {
   .navbar-nav > li.active > a {
     background: transparent !important;

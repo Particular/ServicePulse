@@ -225,12 +225,6 @@ h1 .endpoint-status i.fa-envelope {
     margin-bottom: 10px;
   }
 
-  a.btn-feedback {
-    width: 130px !important;
-    margin: 10px 15px 22px !important;
-    padding-left: 20px !important;
-  }
-
   .navbar-collapse.collapse.in {
     padding: 0 0 0 16px !important;
   }

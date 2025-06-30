@@ -5,7 +5,7 @@ import FAIcon from "./FAIcon.vue";
 
 <template>
   <a class="btn-feedback" href="https://github.com/Particular/ServicePulse/issues/new" target="_blank">
-    <FAIcon class="white" :icon="faComment" title="Feedback" />
+    <FAIcon class="icon" :icon="faComment" title="Feedback" />
     <span class="navbar-label">Feedback</span>
   </a>
 </template>
@@ -13,7 +13,26 @@ import FAIcon from "./FAIcon.vue";
 @import "@/assets/navbar.css";
 @import "@/assets/header-menu-item.css";
 
-.white {
+a.btn-feedback,
+a.btn-feedback:visited,
+a.btn-feedback:focus {
+  color: #fff !important;
+  background-color: #00a3c4 !important;
+  padding: 6px 16px !important;
+  margin: 14px 0 0 0;
+  border-radius: 3px;
+}
+
+a.btn-feedback:hover,
+a.btn-feedback:focus {
+  background-color: hsl(194, 95%, 61%) !important;
+}
+
+a.btn-feedback .navbar-label {
+  font-weight: bold;
+}
+
+.btn-feedback .icon {
   color: #fff;
 }
 </style>
