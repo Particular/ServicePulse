@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
 import routeLinks from "@/router/routeLinks";
+import FAIcon from "../FAIcon.vue";
+import { faEnvelopeOpen } from "@fortawesome/free-solid-svg-icons";
 </script>
 
 <template>
   <RouterLink :to="routeLinks.messages.root">
-    <i class="fa fa-envelope-open icon-white" title="All Messages"></i>
+    <FAIcon :icon="faEnvelopeOpen" title="All Messages" />
     <span class="navbar-label">All Messages</span>
   </RouterLink>
 </template>
