@@ -80,3 +80,11 @@ ul.retry-request-progress li > div {
 .metadata.danger > .danger {
   font-weight: normal !important;
 }
+
+.icon {
+  color: #929e9e;
+}
+
+button .icon {
+  margin-right: 2px;
+}

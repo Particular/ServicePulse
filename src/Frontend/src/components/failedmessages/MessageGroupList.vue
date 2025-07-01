@@ -644,14 +644,6 @@ div.progress-bar.progress-bar-striped.active {
   margin: 0;
 }
 
-.icon {
-  color: #929e9e;
-}
-
-button .icon {
-  margin-right: 2px;
-}
-
 .inset {
   padding-left: 13px;
 }
