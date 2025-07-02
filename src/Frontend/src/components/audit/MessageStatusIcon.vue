@@ -100,7 +100,7 @@ const statusInfo = computed(() => {
   border-radius: 50%;
   width: 1.4em;
   line-height: 1.4em;
-  background-color: #929e9e;
+  background-color: var(--reduced-emphasis);
   display: flex;
   align-items: center;
   justify-content: center;

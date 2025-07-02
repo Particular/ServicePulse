@@ -100,7 +100,7 @@ async function refresh() {
 
 .refresh-icon {
   display: inline-block;
-  color: #929e9e;
+  color: var(--reduced-emphasis);
 }
 
 /* You can add this class dynamically when needed */

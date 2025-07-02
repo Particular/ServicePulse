@@ -166,7 +166,7 @@ const subIcon = computed(() => {
 }
 
 .fa {
-  color: #929e9e;
+  color: var(--reduced-emphasis);
 }
 
 .sub-item {

@@ -206,7 +206,7 @@ div.failed-message-data {
   margin-left: 1px;
   width: 16px;
   height: 16px;
-  border: 1px solid #929e9e;
+  border: 1px solid var(--reduced-emphasis);
   background-color: #fff;
 }
 
@@ -341,6 +341,6 @@ p.metadata button {
 }
 
 .icon {
-  color: #929e9e;
+  color: var(--reduced-emphasis);
 }
 </style>

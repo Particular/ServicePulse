@@ -82,7 +82,7 @@ ul.retry-request-progress li > div {
 }
 
 .icon {
-  color: #929e9e;
+  color: var(--reduced-emphasis);
 }
 
 button .icon {
