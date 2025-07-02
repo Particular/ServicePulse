@@ -4,13 +4,12 @@ import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
 import { EndpointStatus } from "@/resources/Heartbeat";
-import SortableColumn from "@/components/SortableColumn.vue";
+import ColumnHeader from "@/components/ColumnHeader.vue";
 import DataView from "@/components/DataView.vue";
 import OnOffSwitch from "../OnOffSwitch.vue";
 import routeLinks from "@/router/routeLinks";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
-import { Tippy } from "vue-tippy";
 import { useHeartbeatInstancesStore, ColumnNames } from "@/stores/HeartbeatInstancesStore";
 import { EndpointsView } from "@/resources/EndpointView";
 import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
@@ -159,41 +158,19 @@ async function toggleAlerts(instance: EndpointsView) {
     <section role="table" aria-label="endpoint-instances">
       <!--Table headings-->
       <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
-        <div role="columnheader" :aria-label="ColumnNames.InstanceName" class="col-6">
-          <SortableColumn :sort-by="ColumnNames.InstanceName" v-model="sortByInstances" :default-ascending="true">Host Name</SortableColumn>
-        </div>
-        <div role="columnheader" :aria-label="ColumnNames.LastHeartbeat" class="col-2">
-          <SortableColumn :sort-by="ColumnNames.LastHeartbeat" v-model="sortByInstances">Last Heartbeat</SortableColumn>
-        </div>
-        <div role="columnheader" :aria-label="ColumnNames.MuteToggle" class="col-2 centre">
-          <SortableColumn :sort-by="ColumnNames.MuteToggle" v-model="sortByInstances">Mute Alerts</SortableColumn>
-          <tippy max-width="400px">
-            <i :style="{ fontSize: '1.1em', marginLeft: '0.25em' }" class="fa fa-info-circle text-primary" />
-            <template #content>
-              <span>Mute an instance when you are planning to take the instance offline to do maintenance or some other reason. This will prevent alerts on the dashboard.</span>
-            </template>
-          </tippy>
-        </div>
-        <div role="columnheader" aria-label="actions" class="col-1">
-          <div>
-            Actions
-            <tippy max-width="400px">
-              <i :style="{ fontSize: '1.1em' }" class="fa fa-info-circle text-primary" />
-              <template #content>
-                <table>
-                  <tbody>
-                    <tr>
-                      <td style="padding: 3px; width: 6em; text-align: end; align-content: center">
-                        <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash text-white" /> Delete</button>
-                      </td>
-                      <td style="padding: 3px">Delete an instance when that instance has been decommissioned.</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </template>
-            </tippy>
-          </div>
-        </div>
+        <ColumnHeader :name="ColumnNames.InstanceName" label="Host Name" class="col-6" v-model="sortByInstances" sortable default-ascending />
+        <ColumnHeader :name="ColumnNames.LastHeartbeat" label="Last Heartbeat" class="col-2" v-model="sortByInstances" sortable />
+        <ColumnHeader :name="ColumnNames.MuteToggle" label="Mute Alerts" class="col-2 centre">
+          <template #help>Mute an instance when you are planning to take the instance offline to do maintenance or some other reason. This will prevent alerts on the dashboard.</template>
+        </ColumnHeader>
+        <ColumnHeader name="actions" label="Actions" class="col-1" interactive-help>
+          <template #help>
+            <div class="d-flex align-items-center p-1">
+              <button type="button" class="btn btn-danger btn-ms text-nowrap me-3" @click="deleteAllInstances()"><i class="fa fa-trash text-white" /> Delete</button>
+              <span>Delete an instance when that instance has been decommissioned.</span>
+            </div>
+          </template>
+        </ColumnHeader>
       </div>
       <no-data v-if="filteredValidInstances.length === 0" message="No endpoint instances found. For untracked endpoints, disconnected instances are automatically pruned.">
         <div v-if="totalValidInstances.length === 0" class="delete-all">
