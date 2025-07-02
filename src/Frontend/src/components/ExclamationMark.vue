@@ -29,6 +29,6 @@ const props = withDefaults(
 }
 
 .warning {
-  color: #929e9e;
+  color: var(--reduced-emphasis);
 }
 </style>
