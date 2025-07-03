@@ -14,7 +14,6 @@ const { license, getOrUpdateLicenseStatus } = useLicense();
 const configuration = useConfiguration();
 
 function displayWarningMessage(licenseStatus: LicenseStatus) {
-  //TODO: the font-awesome icons don't work here, so either need to give up on showing them or else change the toast popup to take a component rather than a html string
   const configurationRootLink = router.resolve(routeLinks.configuration.root).href;
   switch (licenseStatus) {
     case LicenseStatus.ValidWithExpiredUpgradeProtection: {
@@ -24,8 +23,8 @@ function displayWarningMessage(licenseStatus: LicenseStatus) {
     }
     case LicenseStatus.ValidWithExpiringTrial: {
       const trialExpiring = configuration.value?.mass_transit_connector
-        ? `<div><strong>Early Access license expiring</strong><div>Your Early Access license will expire soon. To continue using the Particular Service Platform you'll need to extend your license.</div><a href="${license.license_extension_url}" class="btn btn-warning"><i class="fa fa-external-link-alt"></i> Extend your license</a><a href="${configurationRootLink}" class="btn btn-light">View license details</a></div>`
-        : `<div><strong>Non-production development license expiring</strong><div>Your non-production development license will expire soon. To continue using the Particular Service Platform you'll need to extend your license.</div><a href="${license.license_extension_url}" class="btn btn-warning"><i class="fa fa-external-link-alt"></i> Extend your license</a><a href="${configurationRootLink}" class="btn btn-light">View license details</a></div>`;
+        ? `<div><strong>Early Access license expiring</strong><div>Your Early Access license will expire soon. To continue using the Particular Service Platform you'll need to extend your license.</div><a href="${license.license_extension_url}" class="btn btn-warning">Extend your license</a><a href="${configurationRootLink}" class="btn btn-light">View license details</a></div>`
+        : `<div><strong>Non-production development license expiring</strong><div>Your non-production development license will expire soon. To continue using the Particular Service Platform you'll need to extend your license.</div><a href="${license.license_extension_url}" class="btn btn-warning">Extend your license</a><a href="${configurationRootLink}" class="btn btn-light">View license details</a></div>`;
       useShowToast(TYPE.WARNING, "", trialExpiring, true);
       break;
     }

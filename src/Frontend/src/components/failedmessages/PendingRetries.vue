@@ -17,6 +17,7 @@ import QueueAddress from "@/resources/QueueAddress";
 import { TYPE } from "vue-toastification";
 import GroupOperation from "@/resources/GroupOperation";
 import { useIsMassTransitConnected } from "@/composables/useIsMassTransitConnected";
+import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort } from "@fortawesome/free-solid-svg-icons";
 
 let refreshInterval: number | undefined;
 let sortMethod: SortOptions<GroupOperation> | undefined;
@@ -38,15 +39,18 @@ const isInitialLoad = ref(true);
 const sortOptions: SortOptions<GroupOperation>[] = [
   {
     description: "Time of failure",
-    icon: "fa-sort-amount-",
+    iconAsc: faArrowDownShortWide,
+    iconDesc: faArrowDownWideShort,
   },
   {
     description: "Message Type",
-    icon: "fa-sort-alpha-",
+    iconAsc: faArrowDownAZ,
+    iconDesc: faArrowDownZA,
   },
   {
     description: "Time of retry request",
-    icon: "fa-sort-amount-",
+    iconAsc: faArrowDownShortWide,
+    iconDesc: faArrowDownWideShort,
   },
 ];
 const periodOptions = ["All Pending Retries", "Retried in the last 2 Hours", "Retried in the last 1 Day", "Retried in the last 7 Days"];
