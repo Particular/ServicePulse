@@ -1,5 +1,4 @@
 @import "bootstrap/dist/css/bootstrap.css";
-@import "font-awesome/css/font-awesome.css";
 @import "footer.css";
 @import "tabs.css";
 @import "dropdown.css";
@@ -309,16 +308,6 @@ pre {
   font-weight: bold !important;
 }
 
-.fa-error {
-  color: #ce4844;
-}
-
-.fa-o {
-  bottom: -0.5em;
-  left: 1.2em;
-  position: relative;
-}
-
 .btn-link:hover,
 .btn-link:focus {
   color: #23527c;
@@ -494,14 +483,6 @@ h2.group-title,
 h3.group-title {
   font-weight: bold;
   line-height: 28px;
-}
-
-div.alert.alert-warning i.fa.fa-warning {
-  color: #8a6d3b;
-}
-
-div.alert.alert-info i.fa.fa-info-circle {
-  color: #31708f;
 }
 
 div.alert.alert-warning strong {
