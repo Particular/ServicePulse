@@ -451,3 +451,7 @@ div[content="Unable to connect to instance"],
 div[content="Unable to connect to monitoring server"] {
   z-index: 99999;
 }
+
+.pull-left {
+  float: left;
+}
