@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import FilterInput from "@/components/FilterInput.vue";
 import { onMounted, ref, useTemplateRef, watch } from "vue";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const selected = defineModel<string>({ required: true });

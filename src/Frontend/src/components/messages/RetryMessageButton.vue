@@ -7,7 +7,7 @@ import { TYPE } from "vue-toastification";
 import { MessageStatus } from "@/resources/Message";
 import { storeToRefs } from "pinia";
 import { FailedMessageStatus } from "@/resources/FailedMessage";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 
 const store = useMessageStore();

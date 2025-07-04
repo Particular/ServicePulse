@@ -2,7 +2,7 @@
 import { RouterLink } from "vue-router";
 import routeLinks from "@/router/routeLinks";
 import { faGauge } from "@fortawesome/free-solid-svg-icons";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 </script>
 
 <template>

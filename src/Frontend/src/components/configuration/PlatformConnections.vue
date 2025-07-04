@@ -5,7 +5,7 @@ import { licenseStatus } from "@/composables/serviceLicense";
 import { monitoringUrl as configuredMonitoringUrl, serviceControlUrl as configuredServiceControlUrl, updateServiceControlUrls, useIsMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
 import { connectionState, monitoringConnectionState } from "@/composables/serviceServiceControl";
 import { faCheck, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 
 const isExpired = licenseStatus.isExpired;
 

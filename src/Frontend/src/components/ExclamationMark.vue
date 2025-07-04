@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
 import { WarningLevel } from "@/components/WarningLevel";
-import FAIcon from "./FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 const props = withDefaults(

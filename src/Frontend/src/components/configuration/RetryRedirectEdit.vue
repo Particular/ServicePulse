@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 export interface RetryRedirect {

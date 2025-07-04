@@ -19,7 +19,7 @@ import LastHeartbeat from "@/components/heartbeats/LastHeartbeat.vue";
 import FilterInput from "../FilterInput.vue";
 import ResultsCount from "../ResultsCount.vue";
 import { faBell, faBellSlash, faChevronLeft, faHeartbeat, faTrash } from "@fortawesome/free-solid-svg-icons";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 
 enum Operation {
   Mute = "mute",

@@ -11,7 +11,7 @@ import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import LastHeartbeat from "@/components/heartbeats/LastHeartbeat.vue";
 import ColumnHeader from "../ColumnHeader.vue";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faBellSlash, faCheck, faCloud, faServer } from "@fortawesome/free-solid-svg-icons";
 
 defineProps<{

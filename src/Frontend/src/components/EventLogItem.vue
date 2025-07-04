@@ -5,7 +5,7 @@ import type EventLogItem from "@/resources/EventLogItem";
 // eslint-disable-next-line no-duplicate-imports
 import { Severity } from "@/resources/EventLogItem";
 import routeLinks from "@/router/routeLinks";
-import FAIcon from "./FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faCheck, faEnvelope, faExclamation, faHeartbeat, faPencil, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { computed } from "vue";
 

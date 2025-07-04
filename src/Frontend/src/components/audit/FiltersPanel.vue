@@ -5,7 +5,7 @@ import { FieldNames, useAuditStore } from "@/stores/AuditStore";
 import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
 import { computed } from "vue";
 import DatePickerRange from "@/components/audit/DatePickerRange.vue";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faAsterisk } from "@fortawesome/free-solid-svg-icons";
 
 const store = useAuditStore();

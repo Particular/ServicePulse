@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Tippy, TippyComponent } from "vue-tippy";
 import { ref, useTemplateRef, watch } from "vue";
-import FAIcon from "./FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 
 const props = withDefaults(

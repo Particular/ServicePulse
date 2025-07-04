@@ -5,7 +5,7 @@ import { useTypedFetchFromServiceControl } from "../../composables/serviceServic
 import TimeSince from "../TimeSince.vue";
 import type HistoricRetryOperation from "@/resources/HistoricRetryOperation";
 import RecoverabilityHistoryResponse from "@/resources/RecoverabilityHistoryResponse";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faAngleDown, faAngleRight, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 

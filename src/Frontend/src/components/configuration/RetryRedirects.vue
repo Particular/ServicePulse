@@ -14,7 +14,7 @@ import { TYPE } from "vue-toastification";
 import type Redirect from "@/resources/Redirect";
 import RetryRedirectEdit, { type RetryRedirect } from "@/components/configuration/RetryRedirectEdit.vue";
 import redirectCountUpdated from "@/components/configuration/redirectCountUpdated";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 
 const isExpired = licenseStatus.isExpired;

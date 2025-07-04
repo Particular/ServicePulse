@@ -2,7 +2,7 @@
 import CustomCheck from "@/resources/CustomCheck";
 import TimeSince from "@/components/TimeSince.vue";
 import { useCustomChecksStore } from "@/stores/CustomChecksStore";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faCheck, faList, faServer } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { hexToCSSFilter } from "hex-to-css-filter";

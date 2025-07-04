@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { faComment } from "@fortawesome/free-solid-svg-icons";
-import FAIcon from "./FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 </script>
 
 <template>

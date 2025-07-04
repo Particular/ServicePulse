@@ -11,7 +11,7 @@ import ConfirmDialog from "../ConfirmDialog.vue";
 import routeLinks from "@/router/routeLinks";
 import { TYPE } from "vue-toastification";
 import GroupOperation from "@/resources/GroupOperation";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faArrowRotateRight, faEnvelope, faEraser, faExclamationTriangle, faPencil, faStickyNote, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import ProgressMessage from "./ProgressMessage.vue";

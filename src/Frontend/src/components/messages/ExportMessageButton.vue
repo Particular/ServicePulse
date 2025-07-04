@@ -4,7 +4,7 @@ import { useDownloadFileFromString } from "@/composables/fileDownloadCreator";
 import { showToastAfterOperation } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import { ref } from "vue";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 
 const store = useMessageStore();

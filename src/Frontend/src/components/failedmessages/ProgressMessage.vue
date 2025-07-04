@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { faArrowRight, faCheck } from "@fortawesome/free-solid-svg-icons";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 
 const props = defineProps<{
   "left-to-do": boolean;

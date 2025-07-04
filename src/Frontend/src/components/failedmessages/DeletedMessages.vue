@@ -16,7 +16,7 @@ import { ExtendedFailedMessage } from "@/resources/FailedMessage";
 import { TYPE } from "vue-toastification";
 import FailureGroup from "@/resources/FailureGroup";
 import { useConfiguration } from "@/composables/configuration";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
 
 let pollingFaster = false;

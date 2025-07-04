@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { licenseStatus, license } from "../composables/serviceLicense";
 import routeLinks from "@/router/routeLinks";
-import FAIcon from "./FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 </script>
 

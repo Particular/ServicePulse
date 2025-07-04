@@ -18,7 +18,7 @@ import { TYPE } from "vue-toastification";
 import GroupOperation from "@/resources/GroupOperation";
 import { useIsMassTransitConnected } from "@/composables/useIsMassTransitConnected";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faInfoCircle, faExternalLink, faFilter, faTimes, faArrowRightRotate } from "@fortawesome/free-solid-svg-icons";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faCheckSquare } from "@fortawesome/free-regular-svg-icons";
 
 let refreshInterval: number | undefined;

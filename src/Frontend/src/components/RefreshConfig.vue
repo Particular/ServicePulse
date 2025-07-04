@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
-import FAIcon from "./FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 
 const props = defineProps<{ isLoading: boolean }>();

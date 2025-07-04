@@ -3,7 +3,7 @@ import { onMounted, ref } from "vue";
 import { useCookies } from "vue3-cookies";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
-import FAIcon from "./FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 
 const emit = defineEmits<{
   sortUpdated: [option: SortOptions<T>];

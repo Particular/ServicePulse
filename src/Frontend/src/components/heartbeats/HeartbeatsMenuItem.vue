@@ -4,7 +4,7 @@ import routeLinks from "@/router/routeLinks";
 import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
 import { faHeartPulse } from "@fortawesome/free-solid-svg-icons";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 
 const { failedHeartbeatsCount } = storeToRefs(useHeartbeatsStore());
 </script>

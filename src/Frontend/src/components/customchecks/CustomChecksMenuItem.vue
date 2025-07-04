@@ -3,7 +3,7 @@ import { RouterLink } from "vue-router";
 import { useCustomChecksStore } from "@/stores/CustomChecksStore";
 import routeLinks from "@/router/routeLinks";
 import { storeToRefs } from "pinia";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 const store = useCustomChecksStore();

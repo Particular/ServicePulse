@@ -19,7 +19,7 @@ import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import { TYPE } from "vue-toastification";
 import GroupOperation from "@/resources/GroupOperation";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faArrowRotateRight, faTrash, faDownload } from "@fortawesome/free-solid-svg-icons";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 
 let pollingFaster = false;
 let refreshInterval: number | undefined;

@@ -10,7 +10,7 @@ import { useMessageStore } from "@/stores/MessageStore";
 import { storeToRefs } from "pinia";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import debounce from "lodash/debounce";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faExclamationCircle, faExclamationTriangle, faUndo } from "@fortawesome/free-solid-svg-icons";
 
 interface HeaderWithEditing extends Header {

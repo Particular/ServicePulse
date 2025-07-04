@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useConfiguration } from "@/composables/configuration";
 import moment from "moment";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const configuration = useConfiguration();

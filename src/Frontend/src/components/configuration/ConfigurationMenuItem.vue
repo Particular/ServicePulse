@@ -9,7 +9,7 @@ import routeLinks from "@/router/routeLinks";
 import { displayConnectionsWarning } from "@/components/configuration/displayConnectionsWarning";
 import { useThroughputStore } from "@/stores/ThroughputStore";
 import { storeToRefs } from "pinia";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 
 const { hasErrors } = storeToRefs(useThroughputStore());

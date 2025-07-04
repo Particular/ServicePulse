@@ -10,7 +10,7 @@ import HeartbeatsList from "./HeartbeatsList.vue";
 import { ref } from "vue";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import ResultsCount from "../ResultsCount.vue";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faCloud, faServer } from "@fortawesome/free-solid-svg-icons";
 
 enum Operation {

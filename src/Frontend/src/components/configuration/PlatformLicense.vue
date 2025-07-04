@@ -9,7 +9,7 @@ import convertToWarningLevel from "@/components/configuration/convertToWarningLe
 import { useConfiguration } from "@/composables/configuration";
 import { typeText } from "@/resources/LicenseInfo";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 
 // This is needed because the ConfigurationView.vue routerView expects this event.
 // The event is only actually emitted on the RetryRedirects.vue component

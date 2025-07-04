@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faExclamationTriangle, faLock, faPencil, faTrash, faUndo } from "@fortawesome/free-solid-svg-icons";
 
 interface MessageHeader {

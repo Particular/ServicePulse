@@ -2,7 +2,7 @@
 import { RouterLink } from "vue-router";
 import routeLinks from "@/router/routeLinks";
 import { stats } from "@/composables/serviceServiceControl";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 </script>
 

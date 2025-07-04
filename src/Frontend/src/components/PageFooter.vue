@@ -6,7 +6,7 @@ import { license, licenseStatus } from "../composables/serviceLicense";
 import { LicenseStatus } from "@/resources/LicenseInfo";
 import routeLinks from "@/router/routeLinks";
 import { useConfiguration } from "@/composables/configuration";
-import FAIcon from "./FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faArrowTurnUp, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const isMonitoringEnabled = computed(() => {

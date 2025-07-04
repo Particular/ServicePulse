@@ -11,7 +11,7 @@ import { TYPE } from "vue-toastification";
 import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
 import type EmailSettings from "@/components/configuration/EmailSettings";
 import OnOffSwitch from "../OnOffSwitch.vue";
-import FAIcon from "../FAIcon.vue";
+import FAIcon from "@/components/FAIcon.vue";
 import { faCheck, faEdit, faEnvelope, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 const isExpired = licenseStatus.isExpired;
