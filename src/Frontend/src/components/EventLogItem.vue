@@ -84,9 +84,9 @@ const subIcon = computed(() => {
     <div class="col-12" @click="navigateToEvent">
       <div class="row">
         <div class="col-auto col-icon">
-          <FAIcon v-if="icon" class="fa" :class="{ danger: props.eventLogItem.severity === Severity.Error }" :icon="icon" size="2x" />
-          <i v-else class="fa pa-redirect-source pa-redirect-large" />
-          <FAIcon v-if="subIcon" class="fa sub-item" :class="{ danger: eventLogItem.severity === Severity.Error }" :icon="subIcon" />
+          <FAIcon v-if="icon" class="icon" :class="{ danger: props.eventLogItem.severity === Severity.Error }" :icon="icon" size="2x" />
+          <i v-else class="icon pa-redirect-source pa-redirect-large" />
+          <FAIcon v-if="subIcon" class="icon sub-item" :class="{ danger: eventLogItem.severity === Severity.Error }" :icon="subIcon" />
         </div>
         <div class="col-9">
           <div class="row box-header">
@@ -165,7 +165,7 @@ const subIcon = computed(() => {
   width: 24px;
 }
 
-.fa {
+.icon {
   color: var(--reduced-emphasis);
 }
 

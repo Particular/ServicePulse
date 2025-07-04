@@ -83,6 +83,6 @@ const configuration = useConfiguration();
 <style scoped>
 .footer-icon {
   color: var(--sp-blue);
-  margin-right: 8px;
+  margin-right: 4px;
 }
 </style>

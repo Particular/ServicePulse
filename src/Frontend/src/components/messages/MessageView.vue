@@ -108,7 +108,7 @@ onMounted(() => {
       <template v-else>
         <div class="row">
           <div class="col-sm-12 no-side-padding">
-            <RouterLink :to="backLink"><FAICon :icon="faChevronLeft" /> Back</RouterLink>
+            <RouterLink :to="backLink"><FAIcon :icon="faChevronLeft" size="sm" /> Back</RouterLink>
             <div class="active break group-title">
               <h1 class="message-type-title">{{ state.data.message_type }}</h1>
             </div>

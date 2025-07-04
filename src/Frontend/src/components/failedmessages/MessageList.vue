@@ -138,7 +138,7 @@ const endpointColor = hexToCSSFilter("#929E9E").filter;
                 </span>
 
                 <button type="button" name="retryMessage" v-if="!message.retryInProgress && props.showRequestRetry" class="btn btn-link btn-sm" @click.stop="emit('retryRequested', message.id)">
-                  <FAIcon :icon="faRotateRight" class="no-link-underline">&nbsp;</FAIcon>Request retry
+                  <FAIcon :icon="faRotateRight" class="no-link-underline" /> Request retry
                 </button>
               </p>
 
