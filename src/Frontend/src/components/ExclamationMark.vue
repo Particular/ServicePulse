@@ -25,7 +25,7 @@ const props = withDefaults(
 
 .danger {
   color: #ce4844 !important;
-  font-weight: normal !important;
+  background: linear-gradient(white, white) center/20% 72% no-repeat;
 }
 
 .warning {
