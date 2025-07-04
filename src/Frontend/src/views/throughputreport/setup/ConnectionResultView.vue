@@ -11,8 +11,8 @@ const props = defineProps<{
 
 <template>
   <div class="title">
-    <FAIcon v-if="result.connection_successful" :icon="faCheck" class="icon-success" />
-    <FAIcon v-else :icon="faTimes" class="icon-error" />
+    <FAIcon v-if="result.connection_successful" :icon="faCheck" class="text-success" />
+    <FAIcon v-else :icon="faTimes" class="text-danger" />
     <strong> {{ props.title }} </strong>
   </div>
   <div class="instructions"><slot name="instructions"></slot></div>
@@ -25,11 +25,5 @@ const props = defineProps<{
 }
 .instructions {
   margin-bottom: 10px;
-}
-.icon-success {
-  color: green;
-}
-.icon-error {
-  color: red;
 }
 </style>

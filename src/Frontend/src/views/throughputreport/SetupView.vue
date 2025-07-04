@@ -20,23 +20,23 @@ const { testResults, isBrokerTransport } = storeToRefs(store);
           <div class="intro">
             <template v-if="testResults?.audit_connection_result.connection_successful">
               <div>
-                <h6><FAIcon :icon="faCheck" class="icon-success" /> Successfully connected to Audit instance(s) for usage collection.</h6>
+                <h6><FAIcon :icon="faCheck" class="text-success" /> Successfully connected to Audit instance(s) for usage collection.</h6>
               </div>
             </template>
             <template v-else>
               <div>
-                <h6><FAIcon :icon="faTimes" class="icon-error" /> The connection to one or more Audit instances was not successful.</h6>
+                <h6><FAIcon :icon="faTimes" class="text-danger" /> The connection to one or more Audit instances was not successful.</h6>
               </div>
             </template>
             <template v-if="useIsMonitoringEnabled()">
               <template v-if="testResults?.monitoring_connection_result.connection_successful">
                 <div>
-                  <h6><FAIcon :icon="faCheck" class="icon-success" /> Successfully connected to Monitoring for usage collection.</h6>
+                  <h6><FAIcon :icon="faCheck" class="text-success" /> Successfully connected to Monitoring for usage collection.</h6>
                 </div>
               </template>
               <template v-else>
                 <div>
-                  <h6><FAIcon :icon="faTimes" class="icon-error" /> The connection to Monitoring was not successful.</h6>
+                  <h6><FAIcon :icon="faTimes" class="text-danger" /> The connection to Monitoring was not successful.</h6>
                 </div>
               </template>
             </template>
@@ -56,12 +56,12 @@ const { testResults, isBrokerTransport } = storeToRefs(store);
         <template v-else>
           <template v-if="testResults?.broker_connection_result.connection_successful">
             <div>
-              <h6><FAIcon :icon="faCheck" class="icon-success" /> Successfully connected to {{ store.transportNameForInstructions() }} for usage collection.</h6>
+              <h6><FAIcon :icon="faCheck" class="text-success" /> Successfully connected to {{ store.transportNameForInstructions() }} for usage collection.</h6>
             </div>
           </template>
           <template v-else>
             <div>
-              <h6><FAIcon :icon="faTimes" class="icon-error" /> The connection to {{ store.transportNameForInstructions() }} was not successful.</h6>
+              <h6><FAIcon :icon="faTimes" class="text-danger" /> The connection to {{ store.transportNameForInstructions() }} was not successful.</h6>
               <p>
                 You may have not setup all the connection settings, have a look at the <RouterLink :to="routeLinks.throughput.setup.connectionSetup.link">Connection Setup</RouterLink> tab.<br />
                 If you have set all the connection settings but are still having issues, look at the <RouterLink :to="routeLinks.throughput.setup.diagnostics.link">Diagnostics</RouterLink> tab for more information on how to fix them.
@@ -100,11 +100,5 @@ const { testResults, isBrokerTransport } = storeToRefs(store);
 <style scoped>
 .intro {
   margin: 10px 0;
-}
-.icon-success {
-  color: green;
-}
-.icon-error {
-  color: red;
 }
 </style>

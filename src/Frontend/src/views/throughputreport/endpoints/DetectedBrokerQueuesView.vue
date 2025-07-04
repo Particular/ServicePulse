@@ -15,7 +15,7 @@ const { testResults } = storeToRefs(store);
 <template>
   <template v-if="!testResults?.broker_connection_result.connection_successful">
     <div class="errorContainer text-center">
-      <h6><FAIcon :icon="faTimes" class="icon-error" /> The connection to {{ store.transportNameForInstructions() }} was not successful.</h6>
+      <h6><FAIcon :icon="faTimes" class="text-danger" /> The connection to {{ store.transportNameForInstructions() }} was not successful.</h6>
       <p>
         You may have not setup all the connection settings, have a look at <RouterLink :to="routeLinks.throughput.setup.connectionSetup.link">Connection Setup in Configuration</RouterLink>.<br />
         If you have set all the connection settings but are still having issues, look at the <RouterLink :to="routeLinks.throughput.setup.diagnostics.link">Diagnostics in Configuration</RouterLink> for more information on how to fix them.
@@ -43,8 +43,5 @@ const { testResults } = storeToRefs(store);
 <style scoped>
 .errorContainer {
   margin: 20px;
-}
-.icon-error {
-  color: red;
 }
 </style>
