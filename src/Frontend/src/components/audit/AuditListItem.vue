@@ -13,18 +13,51 @@ const props = defineProps<{
   message: Message;
 }>();
 
-function navigateToMessage(message: Message) {
+function getMessageUrl(message: Message) {
+  const path = message.status === MessageStatus.Successful || message.status === MessageStatus.ResolvedSuccessfully ? routeLinks.messages.successMessage.link(message.message_id, message.id) : routeLinks.messages.failedMessage.link(message.id);
+
+  // Build the complete URL with hash routing and query parameters
   const query = router.currentRoute.value.query;
+  const queryParams = new URLSearchParams();
+
+  // Add existing query parameters
+  Object.entries(query).forEach(([key, value]) => {
+    if (value !== null && value !== undefined) {
+      queryParams.append(key, String(value));
+    }
+  });
+
+  // Add the back parameter
+  queryParams.set("back", route.path);
+
+  const queryString = queryParams.toString();
+  return `#${path}${queryString ? `?${queryString}` : ""}`;
+}
+
+function navigateToMessage(message: Message, event?: MouseEvent) {
+  // Allow browser's native tab/window opening behavior
+  if (event && (event.metaKey || event.ctrlKey || event.shiftKey || event.button === 1)) {
+    return;
+  }
+
+  // For normal left-clicks, prevent default anchor behavior and use Vue Router
+  // This maintains SPA navigation and preserves the "back" query parameter
+  if (event) {
+    event.preventDefault();
+  }
+
+  const query = router.currentRoute.value.query;
+  const path = message.status === MessageStatus.Successful || message.status === MessageStatus.ResolvedSuccessfully ? routeLinks.messages.successMessage.link(message.message_id, message.id) : routeLinks.messages.failedMessage.link(message.id);
 
   router.push({
-    path: message.status === MessageStatus.Successful || message.status === MessageStatus.ResolvedSuccessfully ? routeLinks.messages.successMessage.link(message.message_id, message.id) : routeLinks.messages.failedMessage.link(message.id),
+    path,
     query: { ...query, ...{ back: route.path } },
   });
 }
 </script>
 
 <template>
-  <div class="item" @click="navigateToMessage(props.message)">
+  <a class="item" :href="getMessageUrl(props.message)" @click="navigateToMessage(props.message, $event)">
     <div class="status">
       <MessageStatusIcon :message="props.message" />
     </div>
@@ -34,7 +67,7 @@ function navigateToMessage(message: Message) {
     <div class="critical-time"><span class="label-name">Critical Time:</span>{{ formatDotNetTimespan(props.message.critical_time) }}</div>
     <div class="processing-time"><span class="label-name">Processing Time:</span>{{ formatDotNetTimespan(props.message.processing_time) }}</div>
     <div class="delivery-time"><span class="label-name">Delivery Time:</span>{{ formatDotNetTimespan(props.message.delivery_time) }}</div>
-  </div>
+  </a>
 </template>
 
 <style scoped>
@@ -49,6 +82,8 @@ function navigateToMessage(message: Message) {
   grid-template-areas:
     "status message-type message-type message-type time-sent"
     "status message-id processing-time critical-time delivery-time";
+  text-decoration: none;
+  color: inherit;
 }
 .item:not(:first-child) {
   border-top-color: #eee;
