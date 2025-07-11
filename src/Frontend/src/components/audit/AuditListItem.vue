@@ -13,61 +13,29 @@ const props = defineProps<{
   message: Message;
 }>();
 
-function getMessageUrl(message: Message) {
+function getMessageRoute(message: Message) {
   const path = message.status === MessageStatus.Successful || message.status === MessageStatus.ResolvedSuccessfully ? routeLinks.messages.successMessage.link(message.message_id, message.id) : routeLinks.messages.failedMessage.link(message.id);
 
-  // Build the complete URL with hash routing and query parameters
   const query = router.currentRoute.value.query;
-  const queryParams = new URLSearchParams();
-
-  // Add existing query parameters
-  Object.entries(query).forEach(([key, value]) => {
-    if (value !== null && value !== undefined) {
-      queryParams.append(key, String(value));
-    }
-  });
-
-  // Add the back parameter
-  queryParams.set("back", route.path);
-
-  const queryString = queryParams.toString();
-  return `#${path}${queryString ? `?${queryString}` : ""}`;
-}
-
-function navigateToMessage(message: Message, event?: MouseEvent) {
-  // Allow browser's native tab/window opening behavior
-  if (event && (event.metaKey || event.ctrlKey || event.shiftKey || event.button === 1)) {
-    return;
-  }
-
-  // For normal left-clicks, prevent default anchor behavior and use Vue Router
-  // This maintains SPA navigation and preserves the "back" query parameter
-  if (event) {
-    event.preventDefault();
-  }
-
-  const query = router.currentRoute.value.query;
-  const path = message.status === MessageStatus.Successful || message.status === MessageStatus.ResolvedSuccessfully ? routeLinks.messages.successMessage.link(message.message_id, message.id) : routeLinks.messages.failedMessage.link(message.id);
-
-  router.push({
+  return {
     path,
-    query: { ...query, ...{ back: route.path } },
-  });
+    query: { ...query, back: route.path },
+  };
 }
 </script>
 
 <template>
-  <a class="item" :href="getMessageUrl(props.message)" @click="navigateToMessage(props.message, $event)">
-    <div class="status">
+  <RouterLink :to="getMessageRoute(props.message)" class="item">
+    <span class="status">
       <MessageStatusIcon :message="props.message" />
-    </div>
-    <div class="message-id">{{ props.message.message_id }}</div>
-    <div class="message-type">{{ props.message.message_type }}</div>
-    <div class="time-sent"><span class="label-name">Time Sent:</span>{{ new Date(props.message.time_sent).toLocaleString() }}</div>
-    <div class="critical-time"><span class="label-name">Critical Time:</span>{{ formatDotNetTimespan(props.message.critical_time) }}</div>
-    <div class="processing-time"><span class="label-name">Processing Time:</span>{{ formatDotNetTimespan(props.message.processing_time) }}</div>
-    <div class="delivery-time"><span class="label-name">Delivery Time:</span>{{ formatDotNetTimespan(props.message.delivery_time) }}</div>
-  </a>
+    </span>
+    <span class="message-id">{{ props.message.message_id }}</span>
+    <span class="message-type">{{ props.message.message_type }}</span>
+    <span class="time-sent"><span class="label-name">Time Sent:</span>{{ new Date(props.message.time_sent).toLocaleString() }}</span>
+    <span class="critical-time"><span class="label-name">Critical Time:</span>{{ formatDotNetTimespan(props.message.critical_time) }}</span>
+    <span class="processing-time"><span class="label-name">Processing Time:</span>{{ formatDotNetTimespan(props.message.processing_time) }}</span>
+    <span class="delivery-time"><span class="label-name">Delivery Time:</span>{{ formatDotNetTimespan(props.message.delivery_time) }}</span>
+  </RouterLink>
 </template>
 
 <style scoped>
@@ -99,25 +67,32 @@ function navigateToMessage(message: Message, event?: MouseEvent) {
 }
 .status {
   grid-area: status;
+  display: block;
 }
 .message-id {
   grid-area: message-id;
+  display: block;
 }
 .time-sent {
   grid-area: time-sent;
+  display: block;
 }
 .message-type {
   grid-area: message-type;
   font-weight: bold;
   overflow-wrap: break-word;
+  display: block;
 }
 .processing-time {
   grid-area: processing-time;
+  display: block;
 }
 .critical-time {
   grid-area: critical-time;
+  display: block;
 }
 .delivery-time {
   grid-area: delivery-time;
+  display: block;
 }
 </style>
