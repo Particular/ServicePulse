@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch, watchEffect } from "vue";
 import { RouteLocationAsPathGeneric, RouterLink, useRoute } from "vue-router";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
@@ -96,6 +96,16 @@ onMounted(() => {
   const { back, ...otherArgs } = route.query;
   if (back) {
     backLink.value = { path: back.toString(), query: otherArgs };
+  }
+});
+
+// Update document title to include message status and type for easier tab identification
+watchEffect(() => {
+  if (state.value.data.message_type) {
+    const statusEmoji = isError.value ? "❌" : "✅";
+    document.title = `${statusEmoji} ${state.value.data.message_type} - ServicePulse`;
+  } else {
+    document.title = "ServicePulse";
   }
 });
 </script>
