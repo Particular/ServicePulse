@@ -1,3 +1,2 @@
 exclusions:
 - src/NServiceBus.snk
-- .github/dependabot.yml
