@@ -1,3 +1,0 @@
-{
-    enabledManagers: [ "nuget", "github-actions", "npm" ]
-}
