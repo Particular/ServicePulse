@@ -90,15 +90,15 @@ describe("DetectedListView tests", () => {
 
   describe("filtering scenarios", () => {
     function getFilterNameElement() {
-      return screen.getByRole("searchbox", { name: /Filter by name/i }) as HTMLTextAreaElement;
-    }
-
-    function getFilterNameTypeElement() {
-      return screen.getByRole("combobox", { name: /Filter name type/i }) as HTMLSelectElement;
+      return screen.getByRole("searchbox", { name: /Filter by name/i }) as HTMLInputElement;
     }
 
     function getFilterUnsetCheckboxElement() {
       return screen.getByRole("checkbox", { name: /Show only not set Endpoint Types/i }) as HTMLInputElement;
+    }
+
+    function waitForDebounce(ms: number = 1000) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
     test("by name", async () => {
@@ -114,26 +114,26 @@ describe("DetectedListView tests", () => {
 
       const user = userEvent.setup();
       const filterNameElement = getFilterNameElement();
-      await user.type(filterNameElement, "Alpha");
+      await user.type(filterNameElement, "Alpha*");
+      await waitForDebounce();
 
       expect(screen.queryAllByText(/Alpha\d/i).length).toBe(10);
       expect(screen.queryAllByText(/\dBeta/i).length).toBe(0);
       expect(screen.queryAllByText(/\dDelta\d/i).length).toBe(0);
-
-      const filterNameTypeElement = getFilterNameTypeElement();
-      await user.selectOptions(filterNameTypeElement, "Ends with");
       await user.clear(filterNameElement);
-      await user.type(filterNameElement, "Beta");
+      await user.type(filterNameElement, "*Beta");
+      await waitForDebounce();
 
       expect(screen.queryAllByText(/\dBeta/i).length).toBe(10);
       expect(screen.queryAllByText(/Alpha\d/i).length).toBe(0);
       expect(screen.queryAllByText(/\dDelta\d/i).length).toBe(0);
-
-      await user.selectOptions(filterNameTypeElement, "Contains");
       await user.clear(filterNameElement);
-      await user.type(filterNameElement, "Delta");
+      await user.type(filterNameElement, "*Delta*");
+      await waitForDebounce();
 
       expect(screen.queryAllByText(/\dDelta\d/i).length).toBe(10);
+      expect(screen.queryAllByText(/\dBeta/i).length).toBe(0);
+      expect(screen.queryAllByText(/Alpha\d/i).length).toBe(0);
       expect(screen.queryAllByText(/\dBeta/i).length).toBe(0);
       expect(screen.queryAllByText(/Alpha\d/i).length).toBe(0);
     });
@@ -176,9 +176,7 @@ describe("DetectedListView tests", () => {
       const filterCheckboxElement = getFilterUnsetCheckboxElement();
       await user.click(filterCheckboxElement);
 
-      const filterNameTypeElement = getFilterNameTypeElement();
       const filterNameElement = getFilterNameElement();
-      await user.selectOptions(filterNameTypeElement, "Begins with");
       await user.clear(filterNameElement);
       await user.type(filterNameElement, "boo");
 

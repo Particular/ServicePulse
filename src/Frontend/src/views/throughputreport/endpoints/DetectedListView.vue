@@ -14,13 +14,8 @@ import ResultsCount from "@/components/ResultsCount.vue";
 import { useHiddenFeature } from "./useHiddenFeature";
 import { license } from "@/composables/serviceLicense";
 import FAIcon from "@/components/FAIcon.vue";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-
-enum NameFilterType {
-  beginsWith = "Begins with",
-  contains = "Contains",
-  endsWith = "Ends with",
-}
+import { faInfoCircle, faAsterisk } from "@fortawesome/free-solid-svg-icons";
+import FilterInput from "@/components/FilterInput.vue";
 
 interface SortData {
   text: string;
@@ -51,17 +46,19 @@ const props = defineProps<DetectedListViewProps>();
 
 const data = ref<EndpointThroughputSummary[]>([]);
 const dataChanges = ref(new Map<string, { indicator: string }>());
-const filterData = reactive({ name: "", nameFilterType: NameFilterType.beginsWith, sort: "name", showUnsetOnly: false });
-const filterNameOptions = [
-  { text: NameFilterType.beginsWith, filter: (a: EndpointThroughputSummary) => a.name.toLowerCase().startsWith(filterData.name.toLowerCase()) },
-  { text: NameFilterType.contains, filter: (a: EndpointThroughputSummary) => a.name.toLowerCase().includes(filterData.name.toLowerCase()) },
-  { text: NameFilterType.endsWith, filter: (a: EndpointThroughputSummary) => a.name.toLowerCase().endsWith(filterData.name.toLowerCase()) },
-];
+const filterData = reactive({ name: "", sort: "name", showUnsetOnly: false });
+
 const filteredData = computed(() => {
   const sortItem = sortData.find((value) => value.value === filterData.sort);
 
   return data.value
-    .filter((row) => !row.name || filterNameOptions.find((v) => v.text === filterData.nameFilterType)?.filter(row))
+    .filter((row) => {
+      if (!filterData.name) return true;
+      // Escape regex special chars except *
+      const escaped = filterData.name.replace(/[-[\]/{}()+?.\\^$|]/g, "\\$&").replace(/\*/g, ".*");
+      const regex = new RegExp(`^${escaped}$`, "i");
+      return regex.test(row.name);
+    })
     .filter((row) => {
       if (filterData.showUnsetOnly) {
         return dataChanges.value.get(row.name)?.indicator === "";
@@ -103,16 +100,8 @@ async function loadData() {
   data.value = results.filter((row) => row.is_known_endpoint === (props.source === DataSource.WellKnownEndpoint));
 }
 
-function nameFilterChanged(event: Event) {
-  filterData.name = (event.target as HTMLInputElement).value;
-}
-
 function sortChanged(item: Item) {
   filterData.sort = item.value;
-}
-
-function searchTypeChanged(event: Event) {
-  filterData.nameFilterType = (event.target as HTMLInputElement).value as NameFilterType;
 }
 
 function updateIndicator(event: Event, name: string) {
@@ -173,19 +162,17 @@ async function save() {
     <div class="row filters">
       <div class="col">
         <div class="text-search-container">
-          <div>
-            <select class="form-select text-search format-text" aria-label="Filter name type" @change="searchTypeChanged">
-              <option v-for="item in filterNameOptions" :value="item.text" :key="item.text">{{ item.text }}</option>
-            </select>
-          </div>
-          <div>
-            <!-- <FilterInput v-model="filterData.name" /> TODO: this is failing a test, should replace the line below -->
-            <input type="search" aria-label="Filter by name" class="form-control format-text" :value="filterData.name" @input="nameFilterChanged" placeholder="Filter by name..." />
+          <FilterInput v-model="filterData.name" placeholder="Filter by name..." aria-label="Filter by name" />
+          <div class="note">
+            Use <FAIcon :icon="faAsterisk" size="xs" /> as a wildcard. E.g.: PRD_<FAIcon :icon="faAsterisk" size="xs" /> or <FAIcon :icon="faAsterisk" size="xs" />_PRD or <FAIcon :icon="faAsterisk" size="xs" />_PRD_<FAIcon
+              :icon="faAsterisk"
+              size="xs"
+            />
           </div>
         </div>
       </div>
-      <div class="col" style="align-content: center">
-        <div>
+      <div class="col">
+        <div class="middle-column">
           <input type="checkbox" aria-label="Show only not set Endpoint Types" class="check-label" id="showUnsetOnly" @input="showUnsetChanged" />
           <label for="showUnsetOnly">Show only not set Endpoint Types</label>
         </div>
@@ -259,17 +246,13 @@ async function save() {
 .formatThroughputColumn {
   padding-right: 20px;
 }
-.format-text {
-  font-weight: unset;
-  font-size: 14px;
-  min-width: 120px;
-}
 .text-search-container {
-  display: flex;
-  flex-direction: row;
+  width: 25rem;
 }
-.text-search {
-  width: 130px;
+.middle-column {
+  align-content: center;
+  display: flex;
+  padding-top: 5px;
 }
 .endpointType {
   width: 340px;
