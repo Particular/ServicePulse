@@ -60,7 +60,7 @@ function findKeyByValue(searchValue: string) {
       <div class="filter-label"></div>
       <div class="filter-component text-search-container">
         <FilterInput v-model="messageFilterString" placeholder="Search messages..." aria-label="Search messages" />
-        <div class="note">Check the <a href="https://docs.particular.net/servicepulse/all-messages#filtering-options">documentation</a> to see the available operators and wildcards</div>
+        <div class="note">Check the <a href="https://docs.particular.net/servicepulse/all-messages#filtering-options">documentation</a> to see the available filtering options</div>
       </div>
     </div>
     <div class="filter">
