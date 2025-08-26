@@ -17,7 +17,7 @@ if ( $? -eq $false ) {
 
 npm install
 npm run build
-Remove-Item -Path "./dist/mockServiceWorker.js"
+Remove-Item -Path "./dist/mockServiceWorker.js" -ErrorAction SilentlyContinue
 Pop-Location
 
 Copy-Item -path $FrontendSourceFolder/dist/* -Destination $AppOutputFolder -Recurse
