@@ -6,7 +6,7 @@ import { faFileLines } from "@fortawesome/free-solid-svg-icons";
 </script>
 
 <template>
-  <RouterLink :to="routeLinks.throughput.root">
+  <RouterLink :to="routeLinks.throughput.root" title="Usage">
     <FAIcon :icon="faFileLines" title="Usage" />
     <span class="navbar-label">Usage</span>
   </RouterLink>

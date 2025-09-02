@@ -7,7 +7,7 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 </script>
 
 <template>
-  <RouterLink :to="routeLinks.failedMessage.root">
+  <RouterLink :to="routeLinks.failedMessage.root" title="Failed Messages">
     <FAIcon :icon="faEnvelope" title="Failed Messages" />
     <span class="navbar-label">Failed Messages</span>
     <span v-if="stats.number_of_failed_messages > 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>

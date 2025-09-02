@@ -10,7 +10,7 @@ const { failedHeartbeatsCount } = storeToRefs(useHeartbeatsStore());
 </script>
 
 <template>
-  <RouterLink aria-label="Heartbeats Menu Item" :to="routeLinks.heartbeats.root">
+  <RouterLink aria-label="Heartbeats Menu Item" :to="routeLinks.heartbeats.root" title="Heartbeats">
     <FAIcon :icon="faHeartPulse" title="Heartbeats" />
     <span class="navbar-label">Heartbeats</span>
     <span v-if="failedHeartbeatsCount > 0" class="badge badge-important" aria-label="Alert Count">{{ failedHeartbeatsCount }}</span>

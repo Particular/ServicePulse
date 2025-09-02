@@ -6,7 +6,7 @@ import FAIcon from "@/components/FAIcon.vue";
 </script>
 
 <template>
-  <RouterLink :to="routeLinks.dashboard">
+  <RouterLink :to="routeLinks.dashboard" title="Dashboard">
     <FAIcon :icon="faGauge" title="Dashboard" />
     <span class="navbar-label">Dashboard</span>
   </RouterLink>
