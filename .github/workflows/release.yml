@@ -31,7 +31,7 @@ jobs:
         with:
           dotnet-version: 7.0.x
       - name: Set up Node.js
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v5.0.0
         with:
           node-version: 22.18.x
       - name: Build Frontend
