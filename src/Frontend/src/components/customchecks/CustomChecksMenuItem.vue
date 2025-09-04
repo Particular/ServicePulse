@@ -11,8 +11,8 @@ const { failingCount } = storeToRefs(store);
 </script>
 
 <template>
-  <RouterLink :to="routeLinks.customChecks" title="Custom Checks">
-    <FAIcon :icon="faCheck" title="Custom Checks" />
+  <RouterLink :to="routeLinks.customChecks">
+    <FAIcon :icon="faCheck" v-tippy="`Custom Checks`" />
     <span class="navbar-label">Custom Checks</span>
     <span v-if="failingCount > 0" class="badge badge-important">{{ failingCount }}</span>
   </RouterLink>

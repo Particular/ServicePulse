@@ -6,8 +6,8 @@ import { faListUl } from "@fortawesome/free-solid-svg-icons";
 </script>
 
 <template>
-  <RouterLink :to="routeLinks.events" title="Events">
-    <FAIcon :icon="faListUl" title="Events" />
+  <RouterLink :to="routeLinks.events">
+    <FAIcon :icon="faListUl" v-tippy="`Events`" />
     <span class="navbar-label">Events</span>
   </RouterLink>
 </template>

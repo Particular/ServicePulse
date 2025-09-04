@@ -6,8 +6,8 @@ import { faEnvelopeOpen } from "@fortawesome/free-solid-svg-icons";
 </script>
 
 <template>
-  <RouterLink :to="routeLinks.messages.root" title="All Messages">
-    <FAIcon :icon="faEnvelopeOpen" title="All Messages" />
+  <RouterLink :to="routeLinks.messages.root">
+    <FAIcon :icon="faEnvelopeOpen" v-tippy="`All Messages`" />
     <span class="navbar-label">All Messages</span>
   </RouterLink>
 </template>
