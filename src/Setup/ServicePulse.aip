@@ -177,7 +177,7 @@
     <ROW Dialog_="Configuration" Control="BottomLine" Type="Line" X="0" Y="234" Width="372" Height="0" Attributes="1" Order="400"/>
     <ROW Dialog_="Configuration" Control="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" Attributes="1048577" Text="[BannerBitmap]" Order="500"/>
     <ROW Dialog_="Configuration" Control="Text_1" Type="Text" X="20" Y="96" Width="43" Height="20" Attributes="65539" Property="TEXT_1_PROP" Text="Port" Order="600"/>
-    <ROW Dialog_="Configuration" Control="Edit_1" Type="Edit" X="50" Y="96" Width="32" Height="15" Attributes="3" Property="INST_PORT_PULSE" Text="{260}" Order="700"/>
+    <ROW Dialog_="Configuration" Control="Edit_1" Type="Edit" X="60" Y="96" Width="32" Height="15" Attributes="3" Property="INST_PORT_PULSE" Text="{260}" Order="700"/>
     <ROW Dialog_="Configuration" Control="Edit_2" Type="Edit" X="109" Y="159" Width="237" Height="15" Attributes="3" Property="INST_URI" Text="{260}" Order="800"/>
     <ROW Dialog_="Configuration" Control="Text_2" Type="Text" X="20" Y="159" Width="89" Height="53" Attributes="65539" Property="TEXT_2_PROP" Text="ServiceControl URI" TextStyle="DlgFontBold8" Order="900"/>
     <ROW Dialog_="Configuration" Control="Text_3" Type="Text" X="20" Y="74" Width="272" Height="16" Attributes="65539" Property="TEXT_3_PROP" Text="Specify the port number ServicePulse will listen on"  TextStyle="DlgFontBold8"  Order="1000"/>
@@ -211,7 +211,7 @@
     <ROW Dialog_="FeatureConfiguration" Control="BottomLine" Type="Line" X="0" Y="234" Width="372" Height="0" Attributes="1" Order="400"/>
     <ROW Dialog_="FeatureConfiguration" Control="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" Attributes="1048577" Text="[BannerBitmap]" Order="500"/>
     <ROW Dialog_="FeatureConfiguration" Control="Text_1" Type="Text" X="20" Y="79" Width="43" Height="20" Attributes="65539" Property="TEXT_1_PROP_1" Text="Port"  Order="600"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Edit_1" Type="Edit" X="50" Y="79" Width="32" Height="15" Attributes="3" Property="INST_PORT_PULSE" Text="{260}" Order="700"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Edit_1" Type="Edit" X="60" Y="79" Width="32" Height="15" Attributes="3" Property="INST_PORT_PULSE" Text="{260}" Order="700"/>
     <ROW Dialog_="FeatureConfiguration" Control="Edit_2" Type="Edit" X="99" Y="119" Width="218" Height="15" Attributes="3" Property="INST_URI" Text="{260}" Order="800"/>
     <ROW Dialog_="FeatureConfiguration" Control="Text_2" Type="Text" X="23" Y="122" Width="89" Height="15" Attributes="65539" Property="TEXT_2_PROP_2" Text="ServiceControl URI" Order="900"/>
     <ROW Dialog_="FeatureConfiguration" Control="Text_3" Type="Text" X="20" Y="59" Width="272" Height="16" Attributes="65539" Property="TEXT_3_PROP_2" Text="Specify the port number ServicePulse will listen on" TextStyle="DlgFontBold8" Order="1000"/>
