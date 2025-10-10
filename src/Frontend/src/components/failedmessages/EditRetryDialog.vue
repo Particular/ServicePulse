@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
-import { useRetryEditedMessage } from "@/composables/serviceFailedMessage";
 import MessageHeader from "./EditMessageHeader.vue";
 import type Header from "@/resources/Header";
 import parseContentType from "@/composables/contentTypeParser";
@@ -105,7 +104,7 @@ function removeHeadersMarkedAsRemoved() {
 async function retryEditedMessage() {
   removeHeadersMarkedAsRemoved();
   try {
-    await useRetryEditedMessage(id.value, localMessage);
+    await store.retryEditedMessage(id.value, localMessage);
     localMessage.value.retried = true;
     return emit("confirm");
   } catch {

@@ -2,6 +2,7 @@ import { usePatchToServiceControl, usePostToServiceControl } from "./serviceServ
 import type { Ref } from "vue";
 import { useIsSupported } from "@/composables/serviceSemVer";
 import { environment } from "@/composables/serviceServiceControl";
+import type EditRetryResponse from "@/resources/EditRetryResponse";
 
 export async function useUnarchiveMessage(ids: string[]) {
   const response = await usePatchToServiceControl("errors/unarchive/", ids);
@@ -28,7 +29,7 @@ export async function useRetryEditedMessage(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     headers: any[];
   }>
-) {
+): Promise<EditRetryResponse> {
   let headers = editedMessage.value.headers;
   if (useIsSupported(environment.sc_version, "5.2.0")) {
     headers = editedMessage.value.headers.reduce(
@@ -49,4 +50,6 @@ export async function useRetryEditedMessage(
   if (!response.ok) {
     throw new Error(response.statusText);
   }
+
+  return (await response.json()) as EditRetryResponse;
 }
