@@ -18,6 +18,7 @@ interface HeaderWithEditing extends Header {
   isMarkedAsRemoved: boolean;
   isChanged: boolean;
 }
+import type { HeaderWithEditing } from "@/resources/EditedMessage";
 
 const emit = defineEmits<{
   cancel: [];

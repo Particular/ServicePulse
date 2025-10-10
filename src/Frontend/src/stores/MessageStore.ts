@@ -13,6 +13,7 @@ import xmlFormat from "xml-formatter";
 import { useArchiveMessage, useRetryMessages, useUnarchiveMessage, useRetryEditedMessage } from "@/composables/serviceFailedMessage";
 import { DataContainer } from "./DataContainer";
 import type EditRetryResponse from "@/resources/EditRetryResponse";
+import type { EditedMessage } from "@/resources/EditedMessage";
 
 interface Model {
   id?: string;
@@ -251,14 +252,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     }
   }
 
-  async function retryEditedMessage(
-    id: string,
-    editedMessage: Ref<{
-      messageBody: string;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      headers: any[];
-    }>
-  ): Promise<void> {
+  async function retryEditedMessage(id: string, editedMessage: Ref<EditedMessage>): Promise<void> {
     const response = await useRetryEditedMessage(id, editedMessage);
     editRetryResponse.value = response;
   }
