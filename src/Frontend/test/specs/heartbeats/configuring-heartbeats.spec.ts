@@ -7,15 +7,19 @@ import { getEndpointsForConfiguration } from "./questions/getEndpointsForConfigu
 import { getEndpointInstance } from "./questions/getEndpointInstance";
 import { toggleHeartbeatMonitoring } from "./actions/toggleHeartbeatMonitoring";
 import { getAllHeartbeatEndpointRecords, getHeartbeatEndpointRecord } from "./questions/getHeartbeatEndpointRecord";
-import flushPromises from "flush-promises";
 import { healthyEndpointTemplate } from "../../mocks/heartbeat-endpoint-template";
 import { setHeartbeatFilter } from "./actions/setHeartbeatFilter";
 import { getHeartbeatFilterValue } from "./questions/getHeartbeatFilterValue";
+import { flushPromises } from "@vue/test-utils";
 
-vi.mock("lodash/debounce", () => ({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  default: (fn: Function) => fn,
-}));
+vi.mock("@vueuse/core", async (importOriginal) => {
+  const originalModule = await importOriginal<typeof import("@vueuse/core")>();
+  return {
+    ...originalModule,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    useDebounceFn: (fn: Function) => fn,
+  };
+});
 
 describe("FEATURE: Heartbeats configuration", () => {
   describe("RULE: A list of all endpoints with the heartbeats plug-in installed should be displayed", () => {
@@ -53,7 +57,6 @@ describe("FEATURE: Heartbeats configuration", () => {
       const endpointInstance = await getEndpointInstance("TestEndpoint_2");
 
       expect(endpointInstance.muted).toBe(false);
-      await flushPromises();
     });
 
     /* SCENARIO
@@ -78,7 +81,6 @@ describe("FEATURE: Heartbeats configuration", () => {
 
       expect(unhealthyEndpoint).toBeTruthy();
       expect(unhealthyEndpoint?.instancesMuted).toBe(1);
-      await flushPromises();
     });
 
     /* SCENARIO
@@ -103,7 +105,6 @@ describe("FEATURE: Heartbeats configuration", () => {
 
       expect(healthyEndpoint).toBeTruthy();
       expect(healthyEndpoint?.instancesMuted).toBe(0);
-      await flushPromises();
     });
 
     /* SCENARIO
@@ -128,7 +129,6 @@ describe("FEATURE: Heartbeats configuration", () => {
 
       expect(healthyEndpoint).toBeTruthy();
       expect(healthyEndpoint?.instancesMuted).toBe(0);
-      await flushPromises();
     });
   });
 

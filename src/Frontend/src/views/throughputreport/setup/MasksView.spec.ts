@@ -5,9 +5,9 @@ import * as precondition from "../../../../test/preconditions";
 import { useServiceControl } from "@/composables/serviceServiceControl";
 import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
 import { minimumSCVersionForThroughput } from "@/views/throughputreport/isThroughputSupported";
-import flushPromises from "flush-promises";
 import Toast from "vue-toastification";
 import { disableMonitoring } from "../../../../test/drivers/vitest/setup";
+import { flushPromises } from "@vue/test-utils";
 
 describe("MaskView tests", () => {
   async function setup() {
@@ -28,8 +28,9 @@ describe("MaskView tests", () => {
     driver.mockEndpoint(`${window.defaultConfig.service_control_url}licensing/settings/masks`, { body });
     useServiceControlUrls();
     await useServiceControl();
-    const { debug } = render(MasksView, { global: { plugins: [Toast] } });
+    const { debug } = render(MasksView, { global: { plugins: [Toast], directives: { tippy: () => {} } } });
     await flushPromises();
+
     return { debug, driver };
   }
 

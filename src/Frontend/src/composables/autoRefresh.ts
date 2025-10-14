@@ -1,51 +1,66 @@
-/**
- * Enables refresh functionality, either auto or manual
- * @param refreshAction The action to perform (by default) when refreshing
- * @param defaultTimeout The time between refreshes in ms or null if no auto-refresh is desired
- */
-export default function useAutoRefresh(refreshAction: () => Promise<void>, defaultTimeout: number | null, startImmediately = true) {
-  let refreshInterval: ReturnType<typeof setTimeout> | null = null;
-  const timeout = { value: defaultTimeout };
+import { watch, ref, shallowReadonly, type WatchStopHandle } from "vue";
+import { useCounter, useDocumentVisibility, useTimeoutPoll } from "@vueuse/core";
 
-  function stopTimer() {
-    if (refreshInterval !== null) {
-      clearTimeout(refreshInterval);
-      refreshInterval = null;
+export default function useFetchWithAutoRefresh(name: string, fetch: () => Promise<void>, intervalMs: number) {
+  let watchStop: WatchStopHandle | null = null;
+  const { count, inc, dec, reset } = useCounter(0);
+  const interval = ref(intervalMs);
+  const isRefreshing = ref(false);
+  const fetchWrapper = async () => {
+    if (isRefreshing.value) {
+      return;
     }
-  }
-
-  function startTimer() {
-    if (timeout.value === null) return;
-
-    stopTimer();
-    refreshInterval = setTimeout(() => {
-      executeAndResetTimer();
-    }, timeout.value as number);
-  }
-
-  async function executeAndResetTimer(overrideAction?: () => Promise<void>) {
-    try {
-      stopTimer();
-      await (overrideAction ?? refreshAction)();
-    } finally {
-      startTimer();
-    }
-  }
-
-  /**
-   * Updates the timeout interval between refreshes
-   * @param updatedTimeout The new time between refreshes in ms or null if no auto-refresh is desired
-   */
-  async function updateTimeout(updatedTimeout: number | null) {
-    timeout.value = updatedTimeout;
-    await executeAndResetTimer();
-  }
-
-  // eslint-disable-next-line promise/catch-or-return,promise/prefer-await-to-then,promise/valid-params
-  if (startImmediately) executeAndResetTimer().then();
-
-  return {
-    executeAndResetTimer,
-    updateTimeout,
+    isRefreshing.value = true;
+    await fetch();
+    isRefreshing.value = false;
   };
+  const { pause, resume } = useTimeoutPoll(
+    fetchWrapper,
+    interval,
+    { immediate: false, immediateCallback: true } // we control first fetch manually
+  );
+
+  const visibility = useDocumentVisibility();
+
+  const start = async () => {
+    inc();
+    if (count.value === 1) {
+      console.debug(`[AutoRefresh] Starting auto-refresh for ${name} every ${interval.value}ms`);
+      resume();
+      watchStop = watch(visibility, (current, previous) => {
+        if (current === "visible" && previous === "hidden") {
+          console.debug(`[AutoRefresh] Resuming auto-refresh for ${name} as document became visible`);
+          resume();
+        }
+
+        if (current === "hidden" && previous === "visible") {
+          console.debug(`[AutoRefresh] Pausing auto-refresh for ${name} as document became hidden`);
+          pause();
+        }
+      });
+    } else {
+      console.debug(`[AutoRefresh] Incremented refCount for ${name} to ${count.value}`);
+      // Because another component has started using the auto-refresh, do an immediate refresh to ensure it has up-to-date data
+      await fetchWrapper();
+    }
+  };
+
+  const stop = () => {
+    dec();
+    if (count.value <= 0) {
+      console.debug(`[AutoRefresh] Stopping auto-refresh for ${name}`);
+      pause();
+      watchStop?.();
+      watchStop = null;
+      reset();
+    } else {
+      console.debug(`[AutoRefresh] Decremented refCount for ${name} to ${count.value}`);
+    }
+  };
+
+  const updateInterval = (newIntervalMs: number) => {
+    interval.value = newIntervalMs;
+  };
+
+  return { refreshNow: fetchWrapper, isRefreshing: shallowReadonly(isRefreshing), updateInterval, start, stop };
 }
