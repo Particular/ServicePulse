@@ -20,6 +20,11 @@ const failureStatus = computed(() => state.value.data.failure_status);
 const isDisabled = computed(() => failureStatus.value.retried || failureStatus.value.archived || failureStatus.value.resolved);
 const isVisible = computed(() => edit_and_retry_config.value.enabled && state.value.data.status !== MessageStatus.Successful && state.value.data.status !== MessageStatus.ResolvedSuccessfully);
 
+const handleIgnoreClose = async () => {
+  isEditIgnoredDialogVisible.value = false;
+  await store.pollForNextUpdate(FailedMessageStatus.Resolved);
+};
+
 const handleConfirm = async () => {
   isConfirmDialogVisible.value = false;
 
@@ -28,8 +33,8 @@ const handleConfirm = async () => {
   } else {
     const message = `Retrying the edited message ${state.value.data.id} ...`;
     useShowToast(TYPE.INFO, "Info", message);
+    await store.pollForNextUpdate(FailedMessageStatus.Resolved);
   }
-  await store.pollForNextUpdate(FailedMessageStatus.Resolved);
 };
 
 async function openDialog() {
@@ -43,7 +48,7 @@ async function openDialog() {
     <button type="button" class="btn btn-default" aria-label="Edit & retry" :disabled="isDisabled" @click="openDialog"><FAIcon :icon="faPencil" class="icon" /> Edit & retry</button>
     <Teleport to="#modalDisplay">
       <EditRetryDialog v-if="isConfirmDialogVisible" @cancel="isConfirmDialogVisible = false" @confirm="handleConfirm"></EditRetryDialog>
-      <EditIgnoredDialog v-if="isEditIgnoredDialogVisible" @close="isEditIgnoredDialogVisible = false"></EditIgnoredDialog>
+      <EditIgnoredDialog v-if="isEditIgnoredDialogVisible" @close="handleIgnoreClose"></EditIgnoredDialog>
     </Teleport>
   </template>
 </template>
