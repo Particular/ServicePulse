@@ -105,10 +105,6 @@ export const connections = reactive<Connections>({
   },
 });
 
-export async function useServiceControl() {
-  await Promise.all([useServiceControlStats(), useServiceControlMonitoringStats(), getServiceControlVersion()]);
-}
-
 export function useServiceControlAutoRefresh() {
   useAutoRefresh("serviceControlVersion", getServiceControlVersion, 60000)();
   useAutoRefresh("serviceControlStats", useServiceControlStats, 5000)();

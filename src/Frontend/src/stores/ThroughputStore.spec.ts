@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import * as precondition from "../../test/preconditions";
-import { useServiceControl } from "@/composables/serviceServiceControl";
 import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
 import { Transport } from "@/views/throughputreport/transport";
 import { makeDriverForTests } from "@component-test-utils";
@@ -21,7 +20,6 @@ describe("ThroughputStore tests", () => {
     await driver.setUp(precondition.hasServiceControlMonitoringInstance);
 
     useServiceControlUrls();
-    await useServiceControl();
 
     const store = useThroughputStore(createTestingPinia({ stubActions: false }));
     const refs = storeToRefs(store);
