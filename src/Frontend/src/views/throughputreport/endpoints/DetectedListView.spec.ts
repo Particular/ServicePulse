@@ -2,7 +2,6 @@ import { describe, expect, test } from "vitest";
 import * as precondition from "../../../../test/preconditions";
 import { useServiceControl } from "@/composables/serviceServiceControl";
 import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
-import flushPromises from "flush-promises";
 import { Transport } from "@/views/throughputreport/transport";
 import { makeDriverForTests, render, screen, userEvent } from "@component-test-utils";
 import { Driver, SetupFactoryOptions } from "../../../../test/driver";
@@ -13,6 +12,7 @@ import { UserIndicator } from "@/views/throughputreport/endpoints/userIndicator"
 import { within } from "@testing-library/vue";
 import UpdateUserIndicator from "@/resources/UpdateUserIndicator";
 import { serviceControlWithThroughput } from "@/views/throughputreport/serviceControlWithThroughput";
+import { flushPromises } from "@vue/test-utils";
 
 describe("DetectedListView tests", () => {
   async function setup() {

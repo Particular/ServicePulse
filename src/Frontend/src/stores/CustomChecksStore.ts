@@ -1,8 +1,8 @@
 import { useDeleteFromServiceControl, useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import CustomCheck from "@/resources/CustomCheck";
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { ref, watch } from "vue";
-import useAutoRefresh from "@/composables/autoRefresh";
+import { computed, ref, watch } from "vue";
+import { useCounter } from "@vueuse/core";
 
 export const useCustomChecksStore = defineStore("CustomChecksStore", () => {
   const prefix = "customchecks/";
@@ -11,7 +11,13 @@ export const useCustomChecksStore = defineStore("CustomChecksStore", () => {
   const failingCount = ref(0);
   const failedChecks = ref<CustomCheck[]>([]);
 
-  const dataRetriever = useAutoRefresh(async () => {
+  const { count, inc, dec } = useCounter(0);
+  const skipRefresh = computed(() => count.value > 0);
+
+  const refresh = async () => {
+    if (skipRefresh.value) {
+      return;
+    }
     try {
       const [response, data] = await useTypedFetchFromServiceControl<CustomCheck[]>(`customchecks?status=fail&page=${pageNumber.value}`);
       failedChecks.value = data;
@@ -21,12 +27,13 @@ export const useCustomChecksStore = defineStore("CustomChecksStore", () => {
       failingCount.value = 0;
       throw e;
     }
-  }, 5000);
+  };
 
-  watch(pageNumber, () => dataRetriever.executeAndResetTimer());
+  watch(pageNumber, () => refresh());
 
   async function dismissCustomCheck(id: string) {
-    await dataRetriever.executeAndResetTimer(async () => {
+    try {
+      inc();
       // NOTE: If it takes more than the refresh interval for ServiceControl to delete the check it will reappear
       failedChecks.value = failedChecks.value.filter((x) => x.id !== id);
       failingCount.value--;
@@ -34,10 +41,13 @@ export const useCustomChecksStore = defineStore("CustomChecksStore", () => {
       // HINT: This is required to handle the difference between ServiceControl 4 and 5
       const guid = id.toLocaleLowerCase().startsWith(prefix) ? id.substring(prefix.length) : id;
       await useDeleteFromServiceControl(`${prefix}${guid}`);
-    });
+    } finally {
+      dec();
+    }
   }
 
   return {
+    refresh,
     dismissCustomCheck,
     pageNumber,
     failingCount,

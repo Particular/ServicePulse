@@ -3,7 +3,6 @@ import * as precondition from "../../../../test/preconditions";
 import { useServiceControl } from "@/composables/serviceServiceControl";
 import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
 import { minimumSCVersionForThroughput } from "@/views/throughputreport/isThroughputSupported";
-import flushPromises from "flush-promises";
 import DiagnosticsView from "./DiagnosticsView.vue";
 import { createTestingPinia } from "@pinia/testing";
 import { Transport } from "@/views/throughputreport/transport";
@@ -52,8 +51,15 @@ describe("DiagnosticsView tests", () => {
     useServiceControlUrls();
     await useServiceControl();
 
-    const { debug } = render(DiagnosticsView, { global: { plugins: [createTestingPinia({ stubActions: false })] } });
-    await flushPromises();
+    const { debug } = render(DiagnosticsView, {
+      global: {
+        plugins: [createTestingPinia({ stubActions: false })],
+        directives: {
+          // Add stub for tippy directive
+          tippy: () => {},
+        },
+      },
+    });
 
     return { debug, driver };
   }

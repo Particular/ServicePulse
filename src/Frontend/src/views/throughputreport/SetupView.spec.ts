@@ -3,7 +3,6 @@ import * as precondition from "../../../test/preconditions";
 import { useServiceControl } from "@/composables/serviceServiceControl";
 import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
 import { minimumSCVersionForThroughput } from "@/views/throughputreport/isThroughputSupported";
-import flushPromises from "flush-promises";
 import { createTestingPinia } from "@pinia/testing";
 import { Transport } from "@/views/throughputreport/transport";
 import { makeDriverForTests, render, screen } from "@component-test-utils";
@@ -12,7 +11,7 @@ import { disableMonitoring } from "../../../test/drivers/vitest/setup";
 import SetupView from "./SetupView.vue";
 import { ConnectionSettingsTestResult } from "@/resources/ConnectionTestResults";
 import makeRouter from "@/router";
-import { RouterLinkStub } from "@vue/test-utils";
+import { flushPromises, RouterLinkStub } from "@vue/test-utils";
 import { serviceControlWithThroughput } from "@/views/throughputreport/serviceControlWithThroughput";
 
 describe("SetupView tests", () => {
@@ -58,6 +57,10 @@ describe("SetupView tests", () => {
           RouterLink: RouterLinkStub,
         },
         plugins: [makeRouter(), createTestingPinia({ stubActions: false })],
+        directives: {
+          // Add stub for tippy directive
+          tippy: () => {},
+        },
       },
     });
     await flushPromises();

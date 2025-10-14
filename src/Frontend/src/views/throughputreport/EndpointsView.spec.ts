@@ -2,14 +2,13 @@ import { describe, expect, test } from "vitest";
 import * as precondition from "../../../test/preconditions";
 import { useServiceControl } from "@/composables/serviceServiceControl";
 import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
-import flushPromises from "flush-promises";
 import { createTestingPinia } from "@pinia/testing";
 import { Transport } from "@/views/throughputreport/transport";
 import { makeDriverForTests, render, screen, userEvent } from "@component-test-utils";
 import { Driver } from "../../../test/driver";
 import { disableMonitoring } from "../../../test/drivers/vitest/setup";
 import makeRouter from "@/router";
-import { RouterLinkStub } from "@vue/test-utils";
+import { flushPromises, RouterLinkStub } from "@vue/test-utils";
 import EndpointsView from "./EndpointsView.vue";
 import { serviceControlWithThroughput } from "@/views/throughputreport/serviceControlWithThroughput";
 
@@ -37,6 +36,10 @@ describe("EndpointsView tests", () => {
           RouterLink: RouterLinkStub,
         },
         plugins: [makeRouter(), createTestingPinia({ stubActions: false })],
+        directives: {
+          // Add stub for tippy directive
+          tippy: () => {},
+        },
       },
     });
     await flushPromises();
