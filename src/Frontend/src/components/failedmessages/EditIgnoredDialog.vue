@@ -20,7 +20,7 @@ function closeDialog() {
               </div>
             </div>
             <div class="modal-body">
-              <p>This message retry was ignored because there had been another edit.</p>
+              <p>This retry was ignored because another edit had already been processed.</p>
             </div>
             <div class="modal-footer">
               <button class="btn btn-primary" @click="closeDialog()">Ok</button>

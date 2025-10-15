@@ -4,6 +4,7 @@ import { useIsSupported } from "@/composables/serviceSemVer";
 import { environment } from "@/composables/serviceServiceControl";
 import type EditRetryResponse from "@/resources/EditRetryResponse";
 import type { EditedMessage, HeaderWithEditing } from "@/resources/EditedMessage";
+import { parse } from "lossless-json";
 
 export async function useUnarchiveMessage(ids: string[]) {
   const response = await usePatchToServiceControl("errors/unarchive/", ids);
@@ -40,10 +41,20 @@ export async function useRetryEditedMessage(id: string, editedMessage: Ref<Edite
     message_body: editedMessage.value.messageBody,
     message_headers: headers,
   };
+
   const response = await usePostToServiceControl(`edit/${id}`, payload);
   if (!response.ok) {
     throw new Error(response.statusText);
   }
 
-  return (await response.json()) as EditRetryResponse;
+  //older versions of SC return no payload about the edit result
+  const bodyText = await response.text();
+  if (bodyText === "") {
+    return {
+      edit_ignored: false,
+    } as EditRetryResponse;
+  }
+
+  const result = parse(bodyText) as EditRetryResponse;
+  return result;
 }

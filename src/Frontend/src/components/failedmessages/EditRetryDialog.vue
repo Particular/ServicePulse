@@ -11,13 +11,6 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import { faExclamationCircle, faExclamationTriangle, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { useDebounceFn } from "@vueuse/core";
-
-interface HeaderWithEditing extends Header {
-  isLocked: boolean;
-  isSensitive: boolean;
-  isMarkedAsRemoved: boolean;
-  isChanged: boolean;
-}
 import type { HeaderWithEditing } from "@/resources/EditedMessage";
 
 const emit = defineEmits<{
