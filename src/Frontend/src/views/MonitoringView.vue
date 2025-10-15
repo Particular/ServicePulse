@@ -3,7 +3,6 @@
 import { onMounted, watch, onUnmounted, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { licenseStatus } from "@/composables/serviceLicense";
-import { connectionState } from "@/composables/serviceServiceControl";
 import { useMonitoringStore } from "@/stores/MonitoringStore";
 // Components
 import LicenseExpired from "@/components/LicenseExpired.vue";
@@ -12,11 +11,15 @@ import EndpointList from "@/components/monitoring/EndpointList.vue";
 import MonitoringNoData from "@/components/monitoring/MonitoringNoData.vue";
 import MonitoringHead from "@/components/monitoring/MonitoringHead.vue";
 import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
+import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 
 const monitoringStore = useMonitoringStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 const noData = computed(() => monitoringStore.endpointListIsEmpty);
+const connectionStore = useConnectionsAndStatsStore();
+const connectionState = connectionStore.connectionState;
+
 let refreshInterval: number | undefined = undefined;
 
 watch(historyPeriod, async (newValue) => {

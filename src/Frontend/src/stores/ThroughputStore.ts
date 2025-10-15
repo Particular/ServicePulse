@@ -3,7 +3,7 @@ import { computed, ref, watch } from "vue";
 import ConnectionTestResults from "@/resources/ConnectionTestResults";
 import throughputClient from "@/views/throughputreport/throughputClient";
 import { Transport } from "@/views/throughputreport/transport";
-import { useIsMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
+import { isMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
 import isThroughputSupported from "@/views/throughputreport/isThroughputSupported";
 
 export const useThroughputStore = defineStore("ThroughputStore", () => {
@@ -27,7 +27,7 @@ export const useThroughputStore = defineStore("ThroughputStore", () => {
     }
 
     // if Monitoring is enabled, we return whatever the value of the connection test
-    if (useIsMonitoringEnabled()) {
+    if (isMonitoringEnabled()) {
       return !testResults.value?.monitoring_connection_result.connection_successful;
     }
 

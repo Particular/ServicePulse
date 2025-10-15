@@ -3,41 +3,7 @@ import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer";
 import { useServiceProductUrls } from "./serviceProductUrls";
 import { monitoringUrl, serviceControlUrl, useTypedFetchFromMonitoring, useTypedFetchFromServiceControl } from "./serviceServiceControlUrls";
 import type RootUrls from "@/resources/RootUrls";
-import type FailedMessage from "@/resources/FailedMessage";
-// eslint-disable-next-line no-duplicate-imports
-import { FailedMessageStatus } from "@/resources/FailedMessage";
 import { useAutoRefresh } from "./useAutoRefresh";
-
-export const stats = reactive({
-  active_endpoints: 0,
-  number_of_exception_groups: 0,
-  number_of_failed_messages: 0,
-  number_of_archived_messages: 0,
-  number_of_pending_retries: 0,
-  number_of_endpoints: 0,
-  number_of_disconnected_endpoints: 0,
-  number_of_archive_groups: 0,
-});
-
-interface ConnectionState {
-  connected: boolean;
-  connecting: boolean;
-  connectedRecently: boolean;
-  unableToConnect: boolean | null;
-}
-export const connectionState = reactive<ConnectionState>({
-  connected: false,
-  connecting: false,
-  connectedRecently: false,
-  unableToConnect: null,
-});
-
-export const monitoringConnectionState = reactive<ConnectionState>({
-  connected: false,
-  connecting: false,
-  connectedRecently: false,
-  unableToConnect: null,
-});
 
 export const environment = reactive({
   monitoring_version: "",
@@ -107,31 +73,8 @@ export const connections = reactive<Connections>({
 
 export function useServiceControlAutoRefresh() {
   useAutoRefresh("serviceControlVersion", getServiceControlVersion, 60000)();
-  useAutoRefresh("serviceControlStats", useServiceControlStats, 5000)();
-  useAutoRefresh("serviceControlMonitoringStats", useServiceControlMonitoringStats, 5000)();
-}
-
-async function useServiceControlStats() {
-  const failedMessagesResult = getFailedMessagesCount();
-  const archivedMessagesResult = getArchivedMessagesCount();
-  const pendingRetriesResult = getPendingRetriesCount();
-
-  try {
-    const [failedMessages, archivedMessages, pendingRetries] = await Promise.all([failedMessagesResult, archivedMessagesResult, pendingRetriesResult]);
-    stats.number_of_failed_messages = failedMessages;
-    stats.number_of_archived_messages = archivedMessages;
-    stats.number_of_pending_retries = pendingRetries;
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function useServiceControlMonitoringStats() {
-  const disconnectedEndpointsCountResult = getDisconnectedEndpointsCount();
-
-  const [disconnectedEndpoints] = await Promise.all([disconnectedEndpointsCountResult]);
-  //Do something here with the argument to the callback in the future if we are using them
-  stats.number_of_disconnected_endpoints = disconnectedEndpoints;
+  //useAutoRefresh("serviceControlStats", useServiceControlStats, 5000)();
+  //useAutoRefresh("serviceControlMonitoringStats", useServiceControlMonitoringStats, 5000)();
 }
 
 export async function useServiceControlConnections() {
@@ -218,85 +161,4 @@ async function setMonitoringVersion() {
   if (response) {
     environment.monitoring_version = response.headers.get("X-Particular-Version") ?? "";
   }
-}
-
-async function fetchWithErrorHandling<T, TResult>(fetchFunction: () => Promise<[Response?, T?]>, connectionState: ConnectionState, action: (response: Response, data: T) => TResult, defaultResult: TResult) {
-  if (connectionState.connecting) {
-    //Skip the connection state checking
-    try {
-      const [response, data] = await fetchFunction();
-      if (response != null && data != null) {
-        return await action(response, data);
-      }
-    } catch (err) {
-      console.log(err);
-      return defaultResult;
-    }
-  }
-  try {
-    if (!connectionState.connected) {
-      connectionState.connecting = true;
-      connectionState.connected = false;
-    }
-
-    try {
-      const [response, data] = await fetchFunction();
-      let result: TResult | null = null;
-      if (response != null && data != null) {
-        result = await action(response, data);
-      }
-      connectionState.unableToConnect = false;
-      connectionState.connectedRecently = true;
-      connectionState.connected = true;
-      connectionState.connecting = false;
-
-      if (result) {
-        return result;
-      }
-    } catch (err) {
-      connectionState.connected = false;
-      connectionState.unableToConnect = true;
-      connectionState.connectedRecently = false;
-      connectionState.connecting = false;
-      console.log(err);
-    }
-  } catch {
-    connectionState.connecting = false;
-    connectionState.connected = false;
-  }
-
-  return defaultResult;
-}
-
-function getFailedMessagesCount() {
-  return getErrorMessagesCount(FailedMessageStatus.Unresolved);
-}
-
-function getPendingRetriesCount() {
-  return getErrorMessagesCount(FailedMessageStatus.RetryIssued);
-}
-
-function getArchivedMessagesCount() {
-  return getErrorMessagesCount(FailedMessageStatus.Archived);
-}
-
-function getErrorMessagesCount(status: FailedMessageStatus) {
-  return fetchWithErrorHandling(
-    () => useTypedFetchFromServiceControl<FailedMessage>(`errors?status=${status}`),
-    connectionState,
-    (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
-    0
-  );
-}
-
-function getDisconnectedEndpointsCount() {
-  return fetchWithErrorHandling(
-    () => useTypedFetchFromMonitoring<number>("monitored-endpoints/disconnected"),
-    monitoringConnectionState,
-
-    (_, data) => {
-      return data;
-    },
-    0
-  );
 }

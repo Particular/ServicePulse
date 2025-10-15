@@ -3,7 +3,6 @@ import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { licenseStatus } from "@/composables/serviceLicense";
-import { connectionState } from "@/composables/serviceServiceControl";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
 import { useEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications, useUpdateEmailNotifications } from "@/composables/serviceNotifications";
 import { useShowToast } from "@/composables/toast";
@@ -13,6 +12,10 @@ import type EmailSettings from "@/components/configuration/EmailSettings";
 import OnOffSwitch from "../OnOffSwitch.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import { faCheck, faEdit, faEnvelope, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
+
+const connectionStore = useConnectionsAndStatsStore();
+const connectionState = connectionStore.connectionState;
 
 const isExpired = licenseStatus.isExpired;
 const emailTestSuccessful = ref<boolean | null>(null);

@@ -39,12 +39,12 @@ function useServiceControlUrls() {
 
 export { useServiceControlUrls, serviceControlUrl, monitoringUrl };
 
-export function useIsMonitoringDisabled() {
+export function isMonitoringDisabled() {
   return monitoringUrl.value == null || monitoringUrl.value === "" || monitoringUrl.value === "!";
 }
 
-export function useIsMonitoringEnabled() {
-  return !useIsMonitoringDisabled();
+export function isMonitoringEnabled() {
+  return !isMonitoringDisabled();
 }
 
 export function useFetchFromServiceControl(suffix: string, options?: { cache?: RequestCache }) {
@@ -67,7 +67,7 @@ export async function useTypedFetchFromServiceControl<T>(suffix: string): Promis
 }
 
 export async function useTypedFetchFromMonitoring<T>(suffix: string): Promise<[Response?, T?]> {
-  if (useIsMonitoringDisabled()) {
+  if (isMonitoringDisabled()) {
     return [];
   }
 
@@ -113,7 +113,7 @@ export function useDeleteFromMonitoring(suffix: string) {
 }
 
 export function useOptionsFromMonitoring() {
-  if (useIsMonitoringDisabled()) {
+  if (isMonitoringDisabled()) {
     return Promise.resolve(null);
   }
 

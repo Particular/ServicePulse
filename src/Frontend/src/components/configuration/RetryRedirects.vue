@@ -3,7 +3,6 @@ import { onMounted, reactive, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import { licenseStatus } from "@/composables/serviceLicense";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { connectionState } from "@/composables/serviceServiceControl";
 import NoData from "../NoData.vue";
 import BusyIndicator from "../BusyIndicator.vue";
 import { useShowToast } from "@/composables/toast";
@@ -16,8 +15,12 @@ import RetryRedirectEdit, { type RetryRedirect } from "@/components/configuratio
 import redirectCountUpdated from "@/components/configuration/redirectCountUpdated";
 import FAIcon from "@/components/FAIcon.vue";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
+import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 
 const isExpired = licenseStatus.isExpired;
+
+const connectionStore = useConnectionsAndStatsStore();
+const connectionState = connectionStore.connectionState;
 
 const loadingData = ref(true);
 const redirects = reactive<{ total: number; data: Redirect[] }>({

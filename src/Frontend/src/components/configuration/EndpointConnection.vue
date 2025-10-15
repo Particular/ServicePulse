@@ -3,10 +3,13 @@ import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { licenseStatus } from "@/composables/serviceLicense";
-import { connectionState, useServiceControlConnections } from "@/composables/serviceServiceControl";
+import { useServiceControlConnections } from "@/composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
+import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 
+const connectionStore = useConnectionsAndStatsStore();
+const connectionState = connectionStore.connectionState;
 const isExpired = licenseStatus.isExpired;
 
 const loading = ref(true);
