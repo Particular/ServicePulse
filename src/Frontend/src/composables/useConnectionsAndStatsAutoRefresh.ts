@@ -1,4 +1,4 @@
 import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
-import { createStoreAutoRefresh } from "./useAutoRefresh";
+import { useStoreAutoRefresh } from "./useAutoRefresh";
 
-export default createStoreAutoRefresh("connectionsAndStats", useConnectionsAndStatsStore, 5000);
+export default useStoreAutoRefresh("connectionsAndStats", useConnectionsAndStatsStore, 5000);
