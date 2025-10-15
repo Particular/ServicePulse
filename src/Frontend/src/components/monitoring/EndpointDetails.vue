@@ -7,7 +7,7 @@ import { isMonitoringDisabled } from "../../composables/serviceServiceControlUrl
 import { storeToRefs } from "pinia";
 //stores
 import { useMonitoringEndpointDetailsStore } from "../../stores/MonitoringEndpointDetailsStore";
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 // Components
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../../components/ServiceControlNotAvailable.vue";
@@ -23,7 +23,7 @@ import routeLinks from "@/router/routeLinks";
 import FAIcon from "@/components/FAIcon.vue";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
-const connectionStore = useConnectionsAndStatsStore();
+const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
 

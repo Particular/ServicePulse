@@ -4,11 +4,11 @@ import { licenseStatus } from "@/composables/serviceLicense";
 import LicenseExpired from "../components/LicenseExpired.vue";
 import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 import { storeToRefs } from "pinia";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 
 const showPendingRetry = window.defaultConfig.showPendingRetry;
-const connectionsAndStatsStore = useConnectionsAndStatsStore();
+const { store: connectionsAndStatsStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionsAndStatsStore.connectionState;
 const { failedMessageCount, archivedMessageCount, pendingRetriesMessageCount } = storeToRefs(connectionsAndStatsStore);
 </script>

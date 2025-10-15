@@ -17,7 +17,7 @@ import { TYPE } from "vue-toastification";
 import FAIcon from "@/components/FAIcon.vue";
 import { faArrowRotateRight, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 
 const statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"] as const;
 type RestoreOperationStatus = (typeof statusesForRestoreOperation)[number];
@@ -56,7 +56,7 @@ const router = useRouter();
 const showRestoreGroupModal = ref(false);
 const selectedGroup = ref<ExtendedFailureGroupView>();
 
-const connectionStore = useConnectionsAndStatsStore();
+const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 
 const groupRestoreSuccessful = ref<boolean | null>(null);

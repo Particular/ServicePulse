@@ -17,7 +17,7 @@ import FailureGroup from "@/resources/FailureGroup";
 import { useConfiguration } from "@/composables/configuration";
 import FAIcon from "@/components/FAIcon.vue";
 import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 
 let pollingFaster = false;
 let refreshInterval: number | undefined;
@@ -39,7 +39,7 @@ const messages = ref<ExtendedFailedMessage[]>([]);
 watch(pageNumber, () => loadMessages());
 const configuration = useConfiguration();
 
-const connectionStore = useConnectionsAndStatsStore();
+const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 
 function loadMessages() {

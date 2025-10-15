@@ -15,11 +15,11 @@ import RetryRedirectEdit, { type RetryRedirect } from "@/components/configuratio
 import redirectCountUpdated from "@/components/configuration/redirectCountUpdated";
 import FAIcon from "@/components/FAIcon.vue";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 
 const isExpired = licenseStatus.isExpired;
 
-const connectionStore = useConnectionsAndStatsStore();
+const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 
 const loadingData = ref(true);

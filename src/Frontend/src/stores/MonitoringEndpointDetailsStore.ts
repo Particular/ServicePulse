@@ -9,7 +9,7 @@ import { useGetExceptionGroupsForEndpoint } from "../composables/serviceMessageG
 import type GroupOperation from "@/resources/GroupOperation";
 import { emptyEndpointDetails } from "@/components/monitoring/endpoints";
 import { useMemoize } from "@vueuse/core";
-import { useConnectionsAndStatsStore } from "./ConnectionsAndStatsStore";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 
 async function getFailureDetails(classifier: string, classifierFilter: string) {
   const failedMessages: GroupOperation[] = await useGetExceptionGroupsForEndpoint(classifier, classifierFilter);
@@ -22,7 +22,7 @@ async function getFailureDetails(classifier: string, classifierFilter: string) {
 
 export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpointDetailsStore", () => {
   const historyPeriodStore = useMonitoringHistoryPeriodStore();
-  const connectionStore = useConnectionsAndStatsStore();
+  const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 
   const getMemoisedEndpointDetails = useMemoize(MonitoringEndpoints.getEndpointDetails);
 

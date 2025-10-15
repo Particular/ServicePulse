@@ -7,10 +7,10 @@ import ServiceControlNotAvailable from "@/components/ServiceControlNotAvailable.
 import type EventLogItemType from "@/resources/EventLogItem";
 import { ref } from "vue";
 import type DataViewPageModel from "@/components/DataViewPageModel";
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 
 const pageModel = ref<DataViewPageModel<EventLogItemType>>({ data: [], totalCount: 0 });
-const connectionStore = useConnectionsAndStatsStore();
+const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 </script>
 

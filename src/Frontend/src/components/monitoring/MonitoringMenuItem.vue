@@ -3,10 +3,10 @@ import { RouterLink } from "vue-router";
 import routeLinks from "@/router/routeLinks";
 import FAIcon from "@/components/FAIcon.vue";
 import { faChartLine } from "@fortawesome/free-solid-svg-icons";
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 import { storeToRefs } from "pinia";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 
-const statsStore = useConnectionsAndStatsStore();
+const { store: statsStore } = useConnectionsAndStatsAutoRefresh();
 const { disconnectedEndpointsCount } = storeToRefs(statsStore);
 </script>
 

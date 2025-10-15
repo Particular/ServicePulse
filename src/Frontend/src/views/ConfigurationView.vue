@@ -11,12 +11,12 @@ import { WarningLevel } from "@/components/WarningLevel";
 import { useLink, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoRefresh";
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 
 const redirectCount = ref(0);
 const { store: throughputStore } = useThroughputStoreAutoRefresh();
 const { hasErrors } = storeToRefs(throughputStore);
-const connectionStore = useConnectionsAndStatsStore();
+const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 watch(redirectCountUpdated, () => (redirectCount.value = redirectCountUpdated.count));
 

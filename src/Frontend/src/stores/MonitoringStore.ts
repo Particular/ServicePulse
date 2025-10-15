@@ -5,14 +5,14 @@ import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints"
 import { useMonitoringHistoryPeriodStore } from "./MonitoringHistoryPeriodStore";
 import type { EndpointGroup, Endpoint, GroupedEndpoint } from "@/resources/MonitoringEndpoint";
 import type { SortInfo } from "@/components/SortInfo";
-import { useConnectionsAndStatsStore } from "./ConnectionsAndStatsStore";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 
 export const useMonitoringStore = defineStore("MonitoringStore", () => {
   const historyPeriodStore = useMonitoringHistoryPeriodStore();
 
   const route = useRoute();
   const router = useRouter();
-  const connectionStore = useConnectionsAndStatsStore();
+  const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 
   //STORE STATE CONSTANTS
   const grouping = ref({

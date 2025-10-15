@@ -2,9 +2,9 @@
 import ConditionalRender from "@/components/ConditionalRender.vue";
 import routeLinks from "@/router/routeLinks";
 import { serviceControlUrl } from "@/composables/serviceServiceControlUrls";
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 
-const connectionStore = useConnectionsAndStatsStore();
+const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 </script>
 

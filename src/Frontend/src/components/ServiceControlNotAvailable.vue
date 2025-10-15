@@ -1,9 +1,9 @@
 ﻿<script setup lang="ts">
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 import { serviceControlUrl } from "./../composables/serviceServiceControlUrls";
 import routeLinks from "@/router/routeLinks";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 
-const connectionStore = useConnectionsAndStatsStore();
+const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 </script>
 

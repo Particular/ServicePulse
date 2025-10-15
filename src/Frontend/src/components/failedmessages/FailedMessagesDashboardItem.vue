@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import DashboardItem from "@/components/DashboardItem.vue";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import routeLinks from "@/router/routeLinks";
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { storeToRefs } from "pinia";
 
-const statsStore = useConnectionsAndStatsStore();
+const { store: statsStore } = useConnectionsAndStatsAutoRefresh();
 const { failedMessageCount } = storeToRefs(statsStore);
 </script>
 
