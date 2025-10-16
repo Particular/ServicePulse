@@ -77,7 +77,7 @@ export async function useTypedFetchFromMonitoring<T>(suffix: string): Promise<[R
   return [response, data];
 }
 
-export function usePostToServiceControl(suffix: string, payload: object | null = null) {
+export function postToServiceControl(suffix: string, payload: object | null = null) {
   const requestOptions: RequestInit = {
     method: "POST",
   };
@@ -88,7 +88,7 @@ export function usePostToServiceControl(suffix: string, payload: object | null =
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
 
-export function usePutToServiceControl(suffix: string, payload: object | null) {
+export function putToServiceControl(suffix: string, payload: object | null) {
   const requestOptions: RequestInit = {
     method: "PUT",
   };
@@ -99,7 +99,7 @@ export function usePutToServiceControl(suffix: string, payload: object | null) {
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
 
-export function useDeleteFromServiceControl(suffix: string) {
+export function deleteFromServiceControl(suffix: string) {
   const requestOptions: RequestInit = {
     method: "DELETE",
   };

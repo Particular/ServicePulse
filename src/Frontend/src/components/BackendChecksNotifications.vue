@@ -3,17 +3,19 @@ import { computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import "bootstrap";
 import { monitoringUrl, serviceControlUrl, isMonitoringDisabled } from "@/composables/serviceServiceControlUrls";
-import { environment } from "@/composables/serviceServiceControl";
 import routeLinks from "@/router/routeLinks";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
+import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 
 const router = useRouter();
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
+const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
+const environment = environmentStore.environment;
 
 const primaryConnectionFailure = computed(() => connectionState.unableToConnect);
 const monitoringConnectionFailure = computed(() => monitoringConnectionState.unableToConnect);

@@ -4,10 +4,12 @@ import ConnectionTestResults from "@/resources/ConnectionTestResults";
 import throughputClient from "@/views/throughputreport/throughputClient";
 import { Transport } from "@/views/throughputreport/transport";
 import { isMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
-import isThroughputSupported from "@/views/throughputreport/isThroughputSupported";
+import useIsThroughputSupported from "@/views/throughputreport/isThroughputSupported";
 
 export const useThroughputStore = defineStore("ThroughputStore", () => {
   const testResults = ref<ConnectionTestResults | null>(null);
+  const isThroughputSupported = useIsThroughputSupported();
+
   const refresh = async () => {
     if (isThroughputSupported.value) {
       testResults.value = await throughputClient.test();

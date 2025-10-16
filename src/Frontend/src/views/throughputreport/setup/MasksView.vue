@@ -3,12 +3,18 @@ import { onMounted, ref } from "vue";
 import throughputClient from "@/views/throughputreport/throughputClient";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
+import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+import useIsThroughputSupported from "../isThroughputSupported";
 
 const masks = ref<string>("");
 const separator = "\n";
 
+const environmentStore = useEnvironmentAndVersionsStore();
+const isThroughputSupported = useIsThroughputSupported();
+
 onMounted(async () => {
-  const maskArray = await throughputClient.getMasks();
+  if (environmentStore.environment.sc_version === "") await environmentStore.refresh();
+  const maskArray = await throughputClient.getMasks(isThroughputSupported.value);
   masks.value = maskArray.join(separator);
 });
 

@@ -1,4 +1,4 @@
-import { useFetchFromServiceControl, usePostToServiceControl, useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
+import { useFetchFromServiceControl, postToServiceControl, useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import EndpointThroughputSummary from "@/resources/EndpointThroughputSummary";
 import UpdateUserIndicator from "@/resources/UpdateUserIndicator";
 import ConnectionTestResults from "@/resources/ConnectionTestResults";
@@ -6,7 +6,6 @@ import ThroughputConnectionSettings from "@/resources/ThroughputConnectionSettin
 import { useDownloadFileFromResponse } from "@/composables/fileDownloadCreator";
 import ReportGenerationState from "@/resources/ReportGenerationState";
 import { parse } from "@tinyhttp/content-disposition";
-import isThroughputSupported from "@/views/throughputreport/isThroughputSupported";
 
 class ThroughputClient {
   constructor(readonly basePath: string) {}
@@ -18,7 +17,7 @@ class ThroughputClient {
   }
 
   public async updateIndicators(data: UpdateUserIndicator[]): Promise<void> {
-    await usePostToServiceControl(`${this.basePath}/endpoints/update`, data);
+    await postToServiceControl(`${this.basePath}/endpoints/update`, data);
   }
 
   public async test() {
@@ -31,8 +30,8 @@ class ThroughputClient {
     return data;
   }
 
-  public async reportAvailable() {
-    if (isThroughputSupported.value) {
+  public async reportAvailable(isThroughputSupported: boolean) {
+    if (isThroughputSupported) {
       const [, data] = await useTypedFetchFromServiceControl<ReportGenerationState>(`${this.basePath}/report/available`);
       return data;
     }
@@ -58,8 +57,8 @@ class ThroughputClient {
     return "";
   }
 
-  public async getMasks() {
-    if (isThroughputSupported.value) {
+  public async getMasks(isThroughputSupported: boolean) {
+    if (isThroughputSupported) {
       const [, data] = await useTypedFetchFromServiceControl<string[]>(`${this.basePath}/settings/masks`);
       return data;
     }
@@ -67,7 +66,7 @@ class ThroughputClient {
   }
 
   public async updateMasks(data: string[]): Promise<void> {
-    await usePostToServiceControl(`${this.basePath}/settings/masks/update`, data);
+    await postToServiceControl(`${this.basePath}/settings/masks/update`, data);
   }
 }
 
