@@ -9,6 +9,7 @@ import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndSt
 
 const showPendingRetry = window.defaultConfig.showPendingRetry;
 const { store: connectionsAndStatsStore } = useConnectionsAndStatsAutoRefresh();
+connectionsAndStatsStore.requiresFullFailureDetails();
 const connectionState = connectionsAndStatsStore.connectionState;
 const { failedMessageCount, archivedMessageCount, pendingRetriesMessageCount } = storeToRefs(connectionsAndStatsStore);
 </script>

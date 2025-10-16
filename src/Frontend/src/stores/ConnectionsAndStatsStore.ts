@@ -1,14 +1,21 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { computed, reactive, ref } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { useTypedFetchFromMonitoring, useTypedFetchFromServiceControl, isMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
 import { FailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
 import { ConnectionState } from "@/resources/ConnectionState";
+import { useCounter } from "@vueuse/core";
 
 export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore", () => {
   const failedMessageCount = ref(0);
   const archivedMessageCount = ref(0);
   const pendingRetriesMessageCount = ref(0);
   const disconnectedEndpointsCount = ref(0);
+
+  const { count: requiresFullFailureDetailsSubscriberCount, inc, dec } = useCounter(0);
+  function requiresFullFailureDetails() {
+    onMounted(() => inc());
+    onUnmounted(() => dec());
+  }
 
   const connectionState = reactive<ConnectionState>({
     connected: false,
@@ -28,8 +35,8 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
 
   async function refresh() {
     const failedMessagesResult = getErrorMessagesCount(FailedMessageStatus.Unresolved);
-    const archivedMessagesResult = getErrorMessagesCount(FailedMessageStatus.Archived);
-    const pendingRetriesResult = getErrorMessagesCount(FailedMessageStatus.RetryIssued);
+    const archivedMessagesResult = requiresFullFailureDetailsSubscriberCount.value > 0 ? getErrorMessagesCount(FailedMessageStatus.Archived) : 0;
+    const pendingRetriesResult = requiresFullFailureDetailsSubscriberCount.value > 0 ? getErrorMessagesCount(FailedMessageStatus.RetryIssued) : 0;
     const disconnectedEndpointsCountResult = getDisconnectedEndpointsCount();
 
     const [failedMessages, archivedMessages, pendingRetries, disconnectedEndpoints] = await Promise.all([failedMessagesResult, archivedMessagesResult, pendingRetriesResult, disconnectedEndpointsCountResult]);
@@ -63,6 +70,7 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
   return {
     refresh,
     failedMessageCount,
+    requiresFullFailureDetails,
     archivedMessageCount,
     pendingRetriesMessageCount,
     disconnectedEndpointsCount,
