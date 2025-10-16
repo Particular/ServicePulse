@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, useTemplateRef, watch } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
-import { connectionState } from "../../composables/serviceServiceControl";
-import { usePatchToServiceControl, usePostToServiceControl, useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { usePatchToServiceControl, postToServiceControl, useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
 import { useCookies } from "vue3-cookies";
 import OrderBy from "@/components/OrderBy.vue";
@@ -20,6 +19,10 @@ import { useIsMassTransitConnected } from "@/composables/useIsMassTransitConnect
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faInfoCircle, faExternalLink, faFilter, faTimes, faArrowRightRotate } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "@/components/FAIcon.vue";
 import { faCheckSquare } from "@fortawesome/free-regular-svg-icons";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
+
+const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
+const connectionState = connectionStore.connectionState;
 
 let refreshInterval: number | undefined;
 let sortMethod: SortOptions<GroupOperation> | undefined;
@@ -147,7 +150,7 @@ async function retrySelectedMessages() {
   const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
 
   useShowToast(TYPE.INFO, "Info", "Selected messages were submitted for retry...");
-  await usePostToServiceControl(
+  await postToServiceControl(
     "pendingretries/retry",
     selectedMessages.map((m) => m.id)
   );
@@ -183,7 +186,7 @@ async function retryAllMessages() {
     data.queueaddress = selectedQueue.value;
   }
 
-  await usePostToServiceControl(url, data);
+  await postToServiceControl(url, data);
   messages.value.forEach((message) => {
     message.selected = false;
     message.submittedForRetrial = true;

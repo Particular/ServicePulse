@@ -9,6 +9,7 @@ import { EndpointsView } from "@/resources/EndpointView";
 import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
 import type { SortInfo } from "@/components/SortInfo";
 import { EndpointSettings } from "@/resources/EndpointSettings";
+import useIsEndpointSettingsSupported from "@/components/heartbeats/isEndpointSettingsSupported";
 
 export enum ColumnNames {
   Name = "name",
@@ -97,10 +98,11 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   watch(endpointFilterString, (newValue) => {
     setEndpointFilterString(newValue);
   });
+  const isEndpointSettingsSupported = useIsEndpointSettingsSupported();
 
   const refresh = async () => {
     try {
-      const [[, data], data2] = await Promise.all([useTypedFetchFromServiceControl<EndpointsView[]>("endpoints"), endpointSettingsClient.endpointSettings()]);
+      const [[, data], data2] = await Promise.all([useTypedFetchFromServiceControl<EndpointsView[]>("endpoints"), endpointSettingsClient.endpointSettings(isEndpointSettingsSupported.value)]);
       endpointInstances.value = data;
       settings.value = data2;
       defaultTrackingInstancesValue.value = data2.find((value) => value.name === "")!.track_instances;

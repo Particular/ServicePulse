@@ -5,7 +5,6 @@ import { storeToRefs } from "pinia";
 import { createTestingPinia } from "@pinia/testing";
 import { EndpointsView } from "@/resources/EndpointView";
 import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
-import { useServiceControl } from "@/composables/serviceServiceControl";
 import * as precondition from "../../test/preconditions";
 import { EndpointSettings } from "@/resources/EndpointSettings";
 import { serviceControlWithHeartbeats } from "@/components/heartbeats/serviceControlWithHeartbeats";
@@ -21,7 +20,6 @@ describe("HeartbeatsStore tests", () => {
     await driver.setUp(precondition.hasHeartbeatsEndpoints(endpoints, endpointSettings));
 
     useServiceControlUrls();
-    await useServiceControl();
 
     const store = useHeartbeatsStore(createTestingPinia({ stubActions: false }));
     const storeRefs = storeToRefs(store);

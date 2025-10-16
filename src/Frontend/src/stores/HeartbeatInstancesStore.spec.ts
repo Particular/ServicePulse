@@ -6,7 +6,6 @@ import { createTestingPinia } from "@pinia/testing";
 import { ColumnNames, useHeartbeatInstancesStore } from "@/stores/HeartbeatInstancesStore";
 import { EndpointsView } from "@/resources/EndpointView";
 import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
-import { useServiceControl } from "@/composables/serviceServiceControl";
 import * as precondition from "../../test/preconditions";
 import { EndpointSettings } from "@/resources/EndpointSettings";
 import { serviceControlWithHeartbeats } from "@/components/heartbeats/serviceControlWithHeartbeats";
@@ -22,7 +21,6 @@ describe("HeartbeatInstancesStore tests", () => {
     await driver.setUp(precondition.hasHeartbeatsEndpoints(endpoints));
 
     useServiceControlUrls();
-    await useServiceControl();
 
     const store = useHeartbeatInstancesStore(createTestingPinia({ stubActions: false }));
     const refs = storeToRefs(store);

@@ -21,6 +21,7 @@ import ResultsCount from "../ResultsCount.vue";
 import { faBell, faBellSlash, faChevronLeft, faHeartbeat, faTrash } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "@/components/FAIcon.vue";
 import useHeartbeatInstancesStoreAutoRefresh from "@/composables/useHeartbeatInstancesStoreAutoRefresh";
+import useIsEndpointSettingsSupported from "./isEndpointSettingsSupported";
 
 enum Operation {
   Mute = "mute",
@@ -49,13 +50,14 @@ const filteredValidInstances = computed(() => filterToValidInstances(filteredIns
 const totalValidInstances = computed(() => filterToValidInstances(sortedInstances.value));
 const showBulkWarningDialog = ref(false);
 const dialogWarningOperation = ref(Operation.Mute);
+const isEndpointSettingsSupported = useIsEndpointSettingsSupported();
 
 onMounted(async () => {
   const back = useRouter().currentRoute.value.query.back as string;
   if (back) {
     backLink.value = back;
   }
-  endpointSettings.value = await endpointSettingsClient.endpointSettings();
+  endpointSettings.value = await endpointSettingsClient.endpointSettings(isEndpointSettingsSupported.value);
 });
 
 function showBulkOperationWarningDialog(operation: Operation) {

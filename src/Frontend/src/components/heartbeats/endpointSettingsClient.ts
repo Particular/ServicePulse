@@ -1,11 +1,10 @@
 import { useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
-
 import { EndpointSettings } from "@/resources/EndpointSettings";
-import isEndpointSettingsSupported from "@/components/heartbeats/isEndpointSettingsSupported";
 
+//TODO: why is this a class?
 class EndpointSettingsClient {
-  public async endpointSettings(): Promise<EndpointSettings[]> {
-    if (isEndpointSettingsSupported.value) {
+  public async endpointSettings(isEndpointSettingsSupported: boolean): Promise<EndpointSettings[]> {
+    if (isEndpointSettingsSupported) {
       const [, data] = await useTypedFetchFromServiceControl<EndpointSettings[]>(`endpointssettings`);
       return data;
     }
