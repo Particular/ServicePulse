@@ -92,9 +92,13 @@ export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersion
   }
 
   async function setMonitoringVersion() {
-    const [response] = await useTypedFetchFromMonitoring("");
-    if (response) {
-      environment.monitoring_version = response.headers.get("X-Particular-Version") ?? "";
+    try {
+      const [response] = await useTypedFetchFromMonitoring("");
+      if (response) {
+        environment.monitoring_version = response.headers.get("X-Particular-Version") ?? "";
+      }
+    } catch {
+      environment.monitoring_version = "";
     }
   }
 
@@ -107,8 +111,19 @@ export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersion
 });
 
 async function getData(url: string) {
-  const response = await fetch(url);
-  return (await response.json()) as unknown as Release[];
+  try {
+    const response = await fetch(url);
+    return (await response.json()) as unknown as Release[];
+  } catch (e) {
+    console.log(e);
+    return [
+      {
+        tag: "Unknown",
+        release: "Unknown",
+        published: "Unknown",
+      },
+    ];
+  }
 }
 
 async function useServiceProductUrls() {
