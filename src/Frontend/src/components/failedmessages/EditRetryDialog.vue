@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
-import { useRetryEditedMessage } from "@/composables/serviceFailedMessage";
 import MessageHeader from "./EditMessageHeader.vue";
 import type Header from "@/resources/Header";
 import parseContentType from "@/composables/contentTypeParser";
@@ -12,13 +11,7 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import { faExclamationCircle, faExclamationTriangle, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { useDebounceFn } from "@vueuse/core";
-
-interface HeaderWithEditing extends Header {
-  isLocked: boolean;
-  isSensitive: boolean;
-  isMarkedAsRemoved: boolean;
-  isChanged: boolean;
-}
+import type { HeaderWithEditing } from "@/resources/EditedMessage";
 
 const emit = defineEmits<{
   cancel: [];
@@ -105,7 +98,7 @@ function removeHeadersMarkedAsRemoved() {
 async function retryEditedMessage() {
   removeHeadersMarkedAsRemoved();
   try {
-    await useRetryEditedMessage(id.value, localMessage);
+    await store.retryEditedMessage(id.value, localMessage);
     localMessage.value.retried = true;
     return emit("confirm");
   } catch {

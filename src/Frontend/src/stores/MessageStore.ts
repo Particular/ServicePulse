@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, type Ref } from "vue";
 import Header from "@/resources/Header";
 import type EndpointDetails from "@/resources/EndpointDetails";
 import FailedMessage, { ExceptionDetails, FailedMessageStatus } from "@/resources/FailedMessage";
@@ -10,8 +10,10 @@ import Message, { MessageStatus } from "@/resources/Message";
 import moment from "moment/moment";
 import { parse, stringify } from "lossless-json";
 import xmlFormat from "xml-formatter";
-import { useArchiveMessage, useRetryMessages, useUnarchiveMessage } from "@/composables/serviceFailedMessage";
+import { useArchiveMessage, useRetryMessages, useUnarchiveMessage, useRetryEditedMessage } from "@/composables/serviceFailedMessage";
 import { DataContainer } from "./DataContainer";
+import type EditRetryResponse from "@/resources/EditRetryResponse";
+import type { EditedMessage } from "@/resources/EditedMessage";
 
 interface Model {
   id?: string;
@@ -63,6 +65,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
   const headers = ref<DataContainer<Header[]>>({ data: [] });
   const body = ref<DataContainer<{ value?: string; content_type?: string; no_content?: boolean }>>({ data: {} });
   const state = reactive<DataContainer<Model>>({ data: { failure_metadata: {}, failure_status: {}, dialog_status: {}, invoked_saga: {} } });
+  const editRetryResponse = ref<EditRetryResponse | null>(null);
   let bodyLoadedId = "";
   let conversationLoadedId = "";
   const conversationData = ref<DataContainer<Message[]>>({ data: [] });
@@ -83,6 +86,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     bodyLoadedId = "";
     conversationLoadedId = "";
     conversationData.value.data = [];
+    editRetryResponse.value = null;
   }
 
   async function loadFailedMessage(id: string) {
@@ -248,6 +252,11 @@ export const useMessageStore = defineStore("MessageStore", () => {
     }
   }
 
+  async function retryEditedMessage(id: string, editedMessage: Ref<EditedMessage>): Promise<void> {
+    const response = await useRetryEditedMessage(id, editedMessage);
+    editRetryResponse.value = response;
+  }
+
   async function pollForNextUpdate(status: FailedMessageStatus) {
     if (!state.data.id) {
       return;
@@ -307,6 +316,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     body,
     state,
     edit_and_retry_config,
+    editRetryResponse,
     reset,
     loadMessage,
     loadFailedMessage,
@@ -318,6 +328,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     retryMessage,
     conversationData,
     pollForNextUpdate,
+    retryEditedMessage,
   };
 });
 

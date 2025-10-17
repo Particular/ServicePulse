@@ -2,6 +2,9 @@ import { usePatchToServiceControl, usePostToServiceControl } from "./serviceServ
 import type { Ref } from "vue";
 import { useIsSupported } from "@/composables/serviceSemVer";
 import { environment } from "@/composables/serviceServiceControl";
+import type EditRetryResponse from "@/resources/EditRetryResponse";
+import type { EditedMessage, HeaderWithEditing } from "@/resources/EditedMessage";
+import { parse } from "lossless-json";
 
 export async function useUnarchiveMessage(ids: string[]) {
   const response = await usePatchToServiceControl("errors/unarchive/", ids);
@@ -21,15 +24,8 @@ export async function useRetryMessages(ids: string[]) {
   await usePostToServiceControl("errors/retry", ids);
 }
 
-export async function useRetryEditedMessage(
-  id: string,
-  editedMessage: Ref<{
-    messageBody: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    headers: any[];
-  }>
-) {
-  let headers = editedMessage.value.headers;
+export async function useRetryEditedMessage(id: string, editedMessage: Ref<EditedMessage>): Promise<EditRetryResponse> {
+  let headers: HeaderWithEditing[] | { [key: string]: string } = editedMessage.value.headers;
   if (useIsSupported(environment.sc_version, "5.2.0")) {
     headers = editedMessage.value.headers.reduce(
       (result, header) => {
@@ -45,8 +41,20 @@ export async function useRetryEditedMessage(
     message_body: editedMessage.value.messageBody,
     message_headers: headers,
   };
+
   const response = await usePostToServiceControl(`edit/${id}`, payload);
   if (!response.ok) {
     throw new Error(response.statusText);
   }
+
+  //older versions of SC return no payload about the edit result
+  const bodyText = await response.text();
+  if (bodyText === "") {
+    return {
+      edit_ignored: false,
+    } as EditRetryResponse;
+  }
+
+  const result = parse(bodyText) as EditRetryResponse;
+  return result;
 }
