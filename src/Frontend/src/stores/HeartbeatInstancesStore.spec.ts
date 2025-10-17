@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { Driver } from "../../test/driver";
 import { makeDriverForTests } from "@component-test-utils";
-import { storeToRefs } from "pinia";
+import { setActivePinia, storeToRefs } from "pinia";
 import { createTestingPinia } from "@pinia/testing";
 import { ColumnNames, useHeartbeatInstancesStore } from "@/stores/HeartbeatInstancesStore";
 import { EndpointsView } from "@/resources/EndpointView";
@@ -10,6 +10,7 @@ import * as precondition from "../../test/preconditions";
 import { EndpointSettings } from "@/resources/EndpointSettings";
 import { serviceControlWithHeartbeats } from "@/components/heartbeats/serviceControlWithHeartbeats";
 import { EndpointStatus } from "@/resources/Heartbeat";
+import { useEnvironmentAndVersionsStore } from "./EnvironmentAndVersionsStore";
 
 describe("HeartbeatInstancesStore tests", () => {
   async function setup(endpoints: EndpointsView[], endpointSettings: EndpointSettings[], preSetup: (driver: Driver) => Promise<void> = () => Promise.resolve()) {
@@ -22,7 +23,10 @@ describe("HeartbeatInstancesStore tests", () => {
 
     useServiceControlUrls();
 
-    const store = useHeartbeatInstancesStore(createTestingPinia({ stubActions: false }));
+    setActivePinia(createTestingPinia({ stubActions: false }));
+    await useEnvironmentAndVersionsStore().refresh();
+
+    const store = useHeartbeatInstancesStore();
     const refs = storeToRefs(store);
 
     await store.refresh();

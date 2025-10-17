@@ -7,6 +7,7 @@ import { minimumSCVersionForThroughput } from "@/views/throughputreport/isThroug
 import Toast from "vue-toastification";
 import { disableMonitoring } from "../../../../test/drivers/vitest/setup";
 import { flushPromises } from "@vue/test-utils";
+import { createTestingPinia } from "@pinia/testing";
 
 describe("MaskView tests", () => {
   async function setup() {
@@ -26,7 +27,7 @@ describe("MaskView tests", () => {
     const driver = await setup();
     driver.mockEndpoint(`${window.defaultConfig.service_control_url}licensing/settings/masks`, { body });
     useServiceControlUrls();
-    const { debug } = render(MasksView, { global: { plugins: [Toast], directives: { tippy: () => {} } } });
+    const { debug } = render(MasksView, { global: { plugins: [Toast, createTestingPinia({ stubActions: false })], directives: { tippy: () => {} } } });
     await flushPromises();
 
     return { debug, driver };
