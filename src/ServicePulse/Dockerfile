@@ -1,5 +1,5 @@
 # Frontend build image
-FROM --platform=$BUILDPLATFORM node:latest AS frontend
+FROM --platform=$BUILDPLATFORM node:22 AS frontend
 WORKDIR /
 COPY . .
 WORKDIR /src/Frontend

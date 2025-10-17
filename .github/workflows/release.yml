@@ -33,7 +33,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: 22.19.x
+          node-version: 22.x
       - name: Build Frontend
         run: .\build.ps1
         working-directory: src/ServicePulse.Host
