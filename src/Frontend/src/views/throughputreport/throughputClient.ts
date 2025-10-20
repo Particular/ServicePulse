@@ -30,12 +30,9 @@ class ThroughputClient {
     return data;
   }
 
-  public async reportAvailable(isThroughputSupported: boolean) {
-    if (isThroughputSupported) {
-      const [, data] = await useTypedFetchFromServiceControl<ReportGenerationState>(`${this.basePath}/report/available`);
-      return data;
-    }
-    return null;
+  public async reportAvailable() {
+    const [, data] = await useTypedFetchFromServiceControl<ReportGenerationState>(`${this.basePath}/report/available`);
+    return data;
   }
 
   public async downloadReport() {
@@ -57,12 +54,9 @@ class ThroughputClient {
     return "";
   }
 
-  public async getMasks(isThroughputSupported: boolean) {
-    if (isThroughputSupported) {
-      const [, data] = await useTypedFetchFromServiceControl<string[]>(`${this.basePath}/settings/masks`);
-      return data;
-    }
-    return [];
+  public async getMasks() {
+    const [, data] = await useTypedFetchFromServiceControl<string[]>(`${this.basePath}/settings/masks`);
+    return data;
   }
 
   public async updateMasks(data: string[]): Promise<void> {

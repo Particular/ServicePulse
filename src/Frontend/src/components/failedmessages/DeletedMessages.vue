@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
-import { usePatchToServiceControl, useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { patchToServiceControl, useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useCookies } from "vue3-cookies";
@@ -153,7 +153,7 @@ async function restoreSelectedMessages() {
   selectedMessages.forEach((m) => (m.restoreInProgress = true));
   useShowToast(TYPE.INFO, "Info", `restoring ${selectedMessages.length} messages...`);
 
-  await usePatchToServiceControl(
+  await patchToServiceControl(
     "errors/unarchive",
     selectedMessages.map((m) => m.id)
   );

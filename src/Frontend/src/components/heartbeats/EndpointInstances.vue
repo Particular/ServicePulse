@@ -12,7 +12,7 @@ import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import { ColumnNames } from "@/stores/HeartbeatInstancesStore";
 import { EndpointsView } from "@/resources/EndpointView";
-import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
+import { getEndpointSettings, defaultEndpointSettingsValue } from "@/components/heartbeats/endpointSettingsClient";
 import { EndpointSettings } from "@/resources/EndpointSettings";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import LastHeartbeat from "@/components/heartbeats/LastHeartbeat.vue";
@@ -33,7 +33,7 @@ const router = useRouter();
 const endpointName = route.params.endpointName.toString();
 const { store } = useHeartbeatInstancesStoreAutoRefresh();
 const { filteredInstances, sortedInstances, instanceFilterString, sortByInstances } = storeToRefs(store);
-const endpointSettings = ref<EndpointSettings[]>([endpointSettingsClient.defaultEndpointSettingsValue()]);
+const endpointSettings = ref<EndpointSettings[]>([defaultEndpointSettingsValue()]);
 const backLink = ref<string>(routeLinks.heartbeats.root);
 const filterToValidInstances = (data: EndpointsView[]) =>
   data
@@ -57,7 +57,8 @@ onMounted(async () => {
   if (back) {
     backLink.value = back;
   }
-  endpointSettings.value = await endpointSettingsClient.endpointSettings(isEndpointSettingsSupported.value);
+  const endpointSettingsPromise = isEndpointSettingsSupported.value ? getEndpointSettings() : Promise.resolve([defaultEndpointSettingsValue()]);
+  endpointSettings.value = await endpointSettingsPromise;
 });
 
 function showBulkOperationWarningDialog(operation: Operation) {

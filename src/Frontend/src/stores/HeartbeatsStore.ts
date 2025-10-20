@@ -1,4 +1,4 @@
-import { usePatchToServiceControl, useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
+import { patchToServiceControl, useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import { EndpointStatus, LogicalEndpoint } from "@/resources/Heartbeat";
@@ -6,7 +6,7 @@ import moment from "moment";
 import { SortDirection, type GroupPropertyType } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
 import { EndpointsView } from "@/resources/EndpointView";
-import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
+import { defaultEndpointSettingsValue, getEndpointSettings } from "@/components/heartbeats/endpointSettingsClient";
 import type { SortInfo } from "@/components/SortInfo";
 import { EndpointSettings } from "@/resources/EndpointSettings";
 import useIsEndpointSettingsSupported from "@/components/heartbeats/isEndpointSettingsSupported";
@@ -55,7 +55,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     isAscending: true,
   });
 
-  const defaultTrackingInstancesValue = ref(endpointSettingsClient.defaultEndpointSettingsValue().track_instances);
+  const defaultTrackingInstancesValue = ref(defaultEndpointSettingsValue().track_instances);
   const endpointFilterString = ref("");
   const itemsPerPage = ref(20);
   const endpointInstances = ref<EndpointsView[]>([]);
@@ -102,7 +102,8 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
   const refresh = async () => {
     try {
-      const [[, data], data2] = await Promise.all([useTypedFetchFromServiceControl<EndpointsView[]>("endpoints"), endpointSettingsClient.endpointSettings(isEndpointSettingsSupported.value)]);
+      const endpointSettingsPromise = isEndpointSettingsSupported.value ? getEndpointSettings() : Promise.resolve([defaultEndpointSettingsValue()]);
+      const [[, data], data2] = await Promise.all([useTypedFetchFromServiceControl<EndpointsView[]>("endpoints"), endpointSettingsPromise]);
       endpointInstances.value = data;
       settings.value = data2;
       defaultTrackingInstancesValue.value = data2.find((value) => value.name === "")!.track_instances;
@@ -113,7 +114,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   };
 
   async function updateEndpointSettings(endpoints: Pick<LogicalEndpoint, "name" | "track_instances">[]) {
-    await Promise.all(endpoints.map((endpoint) => usePatchToServiceControl(`endpointssettings/${endpoint.name}`, { track_instances: !endpoint.track_instances })));
+    await Promise.all(endpoints.map((endpoint) => patchToServiceControl(`endpointssettings/${endpoint.name}`, { track_instances: !endpoint.track_instances })));
     await refresh();
   }
 

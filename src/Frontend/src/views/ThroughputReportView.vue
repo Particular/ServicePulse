@@ -15,7 +15,7 @@ const showWarning = ref<boolean>(false);
 
 const isThroughputSupported = useIsThroughputSupported();
 
-const reportState = computedAsync(async () => await throughputClient.reportAvailable(isThroughputSupported.value), null);
+const reportState = computedAsync(async () => (isThroughputSupported.value ? await throughputClient.reportAvailable() : null), null);
 
 async function generateReport() {
   const results = await throughputClient.endpoints();

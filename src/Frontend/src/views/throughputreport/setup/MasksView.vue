@@ -14,7 +14,9 @@ const isThroughputSupported = useIsThroughputSupported();
 
 onMounted(async () => {
   if (environmentStore.environment.sc_version === "") await environmentStore.refresh();
-  const maskArray = await throughputClient.getMasks(isThroughputSupported.value);
+  //needs to be after the environment refresh since it uses the sc_version
+  if (!isThroughputSupported.value) return;
+  const maskArray = await throughputClient.getMasks();
   masks.value = maskArray.join(separator);
 });
 
