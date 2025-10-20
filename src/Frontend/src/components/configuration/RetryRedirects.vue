@@ -1,37 +1,37 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import { licenseStatus } from "@/composables/serviceLicense";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import NoData from "../NoData.vue";
 import BusyIndicator from "../BusyIndicator.vue";
 import { useShowToast } from "@/composables/toast";
 import TimeSince from "../TimeSince.vue";
-import { useRedirects, useRetryPendingMessagesForQueue } from "@/composables/serviceRedirects";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import { TYPE } from "vue-toastification";
 import type Redirect from "@/resources/Redirect";
 import RetryRedirectEdit, { type RetryRedirect } from "@/components/configuration/RetryRedirectEdit.vue";
-import redirectCountUpdated from "@/components/configuration/redirectCountUpdated";
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
-import { deleteFromServiceControl, postToServiceControl, putToServiceControl } from "@/composables/serviceServiceControlUrls";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
-
-const isExpired = licenseStatus.isExpired;
+import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import { useRedirectsStore } from "@/stores/RedirectsStore";
+import { useLicenseStore } from "@/stores/LicenseStore";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
 const hasResponseStatusInHeader = environmentStore.serviceControlIsGreaterThan("5.2.0");
+const serviceControlStore = useServiceControlStore();
+const redirectsStore = useRedirectsStore();
+const licenseStore = useLicenseStore();
+const { licenseStatus } = licenseStore;
+
+const isExpired = licenseStatus.isExpired;
 
 const loadingData = ref(true);
-const redirects = reactive<{ total: number; data: Redirect[] }>({
-  total: 0,
-  data: [],
-});
+const redirects = redirectsStore.redirects;
 
 const showDelete = ref(false);
 const showEdit = ref(false);
@@ -47,13 +47,8 @@ const redirectSaveSuccessful = ref<boolean | null>(null);
 
 async function getRedirect() {
   loadingData.value = true;
-  const result = await useRedirects();
-  if (redirects.total !== result.total) {
-    redirectCountUpdated.count = result.total;
-  }
-  redirects.total = result.total;
-  redirects.data = result.data;
-  selectedRedirect.value.queues = result.queues;
+  await redirectsStore.refresh();
+  selectedRedirect.value.queues = redirectsStore.redirects.queues;
   loadingData.value = false;
 }
 
@@ -77,7 +72,7 @@ async function saveUpdatedRedirect(redirect: RetryRedirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
   const result = handleResponse(
-    await putToServiceControl(`redirects/${redirect.redirectId}`, {
+    await serviceControlStore.putToServiceControl(`redirects/${redirect.redirectId}`, {
       id: redirect.redirectId,
       fromphysicaladdress: redirect.sourceQueue,
       tophysicaladdress: redirect.targetQueue,
@@ -96,7 +91,7 @@ async function saveUpdatedRedirect(redirect: RetryRedirect) {
     }
   }
   if (result.message === "success" && redirect.immediatelyRetry) {
-    return useRetryPendingMessagesForQueue(redirect.sourceQueue);
+    return redirectsStore.retryPendingMessagesForQueue(redirect.sourceQueue);
   } else {
     return result;
   }
@@ -106,7 +101,7 @@ async function saveCreatedRedirect(redirect: RetryRedirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
   const result = handleResponse(
-    await postToServiceControl("redirects", {
+    await serviceControlStore.postToServiceControl("redirects", {
       fromphysicaladdress: redirect.sourceQueue,
       tophysicaladdress: redirect.targetQueue,
     })
@@ -134,7 +129,7 @@ function deleteRedirect(redirect: Redirect) {
 }
 
 async function saveDeletedRedirect() {
-  const result = handleResponse(await deleteFromServiceControl(`redirects/${selectedRedirect.value.message_redirect_id}`));
+  const result = handleResponse(await serviceControlStore.deleteFromServiceControl(`redirects/${selectedRedirect.value.message_redirect_id}`));
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
     useShowToast(TYPE.INFO, "Info", "Redirect deleted");

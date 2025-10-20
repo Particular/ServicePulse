@@ -2,12 +2,11 @@
 // Composables
 import { computed, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
-import { licenseStatus } from "../../composables/serviceLicense";
-import { isMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
 import { storeToRefs } from "pinia";
 //stores
 import { useMonitoringEndpointDetailsStore } from "../../stores/MonitoringEndpointDetailsStore";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
+import { useLicenseStore } from "@/stores/LicenseStore";
 // Components
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../../components/ServiceControlNotAvailable.vue";
@@ -22,10 +21,13 @@ import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPerio
 import routeLinks from "@/router/routeLinks";
 import FAIcon from "@/components/FAIcon.vue";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { useServiceControlStore } from "@/stores/ServiceControlStore";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
+const licenseStore = useLicenseStore();
+const { licenseStatus } = licenseStore;
 
 const route = useRoute();
 const router = useRouter();
@@ -34,6 +36,7 @@ let refreshInterval: number;
 
 const monitoringStore = useMonitoringEndpointDetailsStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
+const serviceControlStore = useServiceControlStore();
 
 const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 const { negativeCriticalTimeIsPresent, endpointDetails: endpoint } = storeToRefs(monitoringStore);
@@ -89,7 +92,7 @@ onMounted(() => {
         <!--MonitoringNotAvailable-->
         <div class="row">
           <div class="col-sm-12">
-            <MonitoringNotAvailable v-if="monitoringConnectionState.unableToConnect || isMonitoringDisabled()"></MonitoringNotAvailable>
+            <MonitoringNotAvailable v-if="monitoringConnectionState.unableToConnect || serviceControlStore.isMonitoringDisabled"></MonitoringNotAvailable>
           </div>
         </div>
         <!--Header-->

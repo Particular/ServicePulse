@@ -2,9 +2,7 @@
 import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { licenseStatus } from "@/composables/serviceLicense";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
-import { useEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications, useUpdateEmailNotifications } from "@/composables/serviceNotifications";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
@@ -15,11 +13,17 @@ import ActionButton from "@/components/ActionButton.vue";
 import { faCheck, faEdit, faEnvelope, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import EmailNotifications from "@/resources/EmailNotifications";
+import { useLicenseStore } from "@/stores/LicenseStore";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 const environmentStore = useEnvironmentAndVersionsStore();
-const hasResponseStatusInHeader = environmentStore.serviceControlIsGreaterThan("5.2");
+const hasResponseStatusInHeaders = environmentStore.serviceControlIsGreaterThan("5.2");
+const serviceControlStore = useServiceControlStore();
+const licenseStore = useLicenseStore();
+const { licenseStatus } = licenseStore;
 
 const isExpired = licenseStatus.isExpired;
 const emailTestSuccessful = ref<boolean | null>(null);
@@ -42,7 +46,11 @@ const emailNotifications = ref<EmailSettings>({
 async function toggleEmailNotifications() {
   emailTestSuccessful.value = null;
   emailUpdateSuccessful.value = null;
-  const result = await useToggleEmailNotifications(emailNotifications.value.enabled === null ? true : !emailNotifications.value.enabled);
+  const result = await getResponseOrError(() =>
+    serviceControlStore.postToServiceControl("notifications/email/toggle", {
+      enabled: emailNotifications.value.enabled === null ? true : !emailNotifications.value.enabled,
+    })
+  );
   if (result.message === "success") {
     emailToggleSuccessful.value = true;
   } else {
@@ -62,7 +70,7 @@ function editEmailNotifications() {
 async function saveEditedEmailNotifications(newSettings: UpdateEmailNotificationsSettingsRequest) {
   emailUpdateSuccessful.value = null;
   showEmailConfiguration.value = false;
-  const result = await useUpdateEmailNotifications(newSettings);
+  const result = await getResponseOrError(() => serviceControlStore.postToServiceControl("notifications/email", newSettings));
   if (result.message === "success") {
     emailUpdateSuccessful.value = true;
     useShowToast(TYPE.INFO, "Info", "Email settings updated.");
@@ -83,14 +91,27 @@ async function testEmailNotifications() {
   emailTestInProgress.value = true;
   emailToggleSuccessful.value = null;
   emailUpdateSuccessful.value = null;
-  const result = await useTestEmailNotifications(hasResponseStatusInHeader.value);
+  const result = await getResponseOrError(
+    () => serviceControlStore.postToServiceControl("notifications/email/test"),
+    (response) => (hasResponseStatusInHeaders.value ? (response.headers.get("X-Particular-Reason") ?? response.statusText) : response.statusText)
+  );
   emailTestSuccessful.value = result.message === "success";
   emailTestInProgress.value = false;
 }
 
 async function getEmailNotifications() {
   showEmailConfiguration.value = false;
-  const result = await useEmailNotifications();
+  let result: EmailNotifications | null = null;
+  try {
+    const [, data] = await serviceControlStore.fetchTypedFromServiceControl<EmailNotifications>("notifications/email");
+    result = data;
+  } catch (err) {
+    console.log(err);
+    result = {
+      enabled: false,
+      enable_tls: false,
+    };
+  }
   emailNotifications.value.enabled = result.enabled;
   emailNotifications.value.enable_tls = result.enable_tls;
   emailNotifications.value.smtp_server = result.smtp_server ? result.smtp_server : "";
@@ -104,6 +125,22 @@ async function getEmailNotifications() {
 onMounted(async () => {
   await getEmailNotifications();
 });
+
+async function getResponseOrError(action: () => Promise<Response>, responseStatusTextOverride?: (response: Response) => string) {
+  const responseStatusTextDefault = (response: Response) => response.statusText;
+  const responseStatusText = responseStatusTextOverride ?? responseStatusTextDefault;
+  try {
+    const response = await action();
+    return {
+      message: response.ok ? "success" : `error:${responseStatusText(response)}`,
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      message: "error",
+    };
+  }
+}
 </script>
 
 <template>

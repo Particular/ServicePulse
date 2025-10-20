@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref, useTemplateRef } from "vue";
-import { licenseStatus } from "../../composables/serviceLicense";
-import { useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -13,9 +11,15 @@ import GroupOperation from "@/resources/GroupOperation";
 import getSortFunction from "@/components/getSortFunction";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faArrowDown19, faArrowDown91 } from "@fortawesome/free-solid-svg-icons";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
+import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import { useLicenseStore } from "@/stores/LicenseStore";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
+const licenseStore = useLicenseStore();
+const { licenseStatus } = licenseStore;
+
+const serviceControlStore = useServiceControlStore();
 
 const selectedClassifier = ref<string>("");
 const classifiers = ref<string[]>([]);
@@ -63,7 +67,7 @@ const sortOptions: SortOptions<GroupOperation>[] = [
 ];
 
 async function getGroupingClassifiers() {
-  const [, data] = await useTypedFetchFromServiceControl<string[]>("recoverability/classifiers");
+  const [, data] = await serviceControlStore.fetchTypedFromServiceControl<string[]>("recoverability/classifiers");
   classifiers.value = data;
 }
 

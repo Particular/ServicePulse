@@ -1,20 +1,26 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import { licenseStatus } from "@/composables/serviceLicense";
-import { monitoringUrl as configuredMonitoringUrl, serviceControlUrl as configuredServiceControlUrl, updateServiceControlUrls, isMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
 import { faCheck, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "@/components/FAIcon.vue";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
+import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import { storeToRefs } from "pinia";
+import { useLicenseStore } from "@/stores/LicenseStore";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
+const licenseStore = useLicenseStore();
+const { licenseStatus } = licenseStore;
 
 const isExpired = licenseStatus.isExpired;
 
-const serviceControlUrl = ref(configuredServiceControlUrl.value);
-const monitoringUrl = ref(configuredMonitoringUrl.value);
+const serviceControlStore = useServiceControlStore();
+serviceControlStore.refresh();
+const localServiceControlUrl = ref(serviceControlStore.serviceControlUrl);
+const localMonitoringUrl = ref(serviceControlStore.monitoringUrl);
+const { isMonitoringDisabled } = storeToRefs(serviceControlStore);
 
 const testingServiceControl = ref(false);
 const serviceControlValid = ref<boolean | null>(null);
@@ -25,10 +31,10 @@ const monitoringValid = ref<boolean | null>(null);
 const connectionSaved = ref<boolean | null>(null);
 
 async function testServiceControlUrl() {
-  if (serviceControlUrl.value) {
+  if (localServiceControlUrl.value) {
     testingServiceControl.value = true;
     try {
-      const response = await fetch(serviceControlUrl.value);
+      const response = await fetch(localServiceControlUrl.value);
       serviceControlValid.value = response.ok && response.headers.has("X-Particular-Version");
     } catch {
       serviceControlValid.value = false;
@@ -39,15 +45,15 @@ async function testServiceControlUrl() {
 }
 
 async function testMonitoringUrl() {
-  if (monitoringUrl.value) {
+  if (localMonitoringUrl.value) {
     testingMonitoring.value = true;
 
-    if (!monitoringUrl.value.endsWith("/") && monitoringUrl.value !== "!") {
-      monitoringUrl.value += "/";
+    if (!localMonitoringUrl.value.endsWith("/") && localMonitoringUrl.value !== "!") {
+      localMonitoringUrl.value += "/";
     }
 
     try {
-      const response = await fetch(monitoringUrl.value + "monitored-endpoints");
+      const response = await fetch(localMonitoringUrl.value + "monitored-endpoints");
       monitoringValid.value = response.ok && response.headers.has("X-Particular-Version");
     } catch {
       monitoringValid.value = false;
@@ -58,12 +64,34 @@ async function testMonitoringUrl() {
 }
 
 function isMonitoringUrlSpecified() {
-  return monitoringUrl.value && monitoringUrl.value !== "!";
+  return localMonitoringUrl.value && localMonitoringUrl.value !== "!";
 }
 
 function saveConnections() {
-  updateServiceControlUrls(serviceControlUrl, monitoringUrl);
+  updateServiceControlUrls();
   connectionSaved.value = true;
+}
+
+function updateServiceControlUrls() {
+  if (!localServiceControlUrl.value) {
+    throw new Error("ServiceControl URL is mandatory");
+  } else if (!localServiceControlUrl.value.endsWith("/")) {
+    localServiceControlUrl.value += "/";
+  }
+
+  if (!localMonitoringUrl.value) {
+    localMonitoringUrl.value = "!"; //disabled
+  } else if (!localMonitoringUrl.value.endsWith("/") && localMonitoringUrl.value !== "!") {
+    localMonitoringUrl.value += "/";
+  }
+
+  //values have changed. They'll be reset after page reloads
+  window.localStorage.removeItem("scu");
+  window.localStorage.removeItem("mu");
+
+  const newSearch = `?scu=${localServiceControlUrl.value}&mu=${localMonitoringUrl.value}`;
+  console.debug("updateConnections - new query string: ", newSearch);
+  window.location.search = newSearch;
 }
 </script>
 
@@ -84,11 +112,11 @@ function saveConnections() {
                       <span class="failed-validation"><FAIcon :icon="faExclamationTriangle" /> Unable to connect </span>
                     </template>
                   </label>
-                  <input type="text" id="serviceControlUrl" name="serviceControlUrl" v-model="serviceControlUrl" class="form-control" style="color: #000" required />
+                  <input type="text" id="serviceControlUrl" name="serviceControlUrl" v-model="localServiceControlUrl" class="form-control" style="color: #000" required />
                 </div>
 
                 <div class="col-5 no-side-padding">
-                  <button class="btn btn-default btn-secondary btn-connection-test" :class="{ disabled: !configuredServiceControlUrl }" type="button" @click="testServiceControlUrl">Test</button>
+                  <button class="btn btn-default btn-secondary btn-connection-test" :class="{ disabled: !localServiceControlUrl }" type="button" @click="testServiceControlUrl">Test</button>
                   <span class="connection-test connection-testing" v-if="testingServiceControl"> <i class="glyphicon glyphicon-refresh rotate"></i>Testing </span>
                   <span class="connection-test connection-successful" v-if="serviceControlValid === true && !testingServiceControl"><FAIcon :icon="faCheck" /> Connection successful </span>
                   <span class="connection-test connection-failed" v-if="serviceControlValid === false && !testingServiceControl"><FAIcon :icon="faExclamationTriangle" /> Connection failed </span>
@@ -101,11 +129,11 @@ function saveConnections() {
                   <label for="monitoringUrl">
                     CONNECTION URL
                     <span class="auxilliary-label">(OPTIONAL) (Enter ! to disable monitoring)</span>
-                    <template v-if="monitoringConnectionState.unableToConnect && !isMonitoringDisabled()">
+                    <template v-if="monitoringConnectionState.unableToConnect && !isMonitoringDisabled">
                       <span class="failed-validation"><FAIcon :icon="faExclamationTriangle" /> Unable to connect </span>
                     </template>
                   </label>
-                  <input type="text" id="monitoringUrl" name="monitoringUrl" v-model="monitoringUrl" class="form-control" required />
+                  <input type="text" id="monitoringUrl" name="monitoringUrl" v-model="localMonitoringUrl" class="form-control" required />
                 </div>
 
                 <div class="col-5 no-side-padding">

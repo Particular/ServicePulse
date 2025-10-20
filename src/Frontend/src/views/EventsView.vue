@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { licenseStatus } from "@/composables/serviceLicense";
 import LicenseExpired from "@/components/LicenseExpired.vue";
 import DataView from "@/components/AutoRefreshDataView.vue";
 import EventLogItem from "@/components/EventLogItem.vue";
@@ -8,10 +7,13 @@ import type EventLogItemType from "@/resources/EventLogItem";
 import { ref } from "vue";
 import type DataViewPageModel from "@/components/DataViewPageModel";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
+import { useLicenseStore } from "@/stores/LicenseStore";
 
 const pageModel = ref<DataViewPageModel<EventLogItemType>>({ data: [], totalCount: 0 });
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
+const licenseStore = useLicenseStore();
+const { licenseStatus } = licenseStore;
 </script>
 
 <template>

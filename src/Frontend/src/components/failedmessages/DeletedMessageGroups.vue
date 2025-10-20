@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { licenseStatus } from "../../composables/serviceLicense";
 import { useShowToast } from "../../composables/toast";
-import { isError, useGetArchiveGroups, useRestoreGroup } from "../../composables/serviceMessageGroup";
-import { useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import createMessageGroupClient from "./messageGroupClient";
 import { useCookies } from "vue3-cookies";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
@@ -19,6 +17,8 @@ import ActionButton from "@/components/ActionButton.vue";
 import { faArrowRotateRight, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
+import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import { useLicenseStore } from "@/stores/LicenseStore";
 
 const statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"] as const;
 type RestoreOperationStatus = (typeof statusesForRestoreOperation)[number];
@@ -59,13 +59,18 @@ const selectedGroup = ref<ExtendedFailureGroupView>();
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
+const licenseStore = useLicenseStore();
+const { licenseStatus } = licenseStore;
+
+const serviceControlStore = useServiceControlStore();
+const messageGroupClient = createMessageGroupClient();
 
 const groupRestoreSuccessful = ref<boolean | null>(null);
 const selectedClassifier = ref<string | null>(null);
 const classifiers = ref<string[]>([]);
 
 async function getGroupingClassifiers() {
-  const [, data] = await useTypedFetchFromServiceControl<string[]>("recoverability/classifiers");
+  const [, data] = await serviceControlStore.fetchTypedFromServiceControl<string[]>("recoverability/classifiers");
   classifiers.value = data;
 }
 
@@ -83,7 +88,9 @@ async function classifierChanged(classifier: string) {
 }
 
 async function getArchiveGroups(classifier: string) {
-  const result = await useGetArchiveGroups(classifier);
+  //get all deleted message groups
+  const [, result] = await serviceControlStore.fetchTypedFromServiceControl<FailureGroupView[]>(`errors/groups/${classifier}`);
+
   if (result.length === 0 && undismissedRestoreGroups.value.length > 0) {
     undismissedRestoreGroups.value.forEach((deletedGroup) => {
       deletedGroup.need_user_acknowledgement = true;
@@ -183,8 +190,8 @@ async function restoreGroup() {
     group.workflow_state = { status: "restorestarted", message: "Restore request initiated..." };
     group.operation_start_time = new Date().toUTCString();
 
-    const result = await useRestoreGroup(group.id);
-    if (isError(result)) {
+    const result = await messageGroupClient.restoreGroup(group.id);
+    if (messageGroupClient.isError(result)) {
       groupRestoreSuccessful.value = false;
       useShowToast(TYPE.ERROR, "Error", `Failed to restore the group: ${result.message}`);
     } else {

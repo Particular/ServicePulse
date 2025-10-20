@@ -2,7 +2,6 @@
 // Composables
 import { onMounted, watch, onUnmounted, computed } from "vue";
 import { storeToRefs } from "pinia";
-import { licenseStatus } from "@/composables/serviceLicense";
 import { useMonitoringStore } from "@/stores/MonitoringStore";
 // Components
 import LicenseExpired from "@/components/LicenseExpired.vue";
@@ -12,6 +11,7 @@ import MonitoringNoData from "@/components/monitoring/MonitoringNoData.vue";
 import MonitoringHead from "@/components/monitoring/MonitoringHead.vue";
 import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
+import { useLicenseStore } from "@/stores/LicenseStore";
 
 const monitoringStore = useMonitoringStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
@@ -19,6 +19,8 @@ const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 const noData = computed(() => monitoringStore.endpointListIsEmpty);
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
+const licenseStore = useLicenseStore();
+const { licenseStatus } = licenseStore;
 
 let refreshInterval: number | undefined = undefined;
 

@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from "vue-router";
-import { licenseStatus } from "@/composables/serviceLicense";
 import LicenseExpired from "../components/LicenseExpired.vue";
 import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
 import { storeToRefs } from "pinia";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
+import { useLicenseStore } from "@/stores/LicenseStore";
 
 const showPendingRetry = window.defaultConfig.showPendingRetry;
 const { store: connectionsAndStatsStore } = useConnectionsAndStatsAutoRefresh();
 connectionsAndStatsStore.requiresFullFailureDetails();
 const connectionState = connectionsAndStatsStore.connectionState;
 const { failedMessageCount, archivedMessageCount, pendingRetriesMessageCount } = storeToRefs(connectionsAndStatsStore);
+const licenseStore = useLicenseStore();
+const { licenseStatus } = licenseStore;
 </script>
 
 <template>

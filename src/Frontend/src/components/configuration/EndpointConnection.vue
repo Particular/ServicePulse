@@ -2,11 +2,12 @@
 import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { licenseStatus } from "@/composables/serviceLicense";
 import BusyIndicator from "../BusyIndicator.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
-import { monitoringUrl, serviceControlUrl, useTypedFetchFromMonitoring, useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
+import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import { storeToRefs } from "pinia";
+import { useLicenseStore } from "@/stores/LicenseStore";
 
 interface ServiceControlInstanceConnection {
   settings: { [key: string]: object };
@@ -21,6 +22,11 @@ interface MetricsConnectionDetails {
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
+const serviceControlStore = useServiceControlStore();
+const { serviceControlUrl, monitoringUrl } = storeToRefs(serviceControlStore);
+const licenseStore = useLicenseStore();
+const { licenseStatus } = licenseStore;
+
 const isExpired = licenseStatus.isExpired;
 
 const loading = ref(true);
@@ -95,7 +101,7 @@ async function serviceControlConnections() {
 
 async function getServiceControlConnection() {
   try {
-    const [, data] = await useTypedFetchFromServiceControl<ServiceControlInstanceConnection>("connection");
+    const [, data] = await serviceControlStore.fetchTypedFromServiceControl<ServiceControlInstanceConnection>("connection");
     return data;
   } catch {
     return { errors: [`Error reaching ServiceControl at ${serviceControlUrl.value} connection`] } as ServiceControlInstanceConnection;
@@ -104,7 +110,7 @@ async function getServiceControlConnection() {
 
 async function getMonitoringConnection() {
   try {
-    const [, data] = await useTypedFetchFromMonitoring<{ Metrics: MetricsConnectionDetails }>("connection");
+    const [, data] = await serviceControlStore.fetchTypedFromMonitoring<{ Metrics: MetricsConnectionDetails }>("connection");
     return { ...data, errors: [] };
   } catch {
     return { Metrics: null, errors: [`Error SC Monitoring instance at ${monitoringUrl.value}connection`] };

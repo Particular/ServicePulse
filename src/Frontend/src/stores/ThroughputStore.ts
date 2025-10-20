@@ -1,14 +1,18 @@
-import { acceptHMRUpdate, defineStore } from "pinia";
+import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 import ConnectionTestResults from "@/resources/ConnectionTestResults";
-import throughputClient from "@/views/throughputreport/throughputClient";
+import createThroughputClient from "@/views/throughputreport/throughputClient";
 import { Transport } from "@/views/throughputreport/transport";
-import { isMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
 import useIsThroughputSupported from "@/views/throughputreport/isThroughputSupported";
+import { useServiceControlStore } from "./ServiceControlStore";
 
 export const useThroughputStore = defineStore("ThroughputStore", () => {
+  const serviceControlStore = useServiceControlStore();
+  const { isMonitoringEnabled } = storeToRefs(serviceControlStore);
+
   const testResults = ref<ConnectionTestResults | null>(null);
   const isThroughputSupported = useIsThroughputSupported();
+  const throughputClient = createThroughputClient();
 
   const refresh = async () => {
     if (isThroughputSupported.value) {
@@ -29,7 +33,7 @@ export const useThroughputStore = defineStore("ThroughputStore", () => {
     }
 
     // if Monitoring is enabled, we return whatever the value of the connection test
-    if (isMonitoringEnabled()) {
+    if (isMonitoringEnabled) {
       return !testResults.value?.monitoring_connection_result.connection_successful;
     }
 

@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from "vue";
-import { licenseStatus } from "../../composables/serviceLicense";
-import { patchToServiceControl, useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useCookies } from "vue3-cookies";
@@ -14,10 +12,13 @@ import moment from "moment";
 import { ExtendedFailedMessage } from "@/resources/FailedMessage";
 import { TYPE } from "vue-toastification";
 import FailureGroup from "@/resources/FailureGroup";
-import { useConfiguration } from "@/composables/configuration";
 import FAIcon from "@/components/FAIcon.vue";
 import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
+import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import { useConfigurationStore } from "@/stores/ConfigurationStore";
+import { storeToRefs } from "pinia";
+import { useLicenseStore } from "@/stores/LicenseStore";
 
 let pollingFaster = false;
 let refreshInterval: number | undefined;
@@ -37,10 +38,14 @@ const messageList = ref<IMessageList | undefined>();
 const messages = ref<ExtendedFailedMessage[]>([]);
 
 watch(pageNumber, () => loadMessages());
-const configuration = useConfiguration();
 
+const configurationStore = useConfigurationStore();
+const { configuration } = storeToRefs(configurationStore);
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
+const licenseStore = useLicenseStore();
+const { licenseStatus } = licenseStore;
+const serviceControlStore = useServiceControlStore();
 
 function loadMessages() {
   let startDate = new Date(0);
@@ -68,7 +73,7 @@ function loadMessages() {
 }
 
 async function loadGroupDetails(groupId: string) {
-  const [, data] = await useTypedFetchFromServiceControl<FailureGroup>(`archive/groups/id/${groupId}`);
+  const [, data] = await serviceControlStore.fetchTypedFromServiceControl<FailureGroup>(`archive/groups/id/${groupId}`);
   groupName.value = data.title;
 }
 
@@ -81,7 +86,7 @@ function loadPagedMessages(groupId?: string, page: number = 1, sortBy: string = 
 
   async function loadDelMessages() {
     try {
-      const [response, data] = await useTypedFetchFromServiceControl<ExtendedFailedMessage[]>(
+      const [response, data] = await serviceControlStore.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
         `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`
       );
 
@@ -153,7 +158,7 @@ async function restoreSelectedMessages() {
   selectedMessages.forEach((m) => (m.restoreInProgress = true));
   useShowToast(TYPE.INFO, "Info", `restoring ${selectedMessages.length} messages...`);
 
-  await patchToServiceControl(
+  await serviceControlStore.patchToServiceControl(
     "errors/unarchive",
     selectedMessages.map((m) => m.id)
   );
