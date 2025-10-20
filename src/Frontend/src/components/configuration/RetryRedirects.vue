@@ -14,6 +14,7 @@ import type Redirect from "@/resources/Redirect";
 import RetryRedirectEdit, { type RetryRedirect } from "@/components/configuration/RetryRedirectEdit.vue";
 import redirectCountUpdated from "@/components/configuration/redirectCountUpdated";
 import FAIcon from "@/components/FAIcon.vue";
+import ActionButton from "@/components/ActionButton.vue";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { deleteFromServiceControl, postToServiceControl, putToServiceControl } from "@/composables/serviceServiceControlUrls";
@@ -171,7 +172,7 @@ function handleResponse(response: Response) {
           <div class="row">
             <div class="col-sm-12">
               <div class="btn-toolbar">
-                <button type="button" class="btn btn-default" @click="createRedirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Create Redirect</button>
+                <ActionButton @click="createRedirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Create Redirect</ActionButton>
                 <span></span>
               </div>
             </div>
@@ -203,8 +204,8 @@ function handleResponse(response: Response) {
                     <div class="row">
                       <div class="col-sm-12">
                         <p class="small">
-                          <button type="button" class="btn btn-link btn-sm" @click="deleteRedirect(redirect)">End Redirect</button>
-                          <button type="button" class="btn btn-link btn-sm" @click="editRedirect(redirect)">Modify Redirect</button>
+                          <ActionButton variant="link" size="sm" @click="deleteRedirect(redirect)">End Redirect</ActionButton>
+                          <ActionButton variant="link" size="sm" @click="editRedirect(redirect)">Modify Redirect</ActionButton>
                         </p>
                       </div>
                     </div>
