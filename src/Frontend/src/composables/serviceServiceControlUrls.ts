@@ -39,6 +39,7 @@ function useServiceControlUrls() {
 
 export { useServiceControlUrls, serviceControlUrl, monitoringUrl };
 
+//TODO: the callsites of this should be relying on a computed boolean, rather than a boolean, so that when it changes they also change
 export function isMonitoringDisabled() {
   return monitoringUrl.value == null || monitoringUrl.value === "" || monitoringUrl.value === "!";
 }
@@ -123,7 +124,7 @@ export function useOptionsFromMonitoring() {
   return fetch(monitoringUrl.value ?? "", requestOptions);
 }
 
-export function usePatchToServiceControl(suffix: string, payload: object | null) {
+export function patchToServiceControl(suffix: string, payload: object | null) {
   const requestOptions: RequestInit = {
     method: "PATCH",
   };
