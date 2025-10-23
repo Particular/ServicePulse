@@ -21,9 +21,7 @@ describe("ThroughputStore tests", () => {
     await driver.setUp(precondition.hasNoDisconnectedEndpoints);
     await driver.setUp(precondition.hasServiceControlMonitoringInstance);
 
-    const serviceControlStore = useServiceControlStore();
-    serviceControlStore.refresh();
-
+    useServiceControlStore();
     await useEnvironmentAndVersionsStore().refresh();
 
     const store = useThroughputStore();

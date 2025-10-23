@@ -29,8 +29,7 @@ describe("MaskView tests", () => {
     driver.mockEndpoint(`${window.defaultConfig.service_control_url}licensing/settings/masks`, { body });
     setActivePinia(createTestingPinia({ stubActions: false }));
 
-    const serviceControlStore = useServiceControlStore();
-    serviceControlStore.refresh();
+    useServiceControlStore();
 
     const { debug } = render(MasksView, { global: { plugins: [Toast], directives: { tippy: () => {} } } });
     await flushPromises();

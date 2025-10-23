@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { ref, watch } from "vue";
 import { useDateFormatter } from "@/composables/dateFormatter";
 
 const props = withDefaults(
@@ -17,8 +17,6 @@ const props = withDefaults(
 
 const { formatRelativeTime, formatDateTooltip, emptyDate } = useDateFormatter();
 
-let interval: number | undefined = undefined;
-
 const title = ref<string>("");
 const text = ref<string>("");
 
@@ -32,12 +30,7 @@ function updateText() {
   }
 }
 
-onMounted(() => {
-  interval = window.setInterval(updateText, 5000);
-  updateText();
-});
-
-onUnmounted(() => window.clearInterval(interval));
+watch(() => props.dateUtc, updateText);
 </script>
 
 <template>

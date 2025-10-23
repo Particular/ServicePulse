@@ -21,8 +21,7 @@ describe("HeartbeatsStore tests", () => {
     await driver.setUp(serviceControlWithHeartbeats);
     await driver.setUp(precondition.hasHeartbeatsEndpoints(endpoints, endpointSettings));
 
-    const serviceControlStore = useServiceControlStore();
-    serviceControlStore.refresh();
+    useServiceControlStore();
     await useEnvironmentAndVersionsStore().refresh();
 
     const store = useHeartbeatsStore();

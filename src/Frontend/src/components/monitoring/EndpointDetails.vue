@@ -37,6 +37,7 @@ let refreshInterval: number;
 const monitoringStore = useMonitoringEndpointDetailsStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 const serviceControlStore = useServiceControlStore();
+const { isMonitoringDisabled } = storeToRefs(serviceControlStore);
 
 const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 const { negativeCriticalTimeIsPresent, endpointDetails: endpoint } = storeToRefs(monitoringStore);
@@ -92,7 +93,7 @@ onMounted(() => {
         <!--MonitoringNotAvailable-->
         <div class="row">
           <div class="col-sm-12">
-            <MonitoringNotAvailable v-if="monitoringConnectionState.unableToConnect || serviceControlStore.isMonitoringDisabled"></MonitoringNotAvailable>
+            <MonitoringNotAvailable v-if="monitoringConnectionState.unableToConnect || isMonitoringDisabled"></MonitoringNotAvailable>
           </div>
         </div>
         <!--Header-->

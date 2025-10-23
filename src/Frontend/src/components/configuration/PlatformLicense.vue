@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import BusyIndicator from "../BusyIndicator.vue";
 import ExclamationMark from "./../../components/ExclamationMark.vue";
 import convertToWarningLevel from "@/components/configuration/convertToWarningLevel";
 import { typeText } from "@/resources/LicenseInfo";
@@ -11,14 +10,7 @@ import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndSt
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
 import { useLicenseStore } from "@/stores/LicenseStore";
-
-// This is needed because the ConfigurationView.vue routerView expects this event.
-// The event is only actually emitted on the RetryRedirects.vue component
-// but if we don't include it, the console will show warnings about not being able to
-// subscribe to this event
-defineEmits<{
-  redirectCountUpdated: [count: number];
-}>();
+import LoadingSpinner from "../LoadingSpinner.vue";
 
 const configurationStore = useConfigurationStore();
 const { configuration } = storeToRefs(configurationStore);
@@ -37,7 +29,7 @@ const loading = computed(() => {
     <ServiceControlNotAvailable />
     <template v-if="!connectionState.unableToConnect">
       <section>
-        <busy-indicator v-if="loading"></busy-indicator>
+        <LoadingSpinner v-if="loading" />
 
         <template v-if="!loading">
           <div class="box">

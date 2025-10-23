@@ -50,8 +50,7 @@ describe("SetupView tests", () => {
 
     await preSetup(driver);
 
-    const serviceControlStore = useServiceControlStore();
-    serviceControlStore.refresh();
+    useServiceControlStore();
 
     const { debug } = render(SetupView, {
       global: {

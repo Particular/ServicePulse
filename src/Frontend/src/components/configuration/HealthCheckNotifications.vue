@@ -55,6 +55,7 @@ async function toggleEmailNotifications() {
     emailToggleSuccessful.value = true;
   } else {
     emailToggleSuccessful.value = false;
+    console.log(result.message);
     //set it back to what it was
     emailNotifications.value.enabled = !emailNotifications.value.enabled;
   }
@@ -83,6 +84,7 @@ async function saveEditedEmailNotifications(newSettings: UpdateEmailNotification
     emailNotifications.value.to = newSettings.to;
   } else {
     emailUpdateSuccessful.value = false;
+    console.log(result.message);
     useShowToast(TYPE.ERROR, "Error", "Failed to update the email settings.");
   }
 }
@@ -96,6 +98,7 @@ async function testEmailNotifications() {
     (response) => (hasResponseStatusInHeaders.value ? (response.headers.get("X-Particular-Reason") ?? response.statusText) : response.statusText)
   );
   emailTestSuccessful.value = result.message === "success";
+  if (!emailTestSuccessful.value) console.log(result.message);
   emailTestInProgress.value = false;
 }
 

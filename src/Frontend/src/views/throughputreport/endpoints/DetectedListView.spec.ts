@@ -32,8 +32,7 @@ describe("DetectedListView tests", () => {
     const driver = await setup();
     await preSetup(driver);
 
-    const serviceControlStore = useServiceControlStore();
-    serviceControlStore.refresh();
+    useServiceControlStore();
 
     const el = document.createElement("div");
     el.id = "modalDisplay";

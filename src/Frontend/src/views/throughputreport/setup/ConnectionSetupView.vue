@@ -26,7 +26,7 @@ const needsConfiguration = computed(() => {
   const broker = settingsInfo.value?.broker_settings?.length ?? 0;
   const monitoring = settingsInfo.value?.monitoring_settings?.length ?? 0;
   const serviceControl = settingsInfo.value?.service_control_settings?.length ?? 0;
-  return broker > 0 || (monitoring > 0 && isMonitoringEnabled) || serviceControl > 0;
+  return broker > 0 || (monitoring > 0 && isMonitoringEnabled.value) || serviceControl > 0;
 });
 </script>
 

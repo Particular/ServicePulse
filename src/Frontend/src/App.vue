@@ -5,10 +5,6 @@ import PageHeader from "./components/PageHeader.vue";
 import "bootstrap";
 import LicenseNotifications from "@/components/LicenseNotifications.vue";
 import BackendChecksNotifications from "@/components/BackendChecksNotifications.vue";
-// import { useServiceControlStore } from "./stores/ServiceControlStore";
-
-// const serviceControlStore = useServiceControlStore();
-// serviceControlStore.refresh();
 </script>
 
 <template>

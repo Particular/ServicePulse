@@ -93,7 +93,7 @@ watch(
   },
   { immediate: true }
 );
-const endpointColor = hexToCSSFilter("#929E9E").filter;
+const endpointColor = hexToCSSFilter("#777F7F").filter;
 
 onMounted(() => {
   const { back, ...otherArgs } = route.query;
@@ -183,7 +183,7 @@ h1.message-type-title {
 }
 
 .message-metadata {
-  display: inline;
+  display: flex;
 }
 
 div.btn-toolbar.message-toolbar {
@@ -215,6 +215,7 @@ button img {
   background-image: url("@/assets/endpoint.svg");
   background-position: center;
   background-repeat: no-repeat;
+  display: inline-block;
   height: 15px;
   width: 15px;
 }

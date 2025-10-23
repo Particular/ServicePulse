@@ -2,12 +2,12 @@
 import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import BusyIndicator from "../BusyIndicator.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { storeToRefs } from "pinia";
 import { useLicenseStore } from "@/stores/LicenseStore";
+import LoadingSpinner from "../LoadingSpinner.vue";
 
 interface ServiceControlInstanceConnection {
   settings: { [key: string]: object };
@@ -140,7 +140,7 @@ async function getMonitoringConnection() {
           </div>
           <div class="row tabs-config-snippets">
             <div class="col-12">
-              <busy-indicator v-show="loading"></busy-indicator>
+              <LoadingSpinner v-show="loading"></LoadingSpinner>
 
               <!-- Nav tabs -->
               <div v-if="!loading" class="tabs" role="tablist">

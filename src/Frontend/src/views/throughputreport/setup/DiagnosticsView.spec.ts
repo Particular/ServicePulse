@@ -49,8 +49,7 @@ describe("DiagnosticsView tests", () => {
       })
     );
 
-    const serviceControlStore = useServiceControlStore();
-    serviceControlStore.refresh();
+    useServiceControlStore();
 
     const { debug } = render(DiagnosticsView, {
       global: {

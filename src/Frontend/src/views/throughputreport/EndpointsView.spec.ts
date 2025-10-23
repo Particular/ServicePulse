@@ -29,8 +29,7 @@ describe("EndpointsView tests", () => {
     const driver = await setup(transport);
     await preSetup(driver);
 
-    const serviceControlStore = useServiceControlStore();
-    serviceControlStore.refresh();
+    useServiceControlStore();
 
     const { debug } = render(EndpointsView, {
       global: {

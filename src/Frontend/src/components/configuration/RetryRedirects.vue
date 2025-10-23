@@ -3,7 +3,6 @@ import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import NoData from "../NoData.vue";
-import BusyIndicator from "../BusyIndicator.vue";
 import { useShowToast } from "@/composables/toast";
 import TimeSince from "../TimeSince.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
@@ -18,6 +17,7 @@ import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAn
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useRedirectsStore } from "@/stores/RedirectsStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
+import LoadingSpinner from "../LoadingSpinner.vue";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
@@ -162,7 +162,7 @@ function handleResponse(response: Response) {
       <ServiceControlNotAvailable />
       <template v-if="!connectionState.unableToConnect">
         <section>
-          <busy-indicator v-if="loadingData"></busy-indicator>
+          <LoadingSpinner v-if="loadingData" />
 
           <div class="row">
             <div class="col-sm-12">

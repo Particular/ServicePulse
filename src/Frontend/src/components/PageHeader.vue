@@ -22,7 +22,7 @@ const menuItems = computed(
   () => [
   DashboardMenuItem,
   HeartbeatsMenuItem,
-  ...(isMonitoringEnabled ? [MonitoringMenuItem] : []),
+  ...(isMonitoringEnabled.value ? [MonitoringMenuItem] : []),
   AuditMenuItem,
   FailedMessagesMenuItem,
   CustomChecksMenuItem,
