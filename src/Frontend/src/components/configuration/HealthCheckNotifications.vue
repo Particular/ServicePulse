@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
@@ -11,14 +11,11 @@ import OnOffSwitch from "../OnOffSwitch.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faCheck, faEdit, faEnvelope, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import EmailNotifications from "@/resources/EmailNotifications";
 import { useLicenseStore } from "@/stores/LicenseStore";
 
-const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
 const environmentStore = useEnvironmentAndVersionsStore();
 const hasResponseStatusInHeaders = environmentStore.serviceControlIsGreaterThan("5.2");
 const serviceControlStore = useServiceControlStore();
@@ -150,8 +147,7 @@ async function getResponseOrError(action: () => Promise<Response>, responseStatu
   <LicenseExpired />
   <template v-if="!isExpired">
     <section name="notifications">
-      <ServiceControlNotAvailable />
-      <template v-if="!connectionState.unableToConnect">
+      <ServiceControlAvailable>
         <section>
           <div class="row">
             <div class="col-12">
@@ -211,7 +207,7 @@ async function getResponseOrError(action: () => Promise<Response>, responseStatu
             </div>
           </div>
         </section>
-      </template>
+      </ServiceControlAvailable>
 
       <Teleport to="#modalDisplay">
         <!-- use the modal component, pass in the prop -->

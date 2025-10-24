@@ -2,7 +2,7 @@
 import { onMounted, ref, useTemplateRef } from "vue";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
-import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import LastTenOperations from "../failedmessages/LastTenOperations.vue";
 import MessageGroupList, { IMessageGroupList } from "../failedmessages/MessageGroupList.vue";
 import OrderBy from "@/components/OrderBy.vue";
@@ -10,12 +10,9 @@ import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import GroupOperation from "@/resources/GroupOperation";
 import getSortFunction from "@/components/getSortFunction";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faArrowDown19, faArrowDown91 } from "@fortawesome/free-solid-svg-icons";
-import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
 
-const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
 const licenseStore = useLicenseStore();
 const { licenseStatus } = licenseStore;
 
@@ -109,8 +106,7 @@ onMounted(async () => {
 <template>
   <LicenseExpired />
   <template v-if="!licenseStatus.isExpired">
-    <ServiceControlNotAvailable />
-    <template v-if="!connectionState.unableToConnect">
+    <ServiceControlAvailable>
       <section name="message_groups">
         <LastTenOperations></LastTenOperations>
         <div class="row">
@@ -145,7 +141,7 @@ onMounted(async () => {
           </div>
         </div>
       </section>
-    </template>
+    </ServiceControlAvailable>
   </template>
 </template>
 

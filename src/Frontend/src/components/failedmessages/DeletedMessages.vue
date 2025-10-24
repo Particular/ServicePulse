@@ -4,7 +4,7 @@ import { useShowToast } from "../../composables/toast";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
-import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
@@ -14,7 +14,6 @@ import { TYPE } from "vue-toastification";
 import FailureGroup from "@/resources/FailureGroup";
 import FAIcon from "@/components/FAIcon.vue";
 import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
-import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
@@ -41,8 +40,6 @@ watch(pageNumber, () => loadMessages());
 
 const configurationStore = useConfigurationStore();
 const { configuration } = storeToRefs(configurationStore);
-const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
 const licenseStore = useLicenseStore();
 const { licenseStatus } = licenseStore;
 const serviceControlStore = useServiceControlStore();
@@ -222,8 +219,7 @@ onMounted(() => {
 <template>
   <LicenseExpired />
   <template v-if="!licenseStatus.isExpired">
-    <ServiceControlNotAvailable />
-    <template v-if="!connectionState.unableToConnect">
+    <ServiceControlAvailable>
       <section name="message_groups">
         <div class="row" v-if="groupName && messages.length > 0">
           <div class="col-sm-12">
@@ -277,7 +273,7 @@ onMounted(() => {
           ></ConfirmDialog>
         </Teleport>
       </section>
-    </template>
+    </ServiceControlAvailable>
   </template>
 </template>
 

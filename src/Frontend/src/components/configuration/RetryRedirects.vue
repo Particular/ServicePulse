@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import NoData from "../NoData.vue";
 import { useShowToast } from "@/composables/toast";
 import TimeSince from "../TimeSince.vue";
@@ -12,15 +12,12 @@ import RetryRedirectEdit, { type RetryRedirect } from "@/components/configuratio
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useRedirectsStore } from "@/stores/RedirectsStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
 import LoadingSpinner from "../LoadingSpinner.vue";
 
-const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
 const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
 const hasResponseStatusInHeader = environmentStore.serviceControlIsGreaterThan("5.2.0");
 const serviceControlStore = useServiceControlStore();
@@ -159,8 +156,7 @@ function handleResponse(response: Response) {
   <LicenseExpired />
   <template v-if="!isExpired">
     <section name="redirects">
-      <ServiceControlNotAvailable />
-      <template v-if="!connectionState.unableToConnect">
+      <ServiceControlAvailable>
         <section>
           <LoadingSpinner v-if="loadingData" />
 
@@ -225,7 +221,7 @@ function handleResponse(response: Response) {
             <RetryRedirectEdit v-if="showEdit" v-bind="selectedRedirect" @cancel="showEdit = false" @create="saveCreatedRedirect" @edit="saveUpdatedRedirect"></RetryRedirectEdit>
           </Teleport>
         </section>
-      </template>
+      </ServiceControlAvailable>
     </section>
   </template>
 </template>

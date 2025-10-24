@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import EventItemShort from "@/components/EventItemShort.vue";
 import LicenseExpired from "@/components/LicenseExpired.vue";
-import ServiceControlNotAvailable from "@/components/ServiceControlNotAvailable.vue";
+import ServiceControlAvailable from "@/components/ServiceControlAvailable.vue";
 import CustomChecksDashboardItem from "@/components/customchecks/CustomChecksDashboardItem.vue";
 import HeartbeatsDashboardItem from "@/components/heartbeats/HeartbeatsDashboardItem.vue";
 import FailedMessagesDashboardItem from "@/components/failedmessages/FailedMessagesDashboardItem.vue";
-import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useLicenseStore } from "@/stores/LicenseStore";
 
-const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
 const licenseStore = useLicenseStore();
 const { licenseStatus } = licenseStore;
 </script>
@@ -18,9 +15,7 @@ const { licenseStatus } = licenseStore;
   <LicenseExpired />
   <template v-if="!licenseStatus.isExpired">
     <div class="container">
-      <ServiceControlNotAvailable />
-
-      <template v-if="connectionState.connected">
+      <ServiceControlAvailable>
         <div class="row">
           <div class="col-12">
             <h6>System status</h6>
@@ -42,7 +37,7 @@ const { licenseStatus } = licenseStore;
           </div>
           <EventItemShort></EventItemShort>
         </div>
-      </template>
+      </ServiceControlAvailable>
     </div>
   </template>
 </template>

@@ -4,7 +4,7 @@ import { useShowToast } from "../../composables/toast";
 import { useCookies } from "vue3-cookies";
 import OrderBy from "@/components/OrderBy.vue";
 import LicenseExpired from "../../components/LicenseExpired.vue";
-import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
@@ -17,14 +17,10 @@ import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShor
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faCheckSquare } from "@fortawesome/free-regular-svg-icons";
-import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
 import { useLicenseStore } from "@/stores/LicenseStore";
-
-const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
 
 const serviceControlStore = useServiceControlStore();
 const configurationStore = useConfigurationStore();
@@ -253,8 +249,7 @@ onMounted(() => {
 <template>
   <LicenseExpired />
   <template v-if="!licenseStatus.isExpired">
-    <ServiceControlNotAvailable />
-    <template v-if="!connectionState.unableToConnect">
+    <ServiceControlAvailable>
       <section name="pending_retries">
         <div class="row">
           <div class="col-12">
@@ -374,7 +369,7 @@ onMounted(() => {
           ></ConfirmDialog>
         </Teleport>
       </section>
-    </template>
+    </ServiceControlAvailable>
   </template>
 </template>
 

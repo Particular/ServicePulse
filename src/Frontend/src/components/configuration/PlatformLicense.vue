@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import ExclamationMark from "./../../components/ExclamationMark.vue";
 import convertToWarningLevel from "@/components/configuration/convertToWarningLevel";
 import { typeText } from "@/resources/LicenseInfo";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "@/components/FAIcon.vue";
-import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
 import { useLicenseStore } from "@/stores/LicenseStore";
@@ -14,8 +13,6 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 
 const configurationStore = useConfigurationStore();
 const { configuration } = storeToRefs(configurationStore);
-const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
 const licenseStore = useLicenseStore();
 const { licenseStatus, license } = licenseStore;
 
@@ -26,8 +23,7 @@ const loading = computed(() => {
 
 <template>
   <section name="license">
-    <ServiceControlNotAvailable />
-    <template v-if="!connectionState.unableToConnect">
+    <ServiceControlAvailable>
       <section>
         <LoadingSpinner v-if="loading" />
 
@@ -119,7 +115,7 @@ const loading = computed(() => {
           </div>
         </template>
       </section>
-    </template>
+    </ServiceControlAvailable>
   </section>
 </template>
 

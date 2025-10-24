@@ -6,7 +6,7 @@ import { onBeforeRouteLeave, useRoute } from "vue-router";
 import createMessageGroupClient from "./messageGroupClient";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import OrderBy from "@/components/OrderBy.vue";
-import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
@@ -16,13 +16,9 @@ import { TYPE } from "vue-toastification";
 import GroupOperation from "@/resources/GroupOperation";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faArrowRotateRight, faTrash, faDownload } from "@fortawesome/free-solid-svg-icons";
 import ActionButton from "@/components/ActionButton.vue";
-import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useMessageStore } from "@/stores/MessageStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
-
-const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
 
 const serviceControlStore = useServiceControlStore();
 const messageStore = useMessageStore();
@@ -288,8 +284,7 @@ onMounted(() => {
 <template>
   <LicenseExpired />
   <template v-if="!licenseStatus.isExpired">
-    <ServiceControlNotAvailable />
-    <template v-if="!connectionState.unableToConnect">
+    <ServiceControlAvailable>
       <section name="message_groups">
         <div class="row" v-if="groupName && messages.length > 0">
           <div class="col-sm-12">
@@ -358,7 +353,7 @@ onMounted(() => {
           ></ConfirmDialog>
         </Teleport>
       </section>
-    </template>
+    </ServiceControlAvailable>
   </template>
 </template>
 

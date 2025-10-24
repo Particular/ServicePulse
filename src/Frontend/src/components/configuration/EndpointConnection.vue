@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
-import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { storeToRefs } from "pinia";
 import { useLicenseStore } from "@/stores/LicenseStore";
@@ -20,8 +19,6 @@ interface MetricsConnectionDetails {
   Interval?: string;
 }
 
-const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
 const serviceControlStore = useServiceControlStore();
 const { serviceControlUrl, monitoringUrl } = storeToRefs(serviceControlStore);
 const licenseStore = useLicenseStore();
@@ -122,8 +119,7 @@ async function getMonitoringConnection() {
   <LicenseExpired />
   <template v-if="!isExpired">
     <section name="platformconnection">
-      <ServiceControlNotAvailable />
-      <template v-if="!connectionState.unableToConnect">
+      <ServiceControlAvailable>
         <div class="box configuration">
           <div class="row">
             <div class="col-12">
@@ -185,7 +181,7 @@ async function getMonitoringConnection() {
             </div>
           </div>
         </div>
-      </template>
+      </ServiceControlAvailable>
     </section>
   </template>
 </template>

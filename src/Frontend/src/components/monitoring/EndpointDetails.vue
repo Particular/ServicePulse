@@ -9,7 +9,7 @@ import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndSt
 import { useLicenseStore } from "@/stores/LicenseStore";
 // Components
 import LicenseExpired from "../../components/LicenseExpired.vue";
-import ServiceControlNotAvailable from "../../components/ServiceControlNotAvailable.vue";
+import ServiceControlAvailable from "../../components/ServiceControlAvailable.vue";
 import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
 import PeriodSelector from "./MonitoringHistoryPeriod.vue";
 import EndpointBacklog from "./EndpointBacklog.vue";
@@ -24,7 +24,6 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
 const licenseStore = useLicenseStore();
 const { licenseStatus } = licenseStore;
@@ -88,9 +87,8 @@ onMounted(() => {
   <LicenseExpired />
   <template v-if="!licenseStatus.isExpired">
     <div class="container monitoring-view">
-      <ServiceControlNotAvailable />
-      <template v-if="connectionState.connected">
-        <!--MonitoringNotAvailable-->
+      <ServiceControlAvailable>
+        <!--MonitoringAvailable-->
         <div class="row">
           <div class="col-sm-12">
             <MonitoringNotAvailable v-if="monitoringConnectionState.unableToConnect || isMonitoringDisabled"></MonitoringNotAvailable>
@@ -166,7 +164,7 @@ onMounted(() => {
             <EndpointMessageTypes />
           </section>
         </div>
-      </template>
+      </ServiceControlAvailable>
     </div>
   </template>
 </template>

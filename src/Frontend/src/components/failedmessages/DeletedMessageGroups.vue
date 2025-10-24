@@ -7,7 +7,7 @@ import { useCookies } from "vue3-cookies";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import LicenseExpired from "../../components/LicenseExpired.vue";
-import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import routeLinks from "@/router/routeLinks";
 import FailureGroupView from "@/resources/FailureGroupView";
@@ -16,7 +16,6 @@ import MetadataItem from "@/components/MetadataItem.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faArrowRotateRight, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
 
@@ -57,8 +56,6 @@ const router = useRouter();
 const showRestoreGroupModal = ref(false);
 const selectedGroup = ref<ExtendedFailureGroupView>();
 
-const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
 const licenseStore = useLicenseStore();
 const { licenseStatus } = licenseStore;
 
@@ -287,8 +284,7 @@ onMounted(async () => {
 <template>
   <LicenseExpired />
   <template v-if="!licenseStatus.isExpired">
-    <ServiceControlNotAvailable />
-    <template v-if="!connectionState.unableToConnect">
+    <ServiceControlAvailable>
       <section name="message_groups">
         <div class="row">
           <div class="col-6 list-section">
@@ -423,7 +419,7 @@ onMounted(async () => {
           </Teleport>
         </div>
       </section>
-    </template>
+    </ServiceControlAvailable>
   </template>
 </template>
 
