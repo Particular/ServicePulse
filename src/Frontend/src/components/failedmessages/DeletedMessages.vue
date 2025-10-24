@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useShowToast } from "../../composables/toast";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useCookies } from "vue3-cookies";
-import LicenseExpired from "../../components/LicenseExpired.vue";
+import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
@@ -17,7 +17,6 @@ import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
-import { useLicenseStore } from "@/stores/LicenseStore";
 
 let pollingFaster = false;
 let refreshInterval: number | undefined;
@@ -40,8 +39,6 @@ watch(pageNumber, () => loadMessages());
 
 const configurationStore = useConfigurationStore();
 const { configuration } = storeToRefs(configurationStore);
-const licenseStore = useLicenseStore();
-const { licenseStatus } = licenseStore;
 const serviceControlStore = useServiceControlStore();
 
 function loadMessages() {
@@ -217,9 +214,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <LicenseExpired />
-  <template v-if="!licenseStatus.isExpired">
-    <ServiceControlAvailable>
+  <ServiceControlAvailable>
+    <LicenseNotExpired>
       <section name="message_groups">
         <div class="row" v-if="groupName && messages.length > 0">
           <div class="col-sm-12">
@@ -273,8 +269,8 @@ onMounted(() => {
           ></ConfirmDialog>
         </Teleport>
       </section>
-    </ServiceControlAvailable>
-  </template>
+    </LicenseNotExpired>
+  </ServiceControlAvailable>
 </template>
 
 <style scoped>

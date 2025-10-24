@@ -6,9 +6,8 @@ import { storeToRefs } from "pinia";
 //stores
 import { useMonitoringEndpointDetailsStore } from "../../stores/MonitoringEndpointDetailsStore";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
-import { useLicenseStore } from "@/stores/LicenseStore";
 // Components
-import LicenseExpired from "../../components/LicenseExpired.vue";
+import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
 import ServiceControlAvailable from "../../components/ServiceControlAvailable.vue";
 import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
 import PeriodSelector from "./MonitoringHistoryPeriod.vue";
@@ -25,8 +24,6 @@ import { useServiceControlStore } from "@/stores/ServiceControlStore";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
-const licenseStore = useLicenseStore();
-const { licenseStatus } = licenseStore;
 
 const route = useRoute();
 const router = useRouter();
@@ -84,10 +81,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <LicenseExpired />
-  <template v-if="!licenseStatus.isExpired">
-    <div class="container monitoring-view">
-      <ServiceControlAvailable>
+  <div class="container monitoring-view">
+    <ServiceControlAvailable>
+      <LicenseNotExpired>
         <!--MonitoringAvailable-->
         <div class="row">
           <div class="col-sm-12">
@@ -164,9 +160,9 @@ onMounted(() => {
             <EndpointMessageTypes />
           </section>
         </div>
-      </ServiceControlAvailable>
-    </div>
-  </template>
+      </LicenseNotExpired>
+    </ServiceControlAvailable>
+  </div>
 </template>
 
 <style scoped>

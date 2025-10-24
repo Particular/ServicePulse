@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, useTemplateRef } from "vue";
 import { useCookies } from "vue3-cookies";
-import LicenseExpired from "../../components/LicenseExpired.vue";
+import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import LastTenOperations from "../failedmessages/LastTenOperations.vue";
 import MessageGroupList, { IMessageGroupList } from "../failedmessages/MessageGroupList.vue";
@@ -11,10 +11,6 @@ import GroupOperation from "@/resources/GroupOperation";
 import getSortFunction from "@/components/getSortFunction";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faArrowDown19, faArrowDown91 } from "@fortawesome/free-solid-svg-icons";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
-import { useLicenseStore } from "@/stores/LicenseStore";
-
-const licenseStore = useLicenseStore();
-const { licenseStatus } = licenseStore;
 
 const serviceControlStore = useServiceControlStore();
 
@@ -104,9 +100,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <LicenseExpired />
-  <template v-if="!licenseStatus.isExpired">
-    <ServiceControlAvailable>
+  <ServiceControlAvailable>
+    <LicenseNotExpired>
       <section name="message_groups">
         <LastTenOperations></LastTenOperations>
         <div class="row">
@@ -141,8 +136,8 @@ onMounted(async () => {
           </div>
         </div>
       </section>
-    </ServiceControlAvailable>
-  </template>
+    </LicenseNotExpired>
+  </ServiceControlAvailable>
 </template>
 
 <style scoped>

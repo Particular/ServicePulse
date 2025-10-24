@@ -88,6 +88,14 @@ function preventIfDisabled(e: Event) {
               <RouterLink :to="routeLinks.configuration.endpointConnection.link">Endpoint Connection</RouterLink>
             </h5>
           </template>
+          <template v-else>
+            <h5 :class="{ active: isRouteSelected(routeLinks.configuration.connections.link) }" class="nav-item" role="tab" aria-label="connections">
+              <RouterLink :to="routeLinks.configuration.connections.link">
+                Connections
+                <exclamation-mark v-if="connectionStore.displayConnectionsWarning" :type="WarningLevel.Danger" />
+              </RouterLink>
+            </h5>
+          </template>
         </div>
       </div>
     </div>

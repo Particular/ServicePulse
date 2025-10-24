@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import LicenseExpired from "../LicenseExpired.vue";
+import LicenseNotExpired from "../LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import NoData from "../NoData.vue";
 import { useShowToast } from "@/composables/toast";
@@ -15,17 +15,12 @@ import { faClock } from "@fortawesome/free-regular-svg-icons";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useRedirectsStore } from "@/stores/RedirectsStore";
-import { useLicenseStore } from "@/stores/LicenseStore";
 import LoadingSpinner from "../LoadingSpinner.vue";
 
 const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
 const hasResponseStatusInHeader = environmentStore.serviceControlIsGreaterThan("5.2.0");
 const serviceControlStore = useServiceControlStore();
 const redirectsStore = useRedirectsStore();
-const licenseStore = useLicenseStore();
-const { licenseStatus } = licenseStore;
-
-const isExpired = licenseStatus.isExpired;
 
 const loadingData = ref(true);
 const redirects = redirectsStore.redirects;
@@ -153,10 +148,9 @@ function handleResponse(response: Response) {
 </script>
 
 <template>
-  <LicenseExpired />
-  <template v-if="!isExpired">
-    <section name="redirects">
-      <ServiceControlAvailable>
+  <section name="redirects">
+    <ServiceControlAvailable>
+      <LicenseNotExpired>
         <section>
           <LoadingSpinner v-if="loadingData" />
 
@@ -221,9 +215,9 @@ function handleResponse(response: Response) {
             <RetryRedirectEdit v-if="showEdit" v-bind="selectedRedirect" @cancel="showEdit = false" @create="saveCreatedRedirect" @edit="saveUpdatedRedirect"></RetryRedirectEdit>
           </Teleport>
         </section>
-      </ServiceControlAvailable>
-    </section>
-  </template>
+      </LicenseNotExpired>
+    </ServiceControlAvailable>
+  </section>
 </template>
 
 <style scoped>

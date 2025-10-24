@@ -17,8 +17,8 @@ const { isMassTransitConnected } = storeToRefs(configurationStore);
 </script>
 
 <template>
-  <LicenseNotExpired>
-    <ServiceControlAvailable>
+  <ServiceControlAvailable>
+    <LicenseNotExpired>
       <div class="container">
         <div class="row">
           <div class="col-12">
@@ -55,8 +55,8 @@ const { isMassTransitConnected } = storeToRefs(configurationStore);
         </div>
         <RouterView />
       </div>
-    </ServiceControlAvailable>
-  </LicenseNotExpired>
+    </LicenseNotExpired>
+  </ServiceControlAvailable>
 </template>
 
 <style scoped>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import LicenseExpired from "../LicenseExpired.vue";
+import LicenseNotExpired from "../LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
 import { useShowToast } from "@/composables/toast";
@@ -14,15 +14,11 @@ import { faCheck, faEdit, faEnvelope, faExclamationTriangle } from "@fortawesome
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import EmailNotifications from "@/resources/EmailNotifications";
-import { useLicenseStore } from "@/stores/LicenseStore";
 
 const environmentStore = useEnvironmentAndVersionsStore();
 const hasResponseStatusInHeaders = environmentStore.serviceControlIsGreaterThan("5.2");
 const serviceControlStore = useServiceControlStore();
-const licenseStore = useLicenseStore();
-const { licenseStatus } = licenseStore;
 
-const isExpired = licenseStatus.isExpired;
 const emailTestSuccessful = ref<boolean | null>(null);
 const emailTestInProgress = ref<boolean | null>(null);
 const emailToggleSuccessful = ref<boolean | null>(null);
@@ -144,10 +140,9 @@ async function getResponseOrError(action: () => Promise<Response>, responseStatu
 </script>
 
 <template>
-  <LicenseExpired />
-  <template v-if="!isExpired">
-    <section name="notifications">
-      <ServiceControlAvailable>
+  <section name="notifications">
+    <ServiceControlAvailable>
+      <LicenseNotExpired>
         <section>
           <div class="row">
             <div class="col-12">
@@ -207,14 +202,14 @@ async function getResponseOrError(action: () => Promise<Response>, responseStatu
             </div>
           </div>
         </section>
-      </ServiceControlAvailable>
+      </LicenseNotExpired>
 
       <Teleport to="#modalDisplay">
         <!-- use the modal component, pass in the prop -->
         <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration === true" v-bind="emailNotifications" @cancel="showEmailConfiguration = false" @save="saveEditedEmailNotifications"> </HealthCheckNotifications_EmailConfiguration>
       </Teleport>
-    </section>
-  </template>
+    </ServiceControlAvailable>
+  </section>
 </template>
 
 <style scoped>

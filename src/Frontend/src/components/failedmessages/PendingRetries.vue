@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, ref, useTemplateRef, watch } from "vue";
 import { useShowToast } from "../../composables/toast";
 import { useCookies } from "vue3-cookies";
 import OrderBy from "@/components/OrderBy.vue";
-import LicenseExpired from "../../components/LicenseExpired.vue";
+import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
@@ -20,13 +20,10 @@ import { faCheckSquare } from "@fortawesome/free-regular-svg-icons";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
-import { useLicenseStore } from "@/stores/LicenseStore";
 
 const serviceControlStore = useServiceControlStore();
 const configurationStore = useConfigurationStore();
 const { isMassTransitConnected } = storeToRefs(configurationStore);
-const licenseStore = useLicenseStore();
-const { licenseStatus } = licenseStore;
 
 let refreshInterval: number | undefined;
 let sortMethod: SortOptions<GroupOperation> | undefined;
@@ -247,9 +244,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <LicenseExpired />
-  <template v-if="!licenseStatus.isExpired">
-    <ServiceControlAvailable>
+  <ServiceControlAvailable>
+    <LicenseNotExpired>
       <section name="pending_retries">
         <div class="row">
           <div class="col-12">
@@ -369,8 +365,8 @@ onMounted(() => {
           ></ConfirmDialog>
         </Teleport>
       </section>
-    </ServiceControlAvailable>
-  </template>
+    </LicenseNotExpired>
+  </ServiceControlAvailable>
 </template>
 
 <style scoped>

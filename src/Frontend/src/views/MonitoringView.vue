@@ -4,20 +4,17 @@ import { onMounted, watch, onUnmounted, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useMonitoringStore } from "@/stores/MonitoringStore";
 // Components
-import LicenseExpired from "@/components/LicenseExpired.vue";
+import LicenseNotExpired from "@/components/LicenseNotExpired.vue";
 import ServiceControlAvailable from "@/components/ServiceControlAvailable.vue";
 import EndpointList from "@/components/monitoring/EndpointList.vue";
 import MonitoringNoData from "@/components/monitoring/MonitoringNoData.vue";
 import MonitoringHead from "@/components/monitoring/MonitoringHead.vue";
 import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
-import { useLicenseStore } from "@/stores/LicenseStore";
 
 const monitoringStore = useMonitoringStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 const noData = computed(() => monitoringStore.endpointListIsEmpty);
-const licenseStore = useLicenseStore();
-const { licenseStatus } = licenseStore;
 
 let refreshInterval: number | undefined = undefined;
 
@@ -48,16 +45,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <LicenseExpired />
-  <template v-if="!licenseStatus.isExpired">
-    <div class="container monitoring-view">
-      <ServiceControlAvailable>
+  <div class="container monitoring-view">
+    <ServiceControlAvailable>
+      <LicenseNotExpired>
         <MonitoringNoData v-if="noData"></MonitoringNoData>
         <template v-if="!noData">
           <MonitoringHead />
           <EndpointList />
         </template>
-      </ServiceControlAvailable>
-    </div>
-  </template>
+      </LicenseNotExpired>
+    </ServiceControlAvailable>
+  </div>
 </template>

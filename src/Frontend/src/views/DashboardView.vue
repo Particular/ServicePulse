@@ -1,21 +1,16 @@
 <script setup lang="ts">
 import EventItemShort from "@/components/EventItemShort.vue";
-import LicenseExpired from "@/components/LicenseExpired.vue";
+import LicenseNotExpired from "@/components/LicenseNotExpired.vue";
 import ServiceControlAvailable from "@/components/ServiceControlAvailable.vue";
 import CustomChecksDashboardItem from "@/components/customchecks/CustomChecksDashboardItem.vue";
 import HeartbeatsDashboardItem from "@/components/heartbeats/HeartbeatsDashboardItem.vue";
 import FailedMessagesDashboardItem from "@/components/failedmessages/FailedMessagesDashboardItem.vue";
-import { useLicenseStore } from "@/stores/LicenseStore";
-
-const licenseStore = useLicenseStore();
-const { licenseStatus } = licenseStore;
 </script>
 
 <template>
-  <LicenseExpired />
-  <template v-if="!licenseStatus.isExpired">
-    <div class="container">
-      <ServiceControlAvailable>
+  <div class="container">
+    <ServiceControlAvailable>
+      <LicenseNotExpired>
         <div class="row">
           <div class="col-12">
             <h6>System status</h6>
@@ -37,9 +32,9 @@ const { licenseStatus } = licenseStore;
           </div>
           <EventItemShort></EventItemShort>
         </div>
-      </ServiceControlAvailable>
-    </div>
-  </template>
+      </LicenseNotExpired>
+    </ServiceControlAvailable>
+  </div>
 </template>
 
 <style scoped>

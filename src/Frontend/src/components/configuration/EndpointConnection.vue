@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import LicenseExpired from "../LicenseExpired.vue";
+import LicenseNotExpired from "../LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { storeToRefs } from "pinia";
-import { useLicenseStore } from "@/stores/LicenseStore";
 import LoadingSpinner from "../LoadingSpinner.vue";
 
 interface ServiceControlInstanceConnection {
@@ -21,10 +20,6 @@ interface MetricsConnectionDetails {
 
 const serviceControlStore = useServiceControlStore();
 const { serviceControlUrl, monitoringUrl } = storeToRefs(serviceControlStore);
-const licenseStore = useLicenseStore();
-const { licenseStatus } = licenseStore;
-
-const isExpired = licenseStatus.isExpired;
 
 const loading = ref(true);
 const showCodeOnlyTab = ref(true);
@@ -116,10 +111,9 @@ async function getMonitoringConnection() {
 </script>
 
 <template>
-  <LicenseExpired />
-  <template v-if="!isExpired">
-    <section name="platformconnection">
-      <ServiceControlAvailable>
+  <section name="platformconnection">
+    <ServiceControlAvailable>
+      <LicenseNotExpired>
         <div class="box configuration">
           <div class="row">
             <div class="col-12">
@@ -181,9 +175,9 @@ async function getMonitoringConnection() {
             </div>
           </div>
         </div>
-      </ServiceControlAvailable>
-    </section>
-  </template>
+      </LicenseNotExpired>
+    </ServiceControlAvailable>
+  </section>
 </template>
 
 <style scoped>

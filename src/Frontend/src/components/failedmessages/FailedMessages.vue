@@ -4,7 +4,7 @@ import { useShowToast } from "../../composables/toast";
 import { downloadFileFromString } from "../../composables/fileDownloadCreator";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import createMessageGroupClient from "./messageGroupClient";
-import LicenseExpired from "../../components/LicenseExpired.vue";
+import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
 import OrderBy from "@/components/OrderBy.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
@@ -18,13 +18,10 @@ import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShor
 import ActionButton from "@/components/ActionButton.vue";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useMessageStore } from "@/stores/MessageStore";
-import { useLicenseStore } from "@/stores/LicenseStore";
 
 const serviceControlStore = useServiceControlStore();
 const messageStore = useMessageStore();
 const messageGroupClient = createMessageGroupClient();
-const licenseStore = useLicenseStore();
-const { licenseStatus } = licenseStore;
 
 let pollingFaster = false;
 let refreshInterval: number | undefined;
@@ -282,9 +279,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <LicenseExpired />
-  <template v-if="!licenseStatus.isExpired">
-    <ServiceControlAvailable>
+  <ServiceControlAvailable>
+    <LicenseNotExpired>
       <section name="message_groups">
         <div class="row" v-if="groupName && messages.length > 0">
           <div class="col-sm-12">
@@ -353,8 +349,8 @@ onMounted(() => {
           ></ConfirmDialog>
         </Teleport>
       </section>
-    </ServiceControlAvailable>
-  </template>
+    </LicenseNotExpired>
+  </ServiceControlAvailable>
 </template>
 
 <style scoped></style>

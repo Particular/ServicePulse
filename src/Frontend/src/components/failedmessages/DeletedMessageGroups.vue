@@ -6,7 +6,7 @@ import createMessageGroupClient from "./messageGroupClient";
 import { useCookies } from "vue3-cookies";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
-import LicenseExpired from "../../components/LicenseExpired.vue";
+import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import routeLinks from "@/router/routeLinks";
@@ -17,7 +17,6 @@ import ActionButton from "@/components/ActionButton.vue";
 import { faArrowRotateRight, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
-import { useLicenseStore } from "@/stores/LicenseStore";
 
 const statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"] as const;
 type RestoreOperationStatus = (typeof statusesForRestoreOperation)[number];
@@ -55,9 +54,6 @@ const route = useRoute();
 const router = useRouter();
 const showRestoreGroupModal = ref(false);
 const selectedGroup = ref<ExtendedFailureGroupView>();
-
-const licenseStore = useLicenseStore();
-const { licenseStatus } = licenseStore;
 
 const serviceControlStore = useServiceControlStore();
 const messageGroupClient = createMessageGroupClient();
@@ -282,9 +278,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <LicenseExpired />
-  <template v-if="!licenseStatus.isExpired">
-    <ServiceControlAvailable>
+  <ServiceControlAvailable>
+    <LicenseNotExpired>
       <section name="message_groups">
         <div class="row">
           <div class="col-6 list-section">
@@ -419,8 +414,8 @@ onMounted(async () => {
           </Teleport>
         </div>
       </section>
-    </ServiceControlAvailable>
-  </template>
+    </LicenseNotExpired>
+  </ServiceControlAvailable>
 </template>
 
 <style scoped>
