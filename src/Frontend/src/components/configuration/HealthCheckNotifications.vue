@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import LicenseExpired from "../LicenseExpired.vue";
-import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { licenseStatus } from "@/composables/serviceLicense";
+import LicenseNotExpired from "../LicenseNotExpired.vue";
+import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
-import { useEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications, useUpdateEmailNotifications } from "@/composables/serviceNotifications";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
@@ -13,15 +11,14 @@ import OnOffSwitch from "../OnOffSwitch.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faCheck, faEdit, faEnvelope, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import EmailNotifications from "@/resources/EmailNotifications";
 
-const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
 const environmentStore = useEnvironmentAndVersionsStore();
-const hasResponseStatusInHeader = environmentStore.serviceControlIsGreaterThan("5.2");
+const hasResponseStatusInHeaders = environmentStore.serviceControlIsGreaterThan("5.2");
+const serviceControlStore = useServiceControlStore();
 
-const isExpired = licenseStatus.isExpired;
 const emailTestSuccessful = ref<boolean | null>(null);
 const emailTestInProgress = ref<boolean | null>(null);
 const emailToggleSuccessful = ref<boolean | null>(null);
@@ -42,11 +39,16 @@ const emailNotifications = ref<EmailSettings>({
 async function toggleEmailNotifications() {
   emailTestSuccessful.value = null;
   emailUpdateSuccessful.value = null;
-  const result = await useToggleEmailNotifications(emailNotifications.value.enabled === null ? true : !emailNotifications.value.enabled);
+  const result = await getResponseOrError(() =>
+    serviceControlStore.postToServiceControl("notifications/email/toggle", {
+      enabled: emailNotifications.value.enabled === null ? true : !emailNotifications.value.enabled,
+    })
+  );
   if (result.message === "success") {
     emailToggleSuccessful.value = true;
   } else {
     emailToggleSuccessful.value = false;
+    console.log(result.message);
     //set it back to what it was
     emailNotifications.value.enabled = !emailNotifications.value.enabled;
   }
@@ -62,7 +64,7 @@ function editEmailNotifications() {
 async function saveEditedEmailNotifications(newSettings: UpdateEmailNotificationsSettingsRequest) {
   emailUpdateSuccessful.value = null;
   showEmailConfiguration.value = false;
-  const result = await useUpdateEmailNotifications(newSettings);
+  const result = await getResponseOrError(() => serviceControlStore.postToServiceControl("notifications/email", newSettings));
   if (result.message === "success") {
     emailUpdateSuccessful.value = true;
     useShowToast(TYPE.INFO, "Info", "Email settings updated.");
@@ -75,6 +77,7 @@ async function saveEditedEmailNotifications(newSettings: UpdateEmailNotification
     emailNotifications.value.to = newSettings.to;
   } else {
     emailUpdateSuccessful.value = false;
+    console.log(result.message);
     useShowToast(TYPE.ERROR, "Error", "Failed to update the email settings.");
   }
 }
@@ -83,14 +86,28 @@ async function testEmailNotifications() {
   emailTestInProgress.value = true;
   emailToggleSuccessful.value = null;
   emailUpdateSuccessful.value = null;
-  const result = await useTestEmailNotifications(hasResponseStatusInHeader.value);
+  const result = await getResponseOrError(
+    () => serviceControlStore.postToServiceControl("notifications/email/test"),
+    (response) => (hasResponseStatusInHeaders.value ? (response.headers.get("X-Particular-Reason") ?? response.statusText) : response.statusText)
+  );
   emailTestSuccessful.value = result.message === "success";
+  if (!emailTestSuccessful.value) console.log(result.message);
   emailTestInProgress.value = false;
 }
 
 async function getEmailNotifications() {
   showEmailConfiguration.value = false;
-  const result = await useEmailNotifications();
+  let result: EmailNotifications | null = null;
+  try {
+    const [, data] = await serviceControlStore.fetchTypedFromServiceControl<EmailNotifications>("notifications/email");
+    result = data;
+  } catch (err) {
+    console.log(err);
+    result = {
+      enabled: false,
+      enable_tls: false,
+    };
+  }
   emailNotifications.value.enabled = result.enabled;
   emailNotifications.value.enable_tls = result.enable_tls;
   emailNotifications.value.smtp_server = result.smtp_server ? result.smtp_server : "";
@@ -104,14 +121,28 @@ async function getEmailNotifications() {
 onMounted(async () => {
   await getEmailNotifications();
 });
+
+async function getResponseOrError(action: () => Promise<Response>, responseStatusTextOverride?: (response: Response) => string) {
+  const responseStatusTextDefault = (response: Response) => response.statusText;
+  const responseStatusText = responseStatusTextOverride ?? responseStatusTextDefault;
+  try {
+    const response = await action();
+    return {
+      message: response.ok ? "success" : `error:${responseStatusText(response)}`,
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      message: "error",
+    };
+  }
+}
 </script>
 
 <template>
-  <LicenseExpired />
-  <template v-if="!isExpired">
-    <section name="notifications">
-      <ServiceControlNotAvailable />
-      <template v-if="!connectionState.unableToConnect">
+  <section name="notifications">
+    <ServiceControlAvailable>
+      <LicenseNotExpired>
         <section>
           <div class="row">
             <div class="col-12">
@@ -171,14 +202,14 @@ onMounted(async () => {
             </div>
           </div>
         </section>
-      </template>
+      </LicenseNotExpired>
 
       <Teleport to="#modalDisplay">
         <!-- use the modal component, pass in the prop -->
         <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration === true" v-bind="emailNotifications" @cancel="showEmailConfiguration = false" @save="saveEditedEmailNotifications"> </HealthCheckNotifications_EmailConfiguration>
       </Teleport>
-    </section>
-  </template>
+    </ServiceControlAvailable>
+  </section>
 </template>
 
 <style scoped>
