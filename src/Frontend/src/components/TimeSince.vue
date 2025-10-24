@@ -30,7 +30,7 @@ function updateText() {
   }
 }
 
-watch(() => props.dateUtc, updateText);
+watch(() => props.dateUtc, updateText, { immediate: true });
 </script>
 
 <template>
