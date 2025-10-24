@@ -33,8 +33,8 @@ const endpointName = route.params.endpointName.toString();
 const { store } = useHeartbeatInstancesStoreAutoRefresh();
 const { filteredInstances, sortedInstances, instanceFilterString, sortByInstances } = storeToRefs(store);
 const endpointSettingsStore = useEndpointSettingsStore();
-
 const endpointSettings = ref<EndpointSettings[]>([endpointSettingsStore.defaultEndpointSettingsValue]);
+
 const backLink = ref<string>(routeLinks.heartbeats.root);
 const filterToValidInstances = (data: EndpointsView[]) =>
   data
