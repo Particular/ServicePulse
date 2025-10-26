@@ -106,8 +106,9 @@ describe("FEATURE: License", () => {
       await driver.setUp(precondition.hasExpiringLicense(LicenseType.UpgradeProtection, -1));
       await driver.goTo("/configuration/license");
       await waitFor(async () => {
-        expect(await licenseExpiryDaysLeft()).toBeVisible();
-        expect((await licenseExpiryDaysLeft()).textContent).toContain("expired");
+        const testable = await licenseExpiryDaysLeft();
+        expect(testable).toBeVisible();
+        expect(testable.textContent).toContain("expired");
       });
     });
   });
