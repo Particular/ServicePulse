@@ -9,7 +9,12 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
   const isMonitoringEnabled = computed(() => !isMonitoringDisabled.value);
 
   function getServiceControlUrl() {
-    if (!serviceControlUrl.value) refresh();
+    if (!serviceControlUrl.value) {
+       refresh();
+    }
+    if (!serviceControlUrl.value) {
+      throw new Error("Service Control URL is not configured");
+    }
     return serviceControlUrl.value;
   }
 
