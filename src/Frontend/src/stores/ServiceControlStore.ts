@@ -10,7 +10,7 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
 
   function getServiceControlUrl() {
     if (!serviceControlUrl.value) {
-       refresh();
+      refresh();
     }
     if (!serviceControlUrl.value) {
       throw new Error("Service Control URL is not configured");
