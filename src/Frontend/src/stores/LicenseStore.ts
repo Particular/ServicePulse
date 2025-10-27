@@ -97,7 +97,7 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
       const [, data] = await serviceControlStore.fetchTypedFromServiceControl<LicenseInfo>("license?refresh=true&clientName=servicepulse");
       return data;
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching license information", err);
       return null;
     }
   }
