@@ -6,6 +6,7 @@ import CodeEditor from "@/components/CodeEditor.vue";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { storeToRefs } from "pinia";
 import LoadingSpinner from "../LoadingSpinner.vue";
+import { useMonitoringStore } from "@/stores/MonitoringStore";
 
 interface ServiceControlInstanceConnection {
   settings: { [key: string]: object };
@@ -19,7 +20,9 @@ interface MetricsConnectionDetails {
 }
 
 const serviceControlStore = useServiceControlStore();
-const { serviceControlUrl, monitoringUrl } = storeToRefs(serviceControlStore);
+const monitoringStore = useMonitoringStore();
+const { serviceControlUrl } = storeToRefs(serviceControlStore);
+const { monitoringUrl } = storeToRefs(monitoringStore);
 
 const loading = ref(true);
 const showCodeOnlyTab = ref(true);
@@ -102,7 +105,7 @@ async function getServiceControlConnection() {
 
 async function getMonitoringConnection() {
   try {
-    const [, data] = await serviceControlStore.fetchTypedFromMonitoring<{ Metrics: MetricsConnectionDetails }>("connection");
+    const [, data] = await monitoringStore.fetchTypedFromMonitoring<{ Metrics: MetricsConnectionDetails }>("connection");
     return { ...data, errors: [] };
   } catch {
     return { Metrics: null, errors: [`Error SC Monitoring instance at ${monitoringUrl.value}connection`] };

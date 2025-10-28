@@ -10,6 +10,7 @@ import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { storeToRefs } from "pinia";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
+import { useMonitoringStore } from "@/stores/MonitoringStore";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
@@ -18,7 +19,9 @@ const { store: environmentAndVersionsStore } = useEnvironmentAndVersionsAutoRefr
 const newVersions = environmentAndVersionsStore.newVersions;
 const environment = environmentAndVersionsStore.environment;
 const serviceControlStore = useServiceControlStore();
-const { serviceControlUrl, monitoringUrl } = storeToRefs(serviceControlStore);
+const monitoringStore = useMonitoringStore();
+const { serviceControlUrl } = storeToRefs(serviceControlStore);
+const { monitoringUrl } = storeToRefs(monitoringStore);
 const licenseStore = useLicenseStore();
 const { licenseStatus, license } = licenseStore;
 

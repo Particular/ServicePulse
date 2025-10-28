@@ -1,9 +1,9 @@
 ﻿<script setup lang="ts">
 import routeLinks from "@/router/routeLinks";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import { useMonitoringStore } from "@/stores/MonitoringStore";
 import { storeToRefs } from "pinia";
 
-const store = useServiceControlStore();
+const store = useMonitoringStore();
 const { monitoringUrl } = storeToRefs(store);
 </script>
 

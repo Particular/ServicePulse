@@ -12,11 +12,11 @@ import DashboardMenuItem from "@/components/dashboard/DashboardMenuItem.vue";
 import FeedbackButton from "@/components/FeedbackButton.vue";
 import ThroughputMenuItem from "@/views/throughputreport/ThroughputMenuItem.vue";
 import AuditMenuItem from "./audit/AuditMenuItem.vue";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import { useMonitoringStore } from "@/stores/MonitoringStore";
 import { storeToRefs } from "pinia";
 
-const serviceControlStore = useServiceControlStore();
-const { isMonitoringEnabled } = storeToRefs(serviceControlStore);
+const monitoringStore = useMonitoringStore();
+const { isMonitoringEnabled } = storeToRefs(monitoringStore);
 // prettier-ignore
 const menuItems = computed(
   () => [

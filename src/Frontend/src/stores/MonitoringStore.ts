@@ -5,8 +5,9 @@ import { useMonitoringHistoryPeriodStore } from "./MonitoringHistoryPeriodStore"
 import type { EndpointGroup, Endpoint, GroupedEndpoint } from "@/resources/MonitoringEndpoint";
 import type { SortInfo } from "@/components/SortInfo";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
-import { useServiceControlStore } from "./ServiceControlStore";
 import GroupOperation from "@/resources/GroupOperation";
+import { getParameter, getParams } from "./environment";
+import { useServiceControlStore } from "./ServiceControlStore";
 
 export const useMonitoringStore = defineStore("MonitoringStore", () => {
   const historyPeriodStore = useMonitoringHistoryPeriodStore();
@@ -14,9 +15,11 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
   const route = useRoute();
   const router = useRouter();
   const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
+  //TODO: if/when a recoverabilityStore is created, replace this
   const serviceControlStore = useServiceControlStore();
 
   //STORE STATE CONSTANTS
+  const monitoringUrl = ref<string | null>();
   const grouping = ref({
     groupedEndpoints: [] as EndpointGroup[],
     groupSegments: 0,
@@ -36,12 +39,39 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
   const endpointListIsGrouped = computed<boolean>(() => grouping.value.selectedGrouping !== 0);
   const getEndpointList = computed<Endpoint[]>(() => (filterString.value ? endpointList.value.filter((endpoint) => endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())) : endpointList.value));
 
+  const isMonitoringDisabled = computed(() => monitoringUrl.value == null || monitoringUrl.value === "" || monitoringUrl.value === "!");
+  const isMonitoringEnabled = computed(() => !isMonitoringDisabled.value);
+
   watch(sortBy, async () => await updateEndpointList(), { deep: true });
   watch(filterString, async (newValue) => {
     await updateFilterString(newValue);
   });
 
   //STORE ACTIONS
+  function getMonitoringUrl() {
+    if (!monitoringUrl.value) refresh();
+    return monitoringUrl.value;
+  }
+
+  function refresh() {
+    const params = getParams();
+    const mu = getParameter(params, "mu");
+
+    if (mu) {
+      monitoringUrl.value = mu.value;
+      window.localStorage.setItem("mu", monitoringUrl.value);
+      console.debug(`Monitoring Url found in QS and stored in local storage: ${monitoringUrl.value}`);
+    } else if (window.localStorage.getItem("mu")) {
+      monitoringUrl.value = window.localStorage.getItem("mu");
+      console.debug(`Monitoring Url, not in QS, found in local storage: ${monitoringUrl.value}`);
+    } else if (window.defaultConfig && window.defaultConfig.monitoring_urls && window.defaultConfig.monitoring_urls.length) {
+      monitoringUrl.value = window.defaultConfig.monitoring_urls[0];
+      console.debug(`setting Monitoring Url to its default value: ${window.defaultConfig.monitoring_urls[0]}`);
+    } else {
+      console.warn("Monitoring Url is not defined.");
+    }
+  }
+
   async function updateFilterString(filter: string | null = null) {
     filterString.value = filter ?? route.query.filter?.toString() ?? "";
 
@@ -73,9 +103,9 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
 
   async function getAllMonitoredEndpoints() {
     let endpoints: Endpoint[] = [];
-    if (serviceControlStore.isMonitoringEnabled) {
+    if (isMonitoringEnabled.value) {
       try {
-        const [, data] = await serviceControlStore.fetchTypedFromMonitoring<Endpoint[]>(`monitored-endpoints?history=${historyPeriodStore.historyPeriod.pVal}`);
+        const [, data] = await fetchTypedFromMonitoring<Endpoint[]>(`monitored-endpoints?history=${historyPeriodStore.historyPeriod.pVal}`);
         endpoints = data ?? [];
         const [, exceptionGroups] = await serviceControlStore.fetchTypedFromServiceControl<GroupOperation[]>(`recoverability/groups/Endpoint Name`);
 
@@ -200,8 +230,38 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     }
   }
 
+  async function fetchTypedFromMonitoring<T>(suffix: string): Promise<[Response?, T?]> {
+    if (isMonitoringDisabled.value) {
+      return [];
+    }
+
+    const response = await fetch(`${getMonitoringUrl()}${suffix}`);
+    const data = await response.json();
+
+    return [response, data];
+  }
+
+  async function deleteFromMonitoring(suffix: string) {
+    const requestOptions = {
+      method: "DELETE",
+    };
+    return await fetch(`${getMonitoringUrl()}${suffix}`, requestOptions);
+  }
+
+  async function optionsFromMonitoring() {
+    if (isMonitoringDisabled.value) {
+      return Promise.resolve(null);
+    }
+
+    const requestOptions = {
+      method: "OPTIONS",
+    };
+    return await fetch(getMonitoringUrl() ?? "", requestOptions);
+  }
+
   return {
     //state
+    monitoringUrl,
     grouping,
     endpointList,
     disconnectedEndpointCount,
@@ -209,15 +269,21 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     sortBy,
 
     //getters
+    isMonitoringDisabled,
+    isMonitoringEnabled,
     endpointListCount,
     endpointListIsEmpty,
     endpointListIsGrouped,
     getEndpointList,
 
     //actions
+    refresh,
     updateSelectedGrouping,
     updateEndpointList,
     updateFilterString,
+    fetchTypedFromMonitoring,
+    deleteFromMonitoring,
+    optionsFromMonitoring,
   };
 });
 
