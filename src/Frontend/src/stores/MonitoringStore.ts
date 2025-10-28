@@ -231,6 +231,8 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
   }
 
   async function fetchTypedFromMonitoring<T>(suffix: string): Promise<[Response?, T?]> {
+    if (!monitoringUrl.value) refresh();
+
     if (isMonitoringDisabled.value) {
       return [];
     }
