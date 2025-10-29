@@ -3,6 +3,7 @@ interface Param {
   value: string;
 }
 
+//TODO we probbly should use https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams#parsing_window.location
 export function getParams() {
   const params: Param[] = [];
 
