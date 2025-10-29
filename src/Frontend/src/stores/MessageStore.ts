@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import { computed, reactive, ref, watch } from "vue";
+import { computed, reactive, Ref, ref, watch } from "vue";
 import Header from "@/resources/Header";
 import type EndpointDetails from "@/resources/EndpointDetails";
 import { FailedMessage, ExceptionDetails, FailedMessageStatus } from "@/resources/FailedMessage";
@@ -77,6 +77,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
 
   watch(serviceControlUrl, loadConfig, { immediate: true });
   async function loadConfig() {
+    if (!serviceControlUrl.value) return;
     const [, data] = await serviceControlStore.fetchTypedFromServiceControl<EditAndRetryConfig>("edit/config");
     edit_and_retry_config.value = data;
   }
