@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import { computed, reactive, Ref, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import Header from "@/resources/Header";
 import type EndpointDetails from "@/resources/EndpointDetails";
 import { FailedMessage, ExceptionDetails, FailedMessageStatus } from "@/resources/FailedMessage";
