@@ -15,7 +15,7 @@ const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName,
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
-const { refreshNow, isRefreshing, updateInterval, start, stop } = useFetchWithAutoRefresh("audit-list", store.refresh, 3000);
+const { refreshNow, isRefreshing, updateInterval, isActive, start, stop } = useFetchWithAutoRefresh("audit-list", store.refresh, 0);
 const firstLoad = ref(true);
 
 onBeforeMount(() => {
@@ -82,7 +82,7 @@ watch(autoRefreshValue, (newValue) => {
   updateInterval(newValue || 0);
   if (newValue === null || newValue === 0) {
     stop();
-  } else {
+  } else if (!isActive.value) {
     start();
   }
 });
