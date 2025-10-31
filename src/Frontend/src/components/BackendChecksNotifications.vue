@@ -9,6 +9,7 @@ import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndSt
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { storeToRefs } from "pinia";
+import { useMonitoringStore } from "@/stores/MonitoringStore";
 
 const router = useRouter();
 
@@ -18,7 +19,9 @@ const monitoringConnectionState = connectionStore.monitoringConnectionState;
 const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
 const environment = environmentStore.environment;
 const serviceControlStore = useServiceControlStore();
-const { monitoringUrl, serviceControlUrl, isMonitoringDisabled } = storeToRefs(serviceControlStore);
+const monitoringStore = useMonitoringStore();
+const { serviceControlUrl } = storeToRefs(serviceControlStore);
+const { monitoringUrl, isMonitoringDisabled } = storeToRefs(monitoringStore);
 
 const primaryConnectionFailure = computed(() => connectionState.unableToConnect);
 const monitoringConnectionFailure = computed(() => monitoringConnectionState.unableToConnect);

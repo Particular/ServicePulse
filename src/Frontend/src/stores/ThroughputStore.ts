@@ -4,11 +4,11 @@ import ConnectionTestResults from "@/resources/ConnectionTestResults";
 import createThroughputClient from "@/views/throughputreport/throughputClient";
 import { Transport } from "@/views/throughputreport/transport";
 import useIsThroughputSupported from "@/views/throughputreport/isThroughputSupported";
-import { useServiceControlStore } from "./ServiceControlStore";
+import { useMonitoringStore } from "./MonitoringStore";
 
 export const useThroughputStore = defineStore("ThroughputStore", () => {
-  const serviceControlStore = useServiceControlStore();
-  const { isMonitoringEnabled } = storeToRefs(serviceControlStore);
+  const monitoringStore = useMonitoringStore();
+  const { isMonitoringEnabled } = storeToRefs(monitoringStore);
 
   const testResults = ref<ConnectionTestResults | null>(null);
   const isThroughputSupported = useIsThroughputSupported();
