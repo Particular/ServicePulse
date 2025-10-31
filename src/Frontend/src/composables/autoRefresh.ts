@@ -14,7 +14,7 @@ export default function useFetchWithAutoRefresh(name: string, fetch: () => Promi
     await fetch();
     isRefreshing.value = false;
   };
-  const { pause, resume } = useTimeoutPoll(
+  const { isActive, pause, resume } = useTimeoutPoll(
     fetchWrapper,
     interval,
     { immediate: false, immediateCallback: true } // we control first fetch manually
@@ -59,8 +59,15 @@ export default function useFetchWithAutoRefresh(name: string, fetch: () => Promi
   };
 
   const updateInterval = (newIntervalMs: number) => {
+    if (interval.value === newIntervalMs) return;
+
     interval.value = newIntervalMs;
+    console.debug(`[AutoRefresh] updated polling ${name} to ${newIntervalMs}ms`);
+    pause();
+    if (newIntervalMs > 0) {
+      resume();
+    }
   };
 
-  return { refreshNow: fetchWrapper, isRefreshing: shallowReadonly(isRefreshing), updateInterval, start, stop };
+  return { refreshNow: fetchWrapper, isRefreshing: shallowReadonly(isRefreshing), updateInterval, isActive, start, stop };
 }
