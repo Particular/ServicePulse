@@ -1,5 +1,5 @@
-import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import { readonly, ref, watch } from "vue";
+import { acceptHMRUpdate, defineStore } from "pinia";
+import { readonly, ref } from "vue";
 import { useServiceControlStore } from "./ServiceControlStore";
 import { useCookies } from "vue3-cookies";
 import FailureGroupView from "@/resources/FailureGroupView";
@@ -32,14 +32,17 @@ export const useDeletedMessageGroupsStore = defineStore("DeletedMessageGroupsSto
   let undismissedRestoreGroups: ExtendedFailureGroupView[] = [];
 
   const serviceControlStore = useServiceControlStore();
-  const { serviceControlUrl } = storeToRefs(serviceControlStore);
   const messageGroupClient = new MessageGroupClient(serviceControlStore);
 
   const cookies = useCookies();
 
   async function refresh() {
+    if (!selectedClassifier.value) {
+      await getGroupingClassifiers();
+      selectedClassifier.value = getGrouping() ?? classifiers.value[0];
+    }
     //get all deleted message groups
-    const [, result] = await serviceControlStore.fetchTypedFromServiceControl<FailureGroupView[]>(`errors/groups/${selectedClassifier.value}`);
+    const [, result] = await serviceControlStore.fetchTypedFromServiceControl<FailureGroupView[]>(`errors/groups/${selectedClassifier.value ?? getGrouping()}`);
 
     if (result.length === 0 && undismissedRestoreGroups.length > 0) {
       undismissedRestoreGroups.forEach((deletedGroup) => {
@@ -120,18 +123,11 @@ export const useDeletedMessageGroupsStore = defineStore("DeletedMessageGroupsSto
     archiveGroups.value = archiveGroups.value.filter((group) => group.id !== dismissedGroup.id);
   }
 
-  async function initialise() {
-    await Promise.all([getGroupingClassifiers()]);
-    selectedClassifier.value = getGrouping() ?? classifiers.value[0];
-  }
-
-  watch(serviceControlUrl, initialise, { immediate: true });
-
   return {
     refresh,
     classifiers: readonly(classifiers),
     selectedClassifier,
-    archiveGroups: archiveGroups,
+    archiveGroups,
     getGrouping,
     setGrouping,
     restoreGroup,

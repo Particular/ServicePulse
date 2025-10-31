@@ -16,6 +16,7 @@ import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { useDeletedMessageGroupsStore, statusesForRestoreOperation, ExtendedFailureGroupView, Status } from "@/stores/DeletedMessageGroupsStore";
 import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
 import { storeToRefs } from "pinia";
+import LoadingSpinner from "../LoadingSpinner.vue";
 
 let pollingFaster = false;
 const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("deletedMessageGroups", useDeletedMessageGroupsStore, 5000);
@@ -130,6 +131,7 @@ watch(isRefreshing, () => {
               <div class="row">
                 <div class="col-sm-12">
                   <no-data v-if="archiveGroups.length === 0 && !isRefreshing" title="message groups" message="There are currently no grouped message failures"></no-data>
+                  <LoadingSpinner v-if="archiveGroups.length === 0 && isRefreshing" />
                 </div>
               </div>
 
