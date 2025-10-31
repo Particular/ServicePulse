@@ -7,11 +7,11 @@ export interface ErrorResponse {
   message: string;
 }
 
-class MessageGroupClient {
+export class MessageGroupClient {
   serviceControlStore: ServiceControlStore;
-  constructor() {
+  constructor(store?: ServiceControlStore) {
     //this module is only called from within view setup or other pinia stores, so this call is lifecycle safe
-    this.serviceControlStore = useServiceControlStore();
+    this.serviceControlStore = store ?? useServiceControlStore();
   }
 
   public async getExceptionGroups(classifier: string = "") {
