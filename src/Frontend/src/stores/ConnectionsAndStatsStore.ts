@@ -4,10 +4,12 @@ import { FailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
 import { ConnectionState } from "@/resources/ConnectionState";
 import { useCounter } from "@vueuse/core";
 import { useServiceControlStore } from "./ServiceControlStore";
+import { useMonitoringStore } from "./MonitoringStore";
 
 export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore", () => {
   const serviceControlStore = useServiceControlStore();
-  const { isMonitoringEnabled } = storeToRefs(serviceControlStore);
+  const monitoringStore = useMonitoringStore();
+  const { isMonitoringEnabled } = storeToRefs(monitoringStore);
 
   const failedMessageCount = ref(0);
   const archivedMessageCount = ref(0);
@@ -61,7 +63,7 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
 
   function getDisconnectedEndpointsCount() {
     return fetchAndSetConnectionState(
-      () => serviceControlStore.fetchTypedFromMonitoring<number>("monitored-endpoints/disconnected"),
+      () => monitoringStore.fetchTypedFromMonitoring<number>("monitored-endpoints/disconnected"),
       monitoringConnectionState,
       (_, data) => {
         return data;

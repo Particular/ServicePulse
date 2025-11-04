@@ -9,12 +9,12 @@ import type GroupOperation from "@/resources/GroupOperation";
 import { emptyEndpointDetails } from "@/components/monitoring/endpoints";
 import { useMemoize } from "@vueuse/core";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
-import { useServiceControlStore } from "./ServiceControlStore";
+import { useMonitoringStore } from "./MonitoringStore";
 
 export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpointDetailsStore", () => {
   const historyPeriodStore = useMonitoringHistoryPeriodStore();
   const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-  const serviceControlStore = useServiceControlStore();
+  const monitoringStore = useMonitoringStore();
   const messageGroupClient = createMessageGroupClient();
 
   const getMemoisedEndpointDetails = useMemoize((endpointName: string, historyPeriod = 1) => {
@@ -22,9 +22,9 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
     return {
       data,
       refresh: async () => {
-        if (serviceControlStore.isMonitoringEnabled) {
+        if (monitoringStore.isMonitoringEnabled) {
           try {
-            const [, details] = await serviceControlStore.fetchTypedFromMonitoring<EndpointDetails>(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
+            const [, details] = await monitoringStore.fetchTypedFromMonitoring<EndpointDetails>(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
             data.value = details!;
           } catch (error) {
             console.error(error);

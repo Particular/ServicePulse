@@ -5,16 +5,19 @@ import FAIcon from "@/components/FAIcon.vue";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { storeToRefs } from "pinia";
+import { useMonitoringStore } from "@/stores/MonitoringStore";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
 
 const serviceControlStore = useServiceControlStore();
+const monitoringStore = useMonitoringStore();
 serviceControlStore.refresh();
+monitoringStore.refresh();
 const localServiceControlUrl = ref(serviceControlStore.serviceControlUrl);
-const localMonitoringUrl = ref(serviceControlStore.monitoringUrl);
-const { isMonitoringDisabled } = storeToRefs(serviceControlStore);
+const localMonitoringUrl = ref(monitoringStore.monitoringUrl);
+const { isMonitoringDisabled } = storeToRefs(monitoringStore);
 
 const testingServiceControl = ref(false);
 const serviceControlValid = ref<boolean | null>(null);

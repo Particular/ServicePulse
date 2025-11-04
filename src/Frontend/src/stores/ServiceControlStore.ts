@@ -1,12 +1,9 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { ref } from "vue";
+import { getParameter, getParams } from "./environment";
 
 export const useServiceControlStore = defineStore("ServiceControlStore", () => {
   const serviceControlUrl = ref<string | null>();
-  const monitoringUrl = ref<string | null>();
-
-  const isMonitoringDisabled = computed(() => monitoringUrl.value == null || monitoringUrl.value === "" || monitoringUrl.value === "!");
-  const isMonitoringEnabled = computed(() => !isMonitoringDisabled.value);
 
   function getServiceControlUrl() {
     if (!serviceControlUrl.value) {
@@ -18,15 +15,9 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
     return serviceControlUrl.value;
   }
 
-  function getMonitoringUrl() {
-    if (!monitoringUrl.value) refresh();
-    return monitoringUrl.value;
-  }
-
   function refresh() {
     const params = getParams();
     const scu = getParameter(params, "scu");
-    const mu = getParameter(params, "mu");
 
     if (scu) {
       serviceControlUrl.value = scu.value;
@@ -40,20 +31,6 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
       console.debug(`setting ServiceControl Url to its default value: ${window.defaultConfig.service_control_url}`);
     } else {
       console.warn("ServiceControl Url is not defined.");
-    }
-
-    if (mu) {
-      monitoringUrl.value = mu.value;
-      window.localStorage.setItem("mu", monitoringUrl.value);
-      console.debug(`Monitoring Url found in QS and stored in local storage: ${monitoringUrl.value}`);
-    } else if (window.localStorage.getItem("mu")) {
-      monitoringUrl.value = window.localStorage.getItem("mu");
-      console.debug(`Monitoring Url, not in QS, found in local storage: ${monitoringUrl.value}`);
-    } else if (window.defaultConfig && window.defaultConfig.monitoring_urls && window.defaultConfig.monitoring_urls.length) {
-      monitoringUrl.value = window.defaultConfig.monitoring_urls[0];
-      console.debug(`setting Monitoring Url to its default value: ${window.defaultConfig.monitoring_urls[0]}`);
-    } else {
-      console.warn("Monitoring Url is not defined.");
     }
   }
 
@@ -71,17 +48,6 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
   async function fetchTypedFromServiceControl<T>(suffix: string): Promise<[Response, T]> {
     const response = await fetch(`${getServiceControlUrl()}${suffix}`);
     if (!response.ok) throw new Error(response.statusText ?? "No response");
-    const data = await response.json();
-
-    return [response, data];
-  }
-
-  async function fetchTypedFromMonitoring<T>(suffix: string): Promise<[Response?, T?]> {
-    if (isMonitoringDisabled.value) {
-      return [];
-    }
-
-    const response = await fetch(`${getMonitoringUrl()}${suffix}`);
     const data = await response.json();
 
     return [response, data];
@@ -116,24 +82,6 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
     return await fetch(`${getServiceControlUrl()}${suffix}`, requestOptions);
   }
 
-  async function deleteFromMonitoring(suffix: string) {
-    const requestOptions = {
-      method: "DELETE",
-    };
-    return await fetch(`${getMonitoringUrl()}${suffix}`, requestOptions);
-  }
-
-  async function optionsFromMonitoring() {
-    if (isMonitoringDisabled.value) {
-      return Promise.resolve(null);
-    }
-
-    const requestOptions = {
-      method: "OPTIONS",
-    };
-    return await fetch(getMonitoringUrl() ?? "", requestOptions);
-  }
-
   async function patchToServiceControl(suffix: string, payload: object | null) {
     const requestOptions: RequestInit = {
       method: "PATCH",
@@ -148,46 +96,14 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
   return {
     refresh,
     serviceControlUrl,
-    monitoringUrl,
-    isMonitoringDisabled,
-    isMonitoringEnabled,
     fetchFromServiceControl,
     fetchTypedFromServiceControl,
-    fetchTypedFromMonitoring,
     putToServiceControl,
     postToServiceControl,
     patchToServiceControl,
     deleteFromServiceControl,
-    deleteFromMonitoring,
-    optionsFromMonitoring,
   };
 });
-
-interface Param {
-  name: string;
-  value: string;
-}
-
-function getParams() {
-  const params: Param[] = [];
-
-  if (!window.location.search) return params;
-
-  const searchParams = window.location.search.split("&");
-
-  searchParams.forEach((p) => {
-    p = p.startsWith("?") ? p.substring(1, p.length) : p;
-    const singleParam = p.split("=");
-    params.push({ name: singleParam[0], value: singleParam[1] });
-  });
-  return params;
-}
-
-function getParameter(params: Param[], key: string) {
-  return params.find((param) => {
-    return param.name === key;
-  });
-}
 
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useServiceControlStore, import.meta.hot));
