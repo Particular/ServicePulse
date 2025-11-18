@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import { computed, reactive, ref, watch } from "vue";
+import { computed, reactive, Ref, ref, watch } from "vue";
 import Header from "@/resources/Header";
 import type EndpointDetails from "@/resources/EndpointDetails";
 import { FailedMessage, ExceptionDetails, FailedMessageStatus } from "@/resources/FailedMessage";
@@ -11,6 +11,9 @@ import xmlFormat from "xml-formatter";
 import { DataContainer } from "./DataContainer";
 import { useServiceControlStore } from "./ServiceControlStore";
 import { EditAndRetryConfig } from "@/resources/Configuration";
+import EditRetryResponse from "@/resources/EditRetryResponse";
+import { EditedMessage } from "@/resources/EditMessage";
+import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 
 interface Model {
   id?: string;
@@ -65,12 +68,15 @@ export const useMessageStore = defineStore("MessageStore", () => {
   const edit_and_retry_config = ref<EditAndRetryConfig>({ enabled: false, locked_headers: [], sensitive_headers: [] });
   const conversationData = ref<DataContainer<Message[]>>({ data: [] });
 
+  const editRetryResponse = ref<EditRetryResponse | null>(null);
   let bodyLoadedId = "";
   let conversationLoadedId = "";
 
   const configStore = useConfigurationStore();
   const serviceControlStore = useServiceControlStore();
   const { serviceControlUrl } = storeToRefs(serviceControlStore);
+  const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
+  const areSimpleHeadersSupported = environmentStore.serviceControlIsGreaterThan("5.2.0");
 
   const { configuration } = storeToRefs(configStore);
   const error_retention_period = computed(() => moment.duration(configuration.value?.data_retention?.error_retention_period).asHours());
@@ -89,6 +95,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     bodyLoadedId = "";
     conversationLoadedId = "";
     conversationData.value.data = [];
+    editRetryResponse.value = null;
   }
 
   async function loadFailedMessage(id: string) {
@@ -267,6 +274,36 @@ export const useMessageStore = defineStore("MessageStore", () => {
     }
   }
 
+  async function retryEditedMessage(id: string, editedMessage: Ref<EditedMessage>) {
+    const payload = {
+      message_body: editedMessage.value.messageBody,
+      message_headers: areSimpleHeadersSupported.value
+        ? editedMessage.value.headers.reduce(
+            (result, header) => {
+              const { key, value } = header as { key: string; value: string };
+              result[key] = value;
+              return result;
+            },
+            {} as { [key: string]: string }
+          )
+        : editedMessage.value.headers,
+    };
+    const response = await serviceControlStore.postToServiceControl(`edit/${id}`, payload);
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    //older versions of SC return no payload about the edit result
+    const bodyText = await response.text();
+    if (bodyText === "") {
+      editRetryResponse.value = {
+        edit_ignored: false,
+      };
+    } else {
+      editRetryResponse.value = parse(bodyText) as EditRetryResponse;
+    }
+  }
+
   async function pollForNextUpdate(status: FailedMessageStatus) {
     if (!state.data.id) {
       return;
@@ -326,6 +363,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     body,
     state,
     edit_and_retry_config,
+    editRetryResponse,
     reset,
     loadMessage,
     loadFailedMessage,
@@ -338,6 +376,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     retryMessages,
     conversationData,
     pollForNextUpdate,
+    retryEditedMessage,
   };
 });
 
