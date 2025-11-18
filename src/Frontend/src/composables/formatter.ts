@@ -1,9 +1,9 @@
-import moment from "moment";
+import dayjs from "@/utils/dayjs";
 
-const secondDuration = moment.duration(1000);
-const minuteDuration = moment.duration(60 * 1000);
-const hourDuration = moment.duration(60 * 60 * 1000); //this ensures that we never use minute formatting
-const dayDuration = moment.duration(24 * 60 * 60 * 1000);
+const secondDuration = dayjs.duration(1000);
+const minuteDuration = dayjs.duration(60 * 1000);
+const hourDuration = dayjs.duration(60 * 60 * 1000); //this ensures that we never use minute formatting
+const dayDuration = dayjs.duration(24 * 60 * 60 * 1000);
 
 export interface ValueWithUnit {
   value: string;
@@ -13,7 +13,7 @@ export interface ValueWithUnit {
 export function useFormatTime(value?: number): ValueWithUnit {
   const time = { value: "0", unit: "ms" };
   if (value) {
-    const duration = moment.duration(value);
+    const duration = dayjs.duration(value);
     if (duration >= dayDuration) {
       time.value = formatTimeValue(duration.days()) + " d " + formatTimeValue(duration.hours()) + " hrs";
     } else if (duration >= hourDuration) {
