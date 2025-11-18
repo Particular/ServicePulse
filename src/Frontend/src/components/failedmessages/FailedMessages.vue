@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, useTemplateRef, watch } from "vue";
+import { onMounted, ref, useTemplateRef, watch } from "vue";
 import { useShowToast } from "../../composables/toast";
 import { downloadFileFromString } from "../../composables/fileDownloadCreator";
-import { onBeforeRouteLeave, useRoute } from "vue-router";
+import { onBeforeRouteLeave } from "vue-router";
 import createMessageGroupClient from "./messageGroupClient";
 import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
 import OrderBy from "@/components/OrderBy.vue";
@@ -10,33 +10,30 @@ import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
-import { ExtendedFailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
-import SortOptions, { SortDirection } from "@/resources/SortOptions";
+import { FailedMessageStatus } from "@/resources/FailedMessage";
+import SortOptions from "@/resources/SortOptions";
 import { TYPE } from "vue-toastification";
 import GroupOperation from "@/resources/GroupOperation";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faArrowRotateRight, faTrash, faDownload } from "@fortawesome/free-solid-svg-icons";
 import ActionButton from "@/components/ActionButton.vue";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useMessageStore } from "@/stores/MessageStore";
+import { useMessagesStore } from "@/stores/MessagesStore";
+import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
+import { storeToRefs } from "pinia";
+import LoadingSpinner from "../LoadingSpinner.vue";
 
-const serviceControlStore = useServiceControlStore();
 const messageStore = useMessageStore();
 const messageGroupClient = createMessageGroupClient();
+const loading = ref(false);
+const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("messagesStore", useMessagesStore, 5000);
+const { store } = autoRefresh();
+const { messages, groupId, groupName, totalCount, pageNumber } = storeToRefs(store);
 
 let pollingFaster = false;
-let refreshInterval: number | undefined;
-let sortMethod: SortOptions<GroupOperation> | undefined;
-const perPage = 50;
-const route = useRoute();
-const groupId = ref<string>(route.params.groupId as string);
-const groupName = ref("");
-const pageNumber = ref(1);
-const totalCount = ref(0);
 const showDelete = ref(false);
 const showConfirmRetryAll = ref(false);
 const showConfirmDeleteAll = ref(false);
 const messageList = useTemplateRef<IMessageList>("messageList");
-const messages = ref<ExtendedFailedMessage[]>([]);
 const sortOptions: SortOptions<GroupOperation>[] = [
   {
     description: "Time of failure",
@@ -50,73 +47,16 @@ const sortOptions: SortOptions<GroupOperation>[] = [
   },
 ];
 
-watch(pageNumber, () => loadMessages());
-
-function sortGroups(sort: SortOptions<GroupOperation>) {
-  sortMethod = sort;
-  loadMessages();
-}
-
-function loadMessages() {
-  loadPagedMessages(groupId.value, pageNumber.value, sortMethod && sortMethod.description.replaceAll(" ", "_").toLowerCase(), sortMethod?.dir);
-}
-
-async function loadGroupDetails(groupId: string) {
-  const response = await serviceControlStore.fetchFromServiceControl(`recoverability/groups/id/${groupId}`);
-  const data = await response.json();
-  groupName.value = data.title;
-}
-
-function loadPagedMessages(groupId: string, page: number, sortBy?: string, direction?: SortDirection) {
-  sortBy ??= "time_of_failure";
-  direction ??= SortDirection.Descending;
-
-  let loadGroupDetailsPromise;
-  if (groupId && !groupName.value) {
-    loadGroupDetailsPromise = loadGroupDetails(groupId);
-  }
-
-  async function loadMessages() {
-    try {
-      const [response, data] = await serviceControlStore.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
-        `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=${FailedMessageStatus.Unresolved}&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}`
-      );
-      totalCount.value = parseInt(response.headers.get("Total-Count") ?? "");
-      if (messages.value.length && data.length) {
-        // merge the previously selected messages into the new list so we can replace them
-        messages.value.forEach((previousMessage) => {
-          const receivedMessage = data.find((m) => m.id === previousMessage.id);
-          if (receivedMessage) {
-            if (previousMessage.last_modified === receivedMessage.last_modified) {
-              receivedMessage.retryInProgress = previousMessage.retryInProgress;
-              receivedMessage.deleteInProgress = previousMessage.deleteInProgress;
-            }
-
-            receivedMessage.selected = previousMessage.selected;
-          }
-        });
-      }
-      messages.value = data;
-    } catch (err) {
-      console.log(err);
-      const result = {
-        message: "error",
-      };
-      return result;
-    }
-  }
-
-  const loadMessagesPromise = loadMessages();
-
-  if (loadGroupDetailsPromise) {
-    return Promise.all([loadGroupDetailsPromise, loadMessagesPromise]);
-  }
-
-  return loadMessagesPromise;
+async function sortGroups(sort: SortOptions<GroupOperation>) {
+  loading.value = true;
+  await store.setSort(sort.description.replaceAll(" ", "_").toLowerCase(), sort.dir);
+  loading.value = false;
 }
 
 async function retryRequested(id: string) {
-  changeRefreshInterval(1000);
+  // We're starting a retry, poll more frequently
+  pollingFaster = true;
+  updateInterval(1000);
   useShowToast(TYPE.INFO, "Info", "Message retry requested...");
   await messageStore.retryMessages([id]);
   const message = messages.value.find((m) => m.id === id);
@@ -127,7 +67,9 @@ async function retryRequested(id: string) {
 }
 
 async function retrySelected() {
-  changeRefreshInterval(1000);
+  // We're starting a retry, poll more frequently
+  pollingFaster = true;
+  updateInterval(1000);
   const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
   useShowToast(TYPE.INFO, "Info", "Retrying " + selectedMessages.length + " messages...");
   await messageStore.retryMessages(selectedMessages.map((m) => m.id));
@@ -210,14 +152,13 @@ function isAnythingSelected() {
 }
 
 async function deleteSelectedMessages() {
-  changeRefreshInterval(1000);
+  // We're starting a delete, poll more frequently
+  pollingFaster = true;
+  updateInterval(1000);
   const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
 
   useShowToast(TYPE.INFO, "Info", "Deleting " + selectedMessages.length + " messages...");
-  await serviceControlStore.patchToServiceControl(
-    "errors/archive",
-    selectedMessages.map((m) => m.id)
-  );
+  await store.deleteById(selectedMessages.map((m) => m.id));
   messageList.value?.deselectAll();
   selectedMessages.forEach((m) => (m.deleteInProgress = true));
 }
@@ -240,41 +181,27 @@ function isRetryOrDeleteOperationInProgress() {
   });
 }
 
-function changeRefreshInterval(milliseconds: number) {
-  if (refreshInterval != null) {
-    window.clearInterval(refreshInterval);
-  }
-
-  refreshInterval = window.setInterval(() => {
-    // If we're currently polling at 5 seconds and there is a retry or delete in progress, then change the polling interval to poll every 1 second
-    if (!pollingFaster && isRetryOrDeleteOperationInProgress()) {
-      changeRefreshInterval(1000);
-      pollingFaster = true;
-    } else if (pollingFaster && !isRetryOrDeleteOperationInProgress()) {
-      // if we're currently polling every 1 second but all retries or deletes are done, change polling frequency back to every 5 seconds
-      changeRefreshInterval(5000);
-      pollingFaster = false;
-    }
-
-    loadMessages();
-  }, milliseconds);
-}
-
 onBeforeRouteLeave(() => {
   groupId.value = "";
   groupName.value = "";
 });
 
-onUnmounted(() => {
-  if (refreshInterval != null) {
-    window.clearInterval(refreshInterval);
+watch(isRefreshing, () => {
+  // If we're currently polling at 5 seconds and there is a retry or delete in progress, then change the polling interval to poll every 1 second
+  if (!pollingFaster && isRetryOrDeleteOperationInProgress()) {
+    pollingFaster = true;
+    updateInterval(1000);
+  } else if (pollingFaster && !isRetryOrDeleteOperationInProgress()) {
+    // if we're currently polling every 1 second but all retries or deletes are done, change polling frequency back to every 5 seconds
+    pollingFaster = false;
+    updateInterval(5000);
   }
 });
 
-onMounted(() => {
-  loadMessages();
-
-  changeRefreshInterval(5000);
+onMounted(async () => {
+  loading.value = true;
+  await store.setMessageStatus(FailedMessageStatus.Unresolved);
+  loading.value = false;
 });
 </script>
 
@@ -308,11 +235,12 @@ onMounted(() => {
         </div>
         <div class="row">
           <div class="col-12">
-            <MessageList :messages="messages" :show-request-retry="true" @retry-requested="retryRequested" ref="messageList"></MessageList>
+            <LoadingSpinner v-if="messages.length === 0 && (loading || isRefreshing)" />
+            <MessageList v-else :messages="messages" :show-request-retry="true" @retry-requested="retryRequested" ref="messageList"></MessageList>
           </div>
         </div>
         <div class="row">
-          <PaginationStrip v-model="pageNumber" :total-count="totalCount" :items-per-page="perPage" />
+          <PaginationStrip v-model="pageNumber" :total-count="totalCount" :items-per-page="store.perPage" />
         </div>
         <Teleport to="#modalDisplay">
           <ConfirmDialog

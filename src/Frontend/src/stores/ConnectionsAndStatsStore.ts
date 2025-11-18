@@ -18,7 +18,10 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
 
   const { count: requiresFullFailureDetailsSubscriberCount, inc, dec } = useCounter(0);
   function requiresFullFailureDetails() {
-    onMounted(() => inc());
+    onMounted(() => {
+      inc();
+      refresh();
+    });
     onUnmounted(() => dec());
   }
 
