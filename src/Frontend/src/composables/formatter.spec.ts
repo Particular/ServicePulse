@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { useFormatTime, useGetDayDiffFromToday, useFormatLargeNumber, createDateWithDayOffset } from "./formatter";
+import { useFormatTime, useGetDayDiffFromToday, useFormatLargeNumber } from "./formatter";
 
 describe("useFormatTime", () => {
   describe("milliseconds formatting", () => {
@@ -100,37 +100,47 @@ describe("useFormatTime", () => {
 
 describe("useGetDayDiffFromToday", () => {
   test("returns 0 for today's date", () => {
-    const today = createDateWithDayOffset();
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
     const result = useGetDayDiffFromToday(today.toISOString());
     expect(result).toBe(0);
   });
 
   test("returns positive number for future dates", () => {
-    const tomorrow = createDateWithDayOffset(1);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(12, 0, 0, 0);
     const result = useGetDayDiffFromToday(tomorrow.toISOString());
     expect(result).toBe(1);
   });
 
   test("returns negative number for past dates", () => {
-    const yesterday = createDateWithDayOffset(-1);
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(12, 0, 0, 0);
     const result = useGetDayDiffFromToday(yesterday.toISOString());
     expect(result).toBe(-1);
   });
 
   test("returns 7 for date 7 days in the future", () => {
-    const futureDate = createDateWithDayOffset(7);
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 7);
+    futureDate.setHours(12, 0, 0, 0);
     const result = useGetDayDiffFromToday(futureDate.toISOString());
     expect(result).toBe(7);
   });
 
   test("returns -30 for date 30 days in the past", () => {
-    const pastDate = createDateWithDayOffset(-30);
+    const pastDate = new Date();
+    pastDate.setDate(pastDate.getDate() - 30);
+    pastDate.setHours(12, 0, 0, 0);
     const result = useGetDayDiffFromToday(pastDate.toISOString());
     expect(result).toBe(-30);
   });
 
   test("handles dates without Z suffix", () => {
-    const date = createDateWithDayOffset();
+    const date = new Date();
+    date.setHours(12, 0, 0, 0);
     const isoString = date.toISOString().replace("Z", "");
     const result = useGetDayDiffFromToday(isoString);
     expect(result).toBe(0);

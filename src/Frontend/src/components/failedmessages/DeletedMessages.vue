@@ -7,7 +7,8 @@ import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
-import { FailedMessageStatus } from "@/resources/FailedMessage";
+import dayjs from "@/utils/dayjs";
+import { ExtendedFailedMessage } from "@/resources/FailedMessage";
 import { TYPE } from "vue-toastification";
 import FAIcon from "@/components/FAIcon.vue";
 import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
@@ -26,6 +27,102 @@ const { messages, groupId, groupName, totalCount, pageNumber, selectedPeriod } =
 
 const showConfirmRestore = ref(false);
 const messageList = ref<IMessageList | undefined>();
+const messages = ref<ExtendedFailedMessage[]>([]);
+
+watch(pageNumber, () => loadMessages());
+
+const configurationStore = useConfigurationStore();
+const { configuration } = storeToRefs(configurationStore);
+const serviceControlStore = useServiceControlStore();
+
+function loadMessages() {
+  let startDate = new Date(0);
+  const endDate = new Date();
+
+  switch (selectedPeriod.value) {
+    case "All Deleted":
+      startDate = new Date();
+      startDate.setHours(startDate.getHours() - 24 * 365);
+      break;
+    case "Deleted in the last 2 Hours":
+      startDate = new Date();
+      startDate.setHours(startDate.getHours() - 2);
+      break;
+    case "Deleted in the last 1 Day":
+      startDate = new Date();
+      startDate.setHours(startDate.getHours() - 24);
+      break;
+    case "Deleted in the last 7 days":
+      startDate = new Date();
+      startDate.setHours(startDate.getHours() - 24 * 7);
+      break;
+  }
+  return loadPagedMessages(groupId.value, pageNumber.value, "", "", startDate.toISOString(), endDate.toISOString());
+}
+
+async function loadGroupDetails(groupId: string) {
+  const [, data] = await serviceControlStore.fetchTypedFromServiceControl<FailureGroup>(`archive/groups/id/${groupId}`);
+  groupName.value = data.title;
+}
+
+function loadPagedMessages(groupId?: string, page: number = 1, sortBy: string = "modified", direction: string = "desc", startDate: string = new Date(0).toISOString(), endDate: string = new Date().toISOString()) {
+  const dateRange = startDate + "..." + endDate;
+  let loadGroupDetailsPromise;
+  if (groupId && !groupName.value) {
+    loadGroupDetailsPromise = loadGroupDetails(groupId);
+  }
+
+  async function loadDelMessages() {
+    try {
+      const [response, data] = await serviceControlStore.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
+        `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`
+      );
+
+      totalCount.value = parseInt(response.headers.get("Total-Count") ?? "0");
+
+      if (messages.value.length && data.length) {
+        // merge the previously selected messages into the new list so we can replace them
+        messages.value.forEach((previousMessage) => {
+          const receivedMessage = data.find((m) => m.id === previousMessage.id);
+          if (receivedMessage) {
+            if (previousMessage.last_modified === receivedMessage.last_modified) {
+              receivedMessage.retryInProgress = previousMessage.retryInProgress;
+              receivedMessage.deleteInProgress = previousMessage.deleteInProgress;
+            }
+
+            receivedMessage.selected = previousMessage.selected;
+          }
+        });
+      }
+      messages.value = updateMessagesScheduledDeletionDate(data);
+    } catch (err) {
+      console.log(err);
+      const result = {
+        message: "error",
+      };
+      return result;
+    }
+  }
+
+  const loadDelMessagesPromise = loadDelMessages();
+
+  if (loadGroupDetailsPromise) {
+    return Promise.all([loadGroupDetailsPromise, loadDelMessagesPromise]);
+  }
+
+  return loadDelMessagesPromise;
+}
+
+function updateMessagesScheduledDeletionDate(messages: ExtendedFailedMessage[]) {
+  //check deletion time
+  messages.forEach((message) => {
+    message.error_retention_period = dayjs.duration(configuration.value?.data_retention.error_retention_period ?? "PT0S").asHours();
+    const countdown = dayjs(message.last_modified).add(message.error_retention_period, "hours");
+    message.delete_soon = countdown < dayjs();
+    message.deleted_in = countdown.format();
+  });
+  return messages;
+}
 
 function numberSelected() {
   return messageList.value?.getSelectedMessages()?.length ?? 0;
