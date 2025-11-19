@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useShowToast } from "../../composables/toast";
 import NoData from "../NoData.vue";
@@ -18,8 +18,10 @@ import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
 import { storeToRefs } from "pinia";
 import LoadingSpinner from "../LoadingSpinner.vue";
 
-let pollingFaster = false;
-const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("deletedMessageGroups", useDeletedMessageGroupsStore, 5000);
+const POLLING_INTERVAL_NORMAL = 5000;
+const POLLING_INTERVAL_FAST = 1000;
+
+const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("deletedMessageGroups", useDeletedMessageGroupsStore, POLLING_INTERVAL_NORMAL);
 const { store } = autoRefresh();
 const { archiveGroups, classifiers, selectedClassifier } = storeToRefs(store);
 const router = useRouter();
@@ -47,8 +49,7 @@ async function restoreGroup() {
       useShowToast(TYPE.ERROR, "Error", `Failed to restore the group: ${errorMessage}`);
     } else {
       // We're starting a restore, poll more frequently
-      pollingFaster = true;
-      updateInterval(1000);
+      updateInterval(POLLING_INTERVAL_FAST);
       useShowToast(TYPE.INFO, "Info", "Group restore started...");
     }
   }
@@ -79,19 +80,17 @@ function navigateToGroup(groupId: string) {
   router.push(routeLinks.failedMessage.deletedGroup.link(groupId));
 }
 
-function isRestoreInProgress() {
+const isRestoreInProgress = computed(() => {
   return archiveGroups.value.some((group) => group.workflow_state.status !== "none" && group.workflow_state.status !== "restorecompleted");
-}
+});
 
-watch(isRefreshing, () => {
-  // If we're currently polling at 5 seconds and there is a restore in progress, then change the polling interval to poll every 1 second
-  if (!pollingFaster && isRestoreInProgress()) {
-    pollingFaster = true;
-    updateInterval(1000);
-  } else if (pollingFaster && !isRestoreInProgress()) {
-    // if we're currently polling every 1 second and all restores are done, change polling frequency back to every 5 seconds
-    pollingFaster = false;
-    updateInterval(5000);
+watch(isRestoreInProgress, (restoreInProgress) => {
+  if (restoreInProgress) {
+    // If there is a restore in progress, poll every 1 second
+    updateInterval(POLLING_INTERVAL_FAST);
+  } else {
+    // If all restores are done, change polling frequency back to every 5 seconds
+    updateInterval(POLLING_INTERVAL_NORMAL);
   }
 });
 </script>
