@@ -10,6 +10,15 @@ export interface ValueWithUnit {
   unit: string;
 }
 
+export function createDateWithDayOffset(daysOffset: number = 0): Date {
+  const date = new Date();
+  if (daysOffset !== 0) {
+    date.setDate(date.getDate() + daysOffset);
+  }
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
 export function useFormatTime(value?: number): ValueWithUnit {
   const time = { value: "0", unit: "ms" };
   if (value) {
@@ -35,10 +44,12 @@ export function useFormatTime(value?: number): ValueWithUnit {
 }
 
 export function useGetDayDiffFromToday(value: string) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const diff = new Date(value.replace("Z", "")).getTime() - today.getTime();
-  return Math.round(diff / 1000 / 60 / 60 / 24);
+  const today = createDateWithDayOffset();
+  const inputDate = new Date(value.replace("Z", ""));
+  const diff = inputDate.getTime() - today.getTime();
+  const days = Math.round(diff / 1000 / 60 / 60 / 24);
+  // Ensure we don't return -0
+  return days === 0 ? 0 : days;
 }
 
 export function useFormatLargeNumber(num: number, decimals: number) {
