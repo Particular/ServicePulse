@@ -1,9 +1,8 @@
 import { minimumSCVersionForAllMessages } from "@/components/audit/isAllMessagesSupported";
 
 export enum MonitoringCardDescription {
-  NotConfigured = "Enable real-time endpoint performance monitoring to track throughput, processing times, and system health across your entire distributed system.",
+  NotConfigured = "Monitoring instance is connected but no endpoints are sending throughput data. This may be because no endpoints are running or no endpoints have the monitoring plugin enabled.",
   Unavailable = "Monitoring instance is not responding",
-  PartiallyAvailable = "Monitoring instance is connected but no endpoints are sending throughput data. This may be because no endpoints are running or no endpoints have the monitoring plugin enabled.",
   Available = "Monitoring is available and receiving throughput data from endpoints",
 }
 
@@ -16,7 +15,7 @@ export enum MonitoringIndicatorTooltip {
 }
 
 export enum AuditingCardDescription {
-  NotConfigured = "Auditing instance is connected but no successful messages have been processed yet or you don't have auditing enabled for any endpoints. Enable auditing to track message flow and processing across your distributed system.",
+  NotConfigured = "Auditing instance is connected but no successful messages have been processed yet or you don't have auditing enabled for any endpoints.",
   Unavailable = "Auditing instance is not responding",
   NotSupported = `Auditing instance is connected but the "All Messages" feature requires ServiceControl ${minimumSCVersionForAllMessages} or higher.`,
   Available = "Auditing is available and processing successful messages",

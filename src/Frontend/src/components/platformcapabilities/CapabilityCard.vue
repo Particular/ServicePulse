@@ -19,9 +19,9 @@ const props = defineProps<{
 <template>
   <div
     class="capability-card"
+    data-testid="capability-card"
     :class="{
       'capability-available': !props.isLoading && props.status === CapabilityStatus.Available,
-      'capability-partially-available': !props.isLoading && props.status === CapabilityStatus.PartiallyAvailable,
       'capability-unavailable': !props.isLoading && props.status === CapabilityStatus.Unavailable,
       'capability-loading': props.isLoading,
       'capability-notconfigured': !props.isLoading && props.status === CapabilityStatus.NotConfigured,
@@ -37,22 +37,21 @@ const props = defineProps<{
         class="capability-icon"
         :class="{
           'text-success': props.status === CapabilityStatus.Available,
-          'text-warning': props.status === CapabilityStatus.PartiallyAvailable,
           'text-danger': props.status === CapabilityStatus.Unavailable,
           'text-info': props.status === CapabilityStatus.NotConfigured,
         }"
       />
       <div class="capability-info">
         <div class="capability-title-row">
-          <div class="capability-title">{{ props.title }}</div>
+          <h6 class="capability-title">{{ props.title }}</h6>
           <div v-if="props.indicators" class="status-indicators">
-            <div v-for="indicator in props.indicators" :key="indicator.label" class="indicator-item" v-tippy="indicator.tooltip">
+            <div v-for="indicator in props.indicators" :key="indicator.label" class="indicator-item" data-testid="status-indicator" v-tippy="indicator.tooltip">
               <FAIcon
                 :icon="faCircle"
                 class="indicator-light"
                 :class="{
                   'light-success': indicator.status === CapabilityStatus.Available,
-                  'light-warning': indicator.status === CapabilityStatus.PartiallyAvailable,
+                  'light-warning': indicator.status === CapabilityStatus.NotConfigured,
                   'light-danger': indicator.status === CapabilityStatus.Unavailable,
                 }"
               />
@@ -67,7 +66,6 @@ const props = defineProps<{
           class="status-badge"
           :class="{
             'status-available': props.status === CapabilityStatus.Available,
-            'status-partially-available': props.status === CapabilityStatus.PartiallyAvailable,
             'status-unavailable': props.status === CapabilityStatus.Unavailable,
           }"
         >

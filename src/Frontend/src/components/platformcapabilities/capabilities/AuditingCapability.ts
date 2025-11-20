@@ -97,7 +97,7 @@ export function useAuditingCapability(testResults: Ref<ConnectionTestResults | n
 
       indicators.push({
         label: "Messages",
-        status: messagesAvailable ? CapabilityStatus.Available : CapabilityStatus.PartiallyAvailable,
+        status: messagesAvailable ? CapabilityStatus.Available : CapabilityStatus.NotConfigured,
         tooltip: messageTooltip,
       });
     }
