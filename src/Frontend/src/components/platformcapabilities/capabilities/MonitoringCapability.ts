@@ -1,6 +1,6 @@
 import { computed } from "vue";
 import { CapabilityStatus, StatusIndicator } from "@/components/platformcapabilities/types";
-import { faCheck, faTimes, faExclamationTriangle, faInfoCircle, type IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTimes, faInfoCircle, type IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { storeToRefs } from "pinia";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useMonitoringStore } from "@/stores/MonitoringStore";
@@ -28,11 +28,6 @@ export function useMonitoringCapability() {
     const isConfiguredInServiceControl = isMonitoringEnabled.value;
     const connectionSuccessful = monitoringConnectionState.connected && !monitoringConnectionState.unableToConnect;
 
-    // Promo mode - not configured
-    if (!isConfiguredInServiceControl) {
-      return CapabilityStatus.NotConfigured;
-    }
-
     // Disabled - configured but not responding
     if (isConfiguredInServiceControl && !connectionSuccessful) {
       return CapabilityStatus.Unavailable;
@@ -44,7 +39,7 @@ export function useMonitoringCapability() {
     }
 
     // Monitoring is configured and connected but no endpoints are sending data
-    return CapabilityStatus.PartiallyAvailable;
+    return CapabilityStatus.NotConfigured;
   });
 
   const monitoringIcon = computed<IconDefinition>(() => {
@@ -54,10 +49,6 @@ export function useMonitoringCapability() {
 
     if (monitoringStatus.value === CapabilityStatus.Available) {
       return faCheck;
-    }
-
-    if (monitoringStatus.value === CapabilityStatus.PartiallyAvailable) {
-      return faExclamationTriangle;
     }
 
     // Unavailable
@@ -73,11 +64,7 @@ export function useMonitoringCapability() {
       return MonitoringCardDescription.Available;
     }
 
-    if (monitoringStatus.value === CapabilityStatus.PartiallyAvailable) {
-      return MonitoringCardDescription.PartiallyAvailable;
-    }
-
-    // Uavailable
+    // Unavailable
     return MonitoringCardDescription.Unavailable;
   });
 
@@ -88,20 +75,17 @@ export function useMonitoringCapability() {
     const connectionSuccessful = monitoringConnectionState.connected && !monitoringConnectionState.unableToConnect;
     const instanceAvailable = isMonitoringEnabled.value && connectionSuccessful;
 
-    // no indicators shown in promo mode
-    if (monitoringStatus.value !== CapabilityStatus.NotConfigured) {
-      indicators.push({
-        label: "Instance",
-        status: instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable,
-        tooltip: instanceAvailable ? MonitoringIndicatorTooltip.InstanceAvailable : !isMonitoringEnabled.value ? MonitoringIndicatorTooltip.InstanceNotConfigured : MonitoringIndicatorTooltip.InstanceUnavailable,
-      });
-    }
+    indicators.push({
+      label: "Instance",
+      status: instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable,
+      tooltip: instanceAvailable ? MonitoringIndicatorTooltip.InstanceAvailable : !isMonitoringEnabled.value ? MonitoringIndicatorTooltip.InstanceNotConfigured : MonitoringIndicatorTooltip.InstanceUnavailable,
+    });
 
     // data available indicator - only show if instance is connected
     if (instanceAvailable) {
       indicators.push({
         label: "Metrics",
-        status: !endpointListIsEmpty.value ? CapabilityStatus.Available : CapabilityStatus.PartiallyAvailable,
+        status: !endpointListIsEmpty.value ? CapabilityStatus.Available : CapabilityStatus.NotConfigured,
         tooltip: !endpointListIsEmpty.value ? MonitoringIndicatorTooltip.DataAvailable : MonitoringIndicatorTooltip.DataUnavailable,
       });
     }
