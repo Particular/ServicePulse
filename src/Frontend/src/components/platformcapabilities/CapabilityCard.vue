@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import FAIcon from "@/components/FAIcon.vue";
 import { IconDefinition, faCircle } from "@fortawesome/free-solid-svg-icons";
-import { CapabilityStatus, StatusIndicator } from "@/components/platformcapabilities/types";
+import { CapabilityStatus, StatusIndicator, Capability } from "@/components/platformcapabilities/types";
 
 const props = defineProps<{
   status: CapabilityStatus;
   icon: IconDefinition;
-  title: string;
+  title: Capability;
   subtitle: string;
   helpUrl: string;
   dataUrl: string;
@@ -80,7 +80,7 @@ const props = defineProps<{
         {{ props.description }}
       </div>
       <a :href="props.status === CapabilityStatus.Available ? props.dataUrl : props.helpUrl" :target="props.status === CapabilityStatus.Available ? '_self' : '_blank'" class="btn-primary learn-more-btn">
-        {{ props.status === CapabilityStatus.Available ? "View Data" : "Learn More" }}
+        {{ props.status !== CapabilityStatus.Available ? "Learn More" : props.title === Capability.Auditing ? "View Messages" : "View Metrics" }}
       </a>
     </div>
   </div>

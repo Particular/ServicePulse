@@ -10,3 +10,8 @@ export enum CapabilityStatus {
   PartiallyAvailable = "Data Unavailable", // Instance is available but not data is flowing for reasons
   NotConfigured = "Not Configured", // Instance is not configured. Promo should be shown
 }
+
+export enum Capability {
+  Monitoring = "Monitoring",
+  Auditing = "Auditing",
+}
