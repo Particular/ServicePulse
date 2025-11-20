@@ -160,11 +160,6 @@ const props = defineProps<{
   font-size: 14px;
 }
 
-.is-loading {
-  opacity: 0.3;
-  pointer-events: none;
-}
-
 .capability-header {
   display: flex;
   align-items: flex-start;
@@ -311,17 +306,6 @@ const props = defineProps<{
 .learn-more-btn.btn-primary:hover {
   background-color: var(--primary-hover-color, #0056b3);
   border-color: var(--primary-hover-color, #0056b3);
-}
-
-.learn-more-btn.btn-secondary {
-  background-color: transparent;
-  color: var(--primary-color, #007bff);
-  border-color: var(--primary-color, #007bff);
-}
-
-.learn-more-btn.btn-secondary:hover {
-  background-color: var(--primary-color, #007bff);
-  color: white;
 }
 
 /* Responsive adjustments */
