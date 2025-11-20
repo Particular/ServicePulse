@@ -26,7 +26,7 @@ const monitoring = useMonitoringCapability();
         :description="auditing.description.value"
         :indicators="auditing.indicators.value"
         :isLoading="testResults === null"
-        help-url="https://docs.particular.net/servicecontrol/audit-instances/"
+        help-url="https://docs.particular.net/nservicebus/operations/auditing"
         data-url="#/messages"
       ></CapabilityCard>
       <CapabilityCard
@@ -37,7 +37,7 @@ const monitoring = useMonitoringCapability();
         :description="monitoring.description.value"
         :indicators="monitoring.indicators.value"
         :isLoading="testResults === null"
-        help-url="https://docs.particular.net/servicecontrol/monitoring-instances/"
+        help-url="https://docs.particular.net/monitoring/metrics/install-plugin"
         data-url="#/monitoring"
       ></CapabilityCard>
     </div>
