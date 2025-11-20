@@ -12,14 +12,9 @@ import RetryRedirectEdit, { type RetryRedirect } from "@/components/configuratio
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useRedirectsStore } from "@/stores/RedirectsStore";
 import LoadingSpinner from "../LoadingSpinner.vue";
 
-const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
-const hasResponseStatusInHeader = environmentStore.serviceControlIsGreaterThan("5.2.0");
-const serviceControlStore = useServiceControlStore();
 const redirectsStore = useRedirectsStore();
 
 const loadingData = ref(true);
@@ -37,7 +32,7 @@ const selectedRedirect = ref<Redirect & { queues: string[] }>({
 
 const redirectSaveSuccessful = ref<boolean | null>(null);
 
-async function getRedirect() {
+async function getRedirects() {
   loadingData.value = true;
   await redirectsStore.refresh();
   selectedRedirect.value.queues = redirectsStore.redirects.queues;
@@ -63,17 +58,11 @@ function editRedirect(redirect: Redirect) {
 async function saveUpdatedRedirect(redirect: RetryRedirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
-  const result = handleResponse(
-    await serviceControlStore.putToServiceControl(`redirects/${redirect.redirectId}`, {
-      id: redirect.redirectId,
-      fromphysicaladdress: redirect.sourceQueue,
-      tophysicaladdress: redirect.targetQueue,
-    })
-  );
+  const result = await redirectsStore.updateRedirect(redirect);
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
     useShowToast(TYPE.INFO, "Info", "Redirect updated successfully");
-    getRedirect();
+    getRedirects();
   } else {
     redirectSaveSuccessful.value = false;
     if (result.status === 409) {
@@ -92,16 +81,11 @@ async function saveUpdatedRedirect(redirect: RetryRedirect) {
 async function saveCreatedRedirect(redirect: RetryRedirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
-  const result = handleResponse(
-    await serviceControlStore.postToServiceControl("redirects", {
-      fromphysicaladdress: redirect.sourceQueue,
-      tophysicaladdress: redirect.targetQueue,
-    })
-  );
+  const result = await redirectsStore.createRedirect(redirect);
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
     useShowToast(TYPE.INFO, "Info", "Redirect created successfully");
-    getRedirect();
+    getRedirects();
   } else {
     redirectSaveSuccessful.value = false;
     if (result.status === 409 && result.statusText === "Duplicate") {
@@ -121,11 +105,11 @@ function deleteRedirect(redirect: Redirect) {
 }
 
 async function saveDeletedRedirect() {
-  const result = handleResponse(await serviceControlStore.deleteFromServiceControl(`redirects/${selectedRedirect.value.message_redirect_id}`));
+  const result = await redirectsStore.deleteRedirect(selectedRedirect.value.message_redirect_id);
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
     useShowToast(TYPE.INFO, "Info", "Redirect deleted");
-    await getRedirect();
+    await getRedirects();
   } else {
     redirectSaveSuccessful.value = false;
     useShowToast(TYPE.ERROR, "Error", result.message);
@@ -133,18 +117,8 @@ async function saveDeletedRedirect() {
 }
 
 onMounted(() => {
-  getRedirect();
+  getRedirects();
 });
-
-function handleResponse(response: Response) {
-  const responseStatusText = hasResponseStatusInHeader.value ? response.headers.get("X-Particular-Reason") : response.statusText;
-  return {
-    message: response.ok ? "success" : `error:${response.statusText}`,
-    status: response.status,
-    statusText: responseStatusText,
-    data: response,
-  };
-}
 </script>
 
 <template>
