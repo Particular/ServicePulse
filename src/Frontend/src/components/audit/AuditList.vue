@@ -10,6 +10,8 @@ import RefreshConfig from "../RefreshConfig.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import useFetchWithAutoRefresh from "@/composables/autoRefresh";
 import { MessageStatus } from "@/resources/Message";
+import FAIcon from "@/components/FAIcon.vue";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 const store = useAuditStore();
 const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange } = storeToRefs(store);
@@ -111,7 +113,7 @@ watch(autoRefreshValue, (newValue) => {
       </div>
       <div v-if="hasNoSuccessfulMessages" class="no-audit-banner">
         <div class="banner-content">
-          <div class="banner-icon">ℹ️</div>
+          <FAIcon :icon="faInfoCircle" class="banner-icon" />
           <div class="banner-text">
             <strong>No successful audit messages found.</strong>
             <p>Auditing may not be enabled on your endpoints. Learn how to enable auditing to track all messages flowing through your system.</p>
@@ -166,6 +168,7 @@ watch(autoRefreshValue, (newValue) => {
 .banner-icon {
   font-size: 24px;
   flex-shrink: 0;
+  color: #007bff;
 }
 
 .banner-text {
