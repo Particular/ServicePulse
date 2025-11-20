@@ -100,10 +100,6 @@ const props = defineProps<{
   border-left: 4px solid var(--success-color, #28a745);
 }
 
-.capability-partially-available {
-  border-left: 4px solid var(--warning-color, #ffc107);
-}
-
 .capability-unavailable {
   border-left: 4px solid var(--danger-color, #dc3545);
 }
@@ -249,11 +245,6 @@ const props = defineProps<{
 .status-available {
   background-color: #d4edda;
   color: #155724;
-}
-
-.status-partially-available {
-  background-color: #fff3cd;
-  color: #856404;
 }
 
 .status-unavailable {
