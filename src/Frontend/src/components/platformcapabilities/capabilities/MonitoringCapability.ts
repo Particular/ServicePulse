@@ -56,6 +56,12 @@ export function useMonitoringCapability() {
   });
 
   const monitoringDescription = computed(() => {
+    const instanceAvailable = isMonitoringEnabled.value;
+
+    if (!instanceAvailable) {
+      return MonitoringCardDescription.InstanceNotConfigured;
+    }
+
     if (monitoringStatus.value === CapabilityStatus.NotConfigured) {
       return MonitoringCardDescription.NotConfigured;
     }
