@@ -100,7 +100,7 @@ export function useMonitoringCapability() {
     // data available indicator - only show if instance is connected
     if (instanceAvailable) {
       indicators.push({
-        label: "Data",
+        label: "Metrics",
         status: !endpointListIsEmpty.value ? CapabilityStatus.Available : CapabilityStatus.PartiallyAvailable,
         tooltip: !endpointListIsEmpty.value ? MonitoringIndicatorTooltip.DataAvailable : MonitoringIndicatorTooltip.DataUnavailable,
       });

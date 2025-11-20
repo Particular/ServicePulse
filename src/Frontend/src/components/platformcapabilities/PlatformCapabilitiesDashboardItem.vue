@@ -4,6 +4,7 @@ import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoR
 import { storeToRefs } from "pinia";
 import { useAuditingCapability } from "@/components/platformcapabilities/capabilities/AuditingCapability";
 import { useMonitoringCapability } from "@/components/platformcapabilities/capabilities/MonitoringCapability";
+import { Capability } from "@/components/platformcapabilities/types";
 
 const { store } = useThroughputStoreAutoRefresh();
 const { testResults } = storeToRefs(store);
@@ -19,7 +20,7 @@ const monitoring = useMonitoringCapability();
     </div>
     <div class="capabilities-list">
       <CapabilityCard
-        title="Auditing"
+        :title="Capability.Auditing"
         subtitle="Track and search all successful messages flowing through your system"
         :status="auditing.status.value"
         :icon="auditing.icon.value"
@@ -30,7 +31,7 @@ const monitoring = useMonitoringCapability();
         data-url="#/messages"
       ></CapabilityCard>
       <CapabilityCard
-        title="Monitoring"
+        :title="Capability.Monitoring"
         subtitle="Monitor endpoint performance and throughput"
         :status="monitoring.status.value"
         :icon="monitoring.icon.value"
