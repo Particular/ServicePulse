@@ -5,10 +5,11 @@ import { useRoute, useRouter } from "vue-router";
 import ResultsCount from "@/components/ResultsCount.vue";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
 import AuditListItem from "@/components/audit/AuditListItem.vue";
-import { onBeforeMount, ref, watch } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import RefreshConfig from "../RefreshConfig.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import useFetchWithAutoRefresh from "@/composables/autoRefresh";
+import { MessageStatus } from "@/resources/Message";
 
 const store = useAuditStore();
 const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange } = storeToRefs(store);
@@ -17,6 +18,14 @@ const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
 const { refreshNow, isRefreshing, updateInterval, isActive, start, stop } = useFetchWithAutoRefresh("audit-list", store.refresh, 0);
 const firstLoad = ref(true);
+
+// Check if there are no successful audit messages
+const hasNoSuccessfulMessages = computed(() => {
+  if (firstLoad.value || messages.value.length === 0) {
+    return false;
+  }
+  return !messages.value.some((msg) => msg.status === MessageStatus.Successful || msg.status === MessageStatus.ResolvedSuccessfully);
+});
 
 onBeforeMount(() => {
   setQuery();
@@ -100,6 +109,16 @@ watch(autoRefreshValue, (newValue) => {
       <div class="row">
         <ResultsCount :displayed="messages.length" :total="totalCount" />
       </div>
+      <div v-if="hasNoSuccessfulMessages" class="no-audit-banner">
+        <div class="banner-content">
+          <div class="banner-icon">ℹ️</div>
+          <div class="banner-text">
+            <strong>No successful audit messages found.</strong>
+            <p>Auditing may not be enabled on your endpoints. Learn how to enable auditing to track all messages flowing through your system.</p>
+          </div>
+          <a href="https://docs.particular.net/nservicebus/operations/auditing" target="_blank" class="banner-link">Learn More</a>
+        </div>
+      </div>
     </div>
     <div class="row results-table">
       <LoadingSpinner v-if="firstLoad" />
@@ -127,5 +146,60 @@ watch(autoRefreshValue, (newValue) => {
   margin-top: 1rem;
   margin-bottom: 5rem;
   background-color: #ffffff;
+}
+
+.no-audit-banner {
+  background: linear-gradient(135deg, #f6f9fc 0%, #e9f2f9 100%);
+  border: 1px solid #c3ddf5;
+  border-left: 4px solid #007bff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 1rem;
+}
+
+.banner-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.banner-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.banner-text {
+  flex: 1;
+}
+
+.banner-text strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #333;
+  font-size: 14px;
+}
+
+.banner-text p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.banner-link {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  align-self: center;
+  transition: background-color 0.2s ease;
+}
+
+.banner-link:hover {
+  background-color: #0056b3;
 }
 </style>
