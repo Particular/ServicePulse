@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import { EndpointStatus, LogicalEndpoint } from "@/resources/Heartbeat";
-import moment from "moment";
+import dayjs from "@/utils/dayjs";
 import { SortDirection, type GroupPropertyType } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
 import { EndpointsView } from "@/resources/EndpointView";
@@ -30,7 +30,7 @@ const columnSortings = new Map<string, (endpoint: LogicalEndpoint) => GroupPrope
   [ColumnNames.Name, (endpoint) => endpoint.name],
   [ColumnNames.InstancesDown, (endpoint) => endpoint.alive_count - endpoint.down_count],
   [ColumnNames.InstancesTotal, (endpoint) => endpoint.alive_count + endpoint.down_count],
-  [ColumnNames.LastHeartbeat, (endpoint) => moment.utc(endpoint.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00")],
+  [ColumnNames.LastHeartbeat, (endpoint) => dayjs.utc(endpoint.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00")],
   [
     ColumnNames.Muted,
     (endpoint) => {
@@ -158,7 +158,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
           last_report_at: endpointInstances.reduce((previousMax: EndpointsView | null, endpoint: EndpointsView) => {
             if (endpoint.heartbeat_information) {
               if (previousMax) {
-                return moment.utc(endpoint.heartbeat_information.last_report_at) > moment.utc(previousMax.heartbeat_information!.last_report_at) ? endpoint : previousMax;
+                return dayjs.utc(endpoint.heartbeat_information.last_report_at) > dayjs.utc(previousMax.heartbeat_information!.last_report_at) ? endpoint : previousMax;
               }
               return endpoint;
             }

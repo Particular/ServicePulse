@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "@/utils/dayjs";
 import type { DateRange } from "@/types/date";
 
 export interface DateDisplayOptions {
@@ -41,7 +41,7 @@ export function useDateFormatter() {
       return emptyText;
     }
 
-    const m = moment.utc(dateInput);
+    const m = dayjs.utc(dateInput);
 
     if (showRelative) {
       return m.fromNow();
@@ -65,7 +65,7 @@ export function useDateFormatter() {
     if (titleValue) return titleValue;
     if (!dateInput || dateInput === emptyDate) return "";
 
-    const m = moment.utc(dateInput);
+    const m = dayjs.utc(dateInput);
     return `${m.local().format("LLLL")} (local)\n${m.utc().format("LLLL")} (UTC)`;
   }
 
@@ -79,7 +79,7 @@ export function useDateFormatter() {
       return emptyText;
     }
 
-    return moment.utc(dateInput).fromNow();
+    return dayjs.utc(dateInput).fromNow();
   }
 
   /**

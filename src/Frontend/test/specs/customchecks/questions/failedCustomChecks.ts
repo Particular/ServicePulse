@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/vue";
-import moment from "moment";
+import dayjs from "@/utils/dayjs";
 
 export function customChecksMessageElement() {
   const customCheckNoDataElement = screen.queryByRole("note", { name: "customcheck-message" });
@@ -31,10 +31,10 @@ export async function customChecksReportedDateList() {
   const timeStamps = timeElements.map((el) => {
     const utcDateString = el.title.match(/(\w+day, \w+ \d+, \d+ \d+:\d+ [APM]+ \(UTC\))/);
 
-    const finalUtcString = utcDateString ? utcDateString[0] : moment.utc().format("dddd, MMMM D, YYYY h:mm A (UTC)");
+    const finalUtcString = utcDateString ? utcDateString[0] : dayjs.utc().format("dddd, MMMM D, YYYY h:mm A (UTC)");
 
-    // Step 2: Parse the UTC date using moment
-    const utcDate = moment(finalUtcString, "dddd, MMMM D, YYYY h:mm A (UTC)").utc().toDate(); // Converts to UTC Date object
+    // Step 2: Parse the UTC date using dayjs
+    const utcDate = dayjs(finalUtcString, "dddd, MMMM D, YYYY h:mm A (UTC)").utc().toDate(); // Converts to UTC Date object
     return utcDate.getTime();
   });
 
