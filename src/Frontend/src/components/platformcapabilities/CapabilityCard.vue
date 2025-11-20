@@ -80,7 +80,7 @@ const props = defineProps<{
         {{ props.description }}
       </div>
       <a :href="props.status === CapabilityStatus.Available ? props.dataUrl : props.helpUrl" :target="props.status === CapabilityStatus.Available ? '_self' : '_blank'" class="btn-primary learn-more-btn">
-        {{ props.status === CapabilityStatus.Available ? "View Data" : props.status === CapabilityStatus.NotConfigured ? "Get Started" : "Learn More" }}
+        {{ props.status === CapabilityStatus.Available ? "View Data" : "Learn More" }}
       </a>
     </div>
   </div>
