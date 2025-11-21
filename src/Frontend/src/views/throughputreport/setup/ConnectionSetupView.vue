@@ -7,15 +7,12 @@ import { storeToRefs } from "pinia";
 import FAIcon from "@/components/FAIcon.vue";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoRefresh";
-import { useMonitoringStore } from "@/stores/MonitoringStore";
+import monitoringClient from "@/components/monitoring/monitoringClient";
 
 const { store } = useThroughputStoreAutoRefresh();
 const { isBrokerTransport } = storeToRefs(store);
 const settingsInfo = ref<ThroughputConnectionSettings | null>(null);
-
-const monitoringStore = useMonitoringStore();
-const { isMonitoringEnabled } = storeToRefs(monitoringStore);
-
+const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
 const throughputClient = createThroughputClient();
 
 onMounted(async () => {
@@ -26,7 +23,7 @@ const needsConfiguration = computed(() => {
   const broker = settingsInfo.value?.broker_settings?.length ?? 0;
   const monitoring = settingsInfo.value?.monitoring_settings?.length ?? 0;
   const serviceControl = settingsInfo.value?.service_control_settings?.length ?? 0;
-  return broker > 0 || (monitoring > 0 && isMonitoringEnabled.value) || serviceControl > 0;
+  return broker > 0 || (monitoring > 0 && isMonitoringEnabled) || serviceControl > 0;
 });
 </script>
 

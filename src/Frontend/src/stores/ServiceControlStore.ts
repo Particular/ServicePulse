@@ -14,6 +14,14 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
     return serviceControlUrl.value;
   }
 
+  async function getErrorMessagesCount(status: string) {
+    const [response] = await fetchTypedFromServiceControl(`errors?status=${status}`);
+    if (response?.ok) {
+      return parseInt(response.headers.get("Total-Count") ?? "0");
+    }
+    return undefined;
+  }
+
   function refresh() {
     const searchParams = new URLSearchParams(window.location.search);
     const scu = searchParams.get("scu");
@@ -101,6 +109,7 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
     postToServiceControl,
     patchToServiceControl,
     deleteFromServiceControl,
+    getErrorMessagesCount,
   };
 });
 
