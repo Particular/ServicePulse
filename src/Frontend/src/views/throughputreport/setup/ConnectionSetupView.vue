@@ -7,14 +7,14 @@ import { storeToRefs } from "pinia";
 import FAIcon from "@/components/FAIcon.vue";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoRefresh";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import { useMonitoringStore } from "@/stores/MonitoringStore";
 
 const { store } = useThroughputStoreAutoRefresh();
 const { isBrokerTransport } = storeToRefs(store);
 const settingsInfo = ref<ThroughputConnectionSettings | null>(null);
 
-const serviceControlStore = useServiceControlStore();
-const { isMonitoringEnabled } = storeToRefs(serviceControlStore);
+const monitoringStore = useMonitoringStore();
+const { isMonitoringEnabled } = storeToRefs(monitoringStore);
 
 const throughputClient = createThroughputClient();
 
