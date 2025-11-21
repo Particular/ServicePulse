@@ -5,11 +5,10 @@ import { useMemoize } from "@vueuse/core";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, reactive } from "vue";
 import { useServiceControlStore } from "./ServiceControlStore";
-import { useMonitoringStore } from "./MonitoringStore";
+import monitoringClient from "@/components/monitoring/monitoringClient";
 
 export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersionsStore", () => {
   const serviceControlStore = useServiceControlStore();
-  const monitoringStore = useMonitoringStore();
 
   const environment = reactive({
     monitoring_version: "",
@@ -96,14 +95,7 @@ export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersion
   }
 
   async function setMonitoringVersion() {
-    try {
-      const [response] = await monitoringStore.fetchTypedFromMonitoring("");
-      if (response) {
-        environment.monitoring_version = response.headers.get("X-Particular-Version") ?? "";
-      }
-    } catch {
-      environment.monitoring_version = "";
-    }
+    environment.monitoring_version = await monitoringClient.getMonitoringVersion();
   }
 
   return {

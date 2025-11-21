@@ -20,7 +20,7 @@ import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPerio
 import routeLinks from "@/router/routeLinks";
 import FAIcon from "@/components/FAIcon.vue";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { useMonitoringStore } from "@/stores/MonitoringStore";
+import monitoringClient from "./monitoringClient";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
@@ -32,8 +32,7 @@ let refreshInterval: number;
 
 const monitoringEndpointDetailsStore = useMonitoringEndpointDetailsStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
-const monitoringStore = useMonitoringStore();
-const { isMonitoringDisabled } = storeToRefs(monitoringStore);
+const isMonitoringDisabled = monitoringClient.isMonitoringDisabled;
 
 const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 const { negativeCriticalTimeIsPresent, endpointDetails: endpoint } = storeToRefs(monitoringEndpointDetailsStore);
