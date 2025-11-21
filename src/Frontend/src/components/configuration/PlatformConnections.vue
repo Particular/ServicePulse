@@ -3,28 +3,21 @@ import { ref } from "vue";
 import { faCheck, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "@/components/FAIcon.vue";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
-import { storeToRefs } from "pinia";
-import { useMonitoringStore } from "@/stores/MonitoringStore";
+import serviceControlClient from "@/components/serviceControlClient";
+import monitoringClient from "../monitoring/monitoringClient";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
 
-const serviceControlStore = useServiceControlStore();
-const monitoringStore = useMonitoringStore();
-serviceControlStore.refresh();
-monitoringStore.refresh();
-const localServiceControlUrl = ref(serviceControlStore.serviceControlUrl);
-const localMonitoringUrl = ref(monitoringStore.monitoringUrl);
-const { isMonitoringDisabled } = storeToRefs(monitoringStore);
-
+const localServiceControlUrl = ref(serviceControlClient.url);
+const localMonitoringUrl = ref(monitoringClient.url);
+const isMonitoringDisabled = monitoringClient.isMonitoringDisabled;
 const testingServiceControl = ref(false);
 const serviceControlValid = ref<boolean | null>(null);
 
 const testingMonitoring = ref(false);
 const monitoringValid = ref<boolean | null>(null);
-
 const connectionSaved = ref<boolean | null>(null);
 
 async function testServiceControlUrl() {
@@ -82,13 +75,10 @@ function updateServiceControlUrls() {
     localMonitoringUrl.value += "/";
   }
 
-  //values have changed. They'll be reset after page reloads
-  window.localStorage.removeItem("scu");
-  window.localStorage.removeItem("mu");
-
-  const newSearch = `?scu=${localServiceControlUrl.value}&mu=${localMonitoringUrl.value}`;
-  console.debug("updateConnections - new query string: ", newSearch);
-  window.location.search = newSearch;
+  const params = new URLSearchParams();
+  params.set("scu", localServiceControlUrl.value);
+  params.set("mu", localMonitoringUrl.value);
+  window.location.search = `?${params.toString()}`;
 }
 </script>
 

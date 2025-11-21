@@ -7,7 +7,6 @@ import Toast from "vue-toastification";
 import { disableMonitoring } from "../../../../test/drivers/vitest/setup";
 import { flushPromises } from "@vue/test-utils";
 import { createTestingPinia } from "@pinia/testing";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { setActivePinia } from "pinia";
 
 describe("MaskView tests", () => {
@@ -28,8 +27,6 @@ describe("MaskView tests", () => {
     const driver = await setup();
     driver.mockEndpoint(`${window.defaultConfig.service_control_url}licensing/settings/masks`, { body });
     setActivePinia(createTestingPinia({ stubActions: false }));
-
-    useServiceControlStore();
 
     const { debug } = render(MasksView, { global: { plugins: [Toast], directives: { tippy: () => {} } } });
     await flushPromises();

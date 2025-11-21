@@ -3,26 +3,14 @@ import { onMounted, ref } from "vue";
 import LicenseNotExpired from "../LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
-import { storeToRefs } from "pinia";
+import serviceControlClient from "@/components/serviceControlClient";
 import LoadingSpinner from "../LoadingSpinner.vue";
-import { useMonitoringStore } from "@/stores/MonitoringStore";
+import monitoringClient, { MetricsConnectionDetails } from "../monitoring/monitoringClient";
 
 interface ServiceControlInstanceConnection {
   settings: { [key: string]: object };
   errors: string[];
 }
-
-interface MetricsConnectionDetails {
-  Enabled: boolean;
-  MetricsQueue?: string;
-  Interval?: string;
-}
-
-const serviceControlStore = useServiceControlStore();
-const monitoringStore = useMonitoringStore();
-const { serviceControlUrl } = storeToRefs(serviceControlStore);
-const { monitoringUrl } = storeToRefs(monitoringStore);
 
 const loading = ref(true);
 const showCodeOnlyTab = ref(true);
@@ -79,7 +67,7 @@ function switchJsonTab() {
 
 async function serviceControlConnections() {
   const scConnectionResult = getServiceControlConnection();
-  const monitoringConnectionResult = getMonitoringConnection();
+  const monitoringConnectionResult = monitoringClient.getMonitoringConnection();
 
   const [scConnection, mConnection] = await Promise.all([scConnectionResult, monitoringConnectionResult]);
   return {
@@ -96,19 +84,10 @@ async function serviceControlConnections() {
 
 async function getServiceControlConnection() {
   try {
-    const [, data] = await serviceControlStore.fetchTypedFromServiceControl<ServiceControlInstanceConnection>("connection");
+    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<ServiceControlInstanceConnection>("connection");
     return data;
   } catch {
-    return { errors: [`Error reaching ServiceControl at ${serviceControlUrl.value} connection`] } as ServiceControlInstanceConnection;
-  }
-}
-
-async function getMonitoringConnection() {
-  try {
-    const [, data] = await monitoringStore.fetchTypedFromMonitoring<{ Metrics: MetricsConnectionDetails }>("connection");
-    return { ...data, errors: [] };
-  } catch {
-    return { Metrics: null, errors: [`Error SC Monitoring instance at ${monitoringUrl.value}connection`] };
+    return { errors: [`Error reaching ServiceControl at ${serviceControlClient.url} connection`] } as ServiceControlInstanceConnection;
   }
 }
 </script>

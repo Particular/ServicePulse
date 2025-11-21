@@ -7,7 +7,6 @@ import { Transport } from "@/views/throughputreport/transport";
 import { makeDriverForTests, userEvent, render, screen } from "@component-test-utils";
 import { Driver } from "../../../../test/driver";
 import { disableMonitoring } from "../../../../test/drivers/vitest/setup";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { setActivePinia } from "pinia";
 
 describe("DiagnosticsView tests", () => {
@@ -48,8 +47,6 @@ describe("DiagnosticsView tests", () => {
         },
       })
     );
-
-    useServiceControlStore();
 
     const { debug } = render(DiagnosticsView, {
       global: {

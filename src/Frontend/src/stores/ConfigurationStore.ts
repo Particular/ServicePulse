@@ -1,24 +1,19 @@
-import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import { computed, ref, watch } from "vue";
+import { acceptHMRUpdate, defineStore } from "pinia";
+import { computed, ref } from "vue";
 import Configuration from "@/resources/Configuration";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 
 export const useConfigurationStore = defineStore("ConfigurationStore", () => {
   const configuration = ref<Configuration | null>(null);
 
-  const serviceControlStore = useServiceControlStore();
-  const { serviceControlUrl } = storeToRefs(serviceControlStore);
-
   const isMassTransitConnected = computed(() => configuration.value?.mass_transit_connector !== undefined);
 
   async function refresh() {
-    if (!serviceControlUrl.value) return;
+    if (!serviceControlClient.url) return;
 
-    const response = await serviceControlStore.fetchFromServiceControl("configuration");
+    const response = await serviceControlClient.fetchFromServiceControl("configuration");
     configuration.value = await response.json();
   }
-
-  watch(serviceControlUrl, refresh, { immediate: true });
 
   return {
     configuration,

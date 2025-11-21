@@ -2,12 +2,10 @@ import CustomCheck from "@/resources/CustomCheck";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import { useCounter } from "@vueuse/core";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 
 export const useCustomChecksStore = defineStore("CustomChecksStore", () => {
   const prefix = "customchecks/";
-
-  const serviceControlStore = useServiceControlStore();
 
   const pageNumber = ref(1);
   const failingCount = ref(0);
@@ -21,7 +19,7 @@ export const useCustomChecksStore = defineStore("CustomChecksStore", () => {
       return;
     }
     try {
-      const [response, data] = await serviceControlStore.fetchTypedFromServiceControl<CustomCheck[]>(`customchecks?status=fail&page=${pageNumber.value}`);
+      const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<CustomCheck[]>(`customchecks?status=fail&page=${pageNumber.value}`);
       failedChecks.value = data;
       failingCount.value = parseInt(response.headers.get("Total-Count") ?? "0");
     } catch (e) {
@@ -42,7 +40,7 @@ export const useCustomChecksStore = defineStore("CustomChecksStore", () => {
 
       // HINT: This is required to handle the difference between ServiceControl 4 and 5
       const guid = id.toLocaleLowerCase().startsWith(prefix) ? id.substring(prefix.length) : id;
-      await serviceControlStore.deleteFromServiceControl(`${prefix}${guid}`);
+      await serviceControlClient.deleteFromServiceControl(`${prefix}${guid}`);
     } finally {
       dec();
     }

@@ -9,7 +9,6 @@ import { setActivePinia, storeToRefs } from "pinia";
 import { Driver } from "../../test/driver";
 import { disableMonitoring } from "../../test/drivers/vitest/setup";
 import { useEnvironmentAndVersionsStore } from "./EnvironmentAndVersionsStore";
-import { useServiceControlStore } from "./ServiceControlStore";
 
 describe("ThroughputStore tests", () => {
   async function setup(preSetup: (driver: Driver) => Promise<void>) {
@@ -21,7 +20,6 @@ describe("ThroughputStore tests", () => {
     await driver.setUp(precondition.hasNoDisconnectedEndpoints);
     await driver.setUp(precondition.hasServiceControlMonitoringInstance);
 
-    useServiceControlStore();
     await useEnvironmentAndVersionsStore().refresh();
 
     const store = useThroughputStore();

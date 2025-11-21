@@ -16,7 +16,7 @@ import MetadataItem from "@/components/MetadataItem.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faArrowRotateRight, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 
 const statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"] as const;
 type RestoreOperationStatus = (typeof statusesForRestoreOperation)[number];
@@ -55,7 +55,6 @@ const router = useRouter();
 const showRestoreGroupModal = ref(false);
 const selectedGroup = ref<ExtendedFailureGroupView>();
 
-const serviceControlStore = useServiceControlStore();
 const messageGroupClient = createMessageGroupClient();
 
 const groupRestoreSuccessful = ref<boolean | null>(null);
@@ -63,7 +62,7 @@ const selectedClassifier = ref<string | null>(null);
 const classifiers = ref<string[]>([]);
 
 async function getGroupingClassifiers() {
-  const [, data] = await serviceControlStore.fetchTypedFromServiceControl<string[]>("recoverability/classifiers");
+  const [, data] = await serviceControlClient.fetchTypedFromServiceControl<string[]>("recoverability/classifiers");
   classifiers.value = data;
 }
 
@@ -82,7 +81,7 @@ async function classifierChanged(classifier: string) {
 
 async function getArchiveGroups(classifier: string) {
   //get all deleted message groups
-  const [, result] = await serviceControlStore.fetchTypedFromServiceControl<FailureGroupView[]>(`errors/groups/${classifier}`);
+  const [, result] = await serviceControlClient.fetchTypedFromServiceControl<FailureGroupView[]>(`errors/groups/${classifier}`);
 
   if (result.length === 0 && undismissedRestoreGroups.value.length > 0) {
     undismissedRestoreGroups.value.forEach((deletedGroup) => {

@@ -9,25 +9,23 @@ import type GroupOperation from "@/resources/GroupOperation";
 import { emptyEndpointDetails } from "@/components/monitoring/endpoints";
 import { useMemoize } from "@vueuse/core";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
-import { useMonitoringStore } from "./MonitoringStore";
+import monitoringClient from "@/components/monitoring/monitoringClient";
 
 export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpointDetailsStore", () => {
   const historyPeriodStore = useMonitoringHistoryPeriodStore();
   const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-  const monitoringStore = useMonitoringStore();
   const messageGroupClient = createMessageGroupClient();
 
-  const getMemoisedEndpointDetails = useMemoize((endpointName: string, historyPeriod = 1) => {
+  const getMemoisedEndpointDetails = useMemoize((endpointName: string, historyPeriod: number = 1) => {
     const data = ref<EndpointDetails | EndpointDetailsError | null>(null);
     return {
       data,
       refresh: async () => {
-        if (monitoringStore.isMonitoringEnabled) {
+        if (monitoringClient.isMonitoringEnabled) {
           try {
-            const [, details] = await monitoringStore.fetchTypedFromMonitoring<EndpointDetails>(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
+            const details = await monitoringClient.getEndpointDetails(endpointName, historyPeriod);
             data.value = details!;
           } catch (error) {
-            console.error(error);
             if (error instanceof Error) {
               data.value = { error: error.message } as EndpointDetailsError;
             }
