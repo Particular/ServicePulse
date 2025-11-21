@@ -8,6 +8,44 @@ import { useAuditStore } from "@/stores/AuditStore";
 import { AuditingCardDescription, AuditingIndicatorTooltip } from "@/components/platformcapabilities/constants";
 import { MessageStatus } from "@/resources/Message";
 
+// http://localhost:33333/api/configuration/remotes
+/**
+ [
+  {
+    "api_uri": "http://servicecontrol-audit:44444",
+    "version": "6.7.6",
+    "status": "online",
+    "configuration": {
+      "host": {
+        "instance_name": "Particular.ServiceControl.Audit",
+        "logging": {
+          "log_path": "/app/.logs",
+          "logging_level": "information"
+        }
+      },
+      "data_retention": {
+        "audit_retention_period": "7.00:00:00"
+      },
+      "performance_tunning": {
+        "max_body_size_to_store": 102400
+      },
+      "transport": {
+        "transport_type": "RabbitMQ.QuorumConventionalRouting",
+        "audit_log_queue": "audit.log",
+        "audit_queue": "audit",
+        "forward_audit_messages": false
+      },
+      "peristence": {
+        "persistence_type": "RavenDB"
+      },
+      "plugins": {
+
+      }
+    }
+  }
+]
+ */
+
 export function useAuditingCapability(testResults: Ref<ConnectionTestResults | null>) {
   const auditStore = useAuditStore();
   // this gives us the messages array which includes all messages (successful and failed)
