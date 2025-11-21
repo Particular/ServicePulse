@@ -16,10 +16,9 @@ import { TYPE } from "vue-toastification";
 import GroupOperation from "@/resources/GroupOperation";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faArrowRotateRight, faTrash, faDownload } from "@fortawesome/free-solid-svg-icons";
 import ActionButton from "@/components/ActionButton.vue";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import { useMessageStore } from "@/stores/MessageStore";
 
-const serviceControlStore = useServiceControlStore();
 const messageStore = useMessageStore();
 const messageGroupClient = createMessageGroupClient();
 
@@ -62,7 +61,7 @@ function loadMessages() {
 }
 
 async function loadGroupDetails(groupId: string) {
-  const response = await serviceControlStore.fetchFromServiceControl(`recoverability/groups/id/${groupId}`);
+  const response = await serviceControlClient.fetchFromServiceControl(`recoverability/groups/id/${groupId}`);
   const data = await response.json();
   groupName.value = data.title;
 }
@@ -78,7 +77,7 @@ function loadPagedMessages(groupId: string, page: number, sortBy?: string, direc
 
   async function loadMessages() {
     try {
-      const [response, data] = await serviceControlStore.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
+      const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
         `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=${FailedMessageStatus.Unresolved}&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}`
       );
       totalCount.value = parseInt(response.headers.get("Total-Count") ?? "");
@@ -214,7 +213,7 @@ async function deleteSelectedMessages() {
   const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
 
   useShowToast(TYPE.INFO, "Info", "Deleting " + selectedMessages.length + " messages...");
-  await serviceControlStore.patchToServiceControl(
+  await serviceControlClient.patchToServiceControl(
     "errors/archive",
     selectedMessages.map((m) => m.id)
   );

@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import { computed, reactive, Ref, ref, watch } from "vue";
+import { computed, reactive, Ref, ref } from "vue";
 import Header from "@/resources/Header";
 import type EndpointDetails from "@/resources/EndpointDetails";
 import { FailedMessage, ExceptionDetails, FailedMessageStatus } from "@/resources/FailedMessage";
@@ -9,7 +9,7 @@ import dayjs from "@/utils/dayjs";
 import { parse, stringify } from "lossless-json";
 import xmlFormat from "xml-formatter";
 import { DataContainer } from "./DataContainer";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import { EditAndRetryConfig } from "@/resources/Configuration";
 import EditRetryResponse from "@/resources/EditRetryResponse";
 import { EditedMessage } from "@/resources/EditMessage";
@@ -73,20 +73,23 @@ export const useMessageStore = defineStore("MessageStore", () => {
   let conversationLoadedId = "";
 
   const configStore = useConfigurationStore();
-  const serviceControlStore = useServiceControlStore();
-  const { serviceControlUrl } = storeToRefs(serviceControlStore);
   const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
   const areSimpleHeadersSupported = environmentStore.serviceControlIsGreaterThan("5.2.0");
 
   const { configuration } = storeToRefs(configStore);
   const error_retention_period = computed(() => dayjs.duration(configuration.value?.data_retention?.error_retention_period ?? "PT0S").asHours());
 
-  watch(serviceControlUrl, loadConfig, { immediate: true });
-  async function loadConfig() {
-    if (!serviceControlUrl.value) return;
-    const [, data] = await serviceControlStore.fetchTypedFromServiceControl<EditAndRetryConfig>("edit/config");
-    edit_and_retry_config.value = data;
-  }
+  serviceControlClient
+    .fetchTypedFromServiceControl<EditAndRetryConfig>("edit/config")
+    // eslint-disable-next-line promise/prefer-await-to-then
+    .then(([, data]) => {
+      edit_and_retry_config.value = data;
+      return data;
+    })
+    // eslint-disable-next-line promise/prefer-await-to-then
+    .catch(() => {
+      console.warn("Failed to load Edit and Retry configuration");
+    });
 
   function reset() {
     state.data = { failure_metadata: {}, failure_status: {}, dialog_status: {}, invoked_saga: {} };
@@ -104,7 +107,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     state.not_found = false;
 
     try {
-      const response = await serviceControlStore.fetchFromServiceControl(`errors/last/${id}`);
+      const response = await serviceControlClient.fetchFromServiceControl(`errors/last/${id}`);
       if (response.status === 404) {
         state.not_found = true;
         return;
@@ -149,7 +152,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     state.not_found = headers.value.not_found = false;
 
     try {
-      const [, data] = await serviceControlStore.fetchTypedFromServiceControl<Message[]>(`messages/search/${messageId}`);
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<Message[]>(`messages/search/${messageId}`);
 
       const message = data.find((value) => value.id === id);
 
@@ -187,7 +190,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     conversationLoadedId = conversationId;
     conversationData.value.loading = true;
     try {
-      const [, data] = await serviceControlStore.fetchTypedFromServiceControl<Message[]>(`conversations/${conversationId}`);
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<Message[]>(`conversations/${conversationId}`);
 
       conversationData.value.data = data;
     } catch {
@@ -210,7 +213,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     body.value.failed_to_load = false;
 
     try {
-      const response = await serviceControlStore.fetchFromServiceControl(state.data.body_url.substring(1));
+      const response = await serviceControlClient.fetchFromServiceControl(state.data.body_url.substring(1));
       if (response.status === 404) {
         body.value.not_found = true;
 
@@ -242,7 +245,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
 
   async function archiveMessage() {
     if (state.data.id) {
-      const response = await serviceControlStore.patchToServiceControl("errors/archive/", [state.data.id]);
+      const response = await serviceControlClient.patchToServiceControl("errors/archive/", [state.data.id]);
       if (!response.ok) {
         throw new Error(response.statusText);
       }
@@ -252,7 +255,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
 
   async function restoreMessage() {
     if (state.data.id) {
-      const response = await serviceControlStore.patchToServiceControl("errors/unarchive/", [state.data.id]);
+      const response = await serviceControlClient.patchToServiceControl("errors/unarchive/", [state.data.id]);
       if (!response.ok) {
         throw new Error(response.statusText);
       }
@@ -268,7 +271,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
   }
 
   async function retryMessages(ids: string[]) {
-    const response = await serviceControlStore.postToServiceControl("errors/retry", ids);
+    const response = await serviceControlClient.postToServiceControl("errors/retry", ids);
     if (!response.ok) {
       throw new Error(response.statusText);
     }
@@ -288,7 +291,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
           )
         : editedMessage.value.headers,
     };
-    const response = await serviceControlStore.postToServiceControl(`edit/${id}`, payload);
+    const response = await serviceControlClient.postToServiceControl(`edit/${id}`, payload);
     if (!response.ok) {
       throw new Error(response.statusText);
     }
@@ -315,7 +318,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
       // eslint-disable-next-line no-await-in-loop
       await new Promise((resolve) => setTimeout(resolve, 1000));
       // eslint-disable-next-line no-await-in-loop
-      const [, data] = await serviceControlStore.fetchTypedFromServiceControl<FailedMessage>(`errors/last/${state.data.id}`);
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<FailedMessage>(`errors/last/${state.data.id}`);
       if (status === data.status) {
         break;
       }

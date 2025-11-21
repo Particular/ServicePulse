@@ -7,8 +7,7 @@ import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
-import { storeToRefs } from "pinia";
+import serviceControlClient from "@/components/serviceControlClient";
 import monitoringClient from "./monitoring/monitoringClient";
 
 const router = useRouter();
@@ -17,8 +16,6 @@ const connectionState = connectionStore.connectionState;
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
 const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
 const environment = environmentStore.environment;
-const serviceControlStore = useServiceControlStore();
-const { serviceControlUrl } = storeToRefs(serviceControlStore);
 const primaryConnectionFailure = computed(() => connectionState.unableToConnect);
 const monitoringConnectionFailure = computed(() => monitoringConnectionState.unableToConnect);
 
@@ -27,9 +24,9 @@ watch(primaryConnectionFailure, (newValue, oldValue) => {
   if (newValue !== oldValue && !(oldValue === null && newValue === false)) {
     const connectionUrl = router.resolve(routeLinks.configuration.connections.link).href;
     if (newValue) {
-      useShowToast(TYPE.ERROR, "Error", `Could not connect to ServiceControl at ${serviceControlUrl.value}. <a class="btn btn-default" href="${connectionUrl}">View connection settings</a>`);
+      useShowToast(TYPE.ERROR, "Error", `Could not connect to ServiceControl at ${serviceControlClient.url}. <a class="btn btn-default" href="${connectionUrl}">View connection settings</a>`);
     } else {
-      useShowToast(TYPE.SUCCESS, "Success", `Connection to ServiceControl was successful at ${serviceControlUrl.value}.`);
+      useShowToast(TYPE.SUCCESS, "Success", `Connection to ServiceControl was successful at ${serviceControlClient.url}.`);
     }
   }
 });

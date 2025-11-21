@@ -3,8 +3,7 @@ import { onMounted, ref } from "vue";
 import LicenseNotExpired from "../LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
-import { storeToRefs } from "pinia";
+import serviceControlClient from "@/components/serviceControlClient";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import monitoringClient, { MetricsConnectionDetails } from "../monitoring/monitoringClient";
 
@@ -12,9 +11,6 @@ interface ServiceControlInstanceConnection {
   settings: { [key: string]: object };
   errors: string[];
 }
-
-const serviceControlStore = useServiceControlStore();
-const { serviceControlUrl } = storeToRefs(serviceControlStore);
 
 const loading = ref(true);
 const showCodeOnlyTab = ref(true);
@@ -88,10 +84,10 @@ async function serviceControlConnections() {
 
 async function getServiceControlConnection() {
   try {
-    const [, data] = await serviceControlStore.fetchTypedFromServiceControl<ServiceControlInstanceConnection>("connection");
+    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<ServiceControlInstanceConnection>("connection");
     return data;
   } catch {
-    return { errors: [`Error reaching ServiceControl at ${serviceControlUrl.value} connection`] } as ServiceControlInstanceConnection;
+    return { errors: [`Error reaching ServiceControl at ${serviceControlClient.url} connection`] } as ServiceControlInstanceConnection;
   }
 }
 </script>

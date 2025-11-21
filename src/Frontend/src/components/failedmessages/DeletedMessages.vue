@@ -14,7 +14,7 @@ import { TYPE } from "vue-toastification";
 import FailureGroup from "@/resources/FailureGroup";
 import FAIcon from "@/components/FAIcon.vue";
 import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
 
@@ -39,7 +39,6 @@ watch(pageNumber, () => loadMessages());
 
 const configurationStore = useConfigurationStore();
 const { configuration } = storeToRefs(configurationStore);
-const serviceControlStore = useServiceControlStore();
 
 function loadMessages() {
   let startDate = new Date(0);
@@ -67,7 +66,7 @@ function loadMessages() {
 }
 
 async function loadGroupDetails(groupId: string) {
-  const [, data] = await serviceControlStore.fetchTypedFromServiceControl<FailureGroup>(`archive/groups/id/${groupId}`);
+  const [, data] = await serviceControlClient.fetchTypedFromServiceControl<FailureGroup>(`archive/groups/id/${groupId}`);
   groupName.value = data.title;
 }
 
@@ -80,7 +79,7 @@ function loadPagedMessages(groupId?: string, page: number = 1, sortBy: string = 
 
   async function loadDelMessages() {
     try {
-      const [response, data] = await serviceControlStore.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
+      const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
         `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`
       );
 
@@ -152,7 +151,7 @@ async function restoreSelectedMessages() {
   selectedMessages.forEach((m) => (m.restoreInProgress = true));
   useShowToast(TYPE.INFO, "Info", `restoring ${selectedMessages.length} messages...`);
 
-  await serviceControlStore.patchToServiceControl(
+  await serviceControlClient.patchToServiceControl(
     "errors/unarchive",
     selectedMessages.map((m) => m.id)
   );

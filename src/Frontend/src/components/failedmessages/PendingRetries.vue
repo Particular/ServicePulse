@@ -17,11 +17,10 @@ import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShor
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faCheckSquare } from "@fortawesome/free-regular-svg-icons";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
 
-const serviceControlStore = useServiceControlStore();
 const configurationStore = useConfigurationStore();
 const { isMassTransitConnected } = storeToRefs(configurationStore);
 
@@ -64,7 +63,7 @@ const periodOptions = ["All Pending Retries", "Retried in the last 2 Hours", "Re
 watch(pageNumber, () => loadPendingRetryMessages());
 
 async function loadEndpoints() {
-  const [, data] = await serviceControlStore.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
+  const [, data] = await serviceControlClient.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
   endpoints.value = data.map((endpoint) => endpoint.physical_address);
 }
 
@@ -103,7 +102,7 @@ async function loadPagedPendingRetryMessages(page: number, searchPhrase: string,
   if (searchPhrase === "empty") searchPhrase = "";
 
   try {
-    const [response, data] = await serviceControlStore.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
+    const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
       `errors?status=${FailedMessageStatus.RetryIssued}&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate.toISOString()}...${endDate.toISOString()}`
     );
     totalCount.value = parseInt(response.headers.get("Total-Count") ?? "0");
@@ -150,7 +149,7 @@ async function retrySelectedMessages() {
   const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
 
   useShowToast(TYPE.INFO, "Info", "Selected messages were submitted for retry...");
-  await serviceControlStore.postToServiceControl(
+  await serviceControlClient.postToServiceControl(
     "pendingretries/retry",
     selectedMessages.map((m) => m.id)
   );
@@ -163,14 +162,14 @@ async function resolveSelectedMessages() {
   const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
 
   useShowToast(TYPE.INFO, "Info", "Selected messages were marked as resolved.");
-  await serviceControlStore.patchToServiceControl("pendingretries/resolve", { uniquemessageids: selectedMessages.map((m) => m.id) });
+  await serviceControlClient.patchToServiceControl("pendingretries/resolve", { uniquemessageids: selectedMessages.map((m) => m.id) });
   messageList.value?.deselectAll();
   selectedMessages.forEach((m) => (m.resolved = true));
 }
 
 async function resolveAllMessages() {
   useShowToast(TYPE.INFO, "Info", "All filtered messages were marked as resolved.");
-  await serviceControlStore.patchToServiceControl("pendingretries/resolve", { from: new Date(0).toISOString(), to: new Date().toISOString() });
+  await serviceControlClient.patchToServiceControl("pendingretries/resolve", { from: new Date(0).toISOString(), to: new Date().toISOString() });
   messageList.value?.deselectAll();
   messageList.value?.resolveAll();
 }
@@ -186,7 +185,7 @@ async function retryAllMessages() {
     data.queueaddress = selectedQueue.value;
   }
 
-  await serviceControlStore.postToServiceControl(url, data);
+  await serviceControlClient.postToServiceControl(url, data);
   messages.value.forEach((message) => {
     message.selected = false;
     message.submittedForRetrial = true;

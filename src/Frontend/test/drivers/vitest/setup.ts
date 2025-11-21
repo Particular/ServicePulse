@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, beforeEach, vi } from "vitest";
 import { mockServer } from "../../mock-server";
 import "@testing-library/jest-dom/vitest";
-import monitoringClient from "../../../src/components/monitoring/monitoringClient";
+import monitoringClient from "@/components/monitoring/monitoringClient";
+import serviceControlClient from "@/components/serviceControlClient";
 
 const defaultConfig = {
   default_route: "/dashboard",
@@ -14,11 +15,13 @@ const defaultConfig = {
 export function disableMonitoring() {
   vi.stubGlobal("defaultConfig", { ...defaultConfig, ...{ monitoring_urls: ["!"] } });
   monitoringClient.resetUrl();
+  serviceControlClient.resetUrl();
 }
 
 beforeEach(() => {
   vi.stubGlobal("defaultConfig", defaultConfig);
   monitoringClient.resetUrl();
+  serviceControlClient.resetUrl();
 });
 
 beforeAll(() => {

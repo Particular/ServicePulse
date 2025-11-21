@@ -4,12 +4,10 @@ import RootUrls from "@/resources/RootUrls";
 import { useMemoize } from "@vueuse/core";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, reactive } from "vue";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 
 export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersionsStore", () => {
-  const serviceControlStore = useServiceControlStore();
-
   const environment = reactive({
     monitoring_version: "",
     sc_version: "",
@@ -86,7 +84,7 @@ export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersion
 
   async function getPrimaryVersion() {
     try {
-      const [response, data] = await serviceControlStore.fetchTypedFromServiceControl<RootUrls>("");
+      const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<RootUrls>("");
       environment.sc_version = response.headers.get("X-Particular-Version") ?? "";
       return data;
     } catch {

@@ -3,16 +3,14 @@ import { ref } from "vue";
 import { faCheck, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "@/components/FAIcon.vue";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import monitoringClient from "../monitoring/monitoringClient";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
 
-const serviceControlStore = useServiceControlStore();
-serviceControlStore.refresh();
-const localServiceControlUrl = ref(serviceControlStore.serviceControlUrl);
+const localServiceControlUrl = ref(serviceControlClient.url);
 const localMonitoringUrl = ref(monitoringClient.url);
 const isMonitoringDisabled = monitoringClient.isMonitoringDisabled;
 const testingServiceControl = ref(false);

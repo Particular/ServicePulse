@@ -6,7 +6,7 @@ import { type GroupPropertyType, SortDirection } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
 import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { EndpointsView } from "@/resources/EndpointView";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 
 export enum ColumnNames {
   InstanceName = "name",
@@ -21,8 +21,6 @@ const columnSortings = new Map<string, (endpoint: EndpointsView) => GroupPropert
 ]);
 
 export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore", () => {
-  const serviceControlStore = useServiceControlStore();
-
   const instanceFilterString = ref("");
   const store = useHeartbeatsStore();
   const { endpointInstances } = storeToRefs(store);
@@ -45,12 +43,12 @@ export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore",
   }
 
   async function deleteEndpointInstance(endpoint: EndpointsView) {
-    await serviceControlStore.deleteFromServiceControl(`endpoints/${endpoint.id}`);
+    await serviceControlClient.deleteFromServiceControl(`endpoints/${endpoint.id}`);
     await store.refresh();
   }
 
   async function toggleEndpointMonitor(endpoints: EndpointsView[]) {
-    await Promise.all(endpoints.map((endpoint) => serviceControlStore.patchToServiceControl(`endpoints/${endpoint.id}`, { monitor_heartbeat: !endpoint.monitor_heartbeat })));
+    await Promise.all(endpoints.map((endpoint) => serviceControlClient.patchToServiceControl(`endpoints/${endpoint.id}`, { monitor_heartbeat: !endpoint.monitor_heartbeat })));
     await store.refresh();
   }
 
