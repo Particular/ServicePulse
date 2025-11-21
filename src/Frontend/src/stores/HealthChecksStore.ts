@@ -1,7 +1,7 @@
 import EmailSettings from "@/components/configuration/EmailSettings";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref } from "vue";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import EmailNotifications from "@/resources/EmailNotifications";
 import UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
 import { useEnvironmentAndVersionsStore } from "./EnvironmentAndVersionsStore";
@@ -18,14 +18,13 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
     to: "",
   });
 
-  const serviceControlStore = useServiceControlStore();
   const environmentStore = useEnvironmentAndVersionsStore();
   const hasResponseStatusInHeaders = environmentStore.serviceControlIsGreaterThan("5.2");
 
   async function refresh() {
     let result: EmailNotifications | null = null;
     try {
-      const [, data] = await serviceControlStore.fetchTypedFromServiceControl<EmailNotifications>("notifications/email");
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EmailNotifications>("notifications/email");
       result = data;
     } catch (err) {
       console.error(err);
@@ -49,7 +48,7 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
 
   async function toggleEmailNotifications() {
     const result = await getResponseOrError(() =>
-      serviceControlStore.postToServiceControl("notifications/email/toggle", {
+      serviceControlClient.postToServiceControl("notifications/email/toggle", {
         enabled: !(emailNotifications.value.enabled ?? true),
       })
     );
@@ -64,7 +63,7 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
 
   async function testEmailNotifications() {
     const result = await getResponseOrError(
-      () => serviceControlStore.postToServiceControl("notifications/email/test"),
+      () => serviceControlClient.postToServiceControl("notifications/email/test"),
       (response) => (hasResponseStatusInHeaders.value ? (response.headers.get("X-Particular-Reason") ?? response.statusText) : response.statusText)
     );
     if (result.message === "success") return true;
@@ -75,7 +74,7 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
   }
 
   async function saveEmailNotifications(newSettings: UpdateEmailNotificationsSettingsRequest) {
-    const result = await getResponseOrError(() => serviceControlStore.postToServiceControl("notifications/email", newSettings));
+    const result = await getResponseOrError(() => serviceControlClient.postToServiceControl("notifications/email", newSettings));
     if (result.message === "success") {
       emailNotifications.value = {
         enabled: emailNotifications.value.enabled,

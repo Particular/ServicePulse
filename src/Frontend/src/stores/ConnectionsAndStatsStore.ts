@@ -4,7 +4,7 @@ import { FailedMessageStatus } from "@/resources/FailedMessage";
 import { ConnectionState } from "@/resources/ConnectionState";
 import { useCounter } from "@vueuse/core";
 import monitoringClient from "@/components/monitoring/monitoringClient";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 
 export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore", () => {
   const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
@@ -34,7 +34,6 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
   });
 
   const displayConnectionsWarning = computed(() => (connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && isMonitoringEnabled)) ?? false);
-  const serviceControlStore = useServiceControlStore();
 
   async function refresh() {
     const failedMessagesResult = getErrorMessagesCount(FailedMessageStatus.Unresolved);
@@ -51,7 +50,7 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
   }
 
   function getErrorMessagesCount(status: FailedMessageStatus) {
-    return fetchAndSetConnectionState(() => serviceControlStore.getErrorMessagesCount(status), connectionState);
+    return fetchAndSetConnectionState(() => serviceControlClient.getErrorMessagesCount(status), connectionState);
   }
 
   function getDisconnectedEndpointsCount() {

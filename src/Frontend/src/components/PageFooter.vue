@@ -6,7 +6,7 @@ import FAIcon from "@/components/FAIcon.vue";
 import { faArrowTurnUp, faPlus } from "@fortawesome/free-solid-svg-icons";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import { storeToRefs } from "pinia";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
@@ -18,14 +18,12 @@ const monitoringConnectionState = connectionStore.monitoringConnectionState;
 const { store: environmentAndVersionsStore } = useEnvironmentAndVersionsAutoRefresh();
 const newVersions = environmentAndVersionsStore.newVersions;
 const environment = environmentAndVersionsStore.environment;
-const serviceControlStore = useServiceControlStore();
-const { serviceControlUrl } = storeToRefs(serviceControlStore);
 const licenseStore = useLicenseStore();
 const { licenseStatus, license } = licenseStore;
 const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
 
 const scAddressTooltip = computed(() => {
-  return `ServiceControl URL ${serviceControlUrl.value}`;
+  return `ServiceControl URL ${serviceControlClient.url}`;
 });
 
 const scMonitoringAddressTooltip = computed(() => {

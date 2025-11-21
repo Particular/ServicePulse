@@ -13,13 +13,13 @@ import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import { useRedirectsStore } from "@/stores/RedirectsStore";
 import LoadingSpinner from "../LoadingSpinner.vue";
 
 const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
 const hasResponseStatusInHeader = environmentStore.serviceControlIsGreaterThan("5.2.0");
-const serviceControlStore = useServiceControlStore();
+
 const redirectsStore = useRedirectsStore();
 
 const loadingData = ref(true);
@@ -64,7 +64,7 @@ async function saveUpdatedRedirect(redirect: RetryRedirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
   const result = handleResponse(
-    await serviceControlStore.putToServiceControl(`redirects/${redirect.redirectId}`, {
+    await serviceControlClient.putToServiceControl(`redirects/${redirect.redirectId}`, {
       id: redirect.redirectId,
       fromphysicaladdress: redirect.sourceQueue,
       tophysicaladdress: redirect.targetQueue,
@@ -93,7 +93,7 @@ async function saveCreatedRedirect(redirect: RetryRedirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
   const result = handleResponse(
-    await serviceControlStore.postToServiceControl("redirects", {
+    await serviceControlClient.postToServiceControl("redirects", {
       fromphysicaladdress: redirect.sourceQueue,
       tophysicaladdress: redirect.targetQueue,
     })
@@ -121,7 +121,7 @@ function deleteRedirect(redirect: Redirect) {
 }
 
 async function saveDeletedRedirect() {
-  const result = handleResponse(await serviceControlStore.deleteFromServiceControl(`redirects/${selectedRedirect.value.message_redirect_id}`));
+  const result = handleResponse(await serviceControlClient.deleteFromServiceControl(`redirects/${selectedRedirect.value.message_redirect_id}`));
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
     useShowToast(TYPE.INFO, "Info", "Redirect deleted");

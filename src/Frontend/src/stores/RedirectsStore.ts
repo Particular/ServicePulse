@@ -2,7 +2,7 @@ import Redirect from "@/resources/Redirect";
 import QueueAddress from "@/resources/QueueAddress";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { reactive } from "vue";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 
 export interface Redirects {
   data: Redirect[];
@@ -17,15 +17,13 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
     total: 0,
   });
 
-  const serviceControlStore = useServiceControlStore();
-
   async function getKnownQueues() {
-    const [, data] = await serviceControlStore.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
+    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
     redirects.queues = data.map((x) => x.physical_address);
   }
 
   async function getRedirects() {
-    const [response, data] = await serviceControlStore.fetchTypedFromServiceControl<Redirect[]>("redirects");
+    const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<Redirect[]>("redirects");
     redirects.total = parseInt(response.headers.get("Total-Count") || "0");
     redirects.data = data;
   }
@@ -35,7 +33,7 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
   }
 
   async function retryPendingMessagesForQueue(queueName: string) {
-    const response = await serviceControlStore.postToServiceControl(`errors/queues/${queueName}/retry`);
+    const response = await serviceControlClient.postToServiceControl(`errors/queues/${queueName}/retry`);
     return {
       message: response.ok ? "success" : `error:${response.statusText}`,
       status: response.status,

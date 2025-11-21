@@ -10,7 +10,6 @@ import { serviceControlWithHeartbeats } from "@/components/heartbeats/serviceCon
 import { EndpointStatus } from "@/resources/Heartbeat";
 import { ColumnNames, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { useEnvironmentAndVersionsStore } from "./EnvironmentAndVersionsStore";
-import { useServiceControlStore } from "./ServiceControlStore";
 
 describe("HeartbeatsStore tests", () => {
   async function setup(endpoints: EndpointsView[], endpointSettings: EndpointSettings[] = [{ name: "", track_instances: true }], preSetup: (driver: Driver) => Promise<void> = () => Promise.resolve()) {
@@ -21,7 +20,6 @@ describe("HeartbeatsStore tests", () => {
     await driver.setUp(serviceControlWithHeartbeats);
     await driver.setUp(precondition.hasHeartbeatsEndpoints(endpoints, endpointSettings));
 
-    useServiceControlStore();
     await useEnvironmentAndVersionsStore().refresh();
 
     const store = useHeartbeatsStore();

@@ -11,7 +11,6 @@ import { within } from "@testing-library/vue";
 import UpdateUserIndicator from "@/resources/UpdateUserIndicator";
 import { serviceControlWithThroughput } from "@/views/throughputreport/serviceControlWithThroughput";
 import { flushPromises } from "@vue/test-utils";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { setActivePinia } from "pinia";
 import { createTestingPinia } from "@pinia/testing";
 
@@ -31,8 +30,6 @@ describe("DetectedListView tests", () => {
 
     const driver = await setup();
     await preSetup(driver);
-
-    useServiceControlStore();
 
     const el = document.createElement("div");
     el.id = "modalDisplay";

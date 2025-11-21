@@ -1,18 +1,17 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import { EndpointSettings } from "@/resources/EndpointSettings";
 import useIsEndpointSettingsSupported from "@/components/heartbeats/isEndpointSettingsSupported";
 
 export const useEndpointSettingsStore = defineStore("EndpointSettingsStore", () => {
   const defaultEndpointSettingsValue = <EndpointSettings>{ name: "", track_instances: true };
-  const serviceControlStore = useServiceControlStore();
 
   const isEndpointSettingsSupported = useIsEndpointSettingsSupported();
 
   async function getEndpointSettings(): Promise<EndpointSettings[]> {
     if (!isEndpointSettingsSupported.value) return [defaultEndpointSettingsValue];
 
-    const [, data] = await serviceControlStore.fetchTypedFromServiceControl<EndpointSettings[]>(`endpointssettings`);
+    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EndpointSettings[]>(`endpointssettings`);
     return data;
   }
 

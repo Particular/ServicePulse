@@ -10,7 +10,6 @@ import { flushPromises, RouterLinkStub } from "@vue/test-utils";
 import ThroughputReportView from "@/views/ThroughputReportView.vue";
 import Toast from "vue-toastification";
 import { serviceControlWithThroughput } from "@/views/throughputreport/serviceControlWithThroughput";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { setActivePinia } from "pinia";
 
 describe("EndpointsView tests", () => {
@@ -29,8 +28,6 @@ describe("EndpointsView tests", () => {
 
     const driver = await setup();
     await preSetup(driver);
-
-    useServiceControlStore();
 
     const el = document.createElement("div");
     el.id = "modalDisplay";

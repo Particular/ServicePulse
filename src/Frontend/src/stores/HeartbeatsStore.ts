@@ -7,7 +7,7 @@ import getSortFunction from "@/components/getSortFunction";
 import { EndpointsView } from "@/resources/EndpointView";
 import type { SortInfo } from "@/components/SortInfo";
 import { EndpointSettings } from "@/resources/EndpointSettings";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import { useEndpointSettingsStore } from "./EndpointSettingsStore";
 
 export enum ColumnNames {
@@ -49,7 +49,6 @@ const columnSortings = new Map<string, (endpoint: LogicalEndpoint) => GroupPrope
 ]);
 
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
-  const serviceControlStore = useServiceControlStore();
   const endpointSettingsStore = useEndpointSettingsStore();
 
   const sortByInstances = ref<SortInfo>({
@@ -103,7 +102,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
   const refresh = async () => {
     try {
-      const [[, data], data2] = await Promise.all([serviceControlStore.fetchTypedFromServiceControl<EndpointsView[]>("endpoints"), endpointSettingsStore.getEndpointSettings()]);
+      const [[, data], data2] = await Promise.all([serviceControlClient.fetchTypedFromServiceControl<EndpointsView[]>("endpoints"), endpointSettingsStore.getEndpointSettings()]);
       endpointInstances.value = data;
       settings.value = data2;
       defaultTrackingInstancesValue.value = data2.find((value) => value.name === "")!.track_instances;
@@ -114,7 +113,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   };
 
   async function updateEndpointSettings(endpoints: Pick<LogicalEndpoint, "name" | "track_instances">[]) {
-    await Promise.all(endpoints.map((endpoint) => serviceControlStore.patchToServiceControl(`endpointssettings/${endpoint.name}`, { track_instances: !endpoint.track_instances })));
+    await Promise.all(endpoints.map((endpoint) => serviceControlClient.patchToServiceControl(`endpointssettings/${endpoint.name}`, { track_instances: !endpoint.track_instances })));
     await refresh();
   }
 

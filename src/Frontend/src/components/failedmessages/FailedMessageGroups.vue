@@ -10,9 +10,7 @@ import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import GroupOperation from "@/resources/GroupOperation";
 import getSortFunction from "@/components/getSortFunction";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faArrowDown19, faArrowDown91 } from "@fortawesome/free-solid-svg-icons";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
-
-const serviceControlStore = useServiceControlStore();
+import serviceControlClient from "@/components/serviceControlClient";
 
 const selectedClassifier = ref<string>("");
 const classifiers = ref<string[]>([]);
@@ -60,7 +58,7 @@ const sortOptions: SortOptions<GroupOperation>[] = [
 ];
 
 async function getGroupingClassifiers() {
-  const [, data] = await serviceControlStore.fetchTypedFromServiceControl<string[]>("recoverability/classifiers");
+  const [, data] = await serviceControlClient.fetchTypedFromServiceControl<string[]>("recoverability/classifiers");
   classifiers.value = data;
 }
 

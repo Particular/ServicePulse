@@ -10,7 +10,7 @@ import moment from "moment/moment";
 import { parse, stringify } from "lossless-json";
 import xmlFormat from "xml-formatter";
 import { DataContainer } from "./DataContainer";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import EditRetryResponse from "@/resources/EditRetryResponse";
 import { EditedMessage } from "@/resources/EditMessage";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
@@ -71,7 +71,6 @@ export const useMessageStore = defineStore("MessageStore", () => {
   const conversationData = ref<DataContainer<Message[]>>({ data: [] });
   const editRetryStore = useEditRetryStore();
   const configStore = useConfigurationStore();
-  const serviceControlStore = useServiceControlStore();
   const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
   const areSimpleHeadersSupported = environmentStore.serviceControlIsGreaterThan("5.2.0");
 
@@ -98,7 +97,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     state.not_found = false;
 
     try {
-      const response = await serviceControlStore.fetchFromServiceControl(`errors/last/${id}`);
+      const response = await serviceControlClient.fetchFromServiceControl(`errors/last/${id}`);
       if (response.status === 404) {
         state.not_found = true;
         return;
@@ -143,7 +142,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     state.not_found = headers.value.not_found = false;
 
     try {
-      const [, data] = await serviceControlStore.fetchTypedFromServiceControl<Message[]>(`messages/search/${messageId}`);
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<Message[]>(`messages/search/${messageId}`);
 
       const message = data.find((value) => value.id === id);
 
@@ -181,7 +180,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     conversationLoadedId = conversationId;
     conversationData.value.loading = true;
     try {
-      const [, data] = await serviceControlStore.fetchTypedFromServiceControl<Message[]>(`conversations/${conversationId}`);
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<Message[]>(`conversations/${conversationId}`);
 
       conversationData.value.data = data;
     } catch {
@@ -204,7 +203,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     body.value.failed_to_load = false;
 
     try {
-      const response = await serviceControlStore.fetchFromServiceControl(state.data.body_url.substring(1));
+      const response = await serviceControlClient.fetchFromServiceControl(state.data.body_url.substring(1));
       if (response.status === 404) {
         body.value.not_found = true;
 
@@ -236,7 +235,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
 
   async function archiveMessage() {
     if (state.data.id) {
-      const response = await serviceControlStore.patchToServiceControl("errors/archive/", [state.data.id]);
+      const response = await serviceControlClient.patchToServiceControl("errors/archive/", [state.data.id]);
       if (!response.ok) {
         throw new Error(response.statusText);
       }
@@ -246,7 +245,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
 
   async function restoreMessage() {
     if (state.data.id) {
-      const response = await serviceControlStore.patchToServiceControl("errors/unarchive/", [state.data.id]);
+      const response = await serviceControlClient.patchToServiceControl("errors/unarchive/", [state.data.id]);
       if (!response.ok) {
         throw new Error(response.statusText);
       }
@@ -262,7 +261,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
   }
 
   async function retryMessages(ids: string[]) {
-    const response = await serviceControlStore.postToServiceControl("errors/retry", ids);
+    const response = await serviceControlClient.postToServiceControl("errors/retry", ids);
     if (!response.ok) {
       throw new Error(response.statusText);
     }
@@ -282,7 +281,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
           )
         : editedMessage.value.headers,
     };
-    const response = await serviceControlStore.postToServiceControl(`edit/${id}`, payload);
+    const response = await serviceControlClient.postToServiceControl(`edit/${id}`, payload);
     if (!response.ok) {
       throw new Error(response.statusText);
     }
@@ -309,7 +308,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
       // eslint-disable-next-line no-await-in-loop
       await new Promise((resolve) => setTimeout(resolve, 1000));
       // eslint-disable-next-line no-await-in-loop
-      const [, data] = await serviceControlStore.fetchTypedFromServiceControl<FailedMessage>(`errors/last/${state.data.id}`);
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<FailedMessage>(`errors/last/${state.data.id}`);
       if (status === data.status) {
         break;
       }

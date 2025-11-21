@@ -7,15 +7,13 @@ import type { EndpointGroup, Endpoint, GroupedEndpoint } from "@/resources/Monit
 import type { SortInfo } from "@/components/SortInfo";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import GroupOperation from "@/resources/GroupOperation";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 
 export const useMonitoringStore = defineStore("MonitoringStore", () => {
   const historyPeriodStore = useMonitoringHistoryPeriodStore();
   const route = useRoute();
   const router = useRouter();
   const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-  //TODO: if/when a recoverabilityStore is created, replace this
-  const serviceControlStore = useServiceControlStore();
 
   //STORE STATE CONSTANTS
   const grouping = ref({
@@ -76,7 +74,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     if (monitoringClient.isMonitoringEnabled) {
       try {
         endpoints = await monitoringClient.getMonitoredEndpoints(historyPeriodStore.historyPeriod.pVal);
-        const [, exceptionGroups] = await serviceControlStore.fetchTypedFromServiceControl<GroupOperation[]>(`recoverability/groups/Endpoint Name`);
+        const [, exceptionGroups] = await serviceControlClient.fetchTypedFromServiceControl<GroupOperation[]>(`recoverability/groups/Endpoint Name`);
 
         //Squash and add to existing monitored endpoints
         if (exceptionGroups.length > 0) {
