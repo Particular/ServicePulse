@@ -4,6 +4,9 @@
   "type": "module",
   "description": "Production monitoring for distributed systems.",
   "main": "index.html",
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "dev:mocks": "cross-env NODE_ENV=dev-mocks vite",
