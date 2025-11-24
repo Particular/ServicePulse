@@ -1,103 +1,123 @@
-import { computed, type Ref, watchEffect } from "vue";
+import { computed, watchEffect } from "vue";
 import { CapabilityStatus, StatusIndicator } from "@/components/platformcapabilities/types";
-import { faCheck, faInfoCircle, faTimes, type IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import type ConnectionTestResults from "@/resources/ConnectionTestResults";
-import useIsAllMessagesSupported from "@/components/audit/isAllMessagesSupported";
+import useIsAllMessagesSupported, { minimumSCVersionForAllMessages } from "@/components/audit/isAllMessagesSupported";
 import { storeToRefs } from "pinia";
 import { useAuditStore } from "@/stores/AuditStore";
-import { AuditingCardDescription, AuditingIndicatorTooltip } from "@/components/platformcapabilities/constants";
 import { MessageStatus } from "@/resources/Message";
+import { type CapabilityComposable, useCapabilityBase } from "./BaseCapability";
+import { useRemoteInstancesStore } from "@/stores/RemoteInstancesStore";
+import { RemoteInstanceStatus, type RemoteInstance } from "@/resources/RemoteInstance";
 
-// http://localhost:33333/api/configuration/remotes
+enum AuditingCardDescription {
+  NotConfigured = "Auditing instance is connected but no successful messages have been processed yet or you don't have auditing enabled for any endpoints.",
+  Unavailable = "All Auditing instances are configured but not responding.",
+  PartiallyUnavailable = "Some Auditing instances are not responding. Check individual instance status below.",
+  NotSupported = `Auditing instance is connected but the "All Messages" feature requires ServiceControl ${minimumSCVersionForAllMessages} or higher.`,
+  Available = "Auditing is available and processing successful messages.",
+}
+
+enum AuditingIndicatorTooltip {
+  InstanceAvailable = "Auditing instance is configured and available",
+  InstanceUnavailable = "The Auditing instance is configured but not responding",
+  MessagesAvailable = "Successful messages are being processed",
+  MessagesUnavailable = "No successful messages have been processed yet or auditing is not enabled for any endpoints",
+  AllMessagesNotSupported = `The 'All Messages' feature requires ServiceControl ${minimumSCVersionForAllMessages} or higher`,
+}
+
 /**
- [
-  {
-    "api_uri": "http://servicecontrol-audit:44444",
-    "version": "6.7.6",
-    "status": "online",
-    "configuration": {
-      "host": {
-        "instance_name": "Particular.ServiceControl.Audit",
-        "logging": {
-          "log_path": "/app/.logs",
-          "logging_level": "information"
-        }
-      },
-      "data_retention": {
-        "audit_retention_period": "7.00:00:00"
-      },
-      "performance_tunning": {
-        "max_body_size_to_store": 102400
-      },
-      "transport": {
-        "transport_type": "RabbitMQ.QuorumConventionalRouting",
-        "audit_log_queue": "audit.log",
-        "audit_queue": "audit",
-        "forward_audit_messages": false
-      },
-      "peristence": {
-        "persistence_type": "RavenDB"
-      },
-      "plugins": {
-
-      }
-    }
-  }
-]
+ * Checks if all audit remote instances are unavailable
  */
+function allAuditInstancesUnavailable(instances: RemoteInstance[] | null | undefined): boolean {
+  if (!instances || instances.length === 0) {
+    return false;
+  }
+  return instances.every((instance) => instance.status !== RemoteInstanceStatus.Online);
+}
 
-export function useAuditingCapability(testResults: Ref<ConnectionTestResults | null>) {
+/**
+ * Checks if any audit remote instances are unavailable (but not all)
+ */
+function hasUnavailableAuditInstances(instances: RemoteInstance[] | null | undefined): boolean {
+  if (!instances || instances.length === 0) {
+    return false;
+  }
+  return instances.some((instance) => instance.status !== RemoteInstanceStatus.Online);
+}
+
+/**
+ * Checks if any audit remote instances are available
+ */
+function hasAvailableAuditInstances(instances: RemoteInstance[] | null | undefined): boolean {
+  if (!instances || instances.length === 0) {
+    return false;
+  }
+  return instances.some((instance) => instance.status === RemoteInstanceStatus.Online);
+}
+
+/**
+ * Checks if some but not all audit instances are unavailable
+ */
+function hasPartiallyUnavailableAuditInstances(instances: RemoteInstance[] | null | undefined): boolean {
+  if (!instances || instances.length === 0) {
+    return false;
+  }
+  return hasUnavailableAuditInstances(instances) && hasAvailableAuditInstances(instances);
+}
+
+export function useAuditingCapability(): CapabilityComposable {
+  const { getIconForStatus, createIndicator } = useCapabilityBase();
+
+  // This gives us the list of remote instances configured in ServiceControl.
+  const remoteInstancesStore = useRemoteInstancesStore();
+  const { remoteInstances } = storeToRefs(remoteInstancesStore);
+
+  // This gives us the messages array which includes all messages (successful and failed).
   const auditStore = useAuditStore();
-  // this gives us the messages array which includes all messages (successful and failed)
   const { messages } = storeToRefs(auditStore);
-  const isAllMessagesSupported = useIsAllMessagesSupported();
-
-  // Count only successful audit messages
   const successfulMessageCount = computed(() => {
     return messages.value.filter((msg) => msg.status === MessageStatus.Successful || msg.status === MessageStatus.ResolvedSuccessfully).length;
   });
 
-  // this tells us if the audit instance is configured and responding
-  const auditingConfiguredAndResponding = computed(() => {
-    return testResults.value?.audit_connection_result?.connection_successful ?? false;
-  });
+  const isAllMessagesSupported = useIsAllMessagesSupported();
 
   watchEffect(() => {
     // Trigger initial load of audit messages if audit is configured
-    if (auditingConfiguredAndResponding.value && messages.value.length === 0) {
+    if (hasAvailableAuditInstances(remoteInstances.value)) {
       // TODO: This is not auto refreshed. User will need to manually refresh the page to get updated data. Ideally this would auto refresh periodically.
       auditStore.refresh();
     }
   });
 
+  // Determine overall auditing status
   const auditStatus = computed(() => {
-    // If audit instance is not configured or not responding
-    if (!auditingConfiguredAndResponding.value) {
+    // 1. Check if there are any audit instances configured.
+    if (!remoteInstances.value || remoteInstances.value.length === 0) {
+      return CapabilityStatus.NotConfigured;
+    }
+
+    // 2. Check if all audit instances are unavailable
+    if (allAuditInstancesUnavailable(remoteInstances.value)) {
       return CapabilityStatus.Unavailable;
     }
 
-    // If audit instance is available but 'All Messages' feature is not supported or there are no successful audit messages
+    // 3. Check if some but not all audit instances are unavailable
+    if (hasPartiallyUnavailableAuditInstances(remoteInstances.value)) {
+      return CapabilityStatus.PartiallyUnavailable;
+    }
+
+    // 4. Check if all messages feature is supported and there are successful messages
     if (!isAllMessagesSupported.value || successfulMessageCount.value === 0) {
       return CapabilityStatus.NotConfigured;
     }
 
-    // Audit instance is available and there are successful audit messages
+    // 5. Audit instance is available and there are successful audit messages
     return CapabilityStatus.Available;
   });
 
-  const auditIcon = computed<IconDefinition>(() => {
-    if (auditStatus.value === CapabilityStatus.NotConfigured) {
-      return faInfoCircle;
-    }
+  // Determine icon based on status
+  const auditIcon = computed(() => getIconForStatus(auditStatus.value));
 
-    if (auditStatus.value === CapabilityStatus.Available) {
-      return faCheck;
-    }
-
-    // Uavailable
-    return faTimes;
-  });
-
+  // Determine description based on status
   const auditDescription = computed(() => {
     if (auditStatus.value === CapabilityStatus.NotConfigured) {
       return AuditingCardDescription.NotConfigured;
@@ -107,21 +127,31 @@ export function useAuditingCapability(testResults: Ref<ConnectionTestResults | n
       return AuditingCardDescription.Available;
     }
 
-    // Uavailable
+    if (auditStatus.value === CapabilityStatus.PartiallyUnavailable) {
+      return AuditingCardDescription.PartiallyUnavailable;
+    }
+
+    // Unavailable
     return AuditingCardDescription.Unavailable;
   });
 
-  const auditIndicators = computed<StatusIndicator[]>(() => {
+  // Determine indicators
+  const auditIndicators = computed(() => {
     const indicators: StatusIndicator[] = [];
 
-    indicators.push({
-      label: "Instance",
-      status: auditingConfiguredAndResponding.value ? CapabilityStatus.Available : CapabilityStatus.Unavailable,
-      tooltip: auditingConfiguredAndResponding.value ? AuditingIndicatorTooltip.InstanceAvailable : AuditingIndicatorTooltip.InstanceUnavailable,
-    });
+    // Add an indicator for each remote audit instance
+    if (remoteInstances.value && remoteInstances.value.length > 0) {
+      remoteInstances.value.forEach((instance, index) => {
+        const isAvailable = instance.status === RemoteInstanceStatus.Online;
+        const label = remoteInstances.value!.length > 1 ? `Instance ${index + 1}` : "Instance";
+        const tooltip = isAvailable ? AuditingIndicatorTooltip.InstanceAvailable : AuditingIndicatorTooltip.InstanceUnavailable;
 
-    // Messages available indicator
-    if (auditingConfiguredAndResponding.value) {
+        indicators.push(createIndicator(label, isAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, tooltip, instance.api_uri, instance.version));
+      });
+    }
+
+    // Messages available indicator - show if at least one instance is available
+    if (hasAvailableAuditInstances(remoteInstances.value)) {
       const messagesAvailable = isAllMessagesSupported.value && successfulMessageCount.value > 0;
 
       let messageTooltip = "";
@@ -133,20 +163,20 @@ export function useAuditingCapability(testResults: Ref<ConnectionTestResults | n
         messageTooltip = AuditingIndicatorTooltip.MessagesUnavailable;
       }
 
-      indicators.push({
-        label: "Messages",
-        status: messagesAvailable ? CapabilityStatus.Available : CapabilityStatus.NotConfigured,
-        tooltip: messageTooltip,
-      });
+      indicators.push(createIndicator("Messages", messagesAvailable ? CapabilityStatus.Available : CapabilityStatus.NotConfigured, messageTooltip));
     }
 
     return indicators;
   });
+
+  // Loading state - true if remote instances haven't been loaded yet
+  const isLoading = computed(() => remoteInstances.value === null || remoteInstances.value === undefined);
 
   return {
     status: auditStatus,
     icon: auditIcon,
     description: auditDescription,
     indicators: auditIndicators,
+    isLoading,
   };
 }
