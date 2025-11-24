@@ -6,7 +6,6 @@ import type { EndpointGroup, Endpoint, GroupedEndpoint } from "@/resources/Monit
 import type { SortInfo } from "@/components/SortInfo";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import GroupOperation from "@/resources/GroupOperation";
-import { getParameter, getParams } from "./environment";
 import { useServiceControlStore } from "./ServiceControlStore";
 
 export const useMonitoringStore = defineStore("MonitoringStore", () => {
@@ -54,11 +53,11 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
   }
 
   function refresh() {
-    const params = getParams();
-    const mu = getParameter(params, "mu");
+    const searchParams = new URLSearchParams(window.location.search);
+    const mu = searchParams.get("mu");
 
     if (mu) {
-      monitoringUrl.value = mu.value;
+      monitoringUrl.value = mu;
       window.localStorage.setItem("mu", monitoringUrl.value);
       console.debug(`Monitoring Url found in QS and stored in local storage: ${monitoringUrl.value}`);
     } else if (window.localStorage.getItem("mu")) {
