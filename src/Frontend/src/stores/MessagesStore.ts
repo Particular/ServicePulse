@@ -176,7 +176,7 @@ export const useMessagesStore = defineStore("MessagesStore", () => {
 
   async function setSort(sort: string, direction?: SortDirection) {
     if (controller) {
-      // need to cancel any existing fetch which otherwise will set messages of the incorrect status
+      // need to cancel any existing fetch which otherwise will set messages of the incorrect sort
       controller.abort();
     }
     sortBy.value = sort;
@@ -187,7 +187,7 @@ export const useMessagesStore = defineStore("MessagesStore", () => {
 
   async function setPeriod(period: DeletedPeriodOption | RetryPeriodOption) {
     if (controller) {
-      // need to cancel any existing fetch which otherwise will set messages of the incorrect status
+      // need to cancel any existing fetch which otherwise will set messages of the incorrect period
       controller.abort();
     }
     selectedPeriod.value = period;

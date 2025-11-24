@@ -18,10 +18,7 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
 
   const { count: requiresFullFailureDetailsSubscriberCount, inc, dec } = useCounter(0);
   function requiresFullFailureDetails() {
-    onMounted(() => {
-      inc();
-      refresh();
-    });
+    onMounted(() => inc()); //NOTE: not forcing a refresh here since we expect the view utilising this store to also setup a refresh on mount
     onUnmounted(() => dec());
   }
 
