@@ -62,7 +62,7 @@ async function saveUpdatedRedirect(redirect: RetryRedirect) {
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
     useShowToast(TYPE.INFO, "Info", "Redirect updated successfully");
-    getRedirects();
+    await getRedirects();
   } else {
     redirectSaveSuccessful.value = false;
     if (result.status === 409) {
@@ -85,7 +85,7 @@ async function saveCreatedRedirect(redirect: RetryRedirect) {
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
     useShowToast(TYPE.INFO, "Info", "Redirect created successfully");
-    getRedirects();
+    await getRedirects();
   } else {
     redirectSaveSuccessful.value = false;
     if (result.status === 409 && result.statusText === "Duplicate") {
@@ -116,8 +116,8 @@ async function saveDeletedRedirect() {
   }
 }
 
-onMounted(() => {
-  getRedirects();
+onMounted(async () => {
+  await getRedirects();
 });
 </script>
 
