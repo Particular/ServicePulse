@@ -23,6 +23,7 @@ const props = defineProps<{
     :class="{
       'capability-available': !props.isLoading && props.status === CapabilityStatus.Available,
       'capability-unavailable': !props.isLoading && props.status === CapabilityStatus.Unavailable,
+      'capability-partially-unavailable': !props.isLoading && props.status === CapabilityStatus.PartiallyUnavailable,
       'capability-loading': props.isLoading,
       'capability-notconfigured': !props.isLoading && props.status === CapabilityStatus.NotConfigured,
     }"
@@ -38,6 +39,7 @@ const props = defineProps<{
         :class="{
           'text-success': props.status === CapabilityStatus.Available,
           'text-danger': props.status === CapabilityStatus.Unavailable,
+          'text-warning': props.status === CapabilityStatus.PartiallyUnavailable,
           'text-info': props.status === CapabilityStatus.NotConfigured,
         }"
       />
@@ -51,7 +53,7 @@ const props = defineProps<{
                 class="indicator-light"
                 :class="{
                   'light-success': indicator.status === CapabilityStatus.Available,
-                  'light-warning': indicator.status === CapabilityStatus.NotConfigured,
+                  'light-warning': indicator.status === CapabilityStatus.NotConfigured || indicator.status === CapabilityStatus.PartiallyUnavailable,
                   'light-danger': indicator.status === CapabilityStatus.Unavailable,
                 }"
               />
@@ -67,6 +69,7 @@ const props = defineProps<{
           :class="{
             'status-available': props.status === CapabilityStatus.Available,
             'status-unavailable': props.status === CapabilityStatus.Unavailable,
+            'status-partially-unavailable': props.status === CapabilityStatus.PartiallyUnavailable,
           }"
         >
           {{ props.status }}
@@ -104,6 +107,10 @@ const props = defineProps<{
   border-left: 4px solid var(--danger-color, #dc3545);
 }
 
+.capability-partially-unavailable {
+  border-left: 4px solid var(--warning-color, #ffc107);
+}
+
 .capability-loading {
   border-left: 4px solid var(--border-color, #e0e0e0);
 }
@@ -116,6 +123,10 @@ const props = defineProps<{
 
 .text-info {
   color: #007bff;
+}
+
+.text-warning {
+  color: var(--warning-color, #ffc107);
 }
 
 .loading-overlay {
@@ -250,6 +261,11 @@ const props = defineProps<{
 .status-unavailable {
   background-color: #f8d7da;
   color: #721c24;
+}
+
+.status-partially-unavailable {
+  background-color: #fff3cd;
+  color: #856404;
 }
 
 .capability-footer {

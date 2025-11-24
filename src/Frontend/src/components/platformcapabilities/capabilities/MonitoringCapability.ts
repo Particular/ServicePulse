@@ -1,13 +1,28 @@
 import { computed } from "vue";
 import { CapabilityStatus, StatusIndicator } from "@/components/platformcapabilities/types";
-import { faCheck, faTimes, faInfoCircle, type IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { storeToRefs } from "pinia";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useMonitoringStore } from "@/stores/MonitoringStore";
 import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
-import { MonitoringCardDescription, MonitoringIndicatorTooltip } from "@/components/platformcapabilities/constants";
+import { type CapabilityComposable, useCapabilityBase } from "./BaseCapability";
 
-export function useMonitoringCapability() {
+enum MonitoringCardDescription {
+  NotConfigured = "The Monitoring instance is connected but no endpoints are sending throughput data. This may be because no endpoints are running or no endpoints have the monitoring plugin enabled.",
+  InstanceNotConfigured = "The Monitoring instance is not configured in ServicePulse.",
+  Unavailable = "The Monitoring instance is configured but not responding.",
+  Available = "Monitoring is available and receiving throughput data from endpoints.",
+}
+
+enum MonitoringIndicatorTooltip {
+  InstanceAvailable = "The Monitoring instance is configured and available",
+  InstanceUnavailable = "The Monitoring instance is configured but not responding",
+  InstanceNotConfigured = "Monitoring is not configured in ServicePulse",
+  DataAvailable = "Endpoints are sending throughput data",
+  DataUnavailable = "No endpoints are sending throughput data. Endpoints may not be running or may not have the monitoring plugin enabled.",
+}
+
+export function useMonitoringCapability(): CapabilityComposable {
+  const { getIconForStatus, createIndicator } = useCapabilityBase();
   const serviceControlStore = useServiceControlStore();
   // this tells us if monitoring is configured in ServiceControl
   const { isMonitoringEnabled } = storeToRefs(serviceControlStore);
@@ -24,6 +39,7 @@ export function useMonitoringCapability() {
     monitoringStore.updateEndpointList();
   }
 
+  // Determine overall monitoring status
   const monitoringStatus = computed(() => {
     const isConfiguredInServiceControl = isMonitoringEnabled.value;
     const connectionSuccessful = monitoringConnectionState.connected && !monitoringConnectionState.unableToConnect;
@@ -42,19 +58,10 @@ export function useMonitoringCapability() {
     return CapabilityStatus.NotConfigured;
   });
 
-  const monitoringIcon = computed<IconDefinition>(() => {
-    if (monitoringStatus.value === CapabilityStatus.NotConfigured) {
-      return faInfoCircle;
-    }
+  // Icon based on status
+  const monitoringIcon = computed(() => getIconForStatus(monitoringStatus.value));
 
-    if (monitoringStatus.value === CapabilityStatus.Available) {
-      return faCheck;
-    }
-
-    // Unavailable
-    return faTimes;
-  });
-
+  // Description based on status
   const monitoringDescription = computed(() => {
     const instanceAvailable = isMonitoringEnabled.value;
 
@@ -74,35 +81,37 @@ export function useMonitoringCapability() {
     return MonitoringCardDescription.Unavailable;
   });
 
-  const monitoringIndicators = computed<StatusIndicator[]>(() => {
+  const monitoringIndicators = computed(() => {
     const indicators: StatusIndicator[] = [];
 
     // Instance specific states
     const connectionSuccessful = monitoringConnectionState.connected && !monitoringConnectionState.unableToConnect;
     const instanceAvailable = isMonitoringEnabled.value && connectionSuccessful;
 
-    indicators.push({
-      label: "Instance",
-      status: instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable,
-      tooltip: instanceAvailable ? MonitoringIndicatorTooltip.InstanceAvailable : !isMonitoringEnabled.value ? MonitoringIndicatorTooltip.InstanceNotConfigured : MonitoringIndicatorTooltip.InstanceUnavailable,
-    });
+    const instanceTooltip = instanceAvailable ? MonitoringIndicatorTooltip.InstanceAvailable : !isMonitoringEnabled.value ? MonitoringIndicatorTooltip.InstanceNotConfigured : MonitoringIndicatorTooltip.InstanceUnavailable;
+
+    if (isMonitoringEnabled.value) {
+      indicators.push(createIndicator("Instance", instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, instanceTooltip));
+    }
 
     // data available indicator - only show if instance is connected
     if (instanceAvailable) {
-      indicators.push({
-        label: "Metrics",
-        status: !endpointListIsEmpty.value ? CapabilityStatus.Available : CapabilityStatus.NotConfigured,
-        tooltip: !endpointListIsEmpty.value ? MonitoringIndicatorTooltip.DataAvailable : MonitoringIndicatorTooltip.DataUnavailable,
-      });
+      indicators.push(
+        createIndicator("Metrics", !endpointListIsEmpty.value ? CapabilityStatus.Available : CapabilityStatus.NotConfigured, !endpointListIsEmpty.value ? MonitoringIndicatorTooltip.DataAvailable : MonitoringIndicatorTooltip.DataUnavailable)
+      );
     }
 
     return indicators;
   });
+
+  // Loading state - monitoring is loading if we haven't attempted connection yet
+  const isLoading = computed(() => !monitoringConnectionState.connected && !monitoringConnectionState.unableToConnect && monitoringConnectionState.connecting);
 
   return {
     status: monitoringStatus,
     icon: monitoringIcon,
     description: monitoringDescription,
     indicators: monitoringIndicators,
+    isLoading,
   };
 }

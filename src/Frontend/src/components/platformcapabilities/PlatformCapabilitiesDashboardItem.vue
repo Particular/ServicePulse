@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import CapabilityCard from "@/components/platformcapabilities/CapabilityCard.vue";
-import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoRefresh";
-import { storeToRefs } from "pinia";
 import { useAuditingCapability } from "@/components/platformcapabilities/capabilities/AuditingCapability";
 import { useMonitoringCapability } from "@/components/platformcapabilities/capabilities/MonitoringCapability";
 import { Capability } from "@/components/platformcapabilities/types";
 
-const { store } = useThroughputStoreAutoRefresh();
-const { testResults } = storeToRefs(store);
-const auditing = useAuditingCapability(testResults);
+const auditing = useAuditingCapability();
 const monitoring = useMonitoringCapability();
 </script>
 
@@ -26,7 +22,7 @@ const monitoring = useMonitoringCapability();
         :icon="auditing.icon.value"
         :description="auditing.description.value"
         :indicators="auditing.indicators.value"
-        :isLoading="testResults === null"
+        :isLoading="auditing.isLoading.value"
         help-url="https://docs.particular.net/nservicebus/operations/auditing"
         data-url="#/messages"
       ></CapabilityCard>
@@ -37,7 +33,7 @@ const monitoring = useMonitoringCapability();
         :icon="monitoring.icon.value"
         :description="monitoring.description.value"
         :indicators="monitoring.indicators.value"
-        :isLoading="testResults === null"
+        :isLoading="monitoring.isLoading.value"
         help-url="https://docs.particular.net/monitoring/metrics/install-plugin"
         data-url="#/monitoring"
       ></CapabilityCard>
