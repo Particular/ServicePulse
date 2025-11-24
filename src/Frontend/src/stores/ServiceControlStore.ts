@@ -1,6 +1,5 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref } from "vue";
-import { getParameter, getParams } from "./environment";
 
 export const useServiceControlStore = defineStore("ServiceControlStore", () => {
   const serviceControlUrl = ref<string | null>();
@@ -16,11 +15,11 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
   }
 
   function refresh() {
-    const params = getParams();
-    const scu = getParameter(params, "scu");
+    const searchParams = new URLSearchParams(window.location.search);
+    const scu = searchParams.get("scu");
 
     if (scu) {
-      serviceControlUrl.value = scu.value;
+      serviceControlUrl.value = scu;
       window.localStorage.setItem("scu", serviceControlUrl.value);
       console.debug(`ServiceControl Url found in QS and stored in local storage: ${serviceControlUrl.value}`);
     } else if (window.localStorage.getItem("scu")) {
