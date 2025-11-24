@@ -22,7 +22,6 @@ export const useConfigurationStore = defineStore("ConfigurationStore", () => {
 
   return {
     configuration,
-    refresh,
     isMassTransitConnected,
   };
 });
