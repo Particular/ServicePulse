@@ -2,7 +2,6 @@ import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { computed, ref, watch, shallowReadonly } from "vue";
 import { useServiceControlStore } from "./ServiceControlStore";
 import { useCookies } from "vue3-cookies";
-import { MessageGroupClient } from "@/components/failedmessages/messageGroupClient";
 import { useRoute } from "vue-router";
 import { ExtendedFailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
 import { SortDirection } from "@/resources/SortOptions";
@@ -35,7 +34,6 @@ export const useMessagesStore = defineStore("MessagesStore", () => {
   const endpoints = ref<string[]>([]);
 
   const serviceControlStore = useServiceControlStore();
-  const messageGroupClient = new MessageGroupClient(serviceControlStore);
   const configurationStore = useConfigurationStore();
   const { configuration } = storeToRefs(configurationStore);
 
@@ -71,13 +69,14 @@ export const useMessagesStore = defineStore("MessagesStore", () => {
         }
         startDate.value = newStartDate;
       }
-      var additionalQuery = (() => {
+      const additionalQuery = (() => {
         switch (messageStatus) {
           case FailedMessageStatus.Archived:
             return `&modified=${dateRange.value}`;
-          case FailedMessageStatus.RetryIssued:
+          case FailedMessageStatus.RetryIssued: {
             const searchPhrase = selectedQueue.value === "empty" ? "" : selectedQueue.value;
             return `&queueaddress=${searchPhrase}&modified=${dateRange.value}`;
+          }
           default:
             return "";
         }
@@ -145,7 +144,7 @@ export const useMessagesStore = defineStore("MessagesStore", () => {
     messages.value = [];
     //reset all the paging variables
     switch (messageStatus) {
-      case FailedMessageStatus.Archived:
+      case FailedMessageStatus.Archived: {
         sortBy.value = "";
         let deletedMessagePeriod = cookies.cookies.get("all_deleted_messages_period") as DeletedPeriodOption;
         if (!deletedMessagePeriod) {
@@ -153,15 +152,18 @@ export const useMessagesStore = defineStore("MessagesStore", () => {
         }
         selectedPeriod.value = deletedMessagePeriod;
         break;
+      }
       case FailedMessageStatus.RetryIssued:
-        sortBy.value = "time_of_failure";
-        let retryMessagePeriod = cookies.cookies.get("pending_retries_period");
-        if (!retryMessagePeriod) {
-          retryMessagePeriod = retryPeriodOptions[0]; //default All Pending Retries
+        {
+          sortBy.value = "time_of_failure";
+          let retryMessagePeriod = cookies.cookies.get("pending_retries_period");
+          if (!retryMessagePeriod) {
+            retryMessagePeriod = retryPeriodOptions[0]; //default All Pending Retries
+          }
+          selectedPeriod.value = retryMessagePeriod;
+          const [, data] = await serviceControlStore.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
+          endpoints.value = data.map((endpoint) => endpoint.physical_address);
         }
-        selectedPeriod.value = retryMessagePeriod;
-        const [, data] = await serviceControlStore.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
-        endpoints.value = data.map((endpoint) => endpoint.physical_address);
         break;
       default:
         sortBy.value = "time_of_failure";
