@@ -6,6 +6,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, reactive } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
 import monitoringClient from "@/components/monitoring/monitoringClient";
+import { authFetch } from "@/composables/useAuthenticatedFetch";
 
 export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersionsStore", () => {
   const environment = reactive({
@@ -104,9 +105,9 @@ export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersion
   };
 });
 
-async function getData(url: string) {
+async function getData(url: string, authenticated = false) {
   try {
-    const response = await fetch(url);
+    const response = await (authenticated ? authFetch(url) : fetch(url));
     return (await response.json()) as unknown as Release[];
   } catch (e) {
     console.log(e);
@@ -124,8 +125,8 @@ async function useServiceProductUrls() {
   const spURL = "https://platformupdate.particular.net/servicepulse.txt";
   const scURL = "https://platformupdate.particular.net/servicecontrol.txt";
 
-  const servicePulse = getData(spURL);
-  const serviceControl = getData(scURL);
+  const servicePulse = getData(spURL, false);
+  const serviceControl = getData(scURL, false);
 
   const [sp, sc] = await Promise.all([servicePulse, serviceControl]);
   const latestSP = sp[0];
