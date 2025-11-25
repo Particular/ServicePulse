@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { ref, computed } from "vue";
 import FAIcon from "@/components/FAIcon.vue";
 import { IconDefinition, faCircle } from "@fortawesome/free-solid-svg-icons";
 import { CapabilityStatus, StatusIndicator, Capability } from "@/components/platformcapabilities/types";
+import WizardDialog, { type WizardPage } from "./WizardDialog.vue";
 
 const props = defineProps<{
   status: CapabilityStatus;
@@ -13,7 +15,22 @@ const props = defineProps<{
   description: string;
   indicators?: StatusIndicator[];
   isLoading?: boolean;
+  wizardPages?: WizardPage[];
 }>();
+
+const showWizard = ref(false);
+
+const shouldShowWizard = computed(() => {
+  return props.wizardPages && props.wizardPages.length > 0 && (props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured || props.status === CapabilityStatus.Unavailable);
+});
+
+function handleButtonClick() {
+  if (shouldShowWizard.value) {
+    showWizard.value = true;
+  } else if (props.status === CapabilityStatus.Available) {
+    window.location.href = props.helpButtonUrl;
+  }
+}
 </script>
 
 <template>
@@ -80,10 +97,12 @@ const props = defineProps<{
       <div class="capability-description">
         {{ props.description }}
       </div>
-      <a :href="props.helpButtonUrl" :target="props.status === CapabilityStatus.Available ? '_self' : '_blank'" class="btn-primary learn-more-btn">
+      <button class="btn-primary learn-more-btn" @click="handleButtonClick">
         {{ props.helpButtonText }}
-      </a>
+      </button>
     </div>
+
+    <WizardDialog v-if="showWizard && wizardPages" :title="`Getting Started with ${props.title}`" :pages="wizardPages" @close="showWizard = false" />
   </div>
 </template>
 
