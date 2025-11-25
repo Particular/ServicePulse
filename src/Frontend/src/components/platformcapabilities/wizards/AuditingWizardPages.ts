@@ -7,13 +7,89 @@ const AuditingInstanceNotConfiguredPages: WizardPage[] = [
     content: `
       <p>Auditing captures a copy of every successful message processed by your NServiceBus endpoints, allowing you to:</p>
       <ul>
+        <li><strong>Display and discover messages</strong> - View processed messages in your system</li>
         <li><strong>Track message flow</strong> - See the complete journey of messages through your system</li>
+        <li><strong>View the sequence of events</strong> - Understand how messages are processed over time</li>
+        <li><strong>Visualize workflow state</strong> - Monitor and debug your saga workflows</li>
         <li><strong>Debug issues</strong> - Inspect message contents and headers for troubleshooting</li>
-        <li><strong>Analyze patterns</strong> - Understand how your system processes messages over time</li>
       </ul>
     `,
     learnMoreUrl: "https://docs.particular.net/nservicebus/operations/auditing",
     learnMoreText: "Learn more about auditing",
+  },
+  {
+    title: "Display and Discover Messages",
+    content: `
+      <p>Browse and search through all processed messages in your system:</p>
+      <ul>
+        <li><strong>Message list</strong> - View all messages in a searchable list</li>
+        <li><strong>Advanced filtering</strong> - Filter messages by endpoint, time range, and more</li>
+        <li><strong>Full-text search</strong> - Search message contents to find specific data</li>
+        <li><strong>Sorting options</strong> - Sort by time processed, endpoint, or message type</li>
+      </ul>
+    `,
+    image: "/img/all-messages.png",
+    learnMoreUrl: "https://docs.particular.net/servicepulse/all-messages",
+    learnMoreText: "Learn about message discovery",
+  },
+  {
+    title: "Track Message Flow",
+    content: `
+      <p>Follow the complete journey of messages through your distributed system:</p>
+      <ul>
+        <li><strong>Conversation tracking</strong> - See all related messages grouped together by conversation ID</li>
+        <li><strong>Message timeline</strong> - View the sequence of events as messages flow between endpoints</li>
+        <li><strong>Endpoint mapping</strong> - Understand which endpoints send and receive each message type</li>
+        <li><strong>Flow visualization</strong> - Get a clear picture of your system's message-based interactions</li>
+      </ul>
+    `,
+    image: "/img/flow-diagram.png",
+    learnMoreUrl: "https://docs.particular.net/servicepulse/flow-diagram",
+    learnMoreText: "Learn about message tracking",
+  },
+  {
+    title: "View the Sequence of Events",
+    content: `
+      <p>Understand the order and timing of message processing with sequence diagrams:</p>
+      <ul>
+        <li><strong>Timeline view</strong> - See messages arranged chronologically as they were processed</li>
+        <li><strong>Endpoint interactions</strong> - Visualize how endpoints communicate with each other</li>
+        <li><strong>Handler execution</strong> - Track which handlers processed each message</li>
+      </ul>
+    `,
+    image: "/img/sequence-diagram.png",
+    learnMoreUrl: "https://docs.particular.net/servicepulse/sequence-diagram",
+    learnMoreText: "Learn about sequence diagrams",
+  },
+  {
+    title: "Visualize Workflow State",
+    content: `
+      <p>Monitor and debug your saga workflows with saga diagrams:</p>
+      <ul>
+        <li><strong>Saga lifecycle</strong> - View the complete history of a saga from start to completion</li>
+        <li><strong>State changes</strong> - Track how saga state evolves as messages are processed</li>
+        <li><strong>Message correlation</strong> - See which messages initiated and updated the saga</li>
+        <li><strong>Timeout tracking</strong> - Monitor saga timeouts and their triggers</li>
+      </ul>
+    `,
+    image: "/img/saga-diagram-overview.png",
+    learnMoreUrl: "https://docs.particular.net/servicepulse/saga-diagram",
+    learnMoreText: "Learn about saga diagrams",
+  },
+  {
+    title: "Debug Issues",
+    content: `
+      <p>Inspect message details to troubleshoot problems in your system:</p>
+      <ul>
+        <li><strong>Message headers</strong> - View all metadata including timestamps, correlation IDs, and custom headers</li>
+        <li><strong>Message body</strong> - Examine the full payload content of each message</li>
+        <li><strong>Processing details</strong> - See which endpoint processed the message and when</li>
+        <li><strong>Search & filter</strong> - Quickly find specific messages by content, type, or time range</li>
+      </ul>
+    `,
+    image: "/img/message-details-headers.png",
+    learnMoreUrl: "https://docs.particular.net/servicepulse/message-details",
+    learnMoreText: "Learn about message inspection",
   },
   {
     title: "Set Up ServiceControl Audit Instance",

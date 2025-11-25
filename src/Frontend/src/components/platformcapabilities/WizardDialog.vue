@@ -23,6 +23,7 @@ const modalRef = ref<HTMLElement | null>(null);
 let modalInstance: Modal | null = null;
 
 const currentPageIndex = ref(0);
+const isImageExpanded = ref(false);
 
 const currentPage = computed(() => props.pages[currentPageIndex.value]);
 const isFirstPage = computed(() => currentPageIndex.value === 0);
@@ -92,23 +93,19 @@ onUnmounted(() => {
           <h5 class="modal-title">{{ title }}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-
         <div class="modal-body">
-          <div v-if="currentPage.image" class="wizard-image text-center mb-4">
-            <img :src="currentPage.image" :alt="currentPage.title" class="img-fluid rounded" />
-          </div>
-
           <div class="wizard-page-content">
             <h4 class="page-title mb-3">{{ currentPage.title }}</h4>
             <div class="page-content" v-html="currentPage.content"></div>
-
+            <div v-if="currentPage.image" class="wizard-image text-center mb-4">
+              <img :src="currentPage.image" :alt="currentPage.title" class="img-fluid rounded clickable-image" @click="isImageExpanded = true" />
+            </div>
             <a v-if="currentPage.learnMoreUrl" :href="currentPage.learnMoreUrl" target="_blank" rel="noopener noreferrer" class="learn-more-link mt-3 d-inline-flex align-items-center gap-2">
               {{ currentPage.learnMoreText || "Learn more in the documentation" }}
               <FAIcon :icon="faExternalLinkAlt" class="small" />
             </a>
           </div>
         </div>
-
         <div class="modal-footer d-flex justify-content-between align-items-center">
           <div class="page-indicators d-flex gap-2">
             <button v-for="(_, index) in pages" :key="index" type="button" class="page-dot" :class="{ active: index === currentPageIndex, visited: index < currentPageIndex }" @click="goToPage(index)" :aria-label="`Go to page ${index + 1}`"></button>
@@ -133,6 +130,15 @@ onUnmounted(() => {
       </div>
     </div>
   </div>
+
+  <Teleport to="body">
+    <div v-if="isImageExpanded && currentPage.image" class="image-lightbox" @click="isImageExpanded = false">
+      <div class="lightbox-content" @click.stop>
+        <button type="button" class="lightbox-close" @click="isImageExpanded = false" aria-label="Close">&times;</button>
+        <img :src="currentPage.image" :alt="currentPage.title" />
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <style scoped>
@@ -142,8 +148,61 @@ onUnmounted(() => {
 }
 
 .wizard-image img {
-  max-height: 200px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.clickable-image {
+  cursor: zoom-in;
+  transition: transform 0.2s ease;
+}
+
+.clickable-image:hover {
+  transform: scale(1.02);
+}
+
+.image-lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  cursor: zoom-out;
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  cursor: default;
+}
+
+.lightbox-content img {
+  max-width: 100%;
+  max-height: 90vh;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.lightbox-close:hover {
+  color: #ccc;
 }
 
 .page-title {
