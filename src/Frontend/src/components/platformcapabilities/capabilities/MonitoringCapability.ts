@@ -2,85 +2,93 @@ import { computed } from "vue";
 import { CapabilityStatus, StatusIndicator } from "@/components/platformcapabilities/types";
 import { storeToRefs } from "pinia";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
-import { useMonitoringStore } from "@/stores/MonitoringStore";
 import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
-import { type CapabilityComposable, useCapabilityBase } from "./BaseCapability";
+import useMonitoringStoreAutoRefresh from "@/composables/useMonitoringStoreAutoRefresh";
+import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
 
-enum MonitoringCardDescription {
-  NotConfigured = "The Monitoring instance is connected but no endpoints are sending throughput data. This may be because no endpoints are running or no endpoints have the monitoring plugin enabled.",
-  InstanceNotConfigured = "The Monitoring instance is not configured in ServicePulse.",
-  Unavailable = "The Monitoring instance is configured but not responding.",
-  Available = "Monitoring is available and receiving throughput data from endpoints.",
-}
+const MonitoringDescriptions: CapabilityStatusToStringMap = {
+  [CapabilityStatus.EndpointsNotConfigured]:
+    "The ServiceControl Monitoring instance is connected but no endpoints are sending throughput data. This may be because no endpoints are running or no endpoints have the monitoring plugin enabled. Click 'Learn More' to find out how to set up monitoring for your endpoints.",
+  [CapabilityStatus.InstanceNotConfigured]: "The ServiceControl Monitoring instance is not configured. Click 'Get Started' to learn more about setting up monitoring.",
+  [CapabilityStatus.Unavailable]: "The ServiceControl Monitoring instance is configured but not responding. Click 'Learn More' to troubleshoot connection issues.",
+  [CapabilityStatus.Available]: "The ServiceControl Monitoring instance is available and endpoints have been configured to send throughput data.",
+};
+
+const MonitoringHelpButtonText: CapabilityStatusToStringMap = {
+  [CapabilityStatus.EndpointsNotConfigured]: "Learn More",
+  [CapabilityStatus.InstanceNotConfigured]: "Get Started",
+  [CapabilityStatus.Available]: "View Metrics",
+};
+
+const MonitoringHelpButtonUrl: CapabilityStatusToStringMap = {
+  [CapabilityStatus.EndpointsNotConfigured]: "https://docs.particular.net/monitoring/metrics/install-plugin",
+  [CapabilityStatus.InstanceNotConfigured]: "https://docs.particular.net/servicecontrol/monitoring-instances/",
+  [CapabilityStatus.Unavailable]: "https://docs.particular.net/servicecontrol/monitoring-instances/",
+  [CapabilityStatus.Available]: "#/monitoring",
+};
 
 enum MonitoringIndicatorTooltip {
   InstanceAvailable = "The Monitoring instance is configured and available",
   InstanceUnavailable = "The Monitoring instance is configured but not responding",
   InstanceNotConfigured = "Monitoring is not configured in ServicePulse",
-  DataAvailable = "Endpoints are sending throughput data",
+  DataAvailable = "Endpoints have been configured to send throughput data",
   DataUnavailable = "No endpoints are sending throughput data. Endpoints may not be running or may not have the monitoring plugin enabled.",
 }
 
 export function useMonitoringCapability(): CapabilityComposable {
-  const { getIconForStatus, createIndicator } = useCapabilityBase();
-  const serviceControlStore = useServiceControlStore();
-  // this tells us if monitoring is configured in ServiceControl
-  const { isMonitoringEnabled } = storeToRefs(serviceControlStore);
-  const monitoringStore = useMonitoringStore();
-  // this tells us if there are any endpoints sending data
-  const { endpointListIsEmpty } = storeToRefs(monitoringStore);
-  const connectionsStore = useConnectionsAndStatsStore();
-  // this tells us the connection state to the monitoring instance
-  const monitoringConnectionState = connectionsStore.monitoringConnectionState;
+  const { getIconForStatus, getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
 
-  // Trigger initial load of monitoring endpoints if monitoring is enabled
-  if (isMonitoringEnabled.value && endpointListIsEmpty.value) {
-    // TODO: This is not auto refreshed. User will need to manually refresh the page to get updated data. Ideally this would auto refresh periodically.
-    monitoringStore.updateEndpointList();
-  }
+  // this tells us if monitoring is configured in ServiceControl
+  const serviceControlStore = useServiceControlStore();
+  const { isMonitoringEnabled } = storeToRefs(serviceControlStore);
+
+  // this tells us if there are any endpoints sending data
+  // Uses auto-refresh to periodically check for monitored endpoints (every 5 seconds)
+  const { store: monitoringStore } = useMonitoringStoreAutoRefresh();
+  const { hasMonitoredEndpoints } = storeToRefs(monitoringStore);
+
+  // this tells us the connection state to the monitoring instance
+  // this is auto refreshed in the ConnectionsAndStatsStore (every 5 seconds)
+  const connectionsStore = useConnectionsAndStatsStore();
+  const monitoringConnectionState = connectionsStore.monitoringConnectionState;
 
   // Determine overall monitoring status
   const monitoringStatus = computed(() => {
     const isConfiguredInServiceControl = isMonitoringEnabled.value;
     const connectionSuccessful = monitoringConnectionState.connected && !monitoringConnectionState.unableToConnect;
 
-    // Disabled - configured but not responding
-    if (isConfiguredInServiceControl && !connectionSuccessful) {
+    // 1. Check if monitoring is configured in ServiceControl
+    if (!isConfiguredInServiceControl) {
+      return CapabilityStatus.InstanceNotConfigured;
+    }
+
+    // 2. Check if we are connected to the monitoring instance
+    if (!connectionSuccessful) {
       return CapabilityStatus.Unavailable;
     }
 
-    // There are endpoints sending data. Fully enabled and working
-    if (!endpointListIsEmpty.value) {
-      return CapabilityStatus.Available;
+    // 3. Check if there are any endpoints sending data
+    if (!hasMonitoredEndpoints.value) {
+      return CapabilityStatus.EndpointsNotConfigured;
     }
 
-    // Monitoring is configured and connected but no endpoints are sending data
-    return CapabilityStatus.NotConfigured;
+    // 4. If all checks pass, monitoring is available
+    return CapabilityStatus.Available;
   });
 
   // Icon based on status
   const monitoringIcon = computed(() => getIconForStatus(monitoringStatus.value));
 
-  // Description based on status
-  const monitoringDescription = computed(() => {
-    const instanceAvailable = isMonitoringEnabled.value;
+  // Determine description based on status
+  const monitoringDescription = computed(() => getDescriptionForStatus(monitoringStatus.value, MonitoringDescriptions));
 
-    if (!instanceAvailable) {
-      return MonitoringCardDescription.InstanceNotConfigured;
-    }
+  // Determine help button text based on status
+  const monitoringHelpButtonText = computed(() => getHelpButtonTextForStatus(monitoringStatus.value, MonitoringHelpButtonText));
 
-    if (monitoringStatus.value === CapabilityStatus.NotConfigured) {
-      return MonitoringCardDescription.NotConfigured;
-    }
+  // Determine help button URL based on status
+  const monitoringHelpButtonUrl = computed(() => getHelpButtonUrlForStatus(monitoringStatus.value, MonitoringHelpButtonUrl));
 
-    if (monitoringStatus.value === CapabilityStatus.Available) {
-      return MonitoringCardDescription.Available;
-    }
-
-    // Unavailable
-    return MonitoringCardDescription.Unavailable;
-  });
-
+  // Determine indicators
   const monitoringIndicators = computed(() => {
     const indicators: StatusIndicator[] = [];
 
@@ -97,7 +105,11 @@ export function useMonitoringCapability(): CapabilityComposable {
     // data available indicator - only show if instance is connected
     if (instanceAvailable) {
       indicators.push(
-        createIndicator("Metrics", !endpointListIsEmpty.value ? CapabilityStatus.Available : CapabilityStatus.NotConfigured, !endpointListIsEmpty.value ? MonitoringIndicatorTooltip.DataAvailable : MonitoringIndicatorTooltip.DataUnavailable)
+        createIndicator(
+          "Metrics",
+          hasMonitoredEndpoints.value ? CapabilityStatus.Available : CapabilityStatus.EndpointsNotConfigured,
+          hasMonitoredEndpoints.value ? MonitoringIndicatorTooltip.DataAvailable : MonitoringIndicatorTooltip.DataUnavailable
+        )
       );
     }
 
@@ -113,5 +125,7 @@ export function useMonitoringCapability(): CapabilityComposable {
     description: monitoringDescription,
     indicators: monitoringIndicators,
     isLoading,
+    helpButtonText: monitoringHelpButtonText,
+    helpButtonUrl: monitoringHelpButtonUrl,
   };
 }
