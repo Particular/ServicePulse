@@ -23,8 +23,8 @@ const monitoring = useMonitoringCapability();
         :description="auditing.description.value"
         :indicators="auditing.indicators.value"
         :isLoading="auditing.isLoading.value"
-        help-url="https://docs.particular.net/nservicebus/operations/auditing"
-        data-url="#/messages"
+        :help-button-text="auditing.helpButtonText.value"
+        :help-button-url="auditing.helpButtonUrl.value"
       ></CapabilityCard>
       <CapabilityCard
         :title="Capability.Monitoring"
@@ -34,8 +34,8 @@ const monitoring = useMonitoringCapability();
         :description="monitoring.description.value"
         :indicators="monitoring.indicators.value"
         :isLoading="monitoring.isLoading.value"
-        help-url="https://docs.particular.net/monitoring/metrics/install-plugin"
-        data-url="#/monitoring"
+        :help-button-text="monitoring.helpButtonText.value"
+        :help-button-url="monitoring.helpButtonUrl.value"
       ></CapabilityCard>
     </div>
   </div>

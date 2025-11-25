@@ -8,8 +8,8 @@ const props = defineProps<{
   icon: IconDefinition;
   title: Capability;
   subtitle: string;
-  helpUrl: string;
-  dataUrl: string;
+  helpButtonText: string;
+  helpButtonUrl: string;
   description: string;
   indicators?: StatusIndicator[];
   isLoading?: boolean;
@@ -25,7 +25,7 @@ const props = defineProps<{
       'capability-unavailable': !props.isLoading && props.status === CapabilityStatus.Unavailable,
       'capability-partially-unavailable': !props.isLoading && props.status === CapabilityStatus.PartiallyUnavailable,
       'capability-loading': props.isLoading,
-      'capability-notconfigured': !props.isLoading && props.status === CapabilityStatus.NotConfigured,
+      'capability-notconfigured': !props.isLoading && (props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured),
     }"
   >
     <div v-if="props.isLoading" class="loading-overlay">
@@ -40,7 +40,7 @@ const props = defineProps<{
           'text-success': props.status === CapabilityStatus.Available,
           'text-danger': props.status === CapabilityStatus.Unavailable,
           'text-warning': props.status === CapabilityStatus.PartiallyUnavailable,
-          'text-info': props.status === CapabilityStatus.NotConfigured,
+          'text-info': props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured,
         }"
       />
       <div class="capability-info">
@@ -53,7 +53,7 @@ const props = defineProps<{
                 class="indicator-light"
                 :class="{
                   'light-success': indicator.status === CapabilityStatus.Available,
-                  'light-warning': indicator.status === CapabilityStatus.NotConfigured || indicator.status === CapabilityStatus.PartiallyUnavailable,
+                  'light-warning': indicator.status === CapabilityStatus.EndpointsNotConfigured || indicator.status === CapabilityStatus.PartiallyUnavailable,
                   'light-danger': indicator.status === CapabilityStatus.Unavailable,
                 }"
               />
@@ -63,7 +63,7 @@ const props = defineProps<{
         </div>
         <div class="capability-subtitle">{{ props.subtitle }}</div>
       </div>
-      <div v-if="props.status !== CapabilityStatus.NotConfigured" class="capability-status">
+      <div v-if="props.status !== CapabilityStatus.EndpointsNotConfigured && props.status !== CapabilityStatus.InstanceNotConfigured" class="capability-status">
         <span
           class="status-badge"
           :class="{
@@ -80,8 +80,8 @@ const props = defineProps<{
       <div class="capability-description">
         {{ props.description }}
       </div>
-      <a :href="props.status === CapabilityStatus.Available ? props.dataUrl : props.helpUrl" :target="props.status === CapabilityStatus.Available ? '_self' : '_blank'" class="btn-primary learn-more-btn">
-        {{ props.status !== CapabilityStatus.Available ? "Learn More" : props.title === Capability.Auditing ? "View Messages" : "View Metrics" }}
+      <a :href="props.helpButtonUrl" :target="props.status === CapabilityStatus.Available ? '_self' : '_blank'" class="btn-primary learn-more-btn">
+        {{ props.helpButtonText }}
       </a>
     </div>
   </div>
