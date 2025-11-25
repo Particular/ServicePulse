@@ -11,7 +11,7 @@ const AuditingDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.EndpointsNotConfigured]:
     "A ServiceControl Auditing instance is connected but no successful messages have been processed yet or you don't have auditing enabled for any endpoints. Click 'Learn More' to find out how to set up auditing for your endpoints.",
   [CapabilityStatus.InstanceNotConfigured]: "A ServiceControl Auditing instance has not been configured. Click 'Get Started' to learn more about setting up auditing.",
-  [CapabilityStatus.Unavailable]: "All ServiceControl Auditing instances are configured but not responding.",
+  [CapabilityStatus.Unavailable]: "All ServiceControl Auditing instances are configured but not responding. Click 'Learn More' for troubleshooting steps.",
   [CapabilityStatus.PartiallyUnavailable]: "Some ServiceControl Auditing instances are not responding.",
   [CapabilityStatus.Available]: "All ServiceControl Auditing instances are available and endpoints have been configured to send audit messages.",
 };
@@ -29,9 +29,9 @@ const AuditingHelpButtonUrl: CapabilityStatusToStringMap = {
 };
 
 enum AuditingIndicatorTooltip {
-  InstanceAvailable = "Auditing instance is configured and available",
+  InstanceAvailable = "The Auditing instance is configured and available",
   InstanceUnavailable = "The Auditing instance is configured but not responding",
-  MessagesAvailable = "Successful messages are being processed",
+  MessagesAvailable = "Endpoints have been configured to send audit messages",
   MessagesUnavailable = "No successful messages have been processed yet or auditing is not enabled for any endpoints",
   AllMessagesNotSupported = `The 'All Messages' feature requires ServiceControl ${minimumSCVersionForAllMessages} or higher`,
 }

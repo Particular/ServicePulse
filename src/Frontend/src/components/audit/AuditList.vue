@@ -5,29 +5,26 @@ import { useRoute, useRouter } from "vue-router";
 import ResultsCount from "@/components/ResultsCount.vue";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
 import AuditListItem from "@/components/audit/AuditListItem.vue";
-import { computed, onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import RefreshConfig from "../RefreshConfig.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import useFetchWithAutoRefresh from "@/composables/autoRefresh";
-import { MessageStatus } from "@/resources/Message";
 import FAIcon from "@/components/FAIcon.vue";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import WizardDialog from "@/components/platformcapabilities/WizardDialog.vue";
+import { getAuditingWizardPages } from "@/components/platformcapabilities/wizards/AuditingWizardPages";
+import { CapabilityStatus } from "@/components/platformcapabilities/types";
 
 const store = useAuditStore();
+const { hasSuccessfulMessages } = storeToRefs(store);
 const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange } = storeToRefs(store);
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
 const { refreshNow, isRefreshing, updateInterval, isActive, start, stop } = useFetchWithAutoRefresh("audit-list", store.refresh, 0);
 const firstLoad = ref(true);
-
-// Check if there are no successful audit messages
-const hasNoSuccessfulMessages = computed(() => {
-  if (firstLoad.value || messages.value.length === 0) {
-    return false;
-  }
-  return !messages.value.some((msg) => msg.status === MessageStatus.Successful || msg.status === MessageStatus.ResolvedSuccessfully);
-});
+const showWizard = ref(false);
+const wizardPages = getAuditingWizardPages(CapabilityStatus.EndpointsNotConfigured);
 
 onBeforeMount(() => {
   setQuery();
@@ -111,17 +108,18 @@ watch(autoRefreshValue, (newValue) => {
       <div class="row">
         <ResultsCount :displayed="messages.length" :total="totalCount" />
       </div>
-      <div v-if="hasNoSuccessfulMessages" class="no-audit-banner">
+      <div v-if="!hasSuccessfulMessages" class="no-audit-banner">
         <div class="banner-content">
           <FAIcon :icon="faInfoCircle" class="banner-icon" />
           <div class="banner-text">
             <strong>No successful audit messages found.</strong>
-            <p>Auditing may not be enabled on your endpoints. Learn how to enable auditing to track all messages flowing through your system.</p>
+            <p>Auditing may not be enabled on your endpoints. Click 'Get Started' to find out how to enable auditing.</p>
           </div>
-          <a href="https://docs.particular.net/nservicebus/operations/auditing" target="_blank" class="banner-link">Learn More</a>
+          <button class="banner-link" @click="showWizard = true">Get Started</button>
         </div>
       </div>
     </div>
+    <WizardDialog v-if="showWizard" title="Getting Started with Auditing" :pages="wizardPages" @close="showWizard = false" />
     <div class="row results-table">
       <LoadingSpinner v-if="firstLoad" />
       <template v-for="message in messages" :key="message.id">
@@ -193,6 +191,7 @@ watch(autoRefreshValue, (newValue) => {
   padding: 8px 16px;
   background-color: #007bff;
   color: white;
+  border: none;
   border-radius: 4px;
   text-decoration: none;
   font-size: 14px;
@@ -200,6 +199,7 @@ watch(autoRefreshValue, (newValue) => {
   white-space: nowrap;
   align-self: center;
   transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 
 .banner-link:hover {
