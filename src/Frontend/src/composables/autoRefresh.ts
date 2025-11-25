@@ -63,8 +63,9 @@ export default function useFetchWithAutoRefresh(name: string, fetch: () => Promi
 
     interval.value = newIntervalMs;
     console.debug(`[AutoRefresh] updated polling ${name} to ${newIntervalMs}ms`);
+
     pause();
-    if (newIntervalMs > 0) {
+    if (isActive && newIntervalMs > 0) {
       resume();
     }
   };
