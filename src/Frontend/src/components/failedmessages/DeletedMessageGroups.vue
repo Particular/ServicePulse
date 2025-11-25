@@ -134,7 +134,7 @@ watch(isRefreshing, () => {
               <div class="row">
                 <div class="col-sm-12 no-mobile-side-padding">
                   <div v-if="archiveGroups.length > 0">
-                    <div :class="`row box box-group wf-${group.workflow_state.status} repeat-modify deleted-message-group`" v-for="(group, index) in archiveGroups" :key="index" :disabled="group.count == 0" @click.prevent="navigateToGroup(group.id)">
+                    <div :class="`row box box-group wf-${group.workflow_state.status} repeat-modify deleted-message-group`" v-for="group in archiveGroups" :key="group.id" :disabled="group.count == 0" @click.prevent="navigateToGroup(group.id)">
                       <div class="col-sm-12 no-mobile-side-padding">
                         <div class="row">
                           <div class="col-sm-12 no-side-padding">
@@ -143,7 +143,7 @@ watch(isRefreshing, () => {
                                 <p class="lead break">{{ group.title }}</p>
                                 <p class="metadata" v-if="!isBeingRestored(group.workflow_state.status)">
                                   <MetadataItem :icon="faEnvelope">
-                                    <span>{{ group.count }} message<span v-if="group.count > 1">s</span></span>
+                                    <span>{{ group.count }} message<template v-if="group.count > 1">s</template></span>
                                     <span v-if="group.operation_remaining_count"> (currently restoring {{ group.operation_remaining_count }} </span>
                                   </MetadataItem>
 
