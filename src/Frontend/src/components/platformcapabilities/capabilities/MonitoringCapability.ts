@@ -1,5 +1,6 @@
 import { computed } from "vue";
-import { CapabilityStatus, StatusIndicator } from "@/components/platformcapabilities/types";
+import { StatusIndicator } from "@/components/platformcapabilities/types";
+import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import { storeToRefs } from "pinia";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";

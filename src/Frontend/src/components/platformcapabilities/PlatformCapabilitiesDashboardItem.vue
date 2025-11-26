@@ -4,7 +4,7 @@ import CapabilityCard from "@/components/platformcapabilities/CapabilityCard.vue
 import { useAuditingCapability } from "@/components/platformcapabilities/capabilities/AuditingCapability";
 import { useMonitoringCapability } from "@/components/platformcapabilities/capabilities/MonitoringCapability";
 import { useErrorCapability } from "@/components/platformcapabilities/capabilities/ErrorCapability";
-import { Capability } from "@/components/platformcapabilities/types";
+import { Capability } from "@/components/platformcapabilities/constants";
 import { getAuditingWizardPages } from "@/components/platformcapabilities/wizards/AuditingWizardPages";
 import { getMonitoringWizardPages } from "@/components/platformcapabilities/wizards/MonitoringWizardPages";
 import { getErrorWizardPages } from "@/components/platformcapabilities/wizards/ErrorWizardPages";
@@ -66,19 +66,5 @@ const errorWizardPages = computed(() => getErrorWizardPages(error.status.value))
 </template>
 
 <style scoped>
-.capabilities-header {
-  margin-bottom: 10px;
-}
-.capabilities-description {
-  font-size: 14px;
-  color: var(--text-secondary, #666);
-  margin: 0;
-}
-.capabilities-list {
-  display: flex;
-  gap: 16px;
-}
-.capabilities-list > * {
-  flex: 1;
-}
+@import "@/components/platformcapabilities/styles/platformDashboardSection.css";
 </style>
