@@ -69,7 +69,7 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.4",
     "eslint-plugin-promise": "7.2.1",
-    "eslint-plugin-vue": "10.6.0",
+    "eslint-plugin-vue": "10.6.1",
     "globals": "16.5.0",
     "jsdom": "26.1.0",
     "msw": "2.12.3",
