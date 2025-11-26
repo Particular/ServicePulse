@@ -5,7 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import ResultsCount from "@/components/ResultsCount.vue";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
 import AuditListItem from "@/components/audit/AuditListItem.vue";
-import { onBeforeMount, ref, watch } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import RefreshConfig from "../RefreshConfig.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import useFetchWithAutoRefresh from "@/composables/autoRefresh";
@@ -13,10 +13,10 @@ import FAIcon from "@/components/FAIcon.vue";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import WizardDialog from "@/components/platformcapabilities/WizardDialog.vue";
 import { getAuditingWizardPages } from "@/components/platformcapabilities/wizards/AuditingWizardPages";
+import { useAuditingCapability } from "@/components/platformcapabilities/capabilities/AuditingCapability";
 import { CapabilityStatus } from "@/components/platformcapabilities/types";
 
 const store = useAuditStore();
-const { hasSuccessfulMessages } = storeToRefs(store);
 const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange } = storeToRefs(store);
 const route = useRoute();
 const router = useRouter();
@@ -24,7 +24,8 @@ const autoRefreshValue = ref<number | null>(null);
 const { refreshNow, isRefreshing, updateInterval, isActive, start, stop } = useFetchWithAutoRefresh("audit-list", store.refresh, 0);
 const firstLoad = ref(true);
 const showWizard = ref(false);
-const wizardPages = getAuditingWizardPages(CapabilityStatus.EndpointsNotConfigured);
+const { status: auditStatus } = useAuditingCapability();
+const wizardPages = computed(() => getAuditingWizardPages(auditStatus.value));
 
 onBeforeMount(() => {
   setQuery();
@@ -108,14 +109,30 @@ watch(autoRefreshValue, (newValue) => {
       <div class="row">
         <ResultsCount :displayed="messages.length" :total="totalCount" />
       </div>
-      <div v-if="!hasSuccessfulMessages" class="no-audit-banner">
+      <div v-if="auditStatus !== CapabilityStatus.Available" class="no-audit-banner">
         <div class="banner-content">
           <FAIcon :icon="faInfoCircle" class="banner-icon" />
           <div class="banner-text">
-            <strong>No successful audit messages found.</strong>
-            <p>Auditing may not be enabled on your endpoints. Click 'Get Started' to find out how to enable auditing.</p>
+            <template v-if="auditStatus === CapabilityStatus.InstanceNotConfigured">
+              <strong>No ServiceControl Audit instance configured.</strong>
+              <p>A ServiceControl Audit instance is required to view processed messages. Click 'Get Started' to learn how to set one up.</p>
+            </template>
+            <template v-else-if="auditStatus === CapabilityStatus.EndpointsNotConfigured">
+              <strong>No successful audit messages found.</strong>
+              <p>Auditing may not be enabled on your endpoints. Click 'Get Started' to find out how to enable auditing.</p>
+            </template>
+            <template v-else-if="auditStatus === CapabilityStatus.Unavailable">
+              <strong>All ServiceControl Audit instances are not responding.</strong>
+              <p>The configured audit instances appears to be offline or unreachable. Check that the service is running and accessible.</p>
+            </template>
+            <template v-else-if="auditStatus === CapabilityStatus.PartiallyUnavailable">
+              <strong>Some ServiceControl Audit instances are not responding.</strong>
+              <p>One or more audit instances appear to be offline. Some audit data may be unavailable until all instances are restored.</p>
+            </template>
           </div>
-          <button class="banner-link" @click="showWizard = true">Get Started</button>
+          <template v-if="auditStatus !== CapabilityStatus.Unavailable && auditStatus !== CapabilityStatus.PartiallyUnavailable">
+            <button class="banner-link" @click="showWizard = true">Get Started</button>
+          </template>
         </div>
       </div>
     </div>
