@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
-import moment from "moment";
+import dayjs from "@/utils/dayjs";
 import type { SortInfo } from "@/components/SortInfo";
 import { type GroupPropertyType, SortDirection } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
@@ -16,7 +16,7 @@ export enum ColumnNames {
 
 const columnSortings = new Map<string, (endpoint: EndpointsView) => GroupPropertyType>([
   [ColumnNames.InstanceName, (endpoint) => endpoint.host_display_name],
-  [ColumnNames.LastHeartbeat, (endpoint) => moment.utc(endpoint.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00")],
+  [ColumnNames.LastHeartbeat, (endpoint) => dayjs.utc(endpoint.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00")],
   [ColumnNames.MuteToggle, (endpoint) => !endpoint.monitor_heartbeat],
 ]);
 
