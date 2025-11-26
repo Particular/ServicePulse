@@ -32,7 +32,7 @@ export const useDeletedMessageGroupsStore = defineStore("DeletedMessageGroupsSto
   let undismissedRestoreGroups: ExtendedFailureGroupView[] = [];
 
   const serviceControlStore = useServiceControlStore();
-  const messageGroupClient = new MessageGroupClient(serviceControlStore);
+  const messageGroupClient = new MessageGroupClient();
 
   const cookies = useCookies();
 
