@@ -10,10 +10,11 @@ const AuditingInstanceNotConfiguredPages: WizardPage[] = [
         <li><strong>Display and discover messages</strong> - View processed messages in your system</li>
         <li><strong>Track message flow</strong> - See the complete journey of messages through your system</li>
         <li><strong>View the sequence of events</strong> - Understand how messages are processed over time</li>
-        <li><strong>Visualize workflow state</strong> - Monitor and debug your saga workflows</li>
+        <li><strong>Visualize saga state</strong> - Monitor and debug your saga workflows</li>
         <li><strong>Debug issues</strong> - Inspect message contents and headers for troubleshooting</li>
       </ul>
     `,
+    images: [{ src: "/img/all-messages.png", caption: "Display and Discover Messages" }],
     learnMoreUrl: "https://docs.particular.net/nservicebus/operations/auditing",
     learnMoreText: "Learn more about auditing",
   },
@@ -22,13 +23,18 @@ const AuditingInstanceNotConfiguredPages: WizardPage[] = [
     content: `
       <p>Browse and search through all processed messages in your system:</p>
       <ul>
-        <li><strong>Message list</strong> - View all messages in a searchable list</li>
-        <li><strong>Advanced filtering</strong> - Filter messages by endpoint, time range, and more</li>
-        <li><strong>Full-text search</strong> - Search message contents to find specific data</li>
-        <li><strong>Sorting options</strong> - Sort by time processed, endpoint, or message type</li>
+        <li><strong>Message List</strong> - View all messages in a searchable list</li>
+        <li><strong>Advanced Filtering</strong> - Filter messages by endpoint, time range, and more</li>
+        <li><strong>Full-text Search</strong> - Search message contents to find specific data</li>
+        <li><strong>Sorting Options</strong> - Sort by time processed, endpoint, or message type</li>
+        <li><strong>Auto Refresh</strong> - Keep your message list up to date with the latest processed messages</li>
       </ul>
     `,
-    image: "/img/all-messages.png",
+    images: [
+      { src: "/img/all-messages-filter.png", caption: "Advanced Filtering and full-text search" },
+      { src: "/img/all-messages-sort.png", caption: "Sorting Options" },
+      { src: "/img/all-messages-refresh.png", caption: "Auto Refresh" },
+    ],
     learnMoreUrl: "https://docs.particular.net/servicepulse/all-messages",
     learnMoreText: "Learn about message discovery",
   },
@@ -43,7 +49,10 @@ const AuditingInstanceNotConfiguredPages: WizardPage[] = [
         <li><strong>Flow visualization</strong> - Get a clear picture of your system's message-based interactions</li>
       </ul>
     `,
-    image: "/img/flow-diagram.png",
+    images: [
+      { src: "/img/flow-diagram.png", caption: "Track Message Flow" },
+      { src: "/img/flow-diagram-nodes.png", caption: "Message Nodes", maxHeight: "600px" },
+    ],
     learnMoreUrl: "https://docs.particular.net/servicepulse/flow-diagram",
     learnMoreText: "Learn about message tracking",
   },
@@ -57,7 +66,7 @@ const AuditingInstanceNotConfiguredPages: WizardPage[] = [
         <li><strong>Handler execution</strong> - Track which handlers processed each message</li>
       </ul>
     `,
-    image: "/img/sequence-diagram.png",
+    images: [{ src: "/img/sequence-diagram.png" }],
     learnMoreUrl: "https://docs.particular.net/servicepulse/sequence-diagram",
     learnMoreText: "Learn about sequence diagrams",
   },
@@ -72,7 +81,11 @@ const AuditingInstanceNotConfiguredPages: WizardPage[] = [
         <li><strong>Timeout tracking</strong> - Monitor saga timeouts and their triggers</li>
       </ul>
     `,
-    image: "/img/saga-diagram-overview.png",
+    images: [
+      { src: "/img/saga-diagram-overview.png", caption: "Saga Lifecycle" },
+      { src: "/img/saga-diagram-state-change.png", caption: "Saga State Changes" },
+      { src: "/img/saga-diagram-timeout-view.png", caption: "Timeout Tracking" },
+    ],
     learnMoreUrl: "https://docs.particular.net/servicepulse/saga-diagram",
     learnMoreText: "Learn about saga diagrams",
   },
@@ -84,27 +97,31 @@ const AuditingInstanceNotConfiguredPages: WizardPage[] = [
         <li><strong>Message headers</strong> - View all metadata including timestamps, correlation IDs, and custom headers</li>
         <li><strong>Message body</strong> - Examine the full payload content of each message</li>
         <li><strong>Processing details</strong> - See which endpoint processed the message and when</li>
-        <li><strong>Search & filter</strong> - Quickly find specific messages by content, type, or time range</li>
+        <li><strong>Header Search</strong> - Quickly find specific message headers</li>
       </ul>
     `,
-    image: "/img/message-details-headers.png",
+    images: [
+      { src: "/img/message-details-headers.png", caption: "Message Headers" },
+      { src: "/img/message-details-body.png", caption: "Message Body" },
+      { src: "/img/message-metadata.png", caption: "Processing Details" },
+    ],
     learnMoreUrl: "https://docs.particular.net/servicepulse/message-details",
     learnMoreText: "Learn about message inspection",
   },
   {
-    title: "Set Up ServiceControl Audit Instance",
+    title: "Setup ServiceControl Audit Instance",
     content: `
-      <p>To enable auditing in ServicePulse, you need to set up a ServiceControl Audit instance:</p>
+      <p>To enable auditing in ServicePulse, you need to setup a ServiceControl Audit instance. There are multiple ways to do this:</p>
       <ul>
-        <li><strong>Step 1:</strong> Download and install ServiceControl</li>
-        <li><strong>Step 2:</strong> Run the ServiceControl Management utility</li>
-        <li><strong>Step 3:</strong> Create a new Audit instance and configure its transport</li>
-        <li><strong>Step 4:</strong> Connect ServicePulse to your ServiceControl instance</li>
+        <li><strong><a href="https://docs.particular.net/servicecontrol/audit-instances/deployment/powershell" target="_blank">Scripted Deployment</a></strong> - Use a script to automate the installation and configuration of the audit instance</li>
+        <li><strong><a href="https://docs.particular.net/servicecontrol/audit-instances/deployment/containers" target="_blank">Containers</a></strong> - Run the audit instance inside a container</li>
+        <li><strong><a href="https://docs.particular.net/servicecontrol/audit-instances/deployment/scmu" target="_blank">ServiceControl Management Utility</a></strong> - Use the management utility to create and configure the audit instance</li>
       </ul>
       <p>The audit instance stores processed messages and makes them available for viewing in ServicePulse.</p>
     `,
-    learnMoreUrl: "https://docs.particular.net/servicecontrol/audit-instances/",
-    learnMoreText: "View setup guide",
+    images: [{ src: "/img/audit-instance-overview.png", caption: "ServiceControl Audit Instance Architecture" }],
+    learnMoreUrl: "https://docs.particular.net/servicecontrol/audit-instances/deployment/",
+    learnMoreText: "Learn about deploying audit instances",
   },
 ];
 
