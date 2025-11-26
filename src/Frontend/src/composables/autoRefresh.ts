@@ -64,8 +64,9 @@ export default function useFetchWithAutoRefresh(name: string, fetch: () => Promi
     interval.value = newIntervalMs;
     console.debug(`[AutoRefresh] updated polling ${name} to ${newIntervalMs}ms`);
 
-    pause();
-    if (isActive && newIntervalMs > 0) {
+    if (isActive.value) {
+      // We need to do this hack, because useTimeoutPoll doesn't react to interval changes while active
+      pause();
       resume();
     }
   };

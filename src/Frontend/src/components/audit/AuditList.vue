@@ -79,11 +79,13 @@ function setQuery() {
 }
 
 watch(autoRefreshValue, (newValue) => {
-  updateInterval(newValue || 0);
   if (newValue === null || newValue === 0) {
     stop();
-  } else if (!isActive.value) {
-    start();
+  } else {
+    updateInterval(newValue);
+    if (!isActive.value) {
+      start();
+    }
   }
 });
 </script>
