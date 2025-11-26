@@ -3,15 +3,19 @@ import { computed } from "vue";
 import CapabilityCard from "@/components/platformcapabilities/CapabilityCard.vue";
 import { useAuditingCapability } from "@/components/platformcapabilities/capabilities/AuditingCapability";
 import { useMonitoringCapability } from "@/components/platformcapabilities/capabilities/MonitoringCapability";
+import { useErrorCapability } from "@/components/platformcapabilities/capabilities/ErrorCapability";
 import { Capability } from "@/components/platformcapabilities/types";
 import { getAuditingWizardPages } from "@/components/platformcapabilities/wizards/AuditingWizardPages";
 import { getMonitoringWizardPages } from "@/components/platformcapabilities/wizards/MonitoringWizardPages";
+import { getErrorWizardPages } from "@/components/platformcapabilities/wizards/ErrorWizardPages";
 
 const auditing = useAuditingCapability();
 const monitoring = useMonitoringCapability();
+const error = useErrorCapability();
 
 const auditingWizardPages = computed(() => getAuditingWizardPages(auditing.status.value));
 const monitoringWizardPages = computed(() => getMonitoringWizardPages(monitoring.status.value));
+const errorWizardPages = computed(() => getErrorWizardPages(error.status.value));
 </script>
 
 <template>
@@ -44,6 +48,18 @@ const monitoringWizardPages = computed(() => getMonitoringWizardPages(monitoring
         :help-button-text="monitoring.helpButtonText.value"
         :help-button-url="monitoring.helpButtonUrl.value"
         :wizard-pages="monitoringWizardPages"
+      ></CapabilityCard>
+      <CapabilityCard
+        :title="Capability.Error"
+        subtitle="Manage and retry failed messages"
+        :status="error.status.value"
+        :icon="error.icon.value"
+        :description="error.description.value"
+        :indicators="error.indicators.value"
+        :isLoading="error.isLoading.value"
+        :help-button-text="error.helpButtonText.value"
+        :help-button-url="error.helpButtonUrl.value"
+        :wizard-pages="errorWizardPages"
       ></CapabilityCard>
     </div>
   </div>
