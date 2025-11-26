@@ -107,7 +107,8 @@ export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersion
 
 async function getData(url: string, authenticated = false) {
   try {
-    const response = await (authenticated ? authFetch(url) : fetch(url));
+    // eslint-disable-next-line local/no-raw-fetch
+    const response = await (authenticated ? authFetch(url) : fetch(url)); // this needs to be an unauthenticated call
     return (await response.json()) as unknown as Release[];
   } catch (e) {
     console.log(e);
