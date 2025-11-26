@@ -28,7 +28,7 @@ function handleButtonClick() {
   if (shouldShowWizard.value) {
     showWizard.value = true;
   } else {
-    window.open(props.helpButtonUrl, "_blank");
+    window.open(props.helpButtonUrl, props.status !== CapabilityStatus.Available ? "_blank" : "_self");
   }
 }
 </script>

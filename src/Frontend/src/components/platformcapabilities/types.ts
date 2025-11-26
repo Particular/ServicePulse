@@ -15,4 +15,5 @@ export enum CapabilityStatus {
 export enum Capability {
   Monitoring = "Monitoring",
   Auditing = "Auditing",
+  Error = "Recoverability",
 }
