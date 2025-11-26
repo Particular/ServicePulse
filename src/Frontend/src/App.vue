@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import { RouterView } from "vue-router";
 import PageFooter from "./components/PageFooter.vue";
 import PageHeader from "./components/PageHeader.vue";
@@ -12,16 +12,24 @@ import { useAuthStore } from "@/stores/AuthStore";
 
 const { authenticate } = useAuth();
 const authStore = useAuthStore();
-const { isAuthenticating, isAuthenticated } = storeToRefs(authStore);
+const { isAuthenticating, isAuthenticated, authEnabled } = storeToRefs(authStore);
+const shouldShowApp = computed(() => !authEnabled.value || isAuthenticated.value);
 
 onMounted(async () => {
   try {
     // Attempt to authenticate when the app first loads
     await authStore.refresh();
 
+    // If authentication is not enabled, skip authentication
+    if (!authStore.authEnabled) {
+      console.debug("Authentication is disabled");
+      authStore.setAuthenticating(false);
+      return;
+    }
+
     // Check if auth config is available
     if (!authStore.authConfig) {
-      console.debug("Auth configuration not available, skipping authentication");
+      console.debug("Authentication is enabled but configuration not available");
       authStore.setAuthenticating(false);
       return;
     }
@@ -53,7 +61,7 @@ onMounted(async () => {
       <p class="auth-loading-text">Authenticating...</p>
     </div>
   </div>
-  <template v-else-if="isAuthenticated">
+  <template v-if="shouldShowApp">
     <page-header />
     <div class="container-fluid" id="main-content">
       <RouterView />
