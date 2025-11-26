@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import { Modal } from "bootstrap";
 import FAIcon from "@/components/FAIcon.vue";
 import { faChevronLeft, faChevronRight, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
@@ -32,6 +32,8 @@ let modalInstance: Modal | null = null;
 const currentPageIndex = ref(0);
 const isImageExpanded = ref(false);
 const currentImageIndex = ref(0);
+const lightboxCloseRef = ref<HTMLButtonElement | null>(null);
+const lastFocusedElement = ref<HTMLElement | null>(null);
 
 const currentPage = computed(() => props.pages[currentPageIndex.value]);
 function normalizeImage(img: string | WizardImage): WizardImage {
@@ -95,11 +97,30 @@ function handleHidden() {
 }
 
 function handleKeydown(event: KeyboardEvent) {
+  if (isImageExpanded.value && event.key === "Escape") {
+    closeLightbox();
+    return;
+  }
   if (event.key === "ArrowRight" && !isLastPage.value) {
     nextPage();
   } else if (event.key === "ArrowLeft" && !isFirstPage.value) {
     previousPage();
   }
+}
+
+function openLightbox() {
+  lastFocusedElement.value = document.activeElement as HTMLElement;
+  isImageExpanded.value = true;
+  nextTick(() => {
+    lightboxCloseRef.value?.focus();
+  });
+}
+
+function closeLightbox() {
+  isImageExpanded.value = false;
+  nextTick(() => {
+    lastFocusedElement.value?.focus();
+  });
 }
 
 onMounted(() => {
@@ -146,7 +167,7 @@ onUnmounted(() => {
                     :alt="currentImageData?.caption || currentPage.title"
                     class="img-fluid rounded clickable-image"
                     :style="currentImageData?.maxHeight ? { maxHeight: currentImageData.maxHeight } : {}"
-                    @click="isImageExpanded = true"
+                    @click="openLightbox"
                   />
                   <figcaption v-if="currentImageData?.caption" class="image-caption">{{ currentImageData.caption }}</figcaption>
                 </figure>
@@ -190,9 +211,9 @@ onUnmounted(() => {
   </div>
 
   <Teleport to="body">
-    <div v-if="isImageExpanded && currentImageData" class="image-lightbox" @click="isImageExpanded = false">
+    <div v-if="isImageExpanded && currentImageData" class="image-lightbox" role="dialog" aria-modal="true" aria-label="Expanded image" @click="closeLightbox">
       <div class="lightbox-content" @click.stop>
-        <button type="button" class="lightbox-close" @click="isImageExpanded = false" aria-label="Close">&times;</button>
+        <button ref="lightboxCloseRef" type="button" class="lightbox-close" @click="closeLightbox" aria-label="Close expanded image">&times;</button>
         <img :src="currentImageData.src" :alt="currentImageData.caption || currentPage.title" />
       </div>
     </div>
