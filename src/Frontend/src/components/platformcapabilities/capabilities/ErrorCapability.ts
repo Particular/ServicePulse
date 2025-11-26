@@ -1,6 +1,7 @@
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
-import { CapabilityStatus, StatusIndicator } from "@/components/platformcapabilities/types";
+import { StatusIndicator } from "@/components/platformcapabilities/types";
+import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
 

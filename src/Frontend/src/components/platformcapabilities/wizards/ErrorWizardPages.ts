@@ -1,5 +1,5 @@
-import type { WizardPage } from "../WizardDialog.vue";
-import { CapabilityStatus } from "../types";
+import { WizardPage } from "../types";
+import { CapabilityStatus } from "../constants";
 
 const ErrorEndpointsNotConfiguredPages: WizardPage[] = [
   {
