@@ -1,4 +1,4 @@
-import { defineStore } from "pinia";
+import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref } from "vue";
 import { useServiceControlStore } from "./ServiceControlStore";
 import type { AuthConfig } from "@/types/auth";
@@ -19,6 +19,7 @@ export const useAuthStore = defineStore("auth", () => {
   const isAuthenticating = ref(false);
   const authError = ref<string | null>(null);
   const authConfig = ref<AuthConfig | null>(null);
+  const authEnabled = ref(true);
   const loading = ref(false);
 
   async function refresh() {
@@ -26,7 +27,8 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const config = await getAuthConfig();
       if (config) {
-        authConfig.value = transformToAuthConfig(config);
+        authEnabled.value = config.enabled;
+        authConfig.value = config.enabled ? transformToAuthConfig(config) : null;
       }
     } finally {
       loading.value = false;
@@ -38,7 +40,7 @@ export const useAuthStore = defineStore("auth", () => {
       const [, data] = await serviceControlStore.fetchTypedFromServiceControl<AuthConfigResponse>("authentication/configuration");
       return data;
     } catch (err) {
-      console.error("Error fetching auth config information", err);
+      console.error("Error fetching auth configuration", err);
       return null;
     }
   }
@@ -65,7 +67,6 @@ export const useAuthStore = defineStore("auth", () => {
     isAuthenticated.value = !!newToken;
 
     if (newToken) {
-      // Store token in sessionStorage for persistence across page reloads
       sessionStorage.setItem("auth_token", newToken);
     } else {
       sessionStorage.removeItem("auth_token");
@@ -99,6 +100,7 @@ export const useAuthStore = defineStore("auth", () => {
     isAuthenticating,
     authError,
     authConfig,
+    authEnabled,
     loading,
     refresh,
     setToken,
@@ -108,3 +110,9 @@ export const useAuthStore = defineStore("auth", () => {
     setAuthError,
   };
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useAuthStore, import.meta.hot));
+}
+
+export type AuthStore = ReturnType<typeof useAuthStore>;
