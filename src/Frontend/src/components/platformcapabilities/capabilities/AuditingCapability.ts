@@ -25,6 +25,8 @@ const AuditingHelpButtonText: CapabilityStatusToStringMap = {
 const AuditingHelpButtonUrl: CapabilityStatusToStringMap = {
   [CapabilityStatus.EndpointsNotConfigured]: "https://docs.particular.net/nservicebus/operations/auditing",
   [CapabilityStatus.InstanceNotConfigured]: "https://docs.particular.net/servicecontrol/audit-instances/",
+  [CapabilityStatus.Unavailable]: "https://docs.particular.net/servicecontrol/troubleshooting",
+  [CapabilityStatus.PartiallyUnavailable]: "https://docs.particular.net/servicecontrol/troubleshooting",
   [CapabilityStatus.Available]: "#/messages",
 };
 

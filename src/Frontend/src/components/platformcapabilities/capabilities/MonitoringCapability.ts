@@ -23,7 +23,7 @@ const MonitoringHelpButtonText: CapabilityStatusToStringMap = {
 const MonitoringHelpButtonUrl: CapabilityStatusToStringMap = {
   [CapabilityStatus.EndpointsNotConfigured]: "https://docs.particular.net/monitoring/metrics/install-plugin",
   [CapabilityStatus.InstanceNotConfigured]: "https://docs.particular.net/servicecontrol/monitoring-instances/",
-  [CapabilityStatus.Unavailable]: "https://docs.particular.net/servicecontrol/monitoring-instances/",
+  [CapabilityStatus.Unavailable]: "https://docs.particular.net/servicecontrol/troubleshooting",
   [CapabilityStatus.Available]: "#/monitoring",
 };
 

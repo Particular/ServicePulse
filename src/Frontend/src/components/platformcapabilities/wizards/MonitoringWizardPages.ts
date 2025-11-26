@@ -78,51 +78,6 @@ const MonitoringInstanceNotConfiguredPages: WizardPage[] = [
   },
 ];
 
-const MonitoringUnavailablePages: WizardPage[] = [
-  {
-    title: "Monitoring Instance Unavailable",
-    content: `
-      <p>ServicePulse cannot connect to your ServiceControl Monitoring instance. This could be due to:</p>
-      <ul>
-        <li><strong>Service not running</strong> - The ServiceControl Monitoring service may have stopped</li>
-        <li><strong>Network issues</strong> - There may be connectivity problems between ServicePulse and ServiceControl</li>
-        <li><strong>Configuration mismatch</strong> - The URL configured in ServicePulse may be incorrect</li>
-      </ul>
-    `,
-    learnMoreUrl: "https://docs.particular.net/servicecontrol/troubleshooting",
-    learnMoreText: "View troubleshooting guide",
-  },
-  {
-    title: "Check the Service Status",
-    content: `
-      <p>To resolve this issue, try the following steps:</p>
-      <ul>
-        <li><strong>Step 1:</strong> Open Windows Services and check if the ServiceControl Monitoring service is running</li>
-        <li><strong>Step 2:</strong> If stopped, try starting the service</li>
-        <li><strong>Step 3:</strong> Check the ServiceControl Monitoring logs for any errors</li>
-        <li><strong>Step 4:</strong> Verify the monitoring instance URL in your ServicePulse configuration</li>
-      </ul>
-      <p>Logs are typically located in the ServiceControl installation directory under the Logs folder.</p>
-    `,
-    learnMoreUrl: "https://docs.particular.net/servicecontrol/logging",
-    learnMoreText: "Learn about ServiceControl logging",
-  },
-  {
-    title: "Verify Your Configuration",
-    content: `
-      <p>Ensure ServicePulse is configured with the correct monitoring instance URL:</p>
-      <ul>
-        <li><strong>Check the URL</strong> - Verify the ServiceControl Monitoring API URL is correct</li>
-        <li><strong>Test connectivity</strong> - Try accessing the API URL directly in a browser</li>
-        <li><strong>Check firewall rules</strong> - Ensure the port is accessible</li>
-      </ul>
-      <p>Once the service is running and accessible, this page will automatically update.</p>
-    `,
-    learnMoreUrl: "https://docs.particular.net/servicecontrol/monitoring-instances/",
-    learnMoreText: "View configuration guide",
-  },
-];
-
 const MonitoringEndpointsNotConfiguredPages: WizardPage[] = [
   {
     title: "Install the Monitoring Plugin",
@@ -142,10 +97,12 @@ const MonitoringEndpointsNotConfiguredPages: WizardPage[] = [
     title: "Configure Your Endpoints",
     content: `
       <p>Add the metrics plugin to your endpoint configuration:</p>
-      <p><code>var metrics = endpointConfiguration.EnableMetrics();</code></p>
-      <p><code>metrics.SendMetricDataToServiceControl(</code></p>
-      <p><code>    "Particular.Monitoring",</code></p>
-      <p><code>    TimeSpan.FromSeconds(10));</code></p>
+      <pre>
+    <code>var metrics = endpointConfiguration.EnableMetrics();
+      metrics.SendMetricDataToServiceControl(
+        serviceControlMetricsAddress: SERVICE_CONTROL_METRICS_ADDRESS,
+        interval: TimeSpan.FromMinutes(1),
+        instanceId: "INSTANCE_ID_OPTIONAL");</code></pre>
       <p>Make sure the queue name matches your ServiceControl Monitoring instance queue.</p>
     `,
     learnMoreUrl: "https://docs.particular.net/monitoring/metrics/install-plugin#configuration",
@@ -157,7 +114,7 @@ const MonitoringEndpointsNotConfiguredPages: WizardPage[] = [
       <p>Once configured:</p>
       <ul>
         <li><strong>Start your endpoints</strong> - Metrics will begin flowing immediately</li>
-        <li><strong>Check this page</strong> - it will automatically update when metrics are detected</li>
+        <li><strong>Check this capability card</strong> - it will automatically update when metrics are detected</li>
         <li><strong>View the Monitoring tab</strong> to see real-time performance data</li>
       </ul>
       <p>Metrics are sent at regular intervals (default: every 10 seconds), so you should see data appear within a minute.</p>
@@ -173,8 +130,6 @@ export function getMonitoringWizardPages(status: CapabilityStatus): WizardPage[]
       return MonitoringInstanceNotConfiguredPages;
     case CapabilityStatus.EndpointsNotConfigured:
       return MonitoringEndpointsNotConfiguredPages;
-    case CapabilityStatus.Unavailable:
-      return MonitoringUnavailablePages;
     default:
       return [];
   }

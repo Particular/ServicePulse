@@ -21,14 +21,14 @@ const props = defineProps<{
 const showWizard = ref(false);
 
 const shouldShowWizard = computed(() => {
-  return props.wizardPages && props.wizardPages.length > 0 && (props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured || props.status === CapabilityStatus.Unavailable);
+  return props.wizardPages && props.wizardPages.length > 0 && (props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured);
 });
 
 function handleButtonClick() {
   if (shouldShowWizard.value) {
     showWizard.value = true;
-  } else if (props.status === CapabilityStatus.Available) {
-    window.location.href = props.helpButtonUrl;
+  } else {
+    window.open(props.helpButtonUrl, "_blank");
   }
 }
 </script>
