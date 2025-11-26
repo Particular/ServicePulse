@@ -9,20 +9,28 @@ import BackendChecksNotifications from "@/components/BackendChecksNotifications.
 import { useAuth } from "@/composables/useAuth";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/AuthStore";
-import { authConfig } from "@/config/auth.config";
 
 const { authenticate } = useAuth();
 const authStore = useAuthStore();
 const { isAuthenticating, isAuthenticated } = storeToRefs(authStore);
 
 onMounted(async () => {
-  // Attempt to authenticate when the app first loads
   try {
+    // Attempt to authenticate when the app first loads
+    await authStore.refresh();
+
+    // Check if auth config is available
+    if (!authStore.authConfig) {
+      console.debug("Auth configuration not available, skipping authentication");
+      authStore.setAuthenticating(false);
+      return;
+    }
+
     // The authenticate function will:
     // 1. Check if we're returning from the identity provider (handle callback)
     // 2. Check for an existing valid session
     // 3. If no valid session, redirect to the identity provider
-    const authenticated = await authenticate(authConfig);
+    const authenticated = await authenticate(authStore.authConfig);
 
     if (authenticated) {
       console.debug("User authenticated successfully");
