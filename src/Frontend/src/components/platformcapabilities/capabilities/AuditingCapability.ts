@@ -1,5 +1,6 @@
 import { computed } from "vue";
-import { CapabilityStatus, StatusIndicator } from "@/components/platformcapabilities/types";
+import { StatusIndicator } from "@/components/platformcapabilities/types";
+import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import useIsAllMessagesSupported, { minimumSCVersionForAllMessages } from "@/components/audit/isAllMessagesSupported";
 import { storeToRefs } from "pinia";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";

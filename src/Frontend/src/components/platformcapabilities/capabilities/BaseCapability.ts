@@ -1,6 +1,7 @@
 import { type ComputedRef } from "vue";
 import { faCheck, faInfoCircle, faTimes, faExclamationTriangle, type IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import { CapabilityStatus, type StatusIndicator } from "@/components/platformcapabilities/types";
+import { StatusIndicator } from "@/components/platformcapabilities/types";
+import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 
 export interface CapabilityComposable {
   status: ComputedRef<CapabilityStatus>;

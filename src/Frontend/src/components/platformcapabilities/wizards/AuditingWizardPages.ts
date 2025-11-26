@@ -1,5 +1,5 @@
-import type { WizardPage } from "../WizardDialog.vue";
-import { CapabilityStatus } from "../types";
+import { CapabilityStatus } from "../constants";
+import { WizardPage } from "../types";
 
 const AuditingInstanceNotConfiguredPages: WizardPage[] = [
   {

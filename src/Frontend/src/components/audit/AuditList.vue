@@ -14,7 +14,7 @@ import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import WizardDialog from "@/components/platformcapabilities/WizardDialog.vue";
 import { getAuditingWizardPages } from "@/components/platformcapabilities/wizards/AuditingWizardPages";
 import { useAuditingCapability } from "@/components/platformcapabilities/capabilities/AuditingCapability";
-import { CapabilityStatus } from "@/components/platformcapabilities/types";
+import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 
 const store = useAuditStore();
 const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange } = storeToRefs(store);
