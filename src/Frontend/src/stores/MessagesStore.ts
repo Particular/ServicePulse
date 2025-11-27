@@ -140,7 +140,7 @@ export const useMessagesStore = defineStore("MessagesStore", () => {
   async function setMessageStatus(status: FailedMessageStatus) {
     if (controller) {
       // need to cancel any existing fetch which otherwise will set messages of the incorrect status
-      controller.abort(`Switching status to ${status}`);
+      controller.abort(`Aborting current fetch; Switching status to ${status}`);
     }
     messageStatus = status;
     messages.value = [];
