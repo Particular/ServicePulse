@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useShowToast } from "../../composables/toast";
 import { onBeforeRouteLeave } from "vue-router";
 import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
@@ -16,12 +16,14 @@ import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
 import { DeletedPeriodOption, useMessagesStore } from "@/stores/MessagesStore";
 import LoadingSpinner from "../LoadingSpinner.vue";
 
+const POLLING_INTERVAL_NORMAL = 5000;
+const POLLING_INTERVAL_FAST = 1000;
+
 const loading = ref(false);
-const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("messagesStore", useMessagesStore, 5000);
+const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("messagesStore", useMessagesStore, POLLING_INTERVAL_NORMAL);
 const { store } = autoRefresh();
 const { messages, groupId, groupName, totalCount, pageNumber, selectedPeriod } = storeToRefs(store);
 
-let pollingFaster = false;
 const showConfirmRestore = ref(false);
 const messageList = ref<IMessageList | undefined>();
 
@@ -43,8 +45,7 @@ function isAnythingSelected() {
 
 async function restoreSelectedMessages() {
   // We're starting a restore, poll more frequently
-  pollingFaster = true;
-  updateInterval(1000);
+  updateInterval(POLLING_INTERVAL_FAST);
   const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
   selectedMessages.forEach((m) => (m.restoreInProgress = true));
   useShowToast(TYPE.INFO, "Info", `restoring ${selectedMessages.length} messages...`);
@@ -59,24 +60,19 @@ async function periodChanged(period: DeletedPeriodOption) {
   loading.value = false;
 }
 
-function isRestoreInProgress() {
-  return messages.value.some((message) => message.restoreInProgress);
-}
-
 onBeforeRouteLeave(() => {
   groupId.value = "";
   groupName.value = "";
 });
 
-watch(isRefreshing, () => {
-  // If we're currently polling at 5 seconds and there is a restore in progress, then change the polling interval to poll every 1 second
-  if (!pollingFaster && isRestoreInProgress()) {
-    pollingFaster = true;
-    updateInterval(1000);
-  } else if (pollingFaster && !isRestoreInProgress()) {
-    // if we're currently polling every 1 second but all restores are done, change polling frequency back to every 5 seconds
-    pollingFaster = false;
-    updateInterval(5000);
+const isRestoreInProgress = computed(() => messages.value.some((message) => message.restoreInProgress));
+watch(isRestoreInProgress, (restoreInProgress) => {
+  if (restoreInProgress) {
+    // If there is a restore in progress, poll every 1 second
+    updateInterval(POLLING_INTERVAL_FAST);
+  } else {
+    // If all restores are done, change polling frequency back to every 5 seconds
+    updateInterval(POLLING_INTERVAL_NORMAL);
   }
 });
 

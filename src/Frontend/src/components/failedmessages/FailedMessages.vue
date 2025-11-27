@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, watch } from "vue";
+import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useShowToast } from "../../composables/toast";
 import { downloadFileFromString } from "../../composables/fileDownloadCreator";
 import { onBeforeRouteLeave } from "vue-router";
@@ -22,14 +22,16 @@ import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
 import { storeToRefs } from "pinia";
 import LoadingSpinner from "../LoadingSpinner.vue";
 
+const POLLING_INTERVAL_NORMAL = 5000;
+const POLLING_INTERVAL_FAST = 1000;
+
 const messageStore = useMessageStore();
 const messageGroupClient = createMessageGroupClient();
 const loading = ref(false);
-const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("messagesStore", useMessagesStore, 5000);
+const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("messagesStore", useMessagesStore, POLLING_INTERVAL_NORMAL);
 const { store } = autoRefresh();
 const { messages, groupId, groupName, totalCount, pageNumber } = storeToRefs(store);
 
-let pollingFaster = false;
 const showDelete = ref(false);
 const showConfirmRetryAll = ref(false);
 const showConfirmDeleteAll = ref(false);
@@ -55,8 +57,7 @@ async function sortGroups(sort: SortOptions<GroupOperation>) {
 
 async function retryRequested(id: string) {
   // We're starting a retry, poll more frequently
-  pollingFaster = true;
-  updateInterval(1000);
+  updateInterval(POLLING_INTERVAL_FAST);
   useShowToast(TYPE.INFO, "Info", "Message retry requested...");
   await messageStore.retryMessages([id]);
   const message = messages.value.find((m) => m.id === id);
@@ -68,8 +69,7 @@ async function retryRequested(id: string) {
 
 async function retrySelected() {
   // We're starting a retry, poll more frequently
-  pollingFaster = true;
-  updateInterval(1000);
+  updateInterval(POLLING_INTERVAL_FAST);
   const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
   useShowToast(TYPE.INFO, "Info", "Retrying " + selectedMessages.length + " messages...");
   await messageStore.retryMessages(selectedMessages.map((m) => m.id));
@@ -153,8 +153,7 @@ function isAnythingSelected() {
 
 async function deleteSelectedMessages() {
   // We're starting a delete, poll more frequently
-  pollingFaster = true;
-  updateInterval(1000);
+  updateInterval(POLLING_INTERVAL_FAST);
   const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
 
   useShowToast(TYPE.INFO, "Info", "Deleting " + selectedMessages.length + " messages...");
@@ -175,26 +174,19 @@ async function deleteGroup() {
   messages.value.forEach((m) => (m.deleteInProgress = true));
 }
 
-function isRetryOrDeleteOperationInProgress() {
-  return messages.value.some((message) => {
-    return message.retryInProgress || message.deleteInProgress;
-  });
-}
-
 onBeforeRouteLeave(() => {
   groupId.value = "";
   groupName.value = "";
 });
 
-watch(isRefreshing, () => {
-  // If we're currently polling at 5 seconds and there is a retry or delete in progress, then change the polling interval to poll every 1 second
-  if (!pollingFaster && isRetryOrDeleteOperationInProgress()) {
-    pollingFaster = true;
-    updateInterval(1000);
-  } else if (pollingFaster && !isRetryOrDeleteOperationInProgress()) {
-    // if we're currently polling every 1 second but all retries or deletes are done, change polling frequency back to every 5 seconds
-    pollingFaster = false;
-    updateInterval(5000);
+const isRetryOrDeleteOperationInProgress = computed(() => messages.value.some((message) => message.retryInProgress || message.deleteInProgress));
+watch(isRetryOrDeleteOperationInProgress, (retryOrDeleteOperationInProgress) => {
+  // If there is a retry or delete in progress, then change the polling interval to poll every 1 second
+  if (retryOrDeleteOperationInProgress) {
+    updateInterval(POLLING_INTERVAL_FAST);
+  } else {
+    // if all retries or deletes are done, change polling frequency back to every 5 seconds
+    updateInterval(POLLING_INTERVAL_NORMAL);
   }
 });
 

@@ -27,7 +27,6 @@ const { archiveGroups, classifiers, selectedClassifier } = storeToRefs(store);
 const router = useRouter();
 const showRestoreGroupModal = ref(false);
 const selectedGroup = ref<ExtendedFailureGroupView>();
-const groupRestoreSuccessful = ref<boolean | null>(null);
 
 async function classifierChanged(classifier: string) {
   store.setGrouping(classifier);
@@ -51,7 +50,6 @@ async function restoreGroup() {
     } else {
       // We're starting a restore, poll more frequently
       updateInterval(POLLING_INTERVAL_FAST);
-      groupRestoreSuccessful.value = true;
       useShowToast(TYPE.INFO, "Info", "Group restore started...");
     }
   }
