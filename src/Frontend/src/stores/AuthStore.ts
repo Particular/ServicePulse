@@ -19,8 +19,8 @@ export const useAuthStore = defineStore("auth", () => {
   const isAuthenticating = ref(false);
   const authError = ref<string | null>(null);
   const authConfig = ref<AuthConfig | null>(null);
-  const authEnabled = ref(true);
-  const loading = ref(false);
+  const authEnabled = ref(false);
+  const loading = ref(true);
 
   async function refresh() {
     loading.value = true;

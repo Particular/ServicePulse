@@ -12,12 +12,12 @@ import { useAuthStore } from "@/stores/AuthStore";
 
 const { authenticate } = useAuth();
 const authStore = useAuthStore();
-const { isAuthenticating, isAuthenticated, authEnabled } = storeToRefs(authStore);
-const shouldShowApp = computed(() => !authEnabled.value || isAuthenticated.value);
+const { isAuthenticating, isAuthenticated, authEnabled, loading } = storeToRefs(authStore);
+const shouldShowApp = computed(() => !loading.value && (!authEnabled.value || isAuthenticated.value));
 
 onMounted(async () => {
   try {
-    // Attempt to authenticate when the app first loads
+    // Attempt to retrieve the authentication config from ServiceControl API
     await authStore.refresh();
 
     // If authentication is not enabled, skip authentication
@@ -53,15 +53,23 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="isAuthenticating" class="auth-loading-overlay">
-    <div class="auth-loading-spinner">
+  <div v-if="loading" class="loading-overlay">
+    <div class="loading-spinner">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Checking Authentication Details...</span>
+      </div>
+      <p class="loading-text">Checking Authentication Details...</p>
+    </div>
+  </div>
+  <div v-else-if="isAuthenticating" class="loading-overlay">
+    <div class="loading-spinner">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Authenticating...</span>
       </div>
-      <p class="auth-loading-text">Authenticating...</p>
+      <p class="loading-text">Authenticating...</p>
     </div>
   </div>
-  <template v-if="shouldShowApp">
+  <template v-else-if="shouldShowApp">
     <page-header />
     <div class="container-fluid" id="main-content">
       <RouterView />
@@ -73,7 +81,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.auth-loading-overlay {
+.loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -86,11 +94,11 @@ onMounted(async () => {
   z-index: 9999;
 }
 
-.auth-loading-spinner {
+.loading-spinner {
   text-align: center;
 }
 
-.auth-loading-text {
+.loading-text {
   margin-top: 1rem;
   font-size: 1.1rem;
   color: #333;
