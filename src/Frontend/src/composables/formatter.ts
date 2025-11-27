@@ -76,3 +76,13 @@ function formatTimeValue(timeValue: number, displayTwoDigits = false) {
   const strValue = Math.floor(timeValue);
   return `${displayTwoDigits ? ("0" + strValue).slice(-2) : strValue.toLocaleString()}`;
 }
+
+export function timeSpanToDuration(timeSpan: string | undefined) {
+  if (!timeSpan) return dayjs.duration("PT0S");
+
+  const [days, rest] = timeSpan.split(".");
+  const [hours, minutes, seconds, milliseconds] = rest.split(/[:.]/);
+  const units = { days: parseInt(days) ?? 0, hours: parseInt(hours) ?? 0, minutes: parseInt(minutes) ?? 0, seconds: parseInt(seconds) ?? 0, milliseconds: parseInt(milliseconds) ?? 0 };
+
+  return dayjs.duration(units);
+}

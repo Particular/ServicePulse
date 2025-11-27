@@ -9,6 +9,7 @@ import dayjs from "@/utils/dayjs";
 import { useConfigurationStore } from "./ConfigurationStore";
 import FailureGroup from "@/resources/FailureGroup";
 import QueueAddress from "@/resources/QueueAddress";
+import { timeSpanToDuration } from "@/composables/formatter";
 
 const deletedPeriodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"] as const;
 const retryPeriodOptions = ["All Pending Retries", "Retried in the last 2 Hours", "Retried in the last 1 Day", "Retried in the last 7 Days"] as const;
@@ -100,6 +101,7 @@ export const useMessagesStore = defineStore("MessagesStore", () => {
             if (previousMessage.last_modified === receivedMessage.last_modified) {
               receivedMessage.retryInProgress = previousMessage.retryInProgress;
               receivedMessage.deleteInProgress = previousMessage.deleteInProgress;
+              receivedMessage.restoreInProgress = previousMessage.restoreInProgress;
               receivedMessage.submittedForRetrial = previousMessage.submittedForRetrial;
               receivedMessage.resolved = previousMessage.resolved;
             }
@@ -124,7 +126,7 @@ export const useMessagesStore = defineStore("MessagesStore", () => {
       case FailedMessageStatus.Archived:
         //check deletion time
         messages.forEach((message) => {
-          message.error_retention_period = dayjs.duration(configuration.value?.data_retention.error_retention_period ?? "PT0S").asHours();
+          message.error_retention_period = timeSpanToDuration(configuration.value?.data_retention.error_retention_period).asHours();
           const countdown = dayjs(message.last_modified).add(message.error_retention_period, "hours");
           message.delete_soon = countdown < dayjs();
           message.deleted_in = countdown.format();
