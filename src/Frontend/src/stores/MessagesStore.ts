@@ -11,7 +11,7 @@ import FailureGroup from "@/resources/FailureGroup";
 import QueueAddress from "@/resources/QueueAddress";
 
 const deletedPeriodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"] as const;
-const retryPeriodOptions = ["All Pending Retries", "Retried in the last 2 Hours", "Retried in the last 1 Day", "Retried in the last 7 Days"];
+const retryPeriodOptions = ["All Pending Retries", "Retried in the last 2 Hours", "Retried in the last 1 Day", "Retried in the last 7 Days"] as const;
 export type DeletedPeriodOption = (typeof deletedPeriodOptions)[number];
 export type RetryPeriodOption = (typeof retryPeriodOptions)[number];
 
@@ -138,7 +138,7 @@ export const useMessagesStore = defineStore("MessagesStore", () => {
   async function setMessageStatus(status: FailedMessageStatus) {
     if (controller) {
       // need to cancel any existing fetch which otherwise will set messages of the incorrect status
-      controller.abort();
+      controller.abort(`Switching status to ${status}`);
     }
     messageStatus = status;
     messages.value = [];
@@ -156,7 +156,7 @@ export const useMessagesStore = defineStore("MessagesStore", () => {
       case FailedMessageStatus.RetryIssued:
         {
           sortBy.value = "time_of_failure";
-          let retryMessagePeriod = cookies.cookies.get("pending_retries_period");
+          let retryMessagePeriod = cookies.cookies.get("pending_retries_period") as RetryPeriodOption;
           if (!retryMessagePeriod) {
             retryMessagePeriod = retryPeriodOptions[0]; //default All Pending Retries
           }
