@@ -17,7 +17,7 @@ import GroupOperation from "@/resources/GroupOperation";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faArrowRotateRight, faTrash, faDownload } from "@fortawesome/free-solid-svg-icons";
 import ActionButton from "@/components/ActionButton.vue";
 import { useMessageStore } from "@/stores/MessageStore";
-import { useMessagesStore } from "@/stores/MessagesStore";
+import { useRecoverabilityStore } from "@/stores/RecoverabilityStore";
 import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
 import { storeToRefs } from "pinia";
 import LoadingSpinner from "../LoadingSpinner.vue";
@@ -28,7 +28,7 @@ const POLLING_INTERVAL_FAST = 1000;
 const messageStore = useMessageStore();
 const messageGroupClient = createMessageGroupClient();
 const loading = ref(false);
-const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("messagesStore", useMessagesStore, POLLING_INTERVAL_NORMAL);
+const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("messagesStore", useRecoverabilityStore, POLLING_INTERVAL_NORMAL);
 const { store } = autoRefresh();
 const { messages, groupId, groupName, totalCount, pageNumber } = storeToRefs(store);
 

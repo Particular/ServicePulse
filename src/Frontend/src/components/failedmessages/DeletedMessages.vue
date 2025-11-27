@@ -13,14 +13,14 @@ import FAIcon from "@/components/FAIcon.vue";
 import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { storeToRefs } from "pinia";
 import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
-import { DeletedPeriodOption, useMessagesStore } from "@/stores/MessagesStore";
+import { DeletedPeriodOption, useRecoverabilityStore } from "@/stores/RecoverabilityStore";
 import LoadingSpinner from "../LoadingSpinner.vue";
 
 const POLLING_INTERVAL_NORMAL = 5000;
 const POLLING_INTERVAL_FAST = 1000;
 
 const loading = ref(false);
-const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("messagesStore", useMessagesStore, POLLING_INTERVAL_NORMAL);
+const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("messagesStore", useRecoverabilityStore, POLLING_INTERVAL_NORMAL);
 const { store } = autoRefresh();
 const { messages, groupId, groupName, totalCount, pageNumber, selectedPeriod } = storeToRefs(store);
 

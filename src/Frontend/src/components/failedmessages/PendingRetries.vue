@@ -18,10 +18,10 @@ import { faCheckSquare } from "@fortawesome/free-regular-svg-icons";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
 import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
-import { RetryPeriodOption, useMessagesStore } from "@/stores/MessagesStore";
+import { RetryPeriodOption, useRecoverabilityStore } from "@/stores/RecoverabilityStore";
 
 const loading = ref(false);
-const { autoRefresh } = useStoreAutoRefresh("messagesStore", useMessagesStore, 5000);
+const { autoRefresh } = useStoreAutoRefresh("messagesStore", useRecoverabilityStore, 5000);
 const { store } = autoRefresh();
 const { messages, totalCount, pageNumber, selectedPeriod, selectedQueue, endpoints } = storeToRefs(store);
 const configurationStore = useConfigurationStore();

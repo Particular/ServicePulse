@@ -16,7 +16,7 @@ const retryPeriodOptions = ["All Pending Retries", "Retried in the last 2 Hours"
 export type DeletedPeriodOption = (typeof deletedPeriodOptions)[number];
 export type RetryPeriodOption = (typeof retryPeriodOptions)[number];
 
-export const useMessagesStore = defineStore("MessagesStore", () => {
+export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   const route = useRoute();
   const groupId = ref<string>(route.params.groupId as string);
   const groupName = ref("");
@@ -265,7 +265,7 @@ export const useMessagesStore = defineStore("MessagesStore", () => {
 });
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useMessagesStore, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(useRecoverabilityStore, import.meta.hot));
 }
 
-export type MessagesStore = ReturnType<typeof useMessagesStore>;
+export type RecoverabilityStore = ReturnType<typeof useRecoverabilityStore>;
