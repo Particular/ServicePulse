@@ -25,8 +25,7 @@ const port = 5173;
 const defaultUrls = [
   "http://10.211.55.3:*", // The default Parallels url to access Windows VM
   "http://localhost:*",
-  "https://login.microsoftonline.com", // Entra ID authentication
-  "https://graph.microsoft.com", // Microsoft Graph API
+  "https://*",
 ];
 
 // https://vitejs.dev/config/
