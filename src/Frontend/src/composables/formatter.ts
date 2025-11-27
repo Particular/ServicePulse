@@ -77,12 +77,23 @@ function formatTimeValue(timeValue: number, displayTwoDigits = false) {
   return `${displayTwoDigits ? ("0" + strValue).slice(-2) : strValue.toLocaleString()}`;
 }
 
+export function parseTimeSpan(timeSpan: string) {
+  // Split on period first to handle multi-digit days
+  const parts = timeSpan.split(".");
+  let days = 0;
+  let timeComponent = timeSpan;
+
+  if (parts.length > 1) {
+    days = parseInt(parts[0], 10);
+    timeComponent = parts[1];
+  }
+
+  const [hours, minutes, seconds] = timeComponent.split(":").map(Number);
+  return { days, hours, minutes, seconds };
+}
+
 export function timeSpanToDuration(timeSpan: string | undefined) {
   if (!timeSpan) return dayjs.duration("PT0S");
 
-  const [days, rest] = timeSpan.split(".");
-  const [hours, minutes, seconds, milliseconds] = rest.split(/[:.]/);
-  const units = { days: parseInt(days) ?? 0, hours: parseInt(hours) ?? 0, minutes: parseInt(minutes) ?? 0, seconds: parseInt(seconds) ?? 0, milliseconds: parseInt(milliseconds) ?? 0 };
-
-  return dayjs.duration(units);
+  return dayjs.duration(parseTimeSpan(timeSpan));
 }
