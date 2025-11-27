@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
+import { computed, onBeforeMount, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useShowToast } from "../../composables/toast";
 import { downloadFileFromString } from "../../composables/fileDownloadCreator";
 import { onBeforeRouteLeave } from "vue-router";
@@ -190,11 +190,11 @@ watch(isRetryOrDeleteOperationInProgress, (retryOrDeleteOperationInProgress) => 
   }
 });
 
-onMounted(async () => {
+onBeforeMount(async () => {
   loading.value = true;
   await store.setMessageStatus(FailedMessageStatus.Unresolved);
-  loading.value = false;
 });
+onMounted(() => (loading.value = false));
 </script>
 
 <template>

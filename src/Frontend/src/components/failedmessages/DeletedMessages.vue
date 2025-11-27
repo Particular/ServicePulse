@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onBeforeMount, onMounted, ref, watch } from "vue";
 import { useShowToast } from "../../composables/toast";
 import { onBeforeRouteLeave } from "vue-router";
 import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
@@ -76,11 +76,11 @@ watch(isRestoreInProgress, (restoreInProgress) => {
   }
 });
 
-onMounted(async () => {
+onBeforeMount(async () => {
   loading.value = true;
   await store.setMessageStatus(FailedMessageStatus.Archived);
-  loading.value = false;
 });
+onMounted(() => (loading.value = false));
 </script>
 
 <template>

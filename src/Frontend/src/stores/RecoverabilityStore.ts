@@ -40,6 +40,9 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
 
   const cookies = useCookies();
 
+  //keep track of first load after a status change, so that loading of subcomponents that initiate a refresh (e.g. OrderBy) don't cause a double refresh on "page" load
+  let loaded = false;
+
   watch(pageNumber, () => refresh());
 
   let controller: AbortController | null;
@@ -110,8 +113,11 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
           }
         });
       }
+
       messages.value = updateMessages(data);
+      loaded = true;
     } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") return;
       console.error(err);
     }
   }
@@ -140,8 +146,9 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   async function setMessageStatus(status: FailedMessageStatus) {
     if (controller) {
       // need to cancel any existing fetch which otherwise will set messages of the incorrect status
-      controller.abort(`Aborting current fetch; Switching status to ${status}`);
+      controller.abort();
     }
+    loaded = false;
     messageStatus = status;
     messages.value = [];
     //reset all the paging variables
@@ -173,27 +180,30 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
 
     groupId.value = route.params.groupId as string;
 
-    await refresh();
+    //Refresh is handled by the autoRefresh setup on the respective views, so doing it here also would cause a double refresh
+    //await refresh();
   }
 
   async function setSort(sort: string, direction?: SortDirection) {
+    sortBy.value = sort;
+    sortDirection.value = direction ?? SortDirection.Descending;
+    if (!loaded) return;
     if (controller) {
       // need to cancel any existing fetch which otherwise will set messages of the incorrect sort
       controller.abort();
     }
-    sortBy.value = sort;
-    sortDirection.value = direction ?? SortDirection.Descending;
     messages.value = [];
     await refresh();
   }
 
   async function setPeriod(period: DeletedPeriodOption | RetryPeriodOption) {
+    selectedPeriod.value = period;
+    cookies.cookies.set(messageStatus === FailedMessageStatus.Archived ? "all_deleted_messages_period" : "pending_retries_period", period);
+    if (!loaded) return;
     if (controller) {
       // need to cancel any existing fetch which otherwise will set messages of the incorrect period
       controller.abort();
     }
-    selectedPeriod.value = period;
-    cookies.cookies.set(messageStatus === FailedMessageStatus.Archived ? "all_deleted_messages_period" : "pending_retries_period", period);
     messages.value = [];
     await refresh();
   }

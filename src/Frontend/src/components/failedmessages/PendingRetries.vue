@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef } from "vue";
+import { onBeforeMount, onMounted, ref, useTemplateRef } from "vue";
 import { useShowToast } from "../../composables/toast";
 import OrderBy from "@/components/OrderBy.vue";
 import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
@@ -122,11 +122,11 @@ async function periodChanged(period: RetryPeriodOption) {
   loading.value = false;
 }
 
-onMounted(async () => {
+onBeforeMount(async () => {
   loading.value = true;
   await store.setMessageStatus(FailedMessageStatus.RetryIssued);
-  loading.value = false;
 });
+onMounted(() => (loading.value = false));
 </script>
 
 <template>
