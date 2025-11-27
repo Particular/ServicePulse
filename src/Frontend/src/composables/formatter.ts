@@ -1,19 +1,28 @@
-import moment from "moment";
+import dayjs from "@/utils/dayjs";
 
-const secondDuration = moment.duration(1000);
-const minuteDuration = moment.duration(60 * 1000);
-const hourDuration = moment.duration(60 * 60 * 1000); //this ensures that we never use minute formatting
-const dayDuration = moment.duration(24 * 60 * 60 * 1000);
+const secondDuration = dayjs.duration(1000);
+const minuteDuration = dayjs.duration(60 * 1000);
+const hourDuration = dayjs.duration(60 * 60 * 1000); //this ensures that we never use minute formatting
+const dayDuration = dayjs.duration(24 * 60 * 60 * 1000);
 
 export interface ValueWithUnit {
   value: string;
   unit: string;
 }
 
+export function createDateWithDayOffset(daysOffset: number = 0): Date {
+  const date = new Date();
+  if (daysOffset !== 0) {
+    date.setDate(date.getDate() + daysOffset);
+  }
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
 export function useFormatTime(value?: number): ValueWithUnit {
   const time = { value: "0", unit: "ms" };
   if (value) {
-    const duration = moment.duration(value);
+    const duration = dayjs.duration(value);
     if (duration >= dayDuration) {
       time.value = formatTimeValue(duration.days()) + " d " + formatTimeValue(duration.hours()) + " hrs";
     } else if (duration >= hourDuration) {
@@ -35,10 +44,12 @@ export function useFormatTime(value?: number): ValueWithUnit {
 }
 
 export function useGetDayDiffFromToday(value: string) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const diff = new Date(value.replace("Z", "")).getTime() - today.getTime();
-  return Math.round(diff / 1000 / 60 / 60 / 24);
+  const today = createDateWithDayOffset();
+  const inputDate = new Date(value.replace("Z", ""));
+  const diff = inputDate.getTime() - today.getTime();
+  const days = Math.round(diff / 1000 / 60 / 60 / 24);
+  // Ensure we don't return -0
+  return days === 0 ? 0 : days;
 }
 
 export function useFormatLargeNumber(num: number, decimals: number) {

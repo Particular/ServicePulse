@@ -1,5 +1,6 @@
 import CustomCheck, { Status } from "@/resources/CustomCheck";
 import { SetupFactoryOptions } from "../driver";
+import { createDateWithDayOffset } from "@/composables/formatter";
 const emptyContent = JSON.stringify([]);
 
 export const hasCustomChecksEmpty = ({ driver }: SetupFactoryOptions) => {
@@ -45,8 +46,7 @@ export const generateCustomChecksData = (failingCount: number, passingCount: num
   // Create checks (both failing and passing)
   const customChecks = Array.from({ length: totalCount }).map((_, index) => {
     // Generate the date based on the index
-    const date = new Date();
-    date.setDate(date.getDate() - index); // Subtract `index` days from the current date
+    const date = createDateWithDayOffset(-index); // Subtract `index` days from the current date
     const reportedAt = date.toISOString(); // Convert to ISO string format
 
     // Determine status and failure reason

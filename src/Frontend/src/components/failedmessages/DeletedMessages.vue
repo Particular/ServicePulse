@@ -8,7 +8,7 @@ import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
-import moment from "moment";
+import dayjs from "@/utils/dayjs";
 import { ExtendedFailedMessage } from "@/resources/FailedMessage";
 import { TYPE } from "vue-toastification";
 import FailureGroup from "@/resources/FailureGroup";
@@ -122,9 +122,9 @@ function loadPagedMessages(groupId?: string, page: number = 1, sortBy: string = 
 function updateMessagesScheduledDeletionDate(messages: ExtendedFailedMessage[]) {
   //check deletion time
   messages.forEach((message) => {
-    message.error_retention_period = moment.duration(configuration.value?.data_retention.error_retention_period).asHours();
-    const countdown = moment(message.last_modified).add(message.error_retention_period, "hours");
-    message.delete_soon = countdown < moment();
+    message.error_retention_period = dayjs.duration(configuration.value?.data_retention.error_retention_period ?? "PT0S").asHours();
+    const countdown = dayjs(message.last_modified).add(message.error_retention_period, "hours");
+    message.delete_soon = countdown < dayjs();
     message.deleted_in = countdown.format();
   });
   return messages;

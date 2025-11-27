@@ -1,7 +1,7 @@
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import type { Moment } from "moment";
+import type { Dayjs } from "dayjs";
 
-export type GroupPropertyType = string | number | Date | Moment | boolean;
+export type GroupPropertyType = string | number | Date | Dayjs | boolean;
 
 export default interface SortOptions<T> {
   description: string;
