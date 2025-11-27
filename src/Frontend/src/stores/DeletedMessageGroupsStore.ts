@@ -32,7 +32,7 @@ export const useDeletedMessageGroupsStore = defineStore("DeletedMessageGroupsSto
   let undismissedRestoreGroups: ExtendedFailureGroupView[] = [];
 
   const serviceControlStore = useServiceControlStore();
-  const messageGroupClient = new MessageGroupClient(serviceControlStore);
+  const messageGroupClient = new MessageGroupClient();
 
   const cookies = useCookies();
 
@@ -113,7 +113,7 @@ export const useDeletedMessageGroupsStore = defineStore("DeletedMessageGroupsSto
 
     const result = await messageGroupClient.restoreGroup(group.id);
     if (messageGroupClient.isError(result)) {
-      return { result: true, errorMessage: result.message };
+      return { result: false, errorMessage: result.message };
     }
     return { result: true };
   }
