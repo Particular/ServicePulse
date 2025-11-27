@@ -3,6 +3,8 @@ import QueueAddress from "@/resources/QueueAddress";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { reactive } from "vue";
 import { useServiceControlStore } from "./ServiceControlStore";
+import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
+import { RetryRedirect } from "@/components/configuration/RetryRedirectEdit.vue";
 
 export interface Redirects {
   data: Redirect[];
@@ -18,6 +20,8 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
   });
 
   const serviceControlStore = useServiceControlStore();
+  const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
+  const hasResponseStatusInHeader = environmentStore.serviceControlIsGreaterThan("5.2.0");
 
   async function getKnownQueues() {
     const [, data] = await serviceControlStore.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
@@ -43,7 +47,40 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
     };
   }
 
-  return { refresh, redirects, retryPendingMessagesForQueue };
+  async function updateRedirect(redirect: RetryRedirect) {
+    return handleResponse(
+      await serviceControlStore.putToServiceControl(`redirects/${redirect.redirectId}`, {
+        id: redirect.redirectId,
+        fromphysicaladdress: redirect.sourceQueue,
+        tophysicaladdress: redirect.targetQueue,
+      })
+    );
+  }
+
+  async function createRedirect(redirect: RetryRedirect) {
+    return handleResponse(
+      await serviceControlStore.postToServiceControl("redirects", {
+        fromphysicaladdress: redirect.sourceQueue,
+        tophysicaladdress: redirect.targetQueue,
+      })
+    );
+  }
+
+  async function deleteRedirect(redirectId: string) {
+    return handleResponse(await serviceControlStore.deleteFromServiceControl(`redirects/${redirectId}`));
+  }
+
+  function handleResponse(response: Response) {
+    const responseStatusText = hasResponseStatusInHeader.value ? response.headers.get("X-Particular-Reason") : response.statusText;
+    return {
+      message: response.ok ? "success" : `error:${response.statusText}`,
+      status: response.status,
+      statusText: responseStatusText,
+      data: response,
+    };
+  }
+
+  return { refresh, redirects, retryPendingMessagesForQueue, createRedirect, updateRedirect, deleteRedirect };
 });
 
 if (import.meta.hot) {

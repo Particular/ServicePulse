@@ -5,7 +5,7 @@ import type EndpointDetails from "@/resources/EndpointDetails";
 import { FailedMessage, ExceptionDetails, FailedMessageStatus } from "@/resources/FailedMessage";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import Message, { MessageStatus } from "@/resources/Message";
-import moment from "moment/moment";
+import dayjs from "@/utils/dayjs";
 import { parse, stringify } from "lossless-json";
 import xmlFormat from "xml-formatter";
 import { DataContainer } from "./DataContainer";
@@ -79,7 +79,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
   const areSimpleHeadersSupported = environmentStore.serviceControlIsGreaterThan("5.2.0");
 
   const { configuration } = storeToRefs(configStore);
-  const error_retention_period = computed(() => moment.duration(configuration.value?.data_retention?.error_retention_period).asHours());
+  const error_retention_period = computed(() => dayjs.duration(configuration.value?.data_retention?.error_retention_period ?? "PT0S").asHours());
 
   watch(serviceControlUrl, loadConfig, { immediate: true });
   async function loadConfig() {
@@ -137,8 +137,8 @@ export const useMessageStore = defineStore("MessageStore", () => {
       state.loading = false;
     }
 
-    const countdown = moment(state.data.failure_metadata.last_modified).add(error_retention_period.value, "hours");
-    state.data.failure_status.delete_soon = countdown < moment();
+    const countdown = dayjs(state.data.failure_metadata.last_modified).add(error_retention_period.value, "hours");
+    state.data.failure_status.delete_soon = countdown < dayjs();
     state.data.failure_metadata.deleted_in = countdown.format();
   }
 

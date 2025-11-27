@@ -1,5 +1,6 @@
 import { SetupFactoryOptions } from "../driver";
 import LicenseInfo, { LicenseStatus, LicenseType } from "@/resources/LicenseInfo";
+import { createDateWithDayOffset } from "@/composables/formatter";
 
 const licenseResponseTemplate = <LicenseInfo>{
   registered_to: "ACME Software",
@@ -70,17 +71,8 @@ const getLicenseMockedResponse =
   };
 
 function getCustomDateISOString(daysCount: number, isExpired: boolean) {
-  const today = new Date();
-  const customDate = new Date(today);
-  // Set hours, minutes, seconds, and milliseconds to 00
-  today.setHours(0, 0, 0, 0);
-  customDate.setHours(0, 0, 0, 0);
-
-  if (isExpired) {
-    customDate.setDate(today.getDate() - daysCount);
-  } else {
-    customDate.setDate(today.getDate() + daysCount);
-  }
+  const offset = isExpired ? -daysCount : daysCount;
+  const customDate = createDateWithDayOffset(offset);
 
   const nativeISOString = customDate.toISOString(); // e.g., "2026-02-02T14:23:45.123Z"
   const customISOString = nativeISOString.replace(/\.\d+Z$/, (match) => match.slice(0, -1).padEnd(8, "0") + "Z");
