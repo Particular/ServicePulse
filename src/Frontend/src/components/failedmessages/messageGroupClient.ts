@@ -7,7 +7,7 @@ export interface ErrorResponse {
   message: string;
 }
 
-class MessageGroupClient {
+export class MessageGroupClient {
   serviceControlStore: ServiceControlStore;
   constructor() {
     //this module is only called from within view setup or other pinia stores, so this call is lifecycle safe
