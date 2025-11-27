@@ -263,7 +263,7 @@ onMounted(() => {
             <div class="filter-input">
               <div class="input-group mb-3">
                 <label class="input-group-text"><FAIcon :icon="faFilter" size="sm" class="icon" /> <span class="hidden-xs">Filter</span></label>
-                <select class="form-select" id="inputGroupSelect01" onchange="this.dataset.chosen = true;" @change="loadPendingRetryMessages()" v-model="selectedQueue">
+                <select class="form-select" id="inputGroupSelect01" onchange="this.dataset.chosen = true" @change="loadPendingRetryMessages()" v-model="selectedQueue">
                   <option selected disabled hidden class="placeholder" value="empty">Select a queue...</option>
                   <option v-for="(endpoint, index) in endpoints" :key="index" :value="endpoint">
                     {{ endpoint }}
