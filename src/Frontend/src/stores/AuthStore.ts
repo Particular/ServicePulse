@@ -8,7 +8,8 @@ interface AuthConfigResponse {
   enabled: boolean;
   client_id: string;
   authority: string;
-  api_scope: string;
+  api_scopes: string;
+  audience: string;
 }
 
 export const useAuthStore = defineStore("auth", () => {
@@ -46,19 +47,23 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   function transformToAuthConfig(config: AuthConfigResponse): AuthConfig {
+    const apiScope = JSON.parse(config.api_scopes).join(" ");
     return {
       authority: config.authority,
       client_id: config.client_id,
       redirect_uri: window.location.origin,
       post_logout_redirect_uri: window.location.origin,
       response_type: "code",
-      scope: `${config.api_scope} openid profile email offline_access`,
+      scope: `${apiScope} openid profile email offline_access`,
       automaticSilentRenew: true,
       loadUserInfo: false,
       includeIdTokenInSilentRenew: true,
       silent_redirect_uri: window.location.origin + "/silent-renew.html",
       filterProtocolClaims: true,
       userStore: new WebStorageStateStore({ store: window.sessionStorage }),
+      extraQueryParams: {
+        audience: config.audience,
+      },
     };
   }
 
