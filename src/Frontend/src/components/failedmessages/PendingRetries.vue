@@ -1,46 +1,38 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, useTemplateRef, watch } from "vue";
+import { onBeforeMount, ref, useTemplateRef, watch } from "vue";
 import { useShowToast } from "../../composables/toast";
-import { useCookies } from "vue3-cookies";
 import OrderBy from "@/components/OrderBy.vue";
 import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
-import { ExtendedFailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
-import SortOptions, { SortDirection } from "@/resources/SortOptions";
-import QueueAddress from "@/resources/QueueAddress";
+import { FailedMessageStatus } from "@/resources/FailedMessage";
+import SortOptions from "@/resources/SortOptions";
 import { TYPE } from "vue-toastification";
 import GroupOperation from "@/resources/GroupOperation";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faInfoCircle, faExternalLink, faFilter, faTimes, faArrowRightRotate } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faCheckSquare } from "@fortawesome/free-regular-svg-icons";
-import serviceControlClient from "@/components/serviceControlClient";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
+import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
+import { RetryPeriodOption, useRecoverabilityStore } from "@/stores/RecoverabilityStore";
 
+const loading = ref(false);
+const { autoRefresh, isRefreshing } = useStoreAutoRefresh("messagesStore", useRecoverabilityStore, 5000);
+const { store } = autoRefresh();
+const { messages, totalCount, pageNumber, selectedPeriod, selectedQueue, endpoints } = storeToRefs(store);
 const configurationStore = useConfigurationStore();
 const { isMassTransitConnected } = storeToRefs(configurationStore);
 
-let refreshInterval: number | undefined;
-let sortMethod: SortOptions<GroupOperation> | undefined;
-const perPage = 50;
-const cookies = useCookies().cookies;
-const selectedPeriod = ref("All Pending Retries");
-const endpoints = ref<string[]>([]);
 const messageList = useTemplateRef<IMessageList>("messageList");
-const messages = ref<ExtendedFailedMessage[]>([]);
-const selectedQueue = ref("empty");
 const showConfirmRetry = ref(false);
 const showConfirmResolve = ref(false);
 const showConfirmResolveAll = ref(false);
 const showCantRetryAll = ref(false);
 const showRetryAllConfirm = ref(false);
-const pageNumber = ref(1);
-const totalCount = ref(0);
-const isInitialLoad = ref(true);
 const sortOptions: SortOptions<GroupOperation>[] = [
   {
     description: "Time of failure",
@@ -58,76 +50,6 @@ const sortOptions: SortOptions<GroupOperation>[] = [
     iconDesc: faArrowDownWideShort,
   },
 ];
-const periodOptions = ["All Pending Retries", "Retried in the last 2 Hours", "Retried in the last 1 Day", "Retried in the last 7 Days"];
-
-watch(pageNumber, () => loadPendingRetryMessages());
-
-async function loadEndpoints() {
-  const [, data] = await serviceControlClient.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
-  endpoints.value = data.map((endpoint) => endpoint.physical_address);
-}
-
-function clearSelectedQueue() {
-  selectedQueue.value = "empty";
-  loadPendingRetryMessages();
-}
-
-function loadPendingRetryMessages() {
-  let startDate = new Date(0);
-  const endDate = new Date();
-
-  switch (selectedPeriod.value) {
-    case "Retried in the last 2 Hours":
-      startDate = new Date();
-      startDate.setHours(startDate.getHours() - 2);
-      break;
-
-    case "Retried in the last 1 Day":
-      startDate = new Date();
-      startDate.setHours(startDate.getHours() - 24);
-      break;
-
-    case "Retried in the last 7 days":
-      startDate = new Date();
-      startDate.setHours(startDate.getHours() - 24 * 7);
-      break;
-  }
-
-  return loadPagedPendingRetryMessages(pageNumber.value, selectedQueue.value, startDate, endDate, sortMethod?.description.replaceAll(" ", "_").toLowerCase(), sortMethod?.dir);
-}
-
-async function loadPagedPendingRetryMessages(page: number, searchPhrase: string, startDate: Date, endDate: Date, sortBy?: string, direction?: SortDirection) {
-  sortBy ??= "time_of_failure";
-  direction ??= SortDirection.Descending;
-  if (searchPhrase === "empty") searchPhrase = "";
-
-  try {
-    const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
-      `errors?status=${FailedMessageStatus.RetryIssued}&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate.toISOString()}...${endDate.toISOString()}`
-    );
-    totalCount.value = parseInt(response.headers.get("Total-Count") ?? "0");
-
-    messages.value.forEach((previousMessage: ExtendedFailedMessage) => {
-      const receivedMessage = data.find((m) => m.id === previousMessage.id);
-      if (receivedMessage) {
-        if (previousMessage.last_modified === receivedMessage.last_modified) {
-          receivedMessage.submittedForRetrial = previousMessage.submittedForRetrial;
-          receivedMessage.resolved = previousMessage.resolved;
-        }
-
-        receivedMessage.selected = previousMessage.selected;
-      }
-    });
-
-    messages.value = data;
-  } catch (err) {
-    console.log(err);
-    const result = {
-      message: "error",
-    };
-    return result;
-  }
-}
 
 function numberDisplayed() {
   return messageList.value?.numberDisplayed();
@@ -149,10 +71,7 @@ async function retrySelectedMessages() {
   const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
 
   useShowToast(TYPE.INFO, "Info", "Selected messages were submitted for retry...");
-  await serviceControlClient.postToServiceControl(
-    "pendingretries/retry",
-    selectedMessages.map((m) => m.id)
-  );
+  await store.retryById(selectedMessages.map((m) => m.id));
 
   messageList.value?.deselectAll();
   selectedMessages.forEach((m) => (m.submittedForRetrial = true));
@@ -162,30 +81,20 @@ async function resolveSelectedMessages() {
   const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
 
   useShowToast(TYPE.INFO, "Info", "Selected messages were marked as resolved.");
-  await serviceControlClient.patchToServiceControl("pendingretries/resolve", { uniquemessageids: selectedMessages.map((m) => m.id) });
+  await store.resolveById(selectedMessages.map((m) => m.id));
   messageList.value?.deselectAll();
   selectedMessages.forEach((m) => (m.resolved = true));
 }
 
 async function resolveAllMessages() {
   useShowToast(TYPE.INFO, "Info", "All filtered messages were marked as resolved.");
-  await serviceControlClient.patchToServiceControl("pendingretries/resolve", { from: new Date(0).toISOString(), to: new Date().toISOString() });
+  await store.resolveAll();
   messageList.value?.deselectAll();
   messageList.value?.resolveAll();
 }
 
 async function retryAllMessages() {
-  let url = "pendingretries/retry";
-  const data: { from: string; to: string; queueaddress?: string } = {
-    from: new Date(0).toISOString(),
-    to: new Date(0).toISOString(),
-  };
-  if (selectedQueue.value !== "empty") {
-    url = "pendingretries/queues/retry";
-    data.queueaddress = selectedQueue.value;
-  }
-
-  await serviceControlClient.postToServiceControl(url, data);
+  await store.retryAll();
   messages.value.forEach((message) => {
     message.selected = false;
     message.submittedForRetrial = true;
@@ -201,44 +110,25 @@ function retryAllClicked() {
   }
 }
 
-function sortGroups(sort: SortOptions<GroupOperation>) {
-  sortMethod = sort;
-
-  if (!isInitialLoad.value) {
-    loadPendingRetryMessages();
-  }
+async function sortGroups(sort: SortOptions<GroupOperation>) {
+  loading.value = true;
+  await store.setSort(sort.description.replaceAll(" ", "_").toLowerCase(), sort.dir);
+  loading.value = false;
 }
 
-function periodChanged(period: string) {
-  selectedPeriod.value = period;
-  cookies.set("pending_retries_period", period);
-
-  loadPendingRetryMessages();
+async function periodChanged(period: RetryPeriodOption) {
+  loading.value = true;
+  await store.setPeriod(period);
+  loading.value = false;
 }
 
-onUnmounted(() => {
-  if (refreshInterval != null) {
-    window.clearInterval(refreshInterval);
-  }
+onBeforeMount(async () => {
+  loading.value = true;
+  //set status before mount to ensure no other controls/processes can cause extra refreshes during mount
+  await store.setMessageStatus(FailedMessageStatus.RetryIssued);
 });
-
-onMounted(() => {
-  let cookiePeriod = cookies.get("pending_retries_period");
-  if (!cookiePeriod) {
-    cookiePeriod = periodOptions[0]; //default All Pending Retries
-  }
-
-  selectedPeriod.value = cookiePeriod;
-
-  loadEndpoints();
-
-  loadPendingRetryMessages();
-
-  refreshInterval = window.setInterval(() => {
-    loadPendingRetryMessages();
-  }, 5000);
-
-  isInitialLoad.value = false;
+watch(isRefreshing, () => {
+  if (!isRefreshing.value && loading.value) loading.value = false;
 });
 </script>
 
@@ -262,14 +152,14 @@ onMounted(() => {
             <div class="filter-input">
               <div class="input-group mb-3">
                 <label class="input-group-text"><FAIcon :icon="faFilter" size="sm" class="icon" /> <span class="hidden-xs">Filter</span></label>
-                <select class="form-select" id="inputGroupSelect01" onchange="this.dataset.chosen = true;" @change="loadPendingRetryMessages()" v-model="selectedQueue">
+                <select class="form-select" id="inputGroupSelect01" onchange="this.dataset.chosen = true" @change="store.refresh()" v-model="selectedQueue">
                   <option selected disabled hidden class="placeholder" value="empty">Select a queue...</option>
                   <option v-for="(endpoint, index) in endpoints" :key="index" :value="endpoint">
                     {{ endpoint }}
                   </option>
                 </select>
                 <span class="input-group-btn">
-                  <ActionButton @click="clearSelectedQueue()" :icon="faTimes" />
+                  <ActionButton @click="store.clearSelectedQueue()" :icon="faTimes" />
                 </span>
               </div>
             </div>
@@ -282,7 +172,7 @@ onMounted(() => {
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu">
-                <li v-for="(period, index) in periodOptions" :key="index">
+                <li v-for="(period, index) in store.retryPeriodOptions" :key="index">
                   <a @click.prevent="periodChanged(period)">{{ period }}</a>
                 </li>
               </ul>
@@ -306,7 +196,7 @@ onMounted(() => {
           </div>
         </div>
         <div class="row">
-          <PaginationStrip v-model="pageNumber" :total-count="totalCount" :items-per-page="perPage" />
+          <PaginationStrip v-model="pageNumber" :total-count="totalCount" :items-per-page="store.perPage" />
         </div>
         <Teleport to="#modalDisplay">
           <ConfirmDialog

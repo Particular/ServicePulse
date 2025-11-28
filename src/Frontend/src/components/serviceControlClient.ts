@@ -12,8 +12,8 @@ class ServiceControlClient {
     this._url = undefined;
   }
 
-  public async fetchTypedFromServiceControl<T>(suffix: string): Promise<[Response, T]> {
-    const response = await fetch(`${this.url}${suffix}`);
+  public async fetchTypedFromServiceControl<T>(suffix: string, signal?: AbortSignal): Promise<[Response, T]> {
+    const response = await fetch(`${this.url}${suffix}`, { signal });
     if (!response.ok) throw new Error(response.statusText ?? "No response");
     const data = await response.json();
 
