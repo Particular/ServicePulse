@@ -1,3 +1,4 @@
+import monitoringClient from "@/components/monitoring/monitoringClient";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -5,16 +6,14 @@ import { useMonitoringHistoryPeriodStore } from "./MonitoringHistoryPeriodStore"
 import type { EndpointGroup, Endpoint, GroupedEndpoint } from "@/resources/MonitoringEndpoint";
 import type { SortInfo } from "@/components/SortInfo";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
-import { useServiceControlStore } from "./ServiceControlStore";
 import GroupOperation from "@/resources/GroupOperation";
+import serviceControlClient from "@/components/serviceControlClient";
 
 export const useMonitoringStore = defineStore("MonitoringStore", () => {
   const historyPeriodStore = useMonitoringHistoryPeriodStore();
-
   const route = useRoute();
   const router = useRouter();
   const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-  const serviceControlStore = useServiceControlStore();
 
   //STORE STATE CONSTANTS
   const grouping = ref({
@@ -29,7 +28,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
   });
 
   const endpointList = ref<Endpoint[]>([]);
-  const disconnectedEndpointCount = ref(0);
   const filterString = ref("");
   const endpointListCount = computed<number>(() => endpointList.value.length);
   const endpointListIsEmpty = computed<boolean>(() => endpointListCount.value === 0);
@@ -73,11 +71,10 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
 
   async function getAllMonitoredEndpoints() {
     let endpoints: Endpoint[] = [];
-    if (serviceControlStore.isMonitoringEnabled) {
+    if (monitoringClient.isMonitoringEnabled) {
       try {
-        const [, data] = await serviceControlStore.fetchTypedFromMonitoring<Endpoint[]>(`monitored-endpoints?history=${historyPeriodStore.historyPeriod.pVal}`);
-        endpoints = data ?? [];
-        const [, exceptionGroups] = await serviceControlStore.fetchTypedFromServiceControl<GroupOperation[]>(`recoverability/groups/Endpoint Name`);
+        endpoints = await monitoringClient.getMonitoredEndpoints(historyPeriodStore.historyPeriod.pVal);
+        const [, exceptionGroups] = await serviceControlClient.fetchTypedFromServiceControl<GroupOperation[]>(`recoverability/groups/Endpoint Name`);
 
         //Squash and add to existing monitored endpoints
         if (exceptionGroups.length > 0) {
@@ -203,13 +200,10 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
   return {
     //state
     grouping,
-    endpointList,
-    disconnectedEndpointCount,
     filterString,
     sortBy,
 
     //getters
-    endpointListCount,
     endpointListIsEmpty,
     endpointListIsGrouped,
     getEndpointList,

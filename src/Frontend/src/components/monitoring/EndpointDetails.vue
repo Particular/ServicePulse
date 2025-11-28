@@ -20,7 +20,7 @@ import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPerio
 import routeLinks from "@/router/routeLinks";
 import FAIcon from "@/components/FAIcon.vue";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import monitoringClient from "./monitoringClient";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
@@ -30,13 +30,12 @@ const router = useRouter();
 const endpointName = route.params.endpointName.toString();
 let refreshInterval: number;
 
-const monitoringStore = useMonitoringEndpointDetailsStore();
+const monitoringEndpointDetailsStore = useMonitoringEndpointDetailsStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
-const serviceControlStore = useServiceControlStore();
-const { isMonitoringDisabled } = storeToRefs(serviceControlStore);
+const isMonitoringDisabled = monitoringClient.isMonitoringDisabled;
 
 const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
-const { negativeCriticalTimeIsPresent, endpointDetails: endpoint } = storeToRefs(monitoringStore);
+const { negativeCriticalTimeIsPresent, endpointDetails: endpoint } = storeToRefs(monitoringEndpointDetailsStore);
 
 watch(historyPeriod, (newValue) => {
   changeRefreshInterval(newValue.refreshIntervalVal);
@@ -57,7 +56,7 @@ const activeTab = computed({
 });
 
 async function getEndpointDetails() {
-  await monitoringStore.getEndpointDetails(endpointName);
+  await monitoringEndpointDetailsStore.getEndpointDetails(endpointName);
 }
 
 function changeRefreshInterval(milliseconds: number) {

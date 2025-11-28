@@ -12,19 +12,16 @@ import ColumnHeader from "@/components/ColumnHeader.vue";
 import { CriticalTime, InstanceName, ProcessingTime, ScheduledRetries, Throughput } from "@/resources/MonitoringResources";
 import FAIcon from "@/components/FAIcon.vue";
 import { faEnvelope, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import monitoringClient from "./monitoringClient";
 
 const isRemovingEndpointEnabled = ref<boolean>(false);
 const router = useRouter();
-
-const monitoringStore = useMonitoringEndpointDetailsStore();
-const { endpointDetails: endpoint, endpointName } = storeToRefs(monitoringStore);
-
-const serviceControlStore = useServiceControlStore();
+const monitoringEndpointDetailsStore = useMonitoringEndpointDetailsStore();
+const { endpointDetails: endpoint, endpointName } = storeToRefs(monitoringEndpointDetailsStore);
 
 async function removeEndpoint(endpointName: string, instance: ExtendedEndpointInstance) {
   try {
-    await serviceControlStore.deleteFromMonitoring("monitored-instance/" + endpointName + "/" + instance.id);
+    await monitoringClient.deletedMonitoredEndpoint(endpointName, instance.id);
     endpoint.value.instances.splice(endpoint.value.instances.indexOf(instance), 1);
     if (endpoint.value.instances.length === 0) {
       router.push(routeLinks.monitoring.root);
@@ -35,25 +32,8 @@ async function removeEndpoint(endpointName: string, instance: ExtendedEndpointIn
   }
 }
 
-async function getIsRemovingEndpointEnabled() {
-  try {
-    const response = await serviceControlStore.optionsFromMonitoring();
-    if (response) {
-      const headers = response.headers;
-      const allow = headers.get("Allow");
-      if (allow) {
-        const deleteAllowed = allow.indexOf("DELETE") >= 0;
-        return deleteAllowed;
-      }
-    }
-  } catch (err) {
-    console.log(err);
-  }
-  return false;
-}
-
 onMounted(async () => {
-  isRemovingEndpointEnabled.value = await getIsRemovingEndpointEnabled();
+  isRemovingEndpointEnabled.value = await monitoringClient.isRemovingEndpointEnabled();
 });
 </script>
 

@@ -6,13 +6,12 @@ import ThroughputSupported from "@/views/throughputreport/ThroughputSupported.vu
 import FAIcon from "@/components/FAIcon.vue";
 import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoRefresh";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import monitoringClient from "@/components/monitoring/monitoringClient";
 
 const { store } = useThroughputStoreAutoRefresh();
 const { testResults, isBrokerTransport } = storeToRefs(store);
 
-const serviceControlStore = useServiceControlStore();
-const { isMonitoringEnabled } = storeToRefs(serviceControlStore);
+const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
 </script>
 
 <template>

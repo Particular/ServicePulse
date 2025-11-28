@@ -2,7 +2,7 @@ import Redirect from "@/resources/Redirect";
 import QueueAddress from "@/resources/QueueAddress";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { reactive } from "vue";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 import { RetryRedirect } from "@/components/configuration/RetryRedirectEdit.vue";
 
@@ -19,17 +19,16 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
     total: 0,
   });
 
-  const serviceControlStore = useServiceControlStore();
   const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
   const hasResponseStatusInHeader = environmentStore.serviceControlIsGreaterThan("5.2.0");
 
   async function getKnownQueues() {
-    const [, data] = await serviceControlStore.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
+    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
     redirects.queues = data.map((x) => x.physical_address);
   }
 
   async function getRedirects() {
-    const [response, data] = await serviceControlStore.fetchTypedFromServiceControl<Redirect[]>("redirects");
+    const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<Redirect[]>("redirects");
     redirects.total = parseInt(response.headers.get("Total-Count") || "0");
     redirects.data = data;
   }
@@ -39,7 +38,7 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
   }
 
   async function retryPendingMessagesForQueue(queueName: string) {
-    const response = await serviceControlStore.postToServiceControl(`errors/queues/${queueName}/retry`);
+    const response = await serviceControlClient.postToServiceControl(`errors/queues/${queueName}/retry`);
     return {
       message: response.ok ? "success" : `error:${response.statusText}`,
       status: response.status,
@@ -49,7 +48,7 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
 
   async function updateRedirect(redirect: RetryRedirect) {
     return handleResponse(
-      await serviceControlStore.putToServiceControl(`redirects/${redirect.redirectId}`, {
+      await serviceControlClient.putToServiceControl(`redirects/${redirect.redirectId}`, {
         id: redirect.redirectId,
         fromphysicaladdress: redirect.sourceQueue,
         tophysicaladdress: redirect.targetQueue,
@@ -59,7 +58,7 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
 
   async function createRedirect(redirect: RetryRedirect) {
     return handleResponse(
-      await serviceControlStore.postToServiceControl("redirects", {
+      await serviceControlClient.postToServiceControl("redirects", {
         fromphysicaladdress: redirect.sourceQueue,
         tophysicaladdress: redirect.targetQueue,
       })
@@ -67,7 +66,7 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
   }
 
   async function deleteRedirect(redirectId: string) {
-    return handleResponse(await serviceControlStore.deleteFromServiceControl(`redirects/${redirectId}`));
+    return handleResponse(await serviceControlClient.deleteFromServiceControl(`redirects/${redirectId}`));
   }
 
   function handleResponse(response: Response) {

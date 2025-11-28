@@ -1,14 +1,13 @@
-import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
+import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
-import { FailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
+import { FailedMessageStatus } from "@/resources/FailedMessage";
 import { ConnectionState } from "@/resources/ConnectionState";
 import { useCounter } from "@vueuse/core";
-import { useServiceControlStore } from "./ServiceControlStore";
+import monitoringClient from "@/components/monitoring/monitoringClient";
+import serviceControlClient from "@/components/serviceControlClient";
 
 export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore", () => {
-  const serviceControlStore = useServiceControlStore();
-  const { isMonitoringEnabled } = storeToRefs(serviceControlStore);
-
+  const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
   const failedMessageCount = ref(0);
   const archivedMessageCount = ref(0);
   const pendingRetriesMessageCount = ref(0);
@@ -16,7 +15,7 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
 
   const { count: requiresFullFailureDetailsSubscriberCount, inc, dec } = useCounter(0);
   function requiresFullFailureDetails() {
-    onMounted(() => inc());
+    onMounted(() => inc()); //NOTE: not forcing a refresh here since we expect the view utilising this store to also setup a refresh on mount
     onUnmounted(() => dec());
   }
 
@@ -34,7 +33,7 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
     unableToConnect: null,
   });
 
-  const displayConnectionsWarning = computed(() => (connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && isMonitoringEnabled.value)) ?? false);
+  const displayConnectionsWarning = computed(() => (connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && isMonitoringEnabled)) ?? false);
 
   async function refresh() {
     const failedMessagesResult = getErrorMessagesCount(FailedMessageStatus.Unresolved);
@@ -51,23 +50,11 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
   }
 
   function getErrorMessagesCount(status: FailedMessageStatus) {
-    return fetchAndSetConnectionState(
-      () => serviceControlStore.fetchTypedFromServiceControl<FailedMessage>(`errors?status=${status}`),
-      connectionState,
-      (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
-      0
-    );
+    return fetchAndSetConnectionState(() => serviceControlClient.getErrorMessagesCount(status), connectionState);
   }
 
   function getDisconnectedEndpointsCount() {
-    return fetchAndSetConnectionState(
-      () => serviceControlStore.fetchTypedFromMonitoring<number>("monitored-endpoints/disconnected"),
-      monitoringConnectionState,
-      (_, data) => {
-        return data;
-      },
-      0
-    );
+    return fetchAndSetConnectionState(() => monitoringClient.getDisconnectedEndpointsCount(), monitoringConnectionState);
   }
 
   return {
@@ -83,19 +70,13 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
   };
 });
 
-async function fetchAndSetConnectionState<T, TResult>(fetchFunction: () => Promise<[Response?, T?]>, connectionState: ConnectionState, action: (response: Response, data: T) => TResult, defaultResult: TResult) {
+async function fetchAndSetConnectionState(fetchFunction: () => Promise<number | undefined>, connectionState: ConnectionState) {
   if (connectionState.connecting) {
     //Skip the connection state checking
-    try {
-      const [response, data] = await fetchFunction();
-      if (response != null && data != null) {
-        return await action(response, data);
-      }
-    } catch (err) {
-      console.log(err);
-      return defaultResult;
-    }
+    const data = await fetchFunction();
+    return data ?? 0;
   }
+
   try {
     if (!connectionState.connected) {
       connectionState.connecting = true;
@@ -103,19 +84,13 @@ async function fetchAndSetConnectionState<T, TResult>(fetchFunction: () => Promi
     }
 
     try {
-      const [response, data] = await fetchFunction();
-      let result: TResult | null = null;
-      if (response != null && data != null) {
-        result = await action(response, data);
-      }
+      const data = await fetchFunction();
       connectionState.unableToConnect = false;
       connectionState.connectedRecently = true;
       connectionState.connected = true;
       connectionState.connecting = false;
 
-      if (result) {
-        return result;
-      }
+      return data ?? 0;
     } catch (err) {
       connectionState.connected = false;
       connectionState.unableToConnect = true;
@@ -128,7 +103,7 @@ async function fetchAndSetConnectionState<T, TResult>(fetchFunction: () => Promi
     connectionState.connected = false;
   }
 
-  return defaultResult;
+  return 0;
 }
 
 if (import.meta.hot) {

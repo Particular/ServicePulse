@@ -1,4 +1,4 @@
-import { ServiceControlStore, useServiceControlStore } from "@/stores/ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import type GroupOperation from "@/resources/GroupOperation";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -7,53 +7,47 @@ export interface ErrorResponse {
   message: string;
 }
 
-class MessageGroupClient {
-  serviceControlStore: ServiceControlStore;
-  constructor() {
-    //this module is only called from within view setup or other pinia stores, so this call is lifecycle safe
-    this.serviceControlStore = useServiceControlStore();
-  }
-
+export class MessageGroupClient {
   public async getExceptionGroups(classifier: string = "") {
-    const [, data] = await this.serviceControlStore.fetchTypedFromServiceControl<GroupOperation[]>(`recoverability/groups/${classifier}`);
+    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<GroupOperation[]>(`recoverability/groups/${classifier}`);
     return data;
   }
 
   public async getExceptionGroupsForEndpoint(classifier: string = "", classiferFilter = "") {
-    const [, data] = await this.serviceControlStore.fetchTypedFromServiceControl<GroupOperation[]>(`recoverability/groups/${classifier}?classifierFilter=${classiferFilter}`);
+    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<GroupOperation[]>(`recoverability/groups/${classifier}?classifierFilter=${classiferFilter}`);
     return data;
   }
 
   //delete note by group id
   public async deleteNote(groupId: string) {
-    return this.evaluateResponse(await this.serviceControlStore.deleteFromServiceControl(`recoverability/groups/${groupId}/comment`));
+    return this.evaluateResponse(await serviceControlClient.deleteFromServiceControl(`recoverability/groups/${groupId}/comment`));
   }
 
   //edit or create note by group id
   public async editOrCreateNote(groupId: string, comment: string) {
-    return this.evaluateResponse(await this.serviceControlStore.postToServiceControl(`recoverability/groups/${groupId}/comment?comment=${comment}`));
+    return this.evaluateResponse(await serviceControlClient.postToServiceControl(`recoverability/groups/${groupId}/comment?comment=${comment}`));
   }
 
   //archive exception group by group id
   //archiveGroup
   public async archiveExceptionGroup(groupId: string) {
-    return this.evaluateResponse(await this.serviceControlStore.postToServiceControl(`recoverability/groups/${groupId}/errors/archive`));
+    return this.evaluateResponse(await serviceControlClient.postToServiceControl(`recoverability/groups/${groupId}/errors/archive`));
   }
 
   //restore group by group id
   public async restoreGroup(groupId: string) {
-    return this.evaluateResponse(await this.serviceControlStore.postToServiceControl(`recoverability/groups/${groupId}/errors/unarchive`));
+    return this.evaluateResponse(await serviceControlClient.postToServiceControl(`recoverability/groups/${groupId}/errors/unarchive`));
   }
 
   //retry exception group by group id
   //retryGroup
   public async retryExceptionGroup(groupId: string) {
-    return this.evaluateResponse(await this.serviceControlStore.postToServiceControl(`recoverability/groups/${groupId}/errors/retry`));
+    return this.evaluateResponse(await serviceControlClient.postToServiceControl(`recoverability/groups/${groupId}/errors/retry`));
   }
 
   //acknowledge archive exception group by group id
   public async acknowledgeArchiveGroup(groupId: string) {
-    return this.evaluateResponse(await this.serviceControlStore.deleteFromServiceControl(`recoverability/unacknowledgedgroups/${groupId}`));
+    return this.evaluateResponse(await serviceControlClient.deleteFromServiceControl(`recoverability/unacknowledgedgroups/${groupId}`));
   }
 
   evaluateResponse(response: Response): SuccessResponse | ErrorResponse {

@@ -1,10 +1,8 @@
 ﻿<script setup lang="ts">
 import routeLinks from "@/router/routeLinks";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
-import { storeToRefs } from "pinia";
+import monitoringClient from "./monitoringClient";
 
-const store = useServiceControlStore();
-const { monitoringUrl } = storeToRefs(store);
+const monitoringUrl = monitoringClient.url;
 </script>
 
 <template>

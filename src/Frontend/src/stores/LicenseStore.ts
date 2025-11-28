@@ -1,13 +1,11 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import LicenseInfo, { LicenseStatus } from "@/resources/LicenseInfo";
 import { LicenseWarningLevel } from "@/composables/LicenseStatus";
 import { useGetDayDiffFromToday } from "@/composables/formatter";
 
 export const useLicenseStore = defineStore("LicenseStore", () => {
-  const serviceControlStore = useServiceControlStore();
-
   const license = reactive<LicenseInfo>({
     edition: "",
     expiration_date: "",
@@ -98,7 +96,7 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
 
   async function getLicense() {
     try {
-      const [, data] = await serviceControlStore.fetchTypedFromServiceControl<LicenseInfo>("license?refresh=true&clientName=servicepulse");
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<LicenseInfo>("license?refresh=true&clientName=servicepulse");
       return data;
     } catch (err) {
       console.error("Error fetching license information", err);

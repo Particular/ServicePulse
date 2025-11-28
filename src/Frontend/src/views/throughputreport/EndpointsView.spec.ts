@@ -9,7 +9,6 @@ import makeRouter from "@/router";
 import { flushPromises, RouterLinkStub } from "@vue/test-utils";
 import EndpointsView from "./EndpointsView.vue";
 import { serviceControlWithThroughput } from "@/views/throughputreport/serviceControlWithThroughput";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { setActivePinia } from "pinia";
 
 describe("EndpointsView tests", () => {
@@ -28,8 +27,6 @@ describe("EndpointsView tests", () => {
 
     const driver = await setup(transport);
     await preSetup(driver);
-
-    useServiceControlStore();
 
     const { debug } = render(EndpointsView, {
       global: {
