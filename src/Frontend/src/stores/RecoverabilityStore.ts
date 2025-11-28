@@ -45,48 +45,76 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   watch(pageNumber, () => refresh());
 
   let controller: AbortController | null;
+
+  function updateDateRangeForPeriod() {
+    if (messageStatus !== FailedMessageStatus.Archived && messageStatus !== FailedMessageStatus.RetryIssued) return;
+
+    endDate.value = new Date();
+    const newStartDate = new Date();
+
+    switch (selectedPeriod.value) {
+      case "All Deleted":
+      case "All Pending Retries":
+        newStartDate.setHours(newStartDate.getHours() - 24 * 365);
+        break;
+      case "Deleted in the last 2 Hours":
+      case "Retried in the last 2 Hours":
+        newStartDate.setHours(newStartDate.getHours() - 2);
+        break;
+      case "Deleted in the last 1 Day":
+      case "Retried in the last 1 Day":
+        newStartDate.setHours(newStartDate.getHours() - 24);
+        break;
+      case "Deleted in the last 7 days":
+      case "Retried in the last 7 Days":
+        newStartDate.setHours(newStartDate.getHours() - 24 * 7);
+        break;
+    }
+    startDate.value = newStartDate;
+  }
+
+  function buildAdditionalQuery(): string {
+    switch (messageStatus) {
+      case FailedMessageStatus.Archived:
+        return `&modified=${dateRange.value}`;
+      case FailedMessageStatus.RetryIssued: {
+        const searchPhrase = selectedQueue.value === "empty" ? "" : selectedQueue.value;
+        return `&queueaddress=${searchPhrase}&modified=${dateRange.value}`;
+      }
+      default:
+        return "";
+    }
+  }
+
+  function mergeMessageState(previousMessages: ExtendedFailedMessage[], newMessages: ExtendedFailedMessage[]) {
+    if (!previousMessages.length || !newMessages.length) return;
+
+    previousMessages.forEach((previousMessage) => {
+      const receivedMessage = newMessages.find((m) => m.id === previousMessage.id);
+      if (!receivedMessage) return;
+
+      if (previousMessage.last_modified === receivedMessage.last_modified) {
+        receivedMessage.retryInProgress = previousMessage.retryInProgress;
+        receivedMessage.deleteInProgress = previousMessage.deleteInProgress;
+        receivedMessage.restoreInProgress = previousMessage.restoreInProgress;
+        receivedMessage.submittedForRetrial = previousMessage.submittedForRetrial;
+        receivedMessage.resolved = previousMessage.resolved;
+      }
+
+      receivedMessage.selected = previousMessage.selected;
+    });
+  }
+
   async function refresh() {
     try {
       if (!messageStatus) return;
-      if (messageStatus === FailedMessageStatus.Archived || messageStatus === FailedMessageStatus.RetryIssued) {
-        endDate.value = new Date();
-        const newStartDate = new Date();
 
-        switch (selectedPeriod.value) {
-          case "All Deleted":
-          case "All Pending Retries":
-            newStartDate.setHours(newStartDate.getHours() - 24 * 365);
-            break;
-          case "Deleted in the last 2 Hours":
-          case "Retried in the last 2 Hours":
-            newStartDate.setHours(newStartDate.getHours() - 2);
-            break;
-          case "Deleted in the last 1 Day":
-          case "Retried in the last 1 Day":
-            newStartDate.setHours(newStartDate.getHours() - 24);
-            break;
-          case "Deleted in the last 7 days":
-          case "Retried in the last 7 Days":
-            newStartDate.setHours(newStartDate.getHours() - 24 * 7);
-            break;
-        }
-        startDate.value = newStartDate;
-      }
-      const additionalQuery = (() => {
-        switch (messageStatus) {
-          case FailedMessageStatus.Archived:
-            return `&modified=${dateRange.value}`;
-          case FailedMessageStatus.RetryIssued: {
-            const searchPhrase = selectedQueue.value === "empty" ? "" : selectedQueue.value;
-            return `&queueaddress=${searchPhrase}&modified=${dateRange.value}`;
-          }
-          default:
-            return "";
-        }
-      })();
+      updateDateRangeForPeriod();
+      const additionalQuery = buildAdditionalQuery();
 
       controller = new AbortController();
       if (groupId.value && !groupName.value) loadGroupDetails(groupId.value);
+
       const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
         `${groupId.value ? `recoverability/groups/${groupId.value}/` : ""}errors?status=${messageStatus}&page=${pageNumber.value}&per_page=${perPage}&sort=${sortBy.value}&direction=${sortDirection.value}${additionalQuery}`,
         controller.signal
@@ -94,25 +122,7 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
       controller = null;
 
       totalCount.value = parseInt(response.headers.get("Total-Count") ?? "0");
-
-      if (messages.value.length && data.length) {
-        // merge the previously selected messages into the new list so we can replace them
-        messages.value.forEach((previousMessage) => {
-          const receivedMessage = data.find((m) => m.id === previousMessage.id);
-          if (receivedMessage) {
-            if (previousMessage.last_modified === receivedMessage.last_modified) {
-              receivedMessage.retryInProgress = previousMessage.retryInProgress;
-              receivedMessage.deleteInProgress = previousMessage.deleteInProgress;
-              receivedMessage.restoreInProgress = previousMessage.restoreInProgress;
-              receivedMessage.submittedForRetrial = previousMessage.submittedForRetrial;
-              receivedMessage.resolved = previousMessage.resolved;
-            }
-
-            receivedMessage.selected = previousMessage.selected;
-          }
-        });
-      }
-
+      mergeMessageState(messages.value, data);
       messages.value = updateMessages(data);
       loaded = true;
     } catch (err) {

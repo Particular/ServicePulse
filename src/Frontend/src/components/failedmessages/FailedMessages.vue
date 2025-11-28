@@ -28,7 +28,7 @@ const POLLING_INTERVAL_FAST = 1000;
 const messageStore = useMessageStore();
 const messageGroupClient = createMessageGroupClient();
 const loading = ref(false);
-const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("messagesStore", useRecoverabilityStore, POLLING_INTERVAL_NORMAL);
+const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("recoverabilityStore", useRecoverabilityStore, POLLING_INTERVAL_NORMAL);
 const { store } = autoRefresh();
 const { messages, groupId, groupName, totalCount, pageNumber } = storeToRefs(store);
 

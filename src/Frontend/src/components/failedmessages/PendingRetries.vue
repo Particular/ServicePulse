@@ -21,7 +21,7 @@ import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
 import { RetryPeriodOption, useRecoverabilityStore } from "@/stores/RecoverabilityStore";
 
 const loading = ref(false);
-const { autoRefresh, isRefreshing } = useStoreAutoRefresh("messagesStore", useRecoverabilityStore, 5000);
+const { autoRefresh, isRefreshing } = useStoreAutoRefresh("recoverabilityStore", useRecoverabilityStore, 5000);
 const { store } = autoRefresh();
 const { messages, totalCount, pageNumber, selectedPeriod, selectedQueue, endpoints } = storeToRefs(store);
 const configurationStore = useConfigurationStore();
