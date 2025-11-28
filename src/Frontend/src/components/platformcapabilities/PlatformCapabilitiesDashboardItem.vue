@@ -66,5 +66,19 @@ const errorWizardPages = computed(() => getErrorWizardPages(error.status.value))
 </template>
 
 <style scoped>
-@import "@/components/platformcapabilities/styles/platformDashboardSection.css";
+.capabilities-header {
+  margin-bottom: 10px;
+}
+.capabilities-description {
+  font-size: 14px;
+  color: var(--text-secondary, #666);
+  margin: 0;
+}
+.capabilities-list {
+  display: flex;
+  gap: 16px;
+}
+.capabilities-list > * {
+  flex: 1;
+}
 </style>
