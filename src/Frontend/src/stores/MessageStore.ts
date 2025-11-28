@@ -80,17 +80,15 @@ export const useMessageStore = defineStore("MessageStore", () => {
   const { configuration } = storeToRefs(configStore);
   const error_retention_period = computed(() => timeSpanToDuration(configuration.value?.data_retention?.error_retention_period).asHours());
 
-  serviceControlClient
-    .fetchTypedFromServiceControl<EditAndRetryConfig>("edit/config")
-    // eslint-disable-next-line promise/prefer-await-to-then
-    .then(([, data]) => {
+  async function loadEditAndRetryConfiguration() {
+    try {
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EditAndRetryConfig>("edit/config");
       edit_and_retry_config.value = data;
-      return data;
-    })
-    // eslint-disable-next-line promise/prefer-await-to-then
-    .catch(() => {
+    } catch {
       console.warn("Failed to load Edit and Retry configuration");
-    });
+    }
+  }
+  loadEditAndRetryConfiguration();
 
   function reset() {
     state.data = { failure_metadata: {}, failure_status: {}, dialog_status: {}, invoked_saga: {} };
