@@ -12,11 +12,17 @@ import DashboardMenuItem from "@/components/dashboard/DashboardMenuItem.vue";
 import FeedbackButton from "@/components/FeedbackButton.vue";
 import ThroughputMenuItem from "@/views/throughputreport/ThroughputMenuItem.vue";
 import AuditMenuItem from "./audit/AuditMenuItem.vue";
+import UserProfileMenuItem from "@/components/UserProfileMenuItem.vue";
 import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import { useAuthStore } from "@/stores/AuthStore";
 import { storeToRefs } from "pinia";
 
 const serviceControlStore = useServiceControlStore();
 const { isMonitoringEnabled } = storeToRefs(serviceControlStore);
+
+const authStore = useAuthStore();
+const { authEnabled, isAuthenticated } = storeToRefs(authStore);
+
 // prettier-ignore
 const menuItems = computed(
   () => [
@@ -46,6 +52,9 @@ const menuItems = computed(
         <ul class="nav navbar-nav navbar-inverse">
           <li v-for="menuItem in menuItems" :key="menuItem?.name">
             <component :is="menuItem" />
+          </li>
+          <li v-if="authEnabled && isAuthenticated">
+            <UserProfileMenuItem />
           </li>
         </ul>
       </div>

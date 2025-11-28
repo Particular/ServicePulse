@@ -1,5 +1,6 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
+import { authFetch } from "@/composables/useAuthenticatedFetch";
 
 export const useServiceControlStore = defineStore("ServiceControlStore", () => {
   const serviceControlUrl = ref<string | null>();
@@ -65,11 +66,11 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
         Accept: "application/json",
       },
     };
-    return await fetch(`${getServiceControlUrl()}${suffix}`, requestOptions);
+    return await authFetch(`${getServiceControlUrl()}${suffix}`, requestOptions);
   }
 
   async function fetchTypedFromServiceControl<T>(suffix: string): Promise<[Response, T]> {
-    const response = await fetch(`${getServiceControlUrl()}${suffix}`);
+    const response = await authFetch(`${getServiceControlUrl()}${suffix}`);
     if (!response.ok) throw new Error(response.statusText ?? "No response");
     const data = await response.json();
 
@@ -81,7 +82,7 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
       return [];
     }
 
-    const response = await fetch(`${getMonitoringUrl()}${suffix}`);
+    const response = await authFetch(`${getMonitoringUrl()}${suffix}`);
     const data = await response.json();
 
     return [response, data];
@@ -95,7 +96,7 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
       requestOptions.headers = { "Content-Type": "application/json" };
       requestOptions.body = JSON.stringify(payload);
     }
-    return await fetch(`${getServiceControlUrl()}${suffix}`, requestOptions);
+    return await authFetch(`${getServiceControlUrl()}${suffix}`, requestOptions);
   }
 
   async function putToServiceControl(suffix: string, payload: object | null) {
@@ -106,21 +107,21 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
       requestOptions.headers = { "Content-Type": "application/json" };
       requestOptions.body = JSON.stringify(payload);
     }
-    return await fetch(`${getServiceControlUrl()}${suffix}`, requestOptions);
+    return await authFetch(`${getServiceControlUrl()}${suffix}`, requestOptions);
   }
 
   async function deleteFromServiceControl(suffix: string) {
     const requestOptions: RequestInit = {
       method: "DELETE",
     };
-    return await fetch(`${getServiceControlUrl()}${suffix}`, requestOptions);
+    return await authFetch(`${getServiceControlUrl()}${suffix}`, requestOptions);
   }
 
   async function deleteFromMonitoring(suffix: string) {
     const requestOptions = {
       method: "DELETE",
     };
-    return await fetch(`${getMonitoringUrl()}${suffix}`, requestOptions);
+    return await authFetch(`${getMonitoringUrl()}${suffix}`, requestOptions);
   }
 
   async function optionsFromMonitoring() {
@@ -131,7 +132,7 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
     const requestOptions = {
       method: "OPTIONS",
     };
-    return await fetch(getMonitoringUrl() ?? "", requestOptions);
+    return await authFetch(getMonitoringUrl() ?? "", requestOptions);
   }
 
   async function patchToServiceControl(suffix: string, payload: object | null) {
@@ -142,7 +143,7 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
       requestOptions.headers = { "Content-Type": "application/json" };
       requestOptions.body = JSON.stringify(payload);
     }
-    return await fetch(`${getServiceControlUrl()}${suffix}`, requestOptions);
+    return await authFetch(`${getServiceControlUrl()}${suffix}`, requestOptions);
   }
 
   return {
