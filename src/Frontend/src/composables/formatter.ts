@@ -76,3 +76,24 @@ function formatTimeValue(timeValue: number, displayTwoDigits = false) {
   const strValue = Math.floor(timeValue);
   return `${displayTwoDigits ? ("0" + strValue).slice(-2) : strValue.toLocaleString()}`;
 }
+
+export function parseTimeSpan(timeSpan: string) {
+  // Split on period first to handle multi-digit days
+  const parts = timeSpan.split(".");
+  let days = 0;
+  let timeComponent = timeSpan;
+
+  if (parts.length > 1) {
+    days = parseInt(parts[0], 10);
+    timeComponent = parts[1];
+  }
+
+  const [hours, minutes, seconds] = timeComponent.split(":").map(Number);
+  return { days, hours, minutes, seconds };
+}
+
+export function timeSpanToDuration(timeSpan: string | undefined) {
+  if (!timeSpan) return dayjs.duration("PT0S");
+
+  return dayjs.duration(parseTimeSpan(timeSpan));
+}

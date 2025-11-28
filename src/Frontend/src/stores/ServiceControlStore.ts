@@ -44,8 +44,8 @@ export const useServiceControlStore = defineStore("ServiceControlStore", () => {
     return await fetch(`${getServiceControlUrl()}${suffix}`, requestOptions);
   }
 
-  async function fetchTypedFromServiceControl<T>(suffix: string): Promise<[Response, T]> {
-    const response = await fetch(`${getServiceControlUrl()}${suffix}`);
+  async function fetchTypedFromServiceControl<T>(suffix: string, signal?: AbortSignal): Promise<[Response, T]> {
+    const response = await fetch(`${getServiceControlUrl()}${suffix}`, { signal });
     if (!response.ok) throw new Error(response.statusText ?? "No response");
     const data = await response.json();
 
