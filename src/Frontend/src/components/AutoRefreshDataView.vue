@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, ref, watch } from "vue";
 import ItemsPerPage from "@/components/ItemsPerPage.vue";
 import PaginationStrip from "@/components/PaginationStrip.vue";
 import type DataViewPageModel from "./DataViewPageModel";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 
 const props = withDefaults(
   defineProps<{
@@ -20,8 +20,6 @@ const props = withDefaults(
 let refreshTimer: number | undefined;
 const viewModel = defineModel<DataViewPageModel<T>>({ required: true });
 
-const store = useServiceControlStore();
-
 const pageNumber = ref(1);
 const itemsPerPage = ref(props.itemsPerPage);
 
@@ -37,7 +35,7 @@ watch(itemsPerPage, () => loadData());
 watch(pageNumber, () => loadData());
 
 async function loadData() {
-  const [response, data] = await store.fetchTypedFromServiceControl<T[]>(`${props.apiUrl}?page=${pageNumber.value}&per_page=${itemsPerPage.value}`);
+  const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<T[]>(`${props.apiUrl}?page=${pageNumber.value}&per_page=${itemsPerPage.value}`);
   if (response.ok) {
     viewModel.value.totalCount = parseInt(response.headers.get("Total-Count") ?? "0");
     viewModel.value.data = data;

@@ -6,11 +6,11 @@ import FAIcon from "@/components/FAIcon.vue";
 import { faArrowTurnUp, faPlus } from "@fortawesome/free-solid-svg-icons";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import { storeToRefs } from "pinia";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
-import { useMonitoringStore } from "@/stores/MonitoringStore";
+import monitoringClient from "./monitoring/monitoringClient";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
@@ -18,23 +18,16 @@ const monitoringConnectionState = connectionStore.monitoringConnectionState;
 const { store: environmentAndVersionsStore } = useEnvironmentAndVersionsAutoRefresh();
 const newVersions = environmentAndVersionsStore.newVersions;
 const environment = environmentAndVersionsStore.environment;
-const serviceControlStore = useServiceControlStore();
-const monitoringStore = useMonitoringStore();
-const { serviceControlUrl } = storeToRefs(serviceControlStore);
-const { monitoringUrl } = storeToRefs(monitoringStore);
 const licenseStore = useLicenseStore();
 const { licenseStatus, license } = licenseStore;
-
-const isMonitoringEnabled = computed(() => {
-  return monitoringUrl.value !== "!" && monitoringUrl.value !== "" && monitoringUrl.value !== null && monitoringUrl.value !== undefined;
-});
+const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
 
 const scAddressTooltip = computed(() => {
-  return `ServiceControl URL ${serviceControlUrl.value}`;
+  return `ServiceControl URL ${serviceControlClient.url}`;
 });
 
 const scMonitoringAddressTooltip = computed(() => {
-  return `Monitoring URL ${monitoringUrl.value}`;
+  return `Monitoring URL ${monitoringClient.url}`;
 });
 
 const configurationStore = useConfigurationStore();

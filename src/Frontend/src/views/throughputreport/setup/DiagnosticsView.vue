@@ -3,12 +3,11 @@ import ConnectionResultView from "@/views/throughputreport/setup/ConnectionResul
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoRefresh";
-import { useMonitoringStore } from "@/stores/MonitoringStore";
+import monitoringClient from "@/components/monitoring/monitoringClient";
 
 const { store } = useThroughputStoreAutoRefresh();
 const { testResults, isBrokerTransport } = storeToRefs(store);
-const monitoringStore = useMonitoringStore();
-const { isMonitoringEnabled } = storeToRefs(monitoringStore);
+const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
 const loading = ref(false);
 
 async function testConnection() {

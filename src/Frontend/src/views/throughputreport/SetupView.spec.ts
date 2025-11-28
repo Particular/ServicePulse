@@ -11,7 +11,6 @@ import { ConnectionSettingsTestResult } from "@/resources/ConnectionTestResults"
 import makeRouter from "@/router";
 import { flushPromises, RouterLinkStub } from "@vue/test-utils";
 import { serviceControlWithThroughput } from "@/views/throughputreport/serviceControlWithThroughput";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { setActivePinia } from "pinia";
 
 describe("SetupView tests", () => {
@@ -49,8 +48,6 @@ describe("SetupView tests", () => {
     );
 
     await preSetup(driver);
-
-    useServiceControlStore();
 
     const { debug } = render(SetupView, {
       global: {

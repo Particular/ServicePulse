@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { computed, ref, watch, shallowReadonly } from "vue";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 import { useCookies } from "vue3-cookies";
 import { useRoute } from "vue-router";
 import { ExtendedFailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
@@ -34,7 +34,6 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   const selectedQueue = ref("empty");
   const endpoints = ref<string[]>([]);
 
-  const serviceControlStore = useServiceControlStore();
   const configurationStore = useConfigurationStore();
   const { configuration } = storeToRefs(configurationStore);
 
@@ -88,7 +87,7 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
 
       controller = new AbortController();
       if (groupId.value && !groupName.value) loadGroupDetails(groupId.value);
-      const [response, data] = await serviceControlStore.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
+      const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<ExtendedFailedMessage[]>(
         `${groupId.value ? `recoverability/groups/${groupId.value}/` : ""}errors?status=${messageStatus}&page=${pageNumber.value}&per_page=${perPage}&sort=${sortBy.value}&direction=${sortDirection.value}${additionalQuery}`,
         controller.signal
       );
@@ -123,7 +122,7 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   }
 
   async function loadGroupDetails(groupId: string) {
-    const [, data] = await serviceControlStore.fetchTypedFromServiceControl<FailureGroup>(`${messageStatus === FailedMessageStatus.Archived ? "archive" : "recoverability"}/groups/id/${groupId}`, controller?.signal);
+    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<FailureGroup>(`${messageStatus === FailedMessageStatus.Archived ? "archive" : "recoverability"}/groups/id/${groupId}`, controller?.signal);
     groupName.value = data.title;
   }
 
@@ -170,7 +169,7 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
             retryMessagePeriod = retryPeriodOptions[0]; //default All Pending Retries
           }
           selectedPeriod.value = retryMessagePeriod;
-          const [, data] = await serviceControlStore.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
+          const [, data] = await serviceControlClient.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
           endpoints.value = data.map((endpoint) => endpoint.physical_address);
         }
         break;
@@ -209,19 +208,19 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   }
 
   async function deleteById(ids: string[]) {
-    await serviceControlStore.patchToServiceControl("errors/archive", ids);
+    await serviceControlClient.patchToServiceControl("errors/archive", ids);
   }
 
   async function restoreById(ids: string[]) {
-    await serviceControlStore.patchToServiceControl("errors/unarchive", ids);
+    await serviceControlClient.patchToServiceControl("errors/unarchive", ids);
   }
 
   async function retryById(ids: string[]) {
-    await serviceControlStore.postToServiceControl("pendingretries/retry", ids);
+    await serviceControlClient.postToServiceControl("pendingretries/retry", ids);
   }
 
   async function resolveById(ids: string[]) {
-    await serviceControlStore.patchToServiceControl("pendingretries/resolve", { uniquemessageids: ids });
+    await serviceControlClient.patchToServiceControl("pendingretries/resolve", { uniquemessageids: ids });
   }
 
   async function retryAll() {
@@ -235,11 +234,11 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
       data.queueaddress = selectedQueue.value;
     }
 
-    await serviceControlStore.postToServiceControl(url, data);
+    await serviceControlClient.postToServiceControl(url, data);
   }
 
   async function resolveAll() {
-    await serviceControlStore.patchToServiceControl("pendingretries/resolve", { from: new Date(0).toISOString(), to: new Date().toISOString() });
+    await serviceControlClient.patchToServiceControl("pendingretries/resolve", { from: new Date(0).toISOString(), to: new Date().toISOString() });
   }
 
   async function clearSelectedQueue() {

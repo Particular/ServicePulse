@@ -1,9 +1,9 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { readonly, ref } from "vue";
-import { useServiceControlStore } from "./ServiceControlStore";
 import { useCookies } from "vue3-cookies";
 import FailureGroupView from "@/resources/FailureGroupView";
 import { MessageGroupClient } from "@/components/failedmessages/messageGroupClient";
+import serviceControlClient from "@/components/serviceControlClient";
 
 export const statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"] as const;
 type RestoreOperationStatus = (typeof statusesForRestoreOperation)[number];
@@ -31,7 +31,6 @@ export const useDeletedMessageGroupsStore = defineStore("DeletedMessageGroupsSto
   const archiveGroups = ref<ExtendedFailureGroupView[]>([]);
   let undismissedRestoreGroups: ExtendedFailureGroupView[] = [];
 
-  const serviceControlStore = useServiceControlStore();
   const messageGroupClient = new MessageGroupClient();
 
   const cookies = useCookies();
@@ -42,7 +41,7 @@ export const useDeletedMessageGroupsStore = defineStore("DeletedMessageGroupsSto
       selectedClassifier.value = getGrouping() ?? classifiers.value[0];
     }
     //get all deleted message groups
-    const [, result] = await serviceControlStore.fetchTypedFromServiceControl<FailureGroupView[]>(`errors/groups/${selectedClassifier.value ?? getGrouping()}`);
+    const [, result] = await serviceControlClient.fetchTypedFromServiceControl<FailureGroupView[]>(`errors/groups/${selectedClassifier.value ?? getGrouping()}`);
 
     if (result.length === 0 && undismissedRestoreGroups.length > 0) {
       undismissedRestoreGroups.forEach((deletedGroup) => {
@@ -93,7 +92,7 @@ export const useDeletedMessageGroupsStore = defineStore("DeletedMessageGroupsSto
   }
 
   async function getGroupingClassifiers() {
-    const [, data] = await serviceControlStore.fetchTypedFromServiceControl<string[]>("recoverability/classifiers");
+    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<string[]>("recoverability/classifiers");
     classifiers.value = data;
   }
 

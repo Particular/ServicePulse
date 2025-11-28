@@ -2,13 +2,10 @@
 import ConditionalRender from "@/components/ConditionalRender.vue";
 import routeLinks from "@/router/routeLinks";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
-import { storeToRefs } from "pinia";
+import serviceControlClient from "@/components/serviceControlClient";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
-const serviceControlStore = useServiceControlStore();
-const { serviceControlUrl } = storeToRefs(serviceControlStore);
 </script>
 
 <template>
@@ -19,7 +16,7 @@ const { serviceControlUrl } = storeToRefs(serviceControlStore);
         <h1>Cannot connect to ServiceControl</h1>
         <p>
           ServicePulse is unable to connect to the ServiceControl instance at
-          <span id="serviceControlUrl">{{ serviceControlUrl }}</span
+          <span id="serviceControlUrl">{{ serviceControlClient.url }}</span
           >. Please ensure that ServiceControl is running and accessible from your machine.
         </p>
         <div class="action-toolbar">

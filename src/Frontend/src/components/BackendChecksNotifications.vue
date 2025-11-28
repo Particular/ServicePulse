@@ -7,22 +7,15 @@ import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
-import { storeToRefs } from "pinia";
-import { useMonitoringStore } from "@/stores/MonitoringStore";
+import serviceControlClient from "@/components/serviceControlClient";
+import monitoringClient from "./monitoring/monitoringClient";
 
 const router = useRouter();
-
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
 const monitoringConnectionState = connectionStore.monitoringConnectionState;
 const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
 const environment = environmentStore.environment;
-const serviceControlStore = useServiceControlStore();
-const monitoringStore = useMonitoringStore();
-const { serviceControlUrl } = storeToRefs(serviceControlStore);
-const { monitoringUrl, isMonitoringDisabled } = storeToRefs(monitoringStore);
-
 const primaryConnectionFailure = computed(() => connectionState.unableToConnect);
 const monitoringConnectionFailure = computed(() => monitoringConnectionState.unableToConnect);
 
@@ -31,16 +24,16 @@ watch(primaryConnectionFailure, (newValue, oldValue) => {
   if (newValue !== oldValue && !(oldValue === null && newValue === false)) {
     const connectionUrl = router.resolve(routeLinks.configuration.connections.link).href;
     if (newValue) {
-      useShowToast(TYPE.ERROR, "Error", `Could not connect to ServiceControl at ${serviceControlUrl.value}. <a class="btn btn-default" href="${connectionUrl}">View connection settings</a>`);
+      useShowToast(TYPE.ERROR, "Error", `Could not connect to ServiceControl at ${serviceControlClient.url}. <a class="btn btn-default" href="${connectionUrl}">View connection settings</a>`);
     } else {
-      useShowToast(TYPE.SUCCESS, "Success", `Connection to ServiceControl was successful at ${serviceControlUrl.value}.`);
+      useShowToast(TYPE.SUCCESS, "Success", `Connection to ServiceControl was successful at ${serviceControlClient.url}.`);
     }
   }
 });
 
 watch(monitoringConnectionFailure, (newValue, oldValue) => {
   // Only watch the state change if monitoring is enabled
-  if (isMonitoringDisabled.value) {
+  if (monitoringClient.isMonitoringDisabled) {
     return;
   }
 
@@ -48,9 +41,9 @@ watch(monitoringConnectionFailure, (newValue, oldValue) => {
   if (newValue !== oldValue && !(oldValue === null && newValue === false)) {
     const connectionUrl = router.resolve(routeLinks.configuration.connections.link).href;
     if (newValue) {
-      useShowToast(TYPE.ERROR, "Error", `Could not connect to the ServiceControl Monitoring service at ${monitoringUrl.value}. <a class="btn btn-default" href="${connectionUrl}">View connection settings</a>`);
+      useShowToast(TYPE.ERROR, "Error", `Could not connect to the ServiceControl Monitoring service at ${monitoringClient.url}. <a class="btn btn-default" href="${connectionUrl}">View connection settings</a>`);
     } else {
-      useShowToast(TYPE.SUCCESS, "Success", `Connection to ServiceControl Monitoring service was successful at ${monitoringUrl.value}.`);
+      useShowToast(TYPE.SUCCESS, "Success", `Connection to ServiceControl Monitoring service was successful at ${monitoringClient.url}.`);
     }
   }
 });
