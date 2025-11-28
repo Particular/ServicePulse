@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, onMounted, ref, useTemplateRef, watch } from "vue";
+import { computed, onBeforeMount, ref, useTemplateRef, watch } from "vue";
 import { useShowToast } from "../../composables/toast";
 import { downloadFileFromString } from "../../composables/fileDownloadCreator";
 import { onBeforeRouteLeave } from "vue-router";
@@ -192,9 +192,12 @@ watch(isRetryOrDeleteOperationInProgress, (retryOrDeleteOperationInProgress) => 
 
 onBeforeMount(async () => {
   loading.value = true;
+  //set status before mount to ensure no other controls/processes can cause extra refreshes during mount
   await store.setMessageStatus(FailedMessageStatus.Unresolved);
 });
-onMounted(() => (loading.value = false));
+watch(isRefreshing, () => {
+  if (!isRefreshing.value && loading.value) loading.value = false;
+});
 </script>
 
 <template>

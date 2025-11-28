@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, onMounted, ref, useTemplateRef } from "vue";
+import { onBeforeMount, ref, useTemplateRef, watch } from "vue";
 import { useShowToast } from "../../composables/toast";
 import OrderBy from "@/components/OrderBy.vue";
 import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
@@ -21,7 +21,7 @@ import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
 import { RetryPeriodOption, useRecoverabilityStore } from "@/stores/RecoverabilityStore";
 
 const loading = ref(false);
-const { autoRefresh } = useStoreAutoRefresh("messagesStore", useRecoverabilityStore, 5000);
+const { autoRefresh, isRefreshing } = useStoreAutoRefresh("messagesStore", useRecoverabilityStore, 5000);
 const { store } = autoRefresh();
 const { messages, totalCount, pageNumber, selectedPeriod, selectedQueue, endpoints } = storeToRefs(store);
 const configurationStore = useConfigurationStore();
@@ -124,9 +124,12 @@ async function periodChanged(period: RetryPeriodOption) {
 
 onBeforeMount(async () => {
   loading.value = true;
+  //set status before mount to ensure no other controls/processes can cause extra refreshes during mount
   await store.setMessageStatus(FailedMessageStatus.RetryIssued);
 });
-onMounted(() => (loading.value = false));
+watch(isRefreshing, () => {
+  if (!isRefreshing.value && loading.value) loading.value = false;
+});
 </script>
 
 <template>

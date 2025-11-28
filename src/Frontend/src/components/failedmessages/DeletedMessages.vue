@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import { useShowToast } from "../../composables/toast";
 import { onBeforeRouteLeave } from "vue-router";
 import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
@@ -78,9 +78,12 @@ watch(isRestoreInProgress, (restoreInProgress) => {
 
 onBeforeMount(async () => {
   loading.value = true;
+  //set status before mount to ensure no other controls/processes can cause extra refreshes during mount
   await store.setMessageStatus(FailedMessageStatus.Archived);
 });
-onMounted(() => (loading.value = false));
+watch(isRefreshing, () => {
+  if (!isRefreshing.value && loading.value) loading.value = false;
+});
 </script>
 
 <template>
