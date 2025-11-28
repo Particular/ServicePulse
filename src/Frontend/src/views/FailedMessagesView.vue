@@ -5,12 +5,16 @@ import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
 import { storeToRefs } from "pinia";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
+import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
+import { useRecoverabilityStore } from "@/stores/RecoverabilityStore";
 
 const showPendingRetry = window.defaultConfig.showPendingRetry;
 const { store: connectionsAndStatsStore } = useConnectionsAndStatsAutoRefresh();
-connectionsAndStatsStore.requiresFullFailureDetails();
+const { autoRefresh } = useStoreAutoRefresh("recoverabilityStore", useRecoverabilityStore, 5000);
+const { store: recoverabilityStore } = autoRefresh();
 const connectionState = connectionsAndStatsStore.connectionState;
-const { failedMessageCount, archivedMessageCount, pendingRetriesMessageCount } = storeToRefs(connectionsAndStatsStore);
+const { failedMessageCount } = storeToRefs(connectionsAndStatsStore);
+const { archivedMessageCount, pendingRetriesMessageCount } = storeToRefs(recoverabilityStore);
 </script>
 
 <template>

@@ -3,7 +3,7 @@ import { computed, ref, watch, shallowReadonly } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
 import { useCookies } from "vue3-cookies";
 import { useRoute } from "vue-router";
-import { ExtendedFailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
+import { ExtendedFailedMessage, FailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
 import { SortDirection } from "@/resources/SortOptions";
 import dayjs from "@/utils/dayjs";
 import { useConfigurationStore } from "./ConfigurationStore";
@@ -33,7 +33,8 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   const selectedPeriod = ref<DeletedPeriodOption | RetryPeriodOption>("Deleted in the last 7 days");
   const selectedQueue = ref("empty");
   const endpoints = ref<string[]>([]);
-
+  const archivedMessageCount = ref(0);
+  const pendingRetriesMessageCount = ref(0);
   const configurationStore = useConfigurationStore();
   const { configuration } = storeToRefs(configurationStore);
 
@@ -47,7 +48,12 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   let controller: AbortController | null;
   async function refresh() {
     try {
-      if (!messageStatus) return;
+      [archivedMessageCount.value, pendingRetriesMessageCount.value] = await Promise.all([getErrorMessagesCount(FailedMessageStatus.Archived), getErrorMessagesCount(FailedMessageStatus.RetryIssued)]);
+
+      if (!messageStatus) {
+        return;
+      }
+
       if (messageStatus === FailedMessageStatus.Archived || messageStatus === FailedMessageStatus.RetryIssued) {
         endDate.value = new Date();
         const newStartDate = new Date();
@@ -72,6 +78,7 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
         }
         startDate.value = newStartDate;
       }
+
       const additionalQuery = (() => {
         switch (messageStatus) {
           case FailedMessageStatus.Archived:
@@ -124,6 +131,11 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   async function loadGroupDetails(groupId: string) {
     const [, data] = await serviceControlClient.fetchTypedFromServiceControl<FailureGroup>(`${messageStatus === FailedMessageStatus.Archived ? "archive" : "recoverability"}/groups/id/${groupId}`, controller?.signal);
     groupName.value = data.title;
+  }
+
+  async function getErrorMessagesCount(status: FailedMessageStatus) {
+    const [response] = await serviceControlClient.fetchTypedFromServiceControl<FailedMessage>(`errors?status=${status}`);
+    return parseInt(response.headers.get("Total-Count") ?? "0");
   }
 
   function updateMessages(messages: ExtendedFailedMessage[]) {
@@ -248,6 +260,7 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
 
   return {
     refresh,
+    getErrorMessagesCount,
     messages,
     perPage,
     pageNumber,
@@ -260,6 +273,8 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
     selectedPeriod,
     selectedQueue: shallowReadonly(selectedQueue),
     endpoints: shallowReadonly(endpoints),
+    archivedMessageCount,
+    pendingRetriesMessageCount,
     setSort,
     setPeriod,
     setMessageStatus,

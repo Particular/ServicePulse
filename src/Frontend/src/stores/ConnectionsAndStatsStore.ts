@@ -1,23 +1,15 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { FailedMessageStatus } from "@/resources/FailedMessage";
 import { ConnectionState } from "@/resources/ConnectionState";
-import { useCounter } from "@vueuse/core";
 import monitoringClient from "@/components/monitoring/monitoringClient";
-import serviceControlClient from "@/components/serviceControlClient";
+import { useRecoverabilityStore } from "./RecoverabilityStore";
 
 export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore", () => {
   const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
   const failedMessageCount = ref(0);
-  const archivedMessageCount = ref(0);
-  const pendingRetriesMessageCount = ref(0);
   const disconnectedEndpointsCount = ref(0);
-
-  const { count: requiresFullFailureDetailsSubscriberCount, inc, dec } = useCounter(0);
-  function requiresFullFailureDetails() {
-    onMounted(() => inc()); //NOTE: not forcing a refresh here since we expect the view utilising this store to also setup a refresh on mount
-    onUnmounted(() => dec());
-  }
+  const recoverabilityStore = useRecoverabilityStore();
 
   const connectionState = reactive<ConnectionState>({
     connected: false,
@@ -37,20 +29,16 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
 
   async function refresh() {
     const failedMessagesResult = getErrorMessagesCount(FailedMessageStatus.Unresolved);
-    const archivedMessagesResult = requiresFullFailureDetailsSubscriberCount.value > 0 ? getErrorMessagesCount(FailedMessageStatus.Archived) : 0;
-    const pendingRetriesResult = requiresFullFailureDetailsSubscriberCount.value > 0 ? getErrorMessagesCount(FailedMessageStatus.RetryIssued) : 0;
     const disconnectedEndpointsCountResult = getDisconnectedEndpointsCount();
 
-    const [failedMessages, archivedMessages, pendingRetries, disconnectedEndpoints] = await Promise.all([failedMessagesResult, archivedMessagesResult, pendingRetriesResult, disconnectedEndpointsCountResult]);
+    const [failedMessages, disconnectedEndpoints] = await Promise.all([failedMessagesResult, disconnectedEndpointsCountResult]);
 
     failedMessageCount.value = failedMessages;
-    archivedMessageCount.value = archivedMessages;
-    pendingRetriesMessageCount.value = pendingRetries;
     disconnectedEndpointsCount.value = disconnectedEndpoints;
   }
 
   function getErrorMessagesCount(status: FailedMessageStatus) {
-    return fetchAndSetConnectionState(() => serviceControlClient.getErrorMessagesCount(status), connectionState);
+    return fetchAndSetConnectionState(() => recoverabilityStore.getErrorMessagesCount(status), connectionState);
   }
 
   function getDisconnectedEndpointsCount() {
@@ -60,9 +48,6 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
   return {
     refresh,
     failedMessageCount,
-    requiresFullFailureDetails,
-    archivedMessageCount,
-    pendingRetriesMessageCount,
     disconnectedEndpointsCount,
     connectionState,
     monitoringConnectionState,
