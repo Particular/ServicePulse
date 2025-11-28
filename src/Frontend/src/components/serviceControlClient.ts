@@ -1,3 +1,8 @@
+export interface ServiceControlInstanceConnection {
+  settings: { [key: string]: object };
+  errors: string[];
+}
+
 class ServiceControlClient {
   private _url: string | undefined = undefined;
 
@@ -10,6 +15,15 @@ class ServiceControlClient {
 
   public resetUrl() {
     this._url = undefined;
+  }
+
+  public async getServiceControlConnection() {
+    try {
+      const [, data] = await this.fetchTypedFromServiceControl<ServiceControlInstanceConnection>("connection");
+      return data;
+    } catch {
+      return { errors: [`Error reaching ServiceControl at ${this.url} connection`] } as ServiceControlInstanceConnection;
+    }
   }
 
   public async fetchTypedFromServiceControl<T>(suffix: string, signal?: AbortSignal): Promise<[Response, T]> {

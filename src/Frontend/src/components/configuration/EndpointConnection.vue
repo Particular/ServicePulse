@@ -3,14 +3,9 @@ import { onMounted, ref } from "vue";
 import LicenseNotExpired from "../LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
-import serviceControlClient from "@/components/serviceControlClient";
+import serviceControlClient, { ServiceControlInstanceConnection } from "@/components/serviceControlClient";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import monitoringClient, { MetricsConnectionDetails } from "../monitoring/monitoringClient";
-
-interface ServiceControlInstanceConnection {
-  settings: { [key: string]: object };
-  errors: string[];
-}
 
 const loading = ref(true);
 const showCodeOnlyTab = ref(true);
@@ -66,7 +61,7 @@ function switchJsonTab() {
 }
 
 async function serviceControlConnections() {
-  const scConnectionResult = getServiceControlConnection();
+  const scConnectionResult = serviceControlClient.getServiceControlConnection();
   const monitoringConnectionResult = monitoringClient.getMonitoringConnection();
 
   const [scConnection, mConnection] = await Promise.all([scConnectionResult, monitoringConnectionResult]);
@@ -80,15 +75,6 @@ async function serviceControlConnections() {
       errors: mConnection?.errors ?? [],
     },
   };
-}
-
-async function getServiceControlConnection() {
-  try {
-    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<ServiceControlInstanceConnection>("connection");
-    return data;
-  } catch {
-    return { errors: [`Error reaching ServiceControl at ${serviceControlClient.url} connection`] } as ServiceControlInstanceConnection;
-  }
 }
 </script>
 
