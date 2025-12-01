@@ -1,0 +1,13 @@
+{
+  packageRules: [
+    {
+      matchDatasources": ["npm"],
+      matchPackageNames: [
+        "vitest",
+        "@vitest/coverage-v8"
+      ],
+      groupName: "vitest",
+      groupSlug: "vitest-group"
+    }
+  ]
+}
