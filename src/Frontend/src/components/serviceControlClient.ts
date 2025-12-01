@@ -1,3 +1,5 @@
+import { authFetch } from "@/composables/useAuthenticatedFetch";
+
 export interface ServiceControlInstanceConnection {
   settings: { [key: string]: object };
   errors: string[];
@@ -27,7 +29,7 @@ class ServiceControlClient {
   }
 
   public async fetchTypedFromServiceControl<T>(suffix: string, signal?: AbortSignal): Promise<[Response, T]> {
-    const response = await fetch(`${this.url}${suffix}`, { signal });
+    const response = await authFetch(`${this.url}${suffix}`, { signal });
     if (!response.ok) throw new Error(response.statusText ?? "No response");
     const data = await response.json();
 
@@ -42,7 +44,7 @@ class ServiceControlClient {
       requestOptions.headers = { "Content-Type": "application/json" };
       requestOptions.body = JSON.stringify(payload);
     }
-    return await fetch(`${this.url}${suffix}`, requestOptions);
+    return await authFetch(`${this.url}${suffix}`, requestOptions);
   }
 
   public async putToServiceControl(suffix: string, payload: object | null) {
@@ -53,14 +55,14 @@ class ServiceControlClient {
       requestOptions.headers = { "Content-Type": "application/json" };
       requestOptions.body = JSON.stringify(payload);
     }
-    return await fetch(`${this.url}${suffix}`, requestOptions);
+    return await authFetch(`${this.url}${suffix}`, requestOptions);
   }
 
   public async deleteFromServiceControl(suffix: string) {
     const requestOptions: RequestInit = {
       method: "DELETE",
     };
-    return await fetch(`${this.url}${suffix}`, requestOptions);
+    return await authFetch(`${this.url}${suffix}`, requestOptions);
   }
 
   public async patchToServiceControl(suffix: string, payload: object | null) {
@@ -71,7 +73,7 @@ class ServiceControlClient {
       requestOptions.headers = { "Content-Type": "application/json" };
       requestOptions.body = JSON.stringify(payload);
     }
-    return await fetch(`${this.url}${suffix}`, requestOptions);
+    return await authFetch(`${this.url}${suffix}`, requestOptions);
   }
 
   public async fetchFromServiceControl(suffix: string, options?: { cache?: RequestCache }) {
@@ -82,7 +84,7 @@ class ServiceControlClient {
         Accept: "application/json",
       },
     };
-    return await fetch(`${this.url}${suffix}`, requestOptions);
+    return await authFetch(`${this.url}${suffix}`, requestOptions);
   }
 
   public async getErrorMessagesCount(status: string) {
