@@ -1,7 +1,7 @@
 {
   packageRules: [
     {
-      matchDatasources": ["npm"],
+      matchDatasources: ["npm"],
       matchPackageNames: [
         "vitest",
         "@vitest/coverage-v8"
