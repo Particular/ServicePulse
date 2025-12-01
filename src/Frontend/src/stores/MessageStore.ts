@@ -14,7 +14,6 @@ import { EditAndRetryConfig } from "@/resources/Configuration";
 import EditRetryResponse from "@/resources/EditRetryResponse";
 import { EditedMessage } from "@/resources/EditMessage";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
-import { timeSpanToDuration } from "@/composables/formatter";
 
 interface Model {
   id?: string;
