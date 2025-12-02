@@ -1,19 +1,10 @@
 import { useAuditStore } from "@/stores/AuditStore";
-import { useAutoRefresh } from "./useAutoRefresh";
+import { useStoreAutoRefresh } from "./useAutoRefresh";
 
-let store: ReturnType<typeof useAuditStore> | null = null;
-
-const refresh = () => {
-  if (!store) {
-    return Promise.resolve();
-  }
-  return store.checkForSuccessfulMessages();
+// Override the refresh method to use checkForSuccessfulMessages, which is more lightweight
+const useAuditStoreWithRefresh = () => {
+  const store = useAuditStore();
+  return Object.assign(store, { refresh: store.checkForSuccessfulMessages });
 };
 
-const autoRefresh = useAutoRefresh("auditStoreSuccessfulMessages", refresh, 5000);
-
-export default () => {
-  store = useAuditStore();
-  autoRefresh();
-  return { store };
-};
+export default useStoreAutoRefresh("auditStoreSuccessfulMessages", useAuditStoreWithRefresh, 5000).autoRefresh;

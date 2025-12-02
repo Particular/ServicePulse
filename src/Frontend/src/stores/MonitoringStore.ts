@@ -72,12 +72,12 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
 
   async function checkForMonitoredEndpoints() {
     try {
-      if (!serviceControlStore.isMonitoringEnabled || connectionStore.monitoringConnectionState.unableToConnect) {
+      if (!monitoringClient.isMonitoringEnabled || connectionStore.monitoringConnectionState.unableToConnect) {
         hasMonitoredEndpoints.value = false;
         return;
       }
       // Minimal query: just need to check if any endpoints exist
-      const [, data] = await serviceControlStore.fetchTypedFromMonitoring<Endpoint[]>(`monitored-endpoints?history=1`);
+      const data = await monitoringClient.getMonitoredEndpoints(1);
       hasMonitoredEndpoints.value = (data?.length ?? 0) > 0;
     } catch {
       hasMonitoredEndpoints.value = false;
