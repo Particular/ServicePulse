@@ -1,22 +1,17 @@
-import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import { ref, watch } from "vue";
+import { acceptHMRUpdate, defineStore } from "pinia";
+import { ref } from "vue";
 import { RemoteInstance } from "@/resources/RemoteInstance";
-import { useServiceControlStore } from "./ServiceControlStore";
+import serviceControlClient from "@/components/serviceControlClient";
 
 export const useRemoteInstancesStore = defineStore("RemoteInstancesStore", () => {
   const remoteInstances = ref<RemoteInstance[] | null>(null);
 
-  const serviceControlStore = useServiceControlStore();
-  const { serviceControlUrl } = storeToRefs(serviceControlStore);
-
   async function refresh() {
-    if (!serviceControlUrl.value) return;
-
-    const response = await serviceControlStore.fetchFromServiceControl("configuration/remotes");
+    const response = await serviceControlClient.fetchFromServiceControl("configuration/remotes");
     remoteInstances.value = await response.json();
   }
 
-  watch(serviceControlUrl, refresh, { immediate: true });
+  refresh();
 
   return {
     remoteInstances,

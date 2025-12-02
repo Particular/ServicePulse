@@ -2,10 +2,10 @@ import { computed } from "vue";
 import { StatusIndicator } from "@/components/platformcapabilities/types";
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import { storeToRefs } from "pinia";
-import { useServiceControlStore } from "@/stores/ServiceControlStore";
 import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 import useMonitoringStoreAutoRefresh from "@/composables/useMonitoringStoreAutoRefresh";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
+import monitoringClient from "@/components/monitoring/monitoringClient";
 
 const MonitoringDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.EndpointsNotConfigured]:
@@ -39,9 +39,8 @@ enum MonitoringIndicatorTooltip {
 export function useMonitoringCapability(): CapabilityComposable {
   const { getIconForStatus, getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
 
-  // this tells us if monitoring is configured in ServiceControl
-  const serviceControlStore = useServiceControlStore();
-  const { isMonitoringEnabled } = storeToRefs(serviceControlStore);
+  // this tells us if monitoring is configured in ServicePulse
+  const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
 
   // this tells us if there are any endpoints sending data
   // Uses auto-refresh to periodically check for monitored endpoints (every 5 seconds)
@@ -55,11 +54,11 @@ export function useMonitoringCapability(): CapabilityComposable {
 
   // Determine overall monitoring status
   const monitoringStatus = computed(() => {
-    const isConfiguredInServiceControl = isMonitoringEnabled.value;
+    const isConfiguredInServicePulse = isMonitoringEnabled;
     const connectionSuccessful = monitoringConnectionState.connected && !monitoringConnectionState.unableToConnect;
 
-    // 1. Check if monitoring is configured in ServiceControl
-    if (!isConfiguredInServiceControl) {
+    // 1. Check if monitoring is configured in ServicePulse
+    if (!isConfiguredInServicePulse) {
       return CapabilityStatus.InstanceNotConfigured;
     }
 
@@ -95,11 +94,11 @@ export function useMonitoringCapability(): CapabilityComposable {
 
     // Instance specific states
     const connectionSuccessful = monitoringConnectionState.connected && !monitoringConnectionState.unableToConnect;
-    const instanceAvailable = isMonitoringEnabled.value && connectionSuccessful;
+    const instanceAvailable = isMonitoringEnabled && connectionSuccessful;
 
-    const instanceTooltip = instanceAvailable ? MonitoringIndicatorTooltip.InstanceAvailable : !isMonitoringEnabled.value ? MonitoringIndicatorTooltip.InstanceNotConfigured : MonitoringIndicatorTooltip.InstanceUnavailable;
+    const instanceTooltip = instanceAvailable ? MonitoringIndicatorTooltip.InstanceAvailable : !isMonitoringEnabled ? MonitoringIndicatorTooltip.InstanceNotConfigured : MonitoringIndicatorTooltip.InstanceUnavailable;
 
-    if (isMonitoringEnabled.value) {
+    if (isMonitoringEnabled) {
       indicators.push(createIndicator("Instance", instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, instanceTooltip));
     }
 

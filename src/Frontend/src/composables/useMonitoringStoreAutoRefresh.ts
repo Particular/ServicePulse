@@ -1,19 +1,10 @@
 import { useMonitoringStore } from "@/stores/MonitoringStore";
-import { useAutoRefresh } from "./useAutoRefresh";
+import { useStoreAutoRefresh } from "./useAutoRefresh";
 
-let store: ReturnType<typeof useMonitoringStore> | null = null;
-
-const refresh = () => {
-  if (!store) {
-    return Promise.resolve();
-  }
-  return store.checkForMonitoredEndpoints();
+// Override the refresh method to use checkForMonitoredEndpoints, which is more lightweight
+const useMonitoringStoreWithRefresh = () => {
+  const store = useMonitoringStore();
+  return Object.assign(store, { refresh: store.checkForMonitoredEndpoints });
 };
 
-const autoRefresh = useAutoRefresh("monitoringStoreMonitoredEndpoints", refresh, 5000);
-
-export default () => {
-  store = useMonitoringStore();
-  autoRefresh();
-  return { store };
-};
+export default useStoreAutoRefresh("monitoringStoreMonitoredEndpoints", useMonitoringStoreWithRefresh, 5000).autoRefresh;
