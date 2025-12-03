@@ -1,3 +1,4 @@
+import { authFetch } from "@/composables/useAuthenticatedFetch";
 import { Endpoint, EndpointDetails } from "@/resources/MonitoringEndpoint";
 
 export interface MetricsConnectionDetails {
@@ -56,7 +57,7 @@ class MonitoringClient {
     if (this.isMonitoringDisabled) {
       return;
     }
-    await fetch(`${this.url}monitored-instance/${endpointName}/${instanceId}`, {
+    await authFetch(`${this.url}monitored-instance/${endpointName}/${instanceId}`, {
       method: "DELETE",
     });
   }
@@ -66,7 +67,7 @@ class MonitoringClient {
       return false;
     }
 
-    const response = await fetch(`${this.url}`, {
+    const response = await authFetch(`${this.url}`, {
       method: "OPTIONS",
     });
 
@@ -94,7 +95,7 @@ class MonitoringClient {
       return [];
     }
 
-    const response = await fetch(`${this.url}${suffix}`);
+    const response = await authFetch(`${this.url}${suffix}`);
     const data = await response.json();
 
     return [response, data];
