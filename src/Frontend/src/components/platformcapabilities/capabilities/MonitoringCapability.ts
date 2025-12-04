@@ -6,6 +6,7 @@ import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 import useMonitoringStoreAutoRefresh from "@/composables/useMonitoringStoreAutoRefresh";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
 import monitoringClient from "@/components/monitoring/monitoringClient";
+import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 
 const MonitoringDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.EndpointsNotConfigured]:
@@ -51,6 +52,10 @@ export function useMonitoringCapability(): CapabilityComposable {
   // this is auto refreshed in the ConnectionsAndStatsStore (every 5 seconds)
   const connectionsStore = useConnectionsAndStatsStore();
   const monitoringConnectionState = connectionsStore.monitoringConnectionState;
+
+  // this gives us version information for the monitoring instance
+  const environmentStore = useEnvironmentAndVersionsStore();
+  const { environment } = storeToRefs(environmentStore);
 
   // Determine overall monitoring status
   const monitoringStatus = computed(() => {
@@ -99,7 +104,7 @@ export function useMonitoringCapability(): CapabilityComposable {
     const instanceTooltip = instanceAvailable ? MonitoringIndicatorTooltip.InstanceAvailable : !isMonitoringEnabled ? MonitoringIndicatorTooltip.InstanceNotConfigured : MonitoringIndicatorTooltip.InstanceUnavailable;
 
     if (isMonitoringEnabled) {
-      indicators.push(createIndicator("Instance", instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, instanceTooltip));
+      indicators.push(createIndicator("Instance", instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, instanceTooltip, monitoringClient.url, environment.value.monitoring_version));
     }
 
     // data available indicator - only show if instance is connected

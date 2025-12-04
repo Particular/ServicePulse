@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import FAIcon from "@/components/FAIcon.vue";
-import { IconDefinition, faCircle } from "@fortawesome/free-solid-svg-icons";
+import { IconDefinition, faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { StatusIndicator, WizardPage } from "@/components/platformcapabilities/types";
 import { Capability, CapabilityStatus } from "@/components/platformcapabilities/constants";
 import WizardDialog from "./WizardDialog.vue";
+
+const emit = defineEmits<{
+  hide: [];
+}>();
 
 const props = defineProps<{
   status: CapabilityStatus;
@@ -50,6 +54,9 @@ function handleButtonClick() {
       <div class="loading-spinner"></div>
       <div class="loading-text">Loading {{ props.title }} capability status...</div>
     </div>
+    <button class="hide-card-btn" @click="emit('hide')" v-tippy="'Hide this card'">
+      <FAIcon :icon="faTimes" />
+    </button>
     <div v-if="!props.isLoading" class="capability-header">
       <FAIcon
         :icon="props.icon"
@@ -117,6 +124,31 @@ function handleButtonClick() {
   transition: all 0.2s ease;
   position: relative;
   min-height: 150px;
+}
+
+.hide-card-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: var(--text-secondary, #999);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 0.2s ease;
+  font-size: 12px;
+  z-index: 5;
+}
+
+.capability-card:hover .hide-card-btn {
+  opacity: 1;
+}
+
+.hide-card-btn:hover {
+  background-color: var(--hover-bg, #f0f0f0);
+  color: var(--text-primary, #333);
 }
 
 .capability-available {
