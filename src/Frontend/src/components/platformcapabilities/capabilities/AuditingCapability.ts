@@ -6,7 +6,24 @@ import { storeToRefs } from "pinia";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
 import useRemoteInstancesAutoRefresh from "@/composables/useRemoteInstancesAutoRefresh";
 import useAuditStoreAutoRefresh from "@/composables/useAuditStoreAutoRefresh";
-import { RemoteInstanceStatus, type RemoteInstance } from "@/resources/RemoteInstance";
+import { RemoteInstanceStatus, RemoteInstanceType, type RemoteInstance } from "@/resources/RemoteInstance";
+
+/**
+ * Checks if a remote instance is an audit instance using the cached instance type
+ */
+function isAuditInstance(instance: RemoteInstance): boolean {
+  return instance.cachedInstanceType === RemoteInstanceType.Audit;
+}
+
+/**
+ * Filters remote instances to only include audit instances
+ */
+function filterAuditInstances(instances: RemoteInstance[] | null | undefined): RemoteInstance[] {
+  if (!instances) {
+    return [];
+  }
+  return instances.filter(isAuditInstance);
+}
 
 const AuditingDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.EndpointsNotConfigured]:
@@ -87,6 +104,9 @@ export function useAuditingCapability(): CapabilityComposable {
   const { store: remoteInstancesStore } = useRemoteInstancesAutoRefresh();
   const { remoteInstances } = storeToRefs(remoteInstancesStore);
 
+  // Filter to only include audit instances (those with audit_retention_period in configuration)
+  const auditInstances = computed(() => filterAuditInstances(remoteInstances.value));
+
   // This gives us the hasSuccessfulMessages flag which indicates if any successful messages exist.
   // Uses auto-refresh (minimal) to periodically check for at least 1 successful message (every 5 seconds)
   const { store: auditStore } = useAuditStoreAutoRefresh();
@@ -98,17 +118,17 @@ export function useAuditingCapability(): CapabilityComposable {
   // Determine overall auditing status
   const auditStatus = computed(() => {
     // 1. Check if there are any audit instances configured.
-    if (!remoteInstances.value || remoteInstances.value.length === 0) {
+    if (auditInstances.value.length === 0) {
       return CapabilityStatus.InstanceNotConfigured;
     }
 
     // 2. Check if all audit instances are unavailable
-    if (allAuditInstancesUnavailable(remoteInstances.value)) {
+    if (allAuditInstancesUnavailable(auditInstances.value)) {
       return CapabilityStatus.Unavailable;
     }
 
     // 3. Check if some but not all audit instances are unavailable
-    if (hasPartiallyUnavailableAuditInstances(remoteInstances.value)) {
+    if (hasPartiallyUnavailableAuditInstances(auditInstances.value)) {
       return CapabilityStatus.PartiallyUnavailable;
     }
 
@@ -138,10 +158,10 @@ export function useAuditingCapability(): CapabilityComposable {
     const indicators: StatusIndicator[] = [];
 
     // Add an indicator for each remote audit instance
-    if (remoteInstances.value && remoteInstances.value.length > 0) {
-      remoteInstances.value.forEach((instance, index) => {
+    if (auditInstances.value.length > 0) {
+      auditInstances.value.forEach((instance, index) => {
         const isAvailable = instance.status === RemoteInstanceStatus.Online;
-        const label = remoteInstances.value!.length > 1 ? `Instance ${index + 1}` : "Instance";
+        const label = auditInstances.value.length > 1 ? `Instance ${index + 1}` : "Instance";
         const tooltip = isAvailable ? AuditingIndicatorTooltip.InstanceAvailable : AuditingIndicatorTooltip.InstanceUnavailable;
 
         indicators.push(createIndicator(label, isAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, tooltip, instance.api_uri, instance.version));
@@ -149,7 +169,7 @@ export function useAuditingCapability(): CapabilityComposable {
     }
 
     // Messages available indicator - show if at least one instance is available
-    if (hasAvailableAuditInstances(remoteInstances.value)) {
+    if (hasAvailableAuditInstances(auditInstances.value)) {
       const messagesAvailable = isAllMessagesSupported.value && hasSuccessfulMessages.value;
 
       let messageTooltip = "";

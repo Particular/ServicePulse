@@ -4,56 +4,103 @@ import { StatusIndicator } from "@/components/platformcapabilities/types";
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
+import useRemoteInstancesAutoRefresh from "@/composables/useRemoteInstancesAutoRefresh";
+import { RemoteInstanceStatus, RemoteInstanceType, type RemoteInstance } from "@/resources/RemoteInstance";
+import serviceControlClient from "@/components/serviceControlClient";
+import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+
+/**
+ * Checks if a remote instance is an error/recoverability instance using the cached instance type
+ */
+function isErrorInstance(instance: RemoteInstance): boolean {
+  return instance.cachedInstanceType === RemoteInstanceType.Error;
+}
+
+/**
+ * Filters remote instances to only include error/recoverability instances
+ */
+function filterErrorInstances(instances: RemoteInstance[] | null | undefined): RemoteInstance[] {
+  if (!instances) {
+    return [];
+  }
+  return instances.filter(isErrorInstance);
+}
+
+/**
+ * Checks if all error remote instances are unavailable
+ */
+function allErrorInstancesUnavailable(instances: RemoteInstance[]): boolean {
+  if (instances.length === 0) {
+    return false;
+  }
+  return instances.every((instance) => instance.status !== RemoteInstanceStatus.Online);
+}
 
 const ErrorDescriptions: CapabilityStatusToStringMap = {
-  [CapabilityStatus.EndpointsNotConfigured]: "The ServiceControl Error instance is connected but no failed messages have been received yet. This may be because no failures have occurred, or recoverability is not configured.",
-  [CapabilityStatus.Available]: "The ServiceControl Error instance is available and has received failed messages.",
+  [CapabilityStatus.PartiallyUnavailable]: "Some ServiceControl Error instances are not responding.",
+  [CapabilityStatus.Available]: "All ServiceControl Error instances are available.",
 };
 
 const ErrorHelpButtonText: CapabilityStatusToStringMap = {
-  [CapabilityStatus.EndpointsNotConfigured]: "Learn More",
   [CapabilityStatus.Available]: "View Failed Messages",
 };
 
 const ErrorHelpButtonUrl: CapabilityStatusToStringMap = {
-  [CapabilityStatus.EndpointsNotConfigured]: "https://docs.particular.net/nservicebus/recoverability/",
+  [CapabilityStatus.PartiallyUnavailable]: "https://docs.particular.net/servicecontrol/troubleshooting",
   [CapabilityStatus.Available]: "#/failed-messages",
 };
 
 enum ErrorIndicatorTooltip {
   InstanceAvailable = "The ServiceControl Error instance is configured and available",
   InstanceUnavailable = "The ServiceControl Error instance is not responding",
-  FailedMessagesAvailable = "Failed messages have been received and are available for management",
-  FailedMessagesUnavailable = "No failed messages have been received yet",
 }
 
 export function useErrorCapability(): CapabilityComposable {
   const { getIconForStatus, getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
 
-  // This tells us the connection state to the ServiceControl Error instance
-  // and the failed message count. Auto refreshed every 5 seconds.
+  // This tells us the connection state to the primary ServiceControl Error instance.
+  // Auto refreshed every 5 seconds.
   const connectionsStore = useConnectionsAndStatsStore();
   const connectionState = connectionsStore.connectionState;
-  const { failedMessageCount } = storeToRefs(connectionsStore);
 
-  // Determine if there are any failed messages
-  const hasFailedMessages = computed(() => failedMessageCount.value > 0);
+  // This gives us version information for the primary ServiceControl instance
+  const environmentStore = useEnvironmentAndVersionsStore();
+  const { environment } = storeToRefs(environmentStore);
+
+  // This gives us the list of secondary remote instances configured in ServiceControl.
+  // Uses auto-refresh to periodically check status (every 5 seconds)
+  const { store: remoteInstancesStore } = useRemoteInstancesAutoRefresh();
+  const { remoteInstances } = storeToRefs(remoteInstancesStore);
+
+  // Filter secondary instances to only include error instances (those with error_retention_period in configuration)
+  const secondaryErrorInstances = computed(() => filterErrorInstances(remoteInstances.value));
+
+  // Check if primary instance is connected
+  const isPrimaryConnected = computed(() => connectionState.connected && !connectionState.unableToConnect);
+
+  // Total instance count (primary + secondary error instances)
+  const totalInstanceCount = computed(() => 1 + secondaryErrorInstances.value.length);
+
+  // Count of available instances
+  const availableInstanceCount = computed(() => {
+    let count = isPrimaryConnected.value ? 1 : 0;
+    count += secondaryErrorInstances.value.filter((instance) => instance.status === RemoteInstanceStatus.Online).length;
+    return count;
+  });
 
   // Determine overall error status
   const errorStatus = computed(() => {
-    const connectionSuccessful = connectionState.connected && !connectionState.unableToConnect;
-
-    // 1. Check if we are connected to the error instance
-    if (!connectionSuccessful) {
+    // 1. Check if primary instance is unavailable and all secondary error instances are unavailable
+    if (!isPrimaryConnected.value && allErrorInstancesUnavailable(secondaryErrorInstances.value)) {
       return CapabilityStatus.Unavailable;
     }
 
-    // 2. Check if there are any failed messages
-    if (!hasFailedMessages.value) {
-      return CapabilityStatus.EndpointsNotConfigured;
+    // 2. Check if some but not all instances are unavailable (partially unavailable)
+    if (availableInstanceCount.value > 0 && availableInstanceCount.value < totalInstanceCount.value) {
+      return CapabilityStatus.PartiallyUnavailable;
     }
 
-    // 3. If connected and has failed messages, the error instance is fully available
+    // 3. All instances are available
     return CapabilityStatus.Available;
   });
 
@@ -73,15 +120,20 @@ export function useErrorCapability(): CapabilityComposable {
   const errorIndicators = computed(() => {
     const indicators: StatusIndicator[] = [];
 
-    const connectionSuccessful = connectionState.connected && !connectionState.unableToConnect;
-    const instanceTooltip = connectionSuccessful ? ErrorIndicatorTooltip.InstanceAvailable : ErrorIndicatorTooltip.InstanceUnavailable;
+    // Add indicator for primary instance
+    const primaryLabel = totalInstanceCount.value > 1 ? "Primary" : "Instance";
+    const primaryTooltip = isPrimaryConnected.value ? ErrorIndicatorTooltip.InstanceAvailable : ErrorIndicatorTooltip.InstanceUnavailable;
+    indicators.push(createIndicator(primaryLabel, isPrimaryConnected.value ? CapabilityStatus.Available : CapabilityStatus.Unavailable, primaryTooltip, serviceControlClient.url, environment.value.sc_version));
 
-    indicators.push(createIndicator("Instance", connectionSuccessful ? CapabilityStatus.Available : CapabilityStatus.Unavailable, instanceTooltip));
+    // Add an indicator for each secondary error instance
+    if (secondaryErrorInstances.value.length > 0) {
+      secondaryErrorInstances.value.forEach((instance, index) => {
+        const isAvailable = instance.status === RemoteInstanceStatus.Online;
+        const label = `Instance ${index + 2}`; // Start at 2 since primary is Instance 1
+        const tooltip = isAvailable ? ErrorIndicatorTooltip.InstanceAvailable : ErrorIndicatorTooltip.InstanceUnavailable;
 
-    // Only show failed messages indicator if instance is connected
-    if (connectionSuccessful) {
-      const messagesIndicatorTooltip = hasFailedMessages.value ? ErrorIndicatorTooltip.FailedMessagesAvailable : ErrorIndicatorTooltip.FailedMessagesUnavailable;
-      indicators.push(createIndicator("Failed Messages", hasFailedMessages.value ? CapabilityStatus.Available : CapabilityStatus.EndpointsNotConfigured, messagesIndicatorTooltip));
+        indicators.push(createIndicator(label, isAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, tooltip, instance.api_uri, instance.version));
+      });
     }
 
     return indicators;
