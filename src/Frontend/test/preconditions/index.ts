@@ -22,3 +22,6 @@ export { hasLicensingEndpoints } from "../preconditions/hasLicensingEndpoints";
 export { hasEndpointSettings } from "./hasEndpointSettings";
 export * from "./configuration";
 export * from "./authentication";
+export * from "./auditCapability";
+export * from "./monitoringCapability";
+export * from "./recoverabilityCapability";
