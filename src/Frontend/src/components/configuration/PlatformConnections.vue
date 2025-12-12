@@ -19,6 +19,7 @@ const serviceControlValid = ref<boolean | null>(null);
 const testingMonitoring = ref(false);
 const monitoringValid = ref<boolean | null>(null);
 const connectionSaved = ref<boolean | null>(null);
+const isEmbedded = window.defaultConfig.embedded;
 
 async function testServiceControlUrl() {
   if (localServiceControlUrl.value) {
@@ -63,10 +64,16 @@ function saveConnections() {
 }
 
 function updateServiceControlUrls() {
-  if (!localServiceControlUrl.value) {
-    throw new Error("ServiceControl URL is mandatory");
-  } else if (!localServiceControlUrl.value.endsWith("/")) {
-    localServiceControlUrl.value += "/";
+  const params = new URLSearchParams();
+
+  if (!isEmbedded) {
+    if (!localServiceControlUrl.value) {
+      throw new Error("ServiceControl URL is mandatory");
+    } else if (!localServiceControlUrl.value.endsWith("/")) {
+      localServiceControlUrl.value += "/";
+    }
+
+    params.set("scu", localServiceControlUrl.value);
   }
 
   if (!localMonitoringUrl.value) {
@@ -74,10 +81,8 @@ function updateServiceControlUrls() {
   } else if (!localMonitoringUrl.value.endsWith("/") && localMonitoringUrl.value !== "!") {
     localMonitoringUrl.value += "/";
   }
-
-  const params = new URLSearchParams();
-  params.set("scu", localServiceControlUrl.value);
   params.set("mu", localMonitoringUrl.value);
+
   window.location.search = `?${params.toString()}`;
 }
 </script>
@@ -88,7 +93,7 @@ function updateServiceControlUrls() {
       <div class="row">
         <div class="col-12">
           <form novalidate>
-            <div class="row connection">
+            <div v-if="!isEmbedded" class="row connection">
               <h3>ServiceControl</h3>
               <div class="col-7 form-group">
                 <label for="serviceControlUrl">
