@@ -2,9 +2,6 @@ namespace ServicePulse.Host.Hosting
 {
     using System;
     using System.Collections.Generic;
-#if DEBUG
-    using System.Diagnostics;
-#endif
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -38,6 +35,56 @@ namespace ServicePulse.Host.Hosting
                     "url=",
                     @"Configures ServicePulse to listen on the specified url.",
                     s => { Url = s; }
+                },
+                {
+                    "forwardedheadersenabled=",
+                    @"Enable processing of forwarded headers (default: true).",
+                    s => { ForwardedHeadersEnabled = ParseBool(s, true); }
+                },
+                {
+                    "forwardedheaderstrustallproxies=",
+                    @"Trust all proxies for forwarded headers (default: true).",
+                    s => { ForwardedHeadersTrustAllProxies = ParseBool(s, true); }
+                },
+                {
+                    "forwardedheadersknownproxies=",
+                    @"Comma-separated list of trusted proxy IP addresses.",
+                    s => { ForwardedHeadersKnownProxies = ParseList(s); }
+                },
+                {
+                    "forwardedheadersknownnetworks=",
+                    @"Comma-separated list of trusted proxy networks in CIDR notation.",
+                    s => { ForwardedHeadersKnownNetworks = ParseList(s); }
+                },
+                {
+                    "httpsenabled=",
+                    @"Enable HTTPS features (default: false). Note: SSL certificate must be bound at OS level using netsh.",
+                    s => { HttpsEnabled = ParseBool(s, false); }
+                },
+                {
+                    "httpsredirecthttptohttps=",
+                    @"Redirect HTTP requests to HTTPS (default: false).",
+                    s => { HttpsRedirectHttpToHttps = ParseBool(s, false); }
+                },
+                {
+                    "httpsport=",
+                    @"HTTPS port for redirect (required for reverse proxy scenarios).",
+                    s => { HttpsPort = ParseNullableInt(s); }
+                },
+                {
+                    "httpsenablehsts=",
+                    @"Enable HTTP Strict Transport Security (default: false).",
+                    s => { HttpsEnableHsts = ParseBool(s, false); }
+                },
+                {
+                    "httpshstsmaxageseconds=",
+                    @"HSTS max age in seconds (default: 31536000 = 1 year).",
+                    s => { HttpsHstsMaxAgeSeconds = ParseInt(s, 31536000); }
+                },
+                {
+                    "httpshstsincludesubdomains=",
+                    @"Include subdomains in HSTS policy (default: false).",
+                    s => { HttpsHstsIncludeSubDomains = ParseBool(s, false); }
                 }
             };
 
@@ -232,6 +279,46 @@ namespace ServicePulse.Host.Hosting
             }
         }
 
+        static bool ParseBool(string value, bool defaultValue)
+        {
+            if (bool.TryParse(value, out var result))
+            {
+                return result;
+            }
+            return defaultValue;
+        }
+
+        static int ParseInt(string value, int defaultValue)
+        {
+            if (int.TryParse(value, out var result))
+            {
+                return result;
+            }
+            return defaultValue;
+        }
+
+        static int? ParseNullableInt(string value)
+        {
+            if (int.TryParse(value, out var result))
+            {
+                return result;
+            }
+            return null;
+        }
+
+        static List<string> ParseList(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return new List<string>();
+            }
+
+            return value.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => s.Trim())
+                        .Where(s => !string.IsNullOrEmpty(s))
+                        .ToList();
+        }
+
         void ValidateArgs()
         {
             var validProtocols = new[]
@@ -288,6 +375,20 @@ namespace ServicePulse.Host.Hosting
         public string ServiceControlUrl { get; set; }
 
         public string ServiceControlMonitoringUrl { get; set; }
+
+        // Forwarded Headers settings
+        public bool ForwardedHeadersEnabled { get; set; } = true;
+        public bool ForwardedHeadersTrustAllProxies { get; set; } = true;
+        public List<string> ForwardedHeadersKnownProxies { get; set; } = new List<string>();
+        public List<string> ForwardedHeadersKnownNetworks { get; set; } = new List<string>();
+
+        // HTTPS settings (certificate is bound at OS level via netsh, not in app)
+        public bool HttpsEnabled { get; set; } = false;
+        public bool HttpsRedirectHttpToHttps { get; set; } = false;
+        public int? HttpsPort { get; set; } = null;
+        public bool HttpsEnableHsts { get; set; } = false;
+        public int HttpsHstsMaxAgeSeconds { get; set; } = 31536000;
+        public bool HttpsHstsIncludeSubDomains { get; set; } = false;
 
         public string DisplayName { get; set; }
         public string Description { get; set; }
