@@ -89,3 +89,4 @@ The `SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS` setting is intended for use with a 
 - [Local HTTPS Testing](local-https-testing.md) - Guide for testing HTTPS locally during development
 - [Local Reverse Proxy Testing](local-nginx-testing.md) - Testing with NGINX reverse proxy (HSTS, HTTP to HTTPS redirect)
 - [Forwarded Headers Configuration](forwarded-headers.md) - Configure forwarded headers when behind a reverse proxy
+- [Authentication](authentication.md) - Configure OIDC authentication for ServicePulse

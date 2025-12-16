@@ -230,9 +230,15 @@ netsh http add urlacl url=http://+:8081/ user=Everyone
 
 Verify that HTTPS is working through the reverse proxy.
 
-**Start ServicePulse:**
+**Clear environment variables and start ServicePulse:**
 
 ```cmd
+set SERVICEPULSE_FORWARDEDHEADERS_ENABLED=
+set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=
+set SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS=
+set SERVICEPULSE_HTTPS_PORT=
+set SERVICEPULSE_HTTPS_ENABLEHSTS=
+
 cd src\ServicePulse
 dotnet run
 ```
@@ -282,11 +288,14 @@ The request succeeds over HTTPS through the NGINX reverse proxy.
 
 Verify that forwarded headers are being processed correctly.
 
-**Start ServicePulse with forwarded headers enabled:**
+**Set environment variables and start ServicePulse:**
 
 ```cmd
 set SERVICEPULSE_FORWARDEDHEADERS_ENABLED=true
 set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=true
+set SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS=
+set SERVICEPULSE_HTTPS_PORT=
+set SERVICEPULSE_HTTPS_ENABLEHSTS=
 
 cd src\ServicePulse
 dotnet run
@@ -371,13 +380,14 @@ curl -k https://servicepulse-host.localhost/debug/request-info | json
 
 Verify that HTTP requests are redirected to HTTPS.
 
-**Start ServicePulse with redirect enabled:**
+**Set environment variables and start ServicePulse:**
 
 ```cmd
 set SERVICEPULSE_FORWARDEDHEADERS_ENABLED=true
 set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=true
 set SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS=true
 set SERVICEPULSE_HTTPS_PORT=443
+set SERVICEPULSE_HTTPS_ENABLEHSTS=
 
 cd src\ServicePulse
 dotnet run
@@ -428,11 +438,13 @@ Verify that the HSTS header is included in HTTPS responses.
 
 > **Note:** You must use `--environment Production` because HSTS is disabled in Development.
 
-**Start ServicePulse with HSTS enabled:**
+**Set environment variables and start ServicePulse:**
 
 ```cmd
 set SERVICEPULSE_FORWARDEDHEADERS_ENABLED=true
 set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=true
+set SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS=
+set SERVICEPULSE_HTTPS_PORT=
 set SERVICEPULSE_HTTPS_ENABLEHSTS=true
 
 cd src\ServicePulse
@@ -612,3 +624,4 @@ The `/debug/request-info` endpoint is only available:
 - [Forwarded Headers Configuration](forwarded-headers.md) - Configuration reference for all forwarded headers settings
 - [Local HTTPS Testing](local-https-testing.md) - Testing direct HTTPS without a reverse proxy
 - [Local Forwarded Headers Testing](local-forwarded-headers-testing.md) - Testing forwarded headers without a reverse proxy
+- [Local Authentication Testing](local-authentication-testing.md) - Testing OIDC authentication
