@@ -117,12 +117,15 @@ Replace `YOUR_THUMBPRINT` with the thumbprint from the previous step.
 
 Verify that HTTPS is working with a valid certificate.
 
-**Configure and start ServicePulse:**
+**Set environment variables and start ServicePulse:**
 
 ```cmd
 set SERVICEPULSE_HTTPS_ENABLED=true
 set SERVICEPULSE_HTTPS_CERTIFICATEPATH=C:\path\to\repo\.local\certs\localhost.pfx
 set SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD=
+set SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS=
+set SERVICEPULSE_HTTPS_PORT=
+set SERVICEPULSE_HTTPS_ENABLEHSTS=
 
 cd src\ServicePulse
 dotnet run
@@ -149,12 +152,15 @@ The request succeeds over HTTPS. The exact SSL output varies by curl version, bu
 
 Verify that HTTP requests fail when only HTTPS is enabled.
 
-**Configure and start ServicePulse** (same as Scenario 1):
+**Set environment variables and start ServicePulse** (same as Scenario 1):
 
 ```cmd
 set SERVICEPULSE_HTTPS_ENABLED=true
 set SERVICEPULSE_HTTPS_CERTIFICATEPATH=C:\path\to\repo\.local\certs\localhost.pfx
 set SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD=
+set SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS=
+set SERVICEPULSE_HTTPS_PORT=
+set SERVICEPULSE_HTTPS_ENABLEHSTS=
 
 cd src\ServicePulse
 dotnet run
@@ -258,7 +264,7 @@ HTTP requests fail because HttpListener is configured for HTTPS only. The exact 
 
 ### Clear Environment Variables (.NET 8)
 
-After testing, clear the HTTPS environment variables:
+After testing, clear the environment variables:
 
 **Command Prompt (cmd):**
 
@@ -266,6 +272,9 @@ After testing, clear the HTTPS environment variables:
 set SERVICEPULSE_HTTPS_ENABLED=
 set SERVICEPULSE_HTTPS_CERTIFICATEPATH=
 set SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD=
+set SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS=
+set SERVICEPULSE_HTTPS_PORT=
+set SERVICEPULSE_HTTPS_ENABLEHSTS=
 ```
 
 **PowerShell:**
@@ -274,6 +283,9 @@ set SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD=
 $env:SERVICEPULSE_HTTPS_ENABLED = $null
 $env:SERVICEPULSE_HTTPS_CERTIFICATEPATH = $null
 $env:SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD = $null
+$env:SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS = $null
+$env:SERVICEPULSE_HTTPS_PORT = $null
+$env:SERVICEPULSE_HTTPS_ENABLEHSTS = $null
 ```
 
 ### Cleanup (.NET Framework)

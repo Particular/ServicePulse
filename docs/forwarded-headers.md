@@ -180,3 +180,4 @@ When the proxy is **not** trusted (incorrect `KnownProxies`):
 - [Local Forwarded Headers Testing](local-forwarded-headers-testing.md) - Test forwarded headers configuration with curl
 - [Local Reverse Proxy Testing](local-nginx-testing.md) - Guide for testing with NGINX reverse proxy locally
 - [HTTPS Configuration](https-configuration.md) - Configure direct HTTPS without a reverse proxy
+- [Authentication](authentication.md) - Configure OIDC authentication for ServicePulse
