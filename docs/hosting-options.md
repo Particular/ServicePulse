@@ -80,4 +80,4 @@ Not a hosting option - this is a NuGet package that bundles ServicePulse for emb
 
 - [HTTPS Configuration](https-configuration.md) - Configure direct HTTPS for either platform
 - [Forwarded Headers Configuration](forwarded-headers.md) - Configure forwarded headers when behind a reverse proxy
-- [Local HTTPS Testing](local-https-testing.md) - Test HTTPS configuration locally
+- [HTTPS Testing](https-testing.md) - Test HTTPS configuration locally

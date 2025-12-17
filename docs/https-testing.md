@@ -2,8 +2,8 @@
 
 This guide provides scenario-based tests for ServicePulse's direct HTTPS features. Use this to verify HTTPS behavior without a reverse proxy.
 
-> **Note:** HTTP to HTTPS redirection (`RedirectHttpToHttps`) is designed for reverse proxy scenarios where the proxy forwards HTTP requests to ServicePulse. When running with direct HTTPS, ServicePulse only binds to a single port (HTTPS). To test HTTP to HTTPS redirection, see [Local Reverse Proxy Testing](local-nginx-testing.md).
-> **Note:** HSTS should not be tested on localhost because browsers cache the HSTS policy, which could break other local development. To test HSTS, use the [NGINX reverse proxy setup](local-nginx-testing.md) with a custom hostname (`servicepulse.localhost`).
+> **Note:** HTTP to HTTPS redirection (`RedirectHttpToHttps`) is designed for reverse proxy scenarios where the proxy forwards HTTP requests to ServicePulse. When running with direct HTTPS, ServicePulse only binds to a single port (HTTPS). To test HTTP to HTTPS redirection, see [Reverse Proxy Testing](nginx-testing.md).
+> **Note:** HSTS should not be tested on localhost because browsers cache the HSTS policy, which could break other local development. To test HSTS, use the [NGINX reverse proxy setup](nginx-testing.md) with a custom hostname (`servicepulse.localhost`).
 
 ## Application Reference
 
@@ -258,7 +258,7 @@ HTTP requests fail because HttpListener is configured for HTTPS only. The exact 
 | `--httpshstsmaxageseconds=` | `31536000` | HSTS max-age (1 year) |
 | `--httpshstsincludesubdomains=` | `false` | Include subdomains in HSTS |
 
-> **Note:** HSTS and HTTP to HTTPS redirection are not tested in this guide. These features are designed for reverse proxy scenarios. See [Local Reverse Proxy Testing](local-nginx-testing.md) for testing these features.
+> **Note:** HSTS and HTTP to HTTPS redirection are not tested in this guide. These features are designed for reverse proxy scenarios. See [Reverse Proxy Testing](nginx-testing.md) for testing these features.
 
 ## Cleanup
 
@@ -397,5 +397,5 @@ If `curl --ssl-no-revoke https://localhost:9090` hangs with no response:
 
 - [HTTPS Configuration](https-configuration.md) - Configuration reference for all HTTPS settings
 - [Forwarded Headers Configuration](forwarded-headers.md) - Configure forwarded headers when behind a reverse proxy
-- [Local Forwarded Headers Testing](local-forwarded-headers-testing.md) - Testing forwarded headers without a reverse proxy
-- [Local Reverse Proxy Testing](local-nginx-testing.md) - Testing with NGINX reverse proxy
+- [Forwarded Headers Testing](forwarded-headers-testing.md) - Testing forwarded headers without a reverse proxy
+- [Reverse Proxy Testing](nginx-testing.md) - Testing with NGINX reverse proxy

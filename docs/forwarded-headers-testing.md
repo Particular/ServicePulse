@@ -870,5 +870,5 @@ unset SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS
 ## See Also
 
 - [Forwarded Headers Configuration](forwarded-headers.md) - Configuration reference for forwarded headers
-- [Local NGINX Testing](local-nginx-testing.md) - Testing with a real reverse proxy (NGINX)
+- [NGINX Testing](nginx-testing.md) - Testing with a real reverse proxy (NGINX)
 - [Hosting Options](hosting-options.md) - General hosting configuration guide
