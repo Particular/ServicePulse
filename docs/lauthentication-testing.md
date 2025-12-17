@@ -6,7 +6,7 @@ This guide provides scenario-based tests for ServicePulse's OIDC authentication.
 
 - ServicePulse built locally (see main README for build instructions)
 - ServiceControl instance running (provides authentication configuration)
-- **HTTPS configured** - Authentication requires HTTPS for secure token transmission. See [HTTPS Configuration](https-configuration.md) or [Local Reverse Proxy Testing](local-nginx-testing.md) for setup options.
+- **HTTPS configured** - Authentication requires HTTPS for secure token transmission. See [HTTPS Configuration](https-configuration.md) or [Reverse Proxy Testing](nginx-testing.md) for setup options.
 - (Optional) An OIDC identity provider for testing authenticated scenarios
 
 > **Security Note:** OAuth tokens transmitted over HTTP can be intercepted, compromising security. All authentication testing scenarios in this guide assume HTTPS is configured.
@@ -370,7 +370,7 @@ Verify that forwarded headers work correctly with authentication when behind a r
 **Prerequisites:**
 
 - ServiceControl running with authentication enabled
-- External reverse proxy (NGINX) configured (see [Local Reverse Proxy Testing](local-nginx-testing.md))
+- External reverse proxy (NGINX) configured (see [Reverse Proxy Testing](nginx-testing.md))
 - ServicePulse configured to trust forwarded headers
 
 **Configure ServicePulse:**
@@ -607,4 +607,4 @@ Copy the access token and paste it into [jwt.io](https://jwt.io) to view:
 
 - [Authentication](authentication.md) - Authentication configuration reference
 - [HTTPS Configuration](https-configuration.md) - Secure token transmission with HTTPS
-- [Local Reverse Proxy Testing](local-nginx-testing.md) - Testing with NGINX reverse proxy
+- [Reverse Proxy Testing](nginx-testing.md) - Testing with NGINX reverse proxy

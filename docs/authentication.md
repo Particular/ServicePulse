@@ -164,6 +164,6 @@ Token lifetime is controlled by your identity provider. Consider configuring:
 
 ## See Also
 
-- [Local Authentication Testing](local-authentication-testing.md) - Scenario-based testing guide for authentication
+- [Authentication Testing](authentication-testing.md) - Scenario-based testing guide for authentication
 - [ServiceControl Authentication Documentation](https://docs.particular.net/servicecontrol/) - Configure authentication settings in ServiceControl
 - [HTTPS Configuration](https-configuration.md) - Configure HTTPS for secure token transmission

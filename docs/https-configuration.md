@@ -52,7 +52,7 @@ ServicePulse.Host.exe --url=https://localhost:9090 --httpsenabled=true --httpsen
 
 ### SSL Certificate Binding
 
-ServicePulse.Host requires the SSL certificate to be bound at the OS level using `netsh` before starting the application. See [Local HTTPS Testing](local-https-testing.md) for detailed setup instructions.
+ServicePulse.Host requires the SSL certificate to be bound at the OS level using `netsh` before starting the application. See [HTTPS Testing](https-testing.md) for detailed setup instructions.
 
 ## Security Considerations
 
@@ -71,7 +71,7 @@ ServicePulse.Host requires the SSL certificate to be bound at the OS level using
 - HSTS is cached by browsers, so test carefully before enabling in production
 - Start with a short max-age during initial deployment
 - Consider the impact on subdomains before enabling `includeSubDomains`
-- To test HSTS locally, use the [NGINX reverse proxy setup](local-nginx-testing.md) with a custom hostname
+- To test HSTS locally, use the [NGINX reverse proxy setup](nginx-testing.md) with a custom hostname
 
 ### HTTP to HTTPS Redirect
 
@@ -82,11 +82,11 @@ The `SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS` setting is intended for use with a 
 - ServicePulse will redirect HTTP requests to HTTPS based on the `X-Forwarded-Proto` header
 - **Important:** You must also set `SERVICEPULSE_HTTPS_PORT` (or `--httpsport=` for .NET Framework) to specify the HTTPS port for the redirect URL
 
-> **Note:** When running ServicePulse directly without a reverse proxy, the application only listens on a single protocol (HTTP or HTTPS). To test HTTP-to-HTTPS redirection locally, use the [NGINX reverse proxy setup](local-nginx-testing.md).
+> **Note:** When running ServicePulse directly without a reverse proxy, the application only listens on a single protocol (HTTP or HTTPS). To test HTTP-to-HTTPS redirection locally, use the [NGINX reverse proxy setup](nginx-testing.md).
 
 ## See Also
 
-- [Local HTTPS Testing](local-https-testing.md) - Guide for testing HTTPS locally during development
-- [Local Reverse Proxy Testing](local-nginx-testing.md) - Testing with NGINX reverse proxy (HSTS, HTTP to HTTPS redirect)
+- [HTTPS Testing](https-testing.md) - Guide for testing HTTPS locally during development
+- [Reverse Proxy Testing](nginx-testing.md) - Testing with NGINX reverse proxy (HSTS, HTTP to HTTPS redirect)
 - [Forwarded Headers Configuration](forwarded-headers.md) - Configure forwarded headers when behind a reverse proxy
 - [Authentication](authentication.md) - Configure OIDC authentication for ServicePulse

@@ -573,7 +573,7 @@ Ensure ServicePulse is running and listening on the expected port (5291 for .NET
 
 ### Conflicting environment variables from direct HTTPS testing
 
-If you previously tested [direct HTTPS](local-https-testing.md), you may have environment variables set that conflict with reverse proxy testing. Clear them before running:
+If you previously tested [direct HTTPS](https-testing.md), you may have environment variables set that conflict with reverse proxy testing. Clear them before running:
 
 **Command Prompt (cmd):**
 
@@ -622,6 +622,6 @@ The `/debug/request-info` endpoint is only available:
 
 - [HTTPS Configuration](https-configuration.md) - Configuration reference for all HTTPS settings
 - [Forwarded Headers Configuration](forwarded-headers.md) - Configuration reference for all forwarded headers settings
-- [Local HTTPS Testing](local-https-testing.md) - Testing direct HTTPS without a reverse proxy
-- [Local Forwarded Headers Testing](local-forwarded-headers-testing.md) - Testing forwarded headers without a reverse proxy
-- [Local Authentication Testing](local-authentication-testing.md) - Testing OIDC authentication
+- [HTTPS Testing](https-testing.md) - Testing direct HTTPS without a reverse proxy
+- [Forwarded Headers Testing](forwarded-headers-testing.md) - Testing forwarded headers without a reverse proxy
+- [Authentication Testing](authentication-testing.md) - Testing OIDC authentication
