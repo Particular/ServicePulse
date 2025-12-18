@@ -6,6 +6,11 @@ import CustomChecksDashboardItem from "@/components/customchecks/CustomChecksDas
 import HeartbeatsDashboardItem from "@/components/heartbeats/HeartbeatsDashboardItem.vue";
 import FailedMessagesDashboardItem from "@/components/failedmessages/FailedMessagesDashboardItem.vue";
 import PlatformCapabilitiesDashboardItem from "@/components/platformcapabilities/PlatformCapabilitiesDashboardItem.vue";
+import { useConfigurationStore } from "@/stores/ConfigurationStore";
+import { storeToRefs } from "pinia";
+
+const configurationStore = useConfigurationStore();
+const { isMassTransitConnected } = storeToRefs(configurationStore);
 </script>
 
 <template>
@@ -32,7 +37,7 @@ import PlatformCapabilitiesDashboardItem from "@/components/platformcapabilities
               </div>
             </div>
           </div>
-          <div class="col-12 platform-capabilities-section">
+          <div v-if="isMassTransitConnected === false" class="col-12 platform-capabilities-section">
             <PlatformCapabilitiesDashboardItem />
           </div>
           <EventItemShort></EventItemShort>

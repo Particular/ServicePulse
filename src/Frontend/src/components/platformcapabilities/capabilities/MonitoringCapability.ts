@@ -7,6 +7,7 @@ import useMonitoringStoreAutoRefresh from "@/composables/useMonitoringStoreAutoR
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+import routeLinks from "@/router/routeLinks";
 
 const MonitoringDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.EndpointsNotConfigured]:
@@ -26,7 +27,7 @@ const MonitoringHelpButtonUrl: CapabilityStatusToStringMap = {
   [CapabilityStatus.EndpointsNotConfigured]: "https://docs.particular.net/monitoring/metrics/install-plugin",
   [CapabilityStatus.InstanceNotConfigured]: "https://docs.particular.net/servicecontrol/monitoring-instances/",
   [CapabilityStatus.Unavailable]: "https://docs.particular.net/servicecontrol/troubleshooting",
-  [CapabilityStatus.Available]: "#/monitoring",
+  [CapabilityStatus.Available]: routeLinks.monitoring.root,
 };
 
 enum MonitoringIndicatorTooltip {

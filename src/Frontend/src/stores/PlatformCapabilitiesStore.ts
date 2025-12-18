@@ -1,7 +1,20 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref, watch } from "vue";
+import serviceControlClient from "@/components/serviceControlClient";
 
-const STORAGE_KEY = "servicepulse-platform-capabilities-visibility";
+const STORAGE_KEY_PREFIX = "servicepulse-capabilities-vis";
+
+function getStorageKey(): string {
+  const url = serviceControlClient.url;
+  if (url) {
+    // Create a simple hash of the URL to keep the key reasonably short
+    const hash = url.split("").reduce((acc, char) => {
+      return ((acc << 5) - acc + char.charCodeAt(0)) | 0;
+    }, 0);
+    return `${STORAGE_KEY_PREFIX}-${Math.abs(hash).toString(36)}`;
+  }
+  return STORAGE_KEY_PREFIX;
+}
 
 interface PlatformCapabilitiesVisibility {
   showSection: boolean;
@@ -19,7 +32,7 @@ const defaultVisibility: PlatformCapabilitiesVisibility = {
 
 function loadVisibility(): PlatformCapabilitiesVisibility {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(getStorageKey());
     if (stored) {
       const parsed = JSON.parse(stored) as Partial<PlatformCapabilitiesVisibility>;
       return { ...defaultVisibility, ...parsed };
@@ -32,7 +45,7 @@ function loadVisibility(): PlatformCapabilitiesVisibility {
 
 function saveVisibility(visibility: PlatformCapabilitiesVisibility): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(visibility));
+    localStorage.setItem(getStorageKey(), JSON.stringify(visibility));
   } catch {
     // Ignore storage errors
   }

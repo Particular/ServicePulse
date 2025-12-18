@@ -1,3 +1,4 @@
+import type { Component } from "vue";
 import { CapabilityStatus } from "./constants";
 
 export interface StatusIndicator {
@@ -14,7 +15,7 @@ export interface WizardImage {
 
 export interface WizardPage {
   title: string;
-  content: string;
+  content: Component;
   image?: string | WizardImage;
   images?: (string | WizardImage)[];
   learnMoreUrl?: string;

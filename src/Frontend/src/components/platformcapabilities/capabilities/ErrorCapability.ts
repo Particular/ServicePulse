@@ -8,6 +8,7 @@ import useRemoteInstancesAutoRefresh from "@/composables/useRemoteInstancesAutoR
 import { RemoteInstanceStatus, RemoteInstanceType, type RemoteInstance } from "@/resources/RemoteInstance";
 import serviceControlClient from "@/components/serviceControlClient";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+import routeLinks from "@/router/routeLinks";
 
 /**
  * Checks if a remote instance is an error/recoverability instance using the cached instance type
@@ -47,7 +48,7 @@ const ErrorHelpButtonText: CapabilityStatusToStringMap = {
 
 const ErrorHelpButtonUrl: CapabilityStatusToStringMap = {
   [CapabilityStatus.PartiallyUnavailable]: "https://docs.particular.net/servicecontrol/troubleshooting",
-  [CapabilityStatus.Available]: "#/failed-messages",
+  [CapabilityStatus.Available]: routeLinks.failedMessage.root,
 };
 
 enum ErrorIndicatorTooltip {

@@ -2,6 +2,7 @@ import { type ComputedRef } from "vue";
 import { faCheck, faInfoCircle, faTimes, faExclamationTriangle, type IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { StatusIndicator } from "@/components/platformcapabilities/types";
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
+import routeLinks from "@/router/routeLinks";
 
 export interface CapabilityComposable {
   status: ComputedRef<CapabilityStatus>;
@@ -39,7 +40,7 @@ export function useCapabilityBase() {
   };
 
   const getHelpButtonUrlForStatus = (status: CapabilityStatus, helpButtonUrls: CapabilityStatusToStringMap): string => {
-    return helpButtonUrls[status] || "#/dashboard";
+    return helpButtonUrls[status] || routeLinks.dashboard;
   };
 
   const createIndicator = (label: string, status: CapabilityStatus, tooltip: string, url?: string, version?: string): StatusIndicator => {
