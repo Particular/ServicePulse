@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useServiceControlStore } from "./ServiceControlStore";
 import type { AuthConfig } from "@/types/auth";
 import { WebStorageStateStore } from "oidc-client-ts";
+import routeLinks from "@/router/routeLinks";
 
 interface AuthConfigResponse {
   enabled: boolean;
@@ -48,11 +49,13 @@ export const useAuthStore = defineStore("auth", () => {
 
   function transformToAuthConfig(config: AuthConfigResponse): AuthConfig {
     const apiScope = JSON.parse(config.api_scopes).join(" ");
+    // Use hash-based URL for post-logout redirect since the app uses hash routing
+    const postLogoutRedirectUri = `${window.location.origin}${window.location.pathname}#${routeLinks.loggedOut}`;
     return {
       authority: config.authority,
       client_id: config.client_id,
       redirect_uri: window.location.origin,
-      post_logout_redirect_uri: window.location.origin,
+      post_logout_redirect_uri: postLogoutRedirectUri,
       response_type: "code",
       scope: `${apiScope} openid profile email offline_access`,
       automaticSilentRenew: true,

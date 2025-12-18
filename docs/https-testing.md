@@ -7,10 +7,10 @@ This guide provides scenario-based tests for ServicePulse's direct HTTPS feature
 
 ## Application Reference
 
-| Application | Project Directory | Default Port | Configuration |
-|-------------|-------------------|--------------|---------------|
-| ServicePulse (.NET 8) | `src\ServicePulse` | 5291 | Environment variables with `SERVICEPULSE_` prefix |
-| ServicePulse.Host (.NET Framework) | `src\ServicePulse.Host` | 9090 | Command-line arguments with `--` prefix |
+| Application                        | Project Directory       | Default Port | Configuration                                     |
+|------------------------------------|-------------------------|--------------|---------------------------------------------------|
+| ServicePulse (.NET 8)              | `src\ServicePulse`      | 5291         | Environment variables with `SERVICEPULSE_` prefix |
+| ServicePulse.Host (.NET Framework) | `src\ServicePulse.Host` | 9090         | Command-line arguments with `--` prefix           |
 
 ## Prerequisites
 
@@ -52,7 +52,7 @@ Kestrel requires certificates in PFX format. Use mkcert to generate them:
 ```cmd
 mkcert -install
 cd .local\certs
-mkcert -p12-file localhost.pfx -pkcs12 localhost 127.0.0.1 ::1
+mkcert -p12-file localhost.pfx -pkcs12 localhost 127.0.0.1 ::1 servicepulse
 ```
 
 When prompted for a password, you can use an empty password by pressing Enter, or set a password and note it for the configuration step.
@@ -238,25 +238,25 @@ HTTP requests fail because HttpListener is configured for HTTPS only. The exact 
 
 ### ServicePulse (.NET 8)
 
-| Environment Variable | Default | Description |
-|---------------------|---------|-------------|
-| `SERVICEPULSE_HTTPS_ENABLED` | `false` | Enable Kestrel HTTPS |
-| `SERVICEPULSE_HTTPS_CERTIFICATEPATH` | - | Path to PFX certificate file |
-| `SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD` | - | Certificate password (empty string for no password) |
-| `SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS` | `false` | Redirect HTTP requests to HTTPS (reverse proxy only) |
-| `SERVICEPULSE_HTTPS_ENABLEHSTS` | `false` | Enable HTTP Strict Transport Security |
-| `SERVICEPULSE_HTTPS_HSTSMAXAGESECONDS` | `31536000` | HSTS max-age (1 year) |
-| `SERVICEPULSE_HTTPS_HSTSINCLUDESUBDOMAINS` | `false` | Include subdomains in HSTS |
+| Environment Variable                       | Default    | Description                                          |
+|--------------------------------------------|------------|------------------------------------------------------|
+| `SERVICEPULSE_HTTPS_ENABLED`               | `false`    | Enable Kestrel HTTPS                                 |
+| `SERVICEPULSE_HTTPS_CERTIFICATEPATH`       | -          | Path to PFX certificate file                         |
+| `SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD`   | -          | Certificate password (empty string for no password)  |
+| `SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS`   | `false`    | Redirect HTTP requests to HTTPS (reverse proxy only) |
+| `SERVICEPULSE_HTTPS_ENABLEHSTS`            | `false`    | Enable HTTP Strict Transport Security                |
+| `SERVICEPULSE_HTTPS_HSTSMAXAGESECONDS`     | `31536000` | HSTS max-age (1 year)                                |
+| `SERVICEPULSE_HTTPS_HSTSINCLUDESUBDOMAINS` | `false`    | Include subdomains in HSTS                           |
 
 ### ServicePulse.Host (.NET Framework)
 
-| Command-Line Argument | Default | Description |
-|----------------------|---------|-------------|
-| `--httpsenabled=` | `false` | Enable HTTPS |
-| `--httpsredirecthttptohttps=` | `false` | Redirect HTTP requests to HTTPS |
-| `--httpsenablehsts=` | `false` | Enable HTTP Strict Transport Security |
-| `--httpshstsmaxageseconds=` | `31536000` | HSTS max-age (1 year) |
-| `--httpshstsincludesubdomains=` | `false` | Include subdomains in HSTS |
+| Command-Line Argument           | Default    | Description                           |
+|---------------------------------|------------|---------------------------------------|
+| `--httpsenabled=`               | `false`    | Enable HTTPS                          |
+| `--httpsredirecthttptohttps=`   | `false`    | Redirect HTTP requests to HTTPS       |
+| `--httpsenablehsts=`            | `false`    | Enable HTTP Strict Transport Security |
+| `--httpshstsmaxageseconds=`     | `31536000` | HSTS max-age (1 year)                 |
+| `--httpshstsincludesubdomains=` | `false`    | Include subdomains in HSTS            |
 
 > **Note:** HSTS and HTTP to HTTPS redirection are not tested in this guide. These features are designed for reverse proxy scenarios. See [Reverse Proxy Testing](nginx-testing.md) for testing these features.
 

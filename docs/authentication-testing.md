@@ -5,7 +5,7 @@ This guide provides scenario-based tests for ServicePulse's OIDC authentication.
 ## Prerequisites
 
 - ServicePulse built locally (see main README for build instructions)
-- ServiceControl instance running (provides authentication configuration)
+- ServiceControl instance running (provides authentication configuration) - See the hosting guide in ServiceControl docs for more info.
 - **HTTPS configured** - Authentication requires HTTPS for secure token transmission. See [HTTPS Configuration](https-configuration.md) or [Reverse Proxy Testing](nginx-testing.md) for setup options.
 - (Optional) An OIDC identity provider for testing authenticated scenarios
 
@@ -78,16 +78,7 @@ Test that ServiceControl returns the correct authentication configuration for Se
 
 **Configure and start ServiceControl:**
 
-```cmd
-set SERVICECONTROL_AUTHENTICATION_ENABLED=true
-set SERVICECONTROL_AUTHENTICATION_AUTHORITY=https://login.microsoftonline.com/{tenant-id}/v2.0
-set SERVICECONTROL_AUTHENTICATION_AUDIENCE=api://servicecontrol
-set SERVICECONTROL_AUTHENTICATION_SERVICEPULSE_CLIENTID={servicepulse-client-id}
-set SERVICECONTROL_AUTHENTICATION_SERVICEPULSE_APISCOPES=["api://servicecontrol/access_as_user"]
-
-cd src\ServiceControl
-dotnet run
-```
+See ServiceControl docs for correct setup
 
 **Test with curl:**
 
@@ -102,8 +93,8 @@ curl http://localhost:33333/api/authentication/configuration | json
   "enabled": true,
   "client_id": "{servicepulse-client-id}",
   "authority": "https://login.microsoftonline.com/{tenant-id}/v2.0",
-  "api_scopes": "[\"api://servicecontrol/access_as_user\"]",
-  "audience": "api://servicecontrol"
+  "audience": "api://servicecontrol",
+  "api_scopes": "[\"api://servicecontrol/access_as_user\"]"
 }
 ```
 
@@ -156,6 +147,23 @@ Verify that authenticated requests include the Bearer token.
 ```text
 Authorization: Bearer eyJhbGciOiJSUzI1NiIs...
 ```
+
+**Test with curl (using a token):**
+
+If you have obtained a token (e.g., from browser Developer Tools > Application > Session Storage > `oidc.user:*`), you can test API requests directly:
+
+```cmd
+rem Set your token (copy from browser session storage)
+set TOKEN=eyJhbGciOiJSUzI1NiIs...
+
+rem Test against ServiceControl directly
+curl -v -H "Authorization: Bearer %TOKEN%" http://localhost:33333/api/endpoints
+
+rem Test through ServicePulse reverse proxy
+curl -v -H "Authorization: Bearer %TOKEN%" http://localhost:5291/api/endpoints
+```
+
+**Expected:** Both requests return `200 OK` with endpoint data (JSON array).
 
 ### Scenario 5: Unauthenticated API Access Blocked
 
@@ -216,7 +224,7 @@ Verify that sessions are isolated between browser tabs.
 
 ### Scenario 8: Logout Flow
 
-Verify that logout clears the session.
+Verify that logout clears the session and redirects to the logged-out page.
 
 **Prerequisites:**
 
@@ -225,12 +233,23 @@ Verify that logout clears the session.
 **Test in browser:**
 
 1. Click on the user profile menu in the header
-2. Click "Sign out"
-3. Browser should redirect to the identity provider's logout page (if configured)
-4. Navigate back to `http://localhost:5291`
-5. Should be prompted to log in again
+2. Click "Log out"
+3. Browser should redirect to the identity provider's logout page
+4. After IdP logout, browser redirects to `http://localhost:5291/#/logged-out`
+5. The logged-out page displays:
+   - "You have been signed out" message
+   - "Sign in again" button
+6. Click "Sign in again" to initiate a new login
 
-**Expected:** The session is cleared. User must re-authenticate to access ServicePulse.
+**Expected:** The session is cleared. User sees the logged-out confirmation page and can sign in again.
+
+**Test with curl (verify logged-out page is accessible without auth):**
+
+```cmd
+curl http://localhost:5291/#/logged-out
+```
+
+**Expected:** The logged-out page should be accessible without authentication (it's an anonymous route).
 
 ### Scenario 9: Silent Token Renewal
 

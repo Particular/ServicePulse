@@ -24,19 +24,19 @@ dotnet build
 
 ## Application Reference
 
-| Application | Project Directory | Default Port | Configuration |
-|-------------|-------------------|--------------|---------------|
-| ServicePulse (.NET 8) | `src\ServicePulse` | 5291 | Environment variables with `SERVICEPULSE_` prefix |
-| ServicePulse.Host (.NET Framework) | `src\ServicePulse.Host` | 8081 | Command-line arguments with `--` prefix |
+| Application                        | Project Directory       | Default Port | Configuration                                     |
+|------------------------------------|-------------------------|--------------|---------------------------------------------------|
+| ServicePulse (.NET 8)              | `src\ServicePulse`      | 5291         | Environment variables with `SERVICEPULSE_` prefix |
+| ServicePulse.Host (.NET Framework) | `src\ServicePulse.Host` | 8081         | Command-line arguments with `--` prefix           |
 
 ### Configuration Settings
 
-| Setting | .NET 8 Environment Variable | .NET Framework Argument |
-|---------|----------------------------|------------------------|
-| Enable forwarded headers | `SERVICEPULSE_FORWARDEDHEADERS_ENABLED` | `--forwardedheadersenabled=` |
-| Trust all proxies | `SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES` | `--forwardedheaderstrustallproxies=` |
-| Known proxies | `SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES` | `--forwardedheadersknownproxies=` |
-| Known networks | `SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS` | `--forwardedheadersknownnetworks=` |
+| Setting                  | .NET 8 Environment Variable                     | .NET Framework Argument              |
+|--------------------------|-------------------------------------------------|--------------------------------------|
+| Enable forwarded headers | `SERVICEPULSE_FORWARDEDHEADERS_ENABLED`         | `--forwardedheadersenabled=`         |
+| Trust all proxies        | `SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES` | `--forwardedheaderstrustallproxies=` |
+| Known proxies            | `SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES`    | `--forwardedheadersknownproxies=`    |
+| Known networks           | `SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS`   | `--forwardedheadersknownnetworks=`   |
 
 ## How Forwarded Headers Work
 
@@ -815,18 +815,18 @@ The `/debug/request-info` endpoint is only available in Development environment.
 }
 ```
 
-| Section | Field | Description |
-|---------|-------|-------------|
-| `processed` | `scheme` | The request scheme after forwarded headers processing |
-| `processed` | `host` | The request host after forwarded headers processing |
-| `processed` | `remoteIpAddress` | The client IP after forwarded headers processing |
-| `rawHeaders` | `xForwardedFor` | Raw `X-Forwarded-For` header (empty if consumed by middleware) |
-| `rawHeaders` | `xForwardedProto` | Raw `X-Forwarded-Proto` header (empty if consumed by middleware) |
-| `rawHeaders` | `xForwardedHost` | Raw `X-Forwarded-Host` header (empty if consumed by middleware) |
-| `configuration` | `enabled` | Whether forwarded headers middleware is enabled |
-| `configuration` | `trustAllProxies` | Whether all proxies are trusted (security warning if true) |
-| `configuration` | `knownProxies` | List of trusted proxy IP addresses |
-| `configuration` | `knownNetworks` | List of trusted CIDR network ranges |
+| Section         | Field             | Description                                                      |
+|-----------------|-------------------|------------------------------------------------------------------|
+| `processed`     | `scheme`          | The request scheme after forwarded headers processing            |
+| `processed`     | `host`            | The request host after forwarded headers processing              |
+| `processed`     | `remoteIpAddress` | The client IP after forwarded headers processing                 |
+| `rawHeaders`    | `xForwardedFor`   | Raw `X-Forwarded-For` header (empty if consumed by middleware)   |
+| `rawHeaders`    | `xForwardedProto` | Raw `X-Forwarded-Proto` header (empty if consumed by middleware) |
+| `rawHeaders`    | `xForwardedHost`  | Raw `X-Forwarded-Host` header (empty if consumed by middleware)  |
+| `configuration` | `enabled`         | Whether forwarded headers middleware is enabled                  |
+| `configuration` | `trustAllProxies` | Whether all proxies are trusted (security warning if true)       |
+| `configuration` | `knownProxies`    | List of trusted proxy IP addresses                               |
+| `configuration` | `knownNetworks`   | List of trusted CIDR network ranges                              |
 
 ### Key Diagnostic Questions
 

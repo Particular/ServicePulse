@@ -9,6 +9,7 @@ import CustomChecksView from "@/views/CustomChecksView.vue";
 import HeartbeatsView from "@/views/HeartbeatsView.vue";
 import ThroughputReportView from "@/views/ThroughputReportView.vue";
 import AuditView from "@/views/AuditView.vue";
+import LoggedOutView from "@/views/LoggedOutView.vue";
 
 export interface RouteItem {
   path: string;
@@ -17,9 +18,16 @@ export interface RouteItem {
   title: string;
   component?: RouteComponent | (() => Promise<RouteComponent>);
   children?: RouteItem[];
+  allowAnonymous?: boolean;
 }
 
 const config: RouteItem[] = [
+  {
+    path: routeLinks.loggedOut,
+    component: LoggedOutView,
+    title: "Signed Out",
+    allowAnonymous: true,
+  },
   {
     path: routeLinks.dashboard,
     component: DashboardView,
