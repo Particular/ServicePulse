@@ -22,25 +22,6 @@ export function createAuditInstance(options: { apiUri?: string; version?: string
 }
 
 /**
- * Creates a remote error instance with the given configuration
- */
-export function createErrorInstance(options: { apiUri?: string; version?: string; status?: RemoteInstanceStatus; retentionPeriod?: string } = {}): RemoteInstance {
-  const { apiUri = "http://localhost:33335/api/", version = "6.6.0", status = RemoteInstanceStatus.Online, retentionPeriod = "15.00:00:00" } = options;
-
-  return {
-    api_uri: apiUri,
-    version,
-    status,
-    configuration: {
-      data_retention: {
-        error_retention_period: retentionPeriod,
-      },
-    },
-    cachedInstanceType: RemoteInstanceType.Error,
-  };
-}
-
-/**
  * Creates a successful message for testing
  */
 export function createSuccessfulMessage(id: string = "msg-1"): Message {
