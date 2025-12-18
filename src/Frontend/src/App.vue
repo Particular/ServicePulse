@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
-import { RouterView } from "vue-router";
+import { RouterView, useRoute } from "vue-router";
 import PageFooter from "./components/PageFooter.vue";
 import PageHeader from "./components/PageHeader.vue";
 import "bootstrap";
@@ -9,11 +9,18 @@ import BackendChecksNotifications from "@/components/BackendChecksNotifications.
 import { useAuth } from "@/composables/useAuth";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/AuthStore";
+import routeLinks from "@/router/routeLinks";
 
 const { authenticate } = useAuth();
 const authStore = useAuthStore();
+const route = useRoute();
 const { isAuthenticating, isAuthenticated, authEnabled, loading } = storeToRefs(authStore);
-const shouldShowApp = computed(() => !loading.value && (!authEnabled.value || isAuthenticated.value));
+
+// Check if the current route allows anonymous access (e.g., logged-out page)
+const isAnonymousRoute = computed(() => route.meta?.allowAnonymous === true);
+const shouldShowApp = computed(() => !loading.value && (!authEnabled.value || isAuthenticated.value || isAnonymousRoute.value));
+// Show full app layout (header, footer, notifications) only when authenticated or auth is disabled
+const shouldShowFullLayout = computed(() => !authEnabled.value || isAuthenticated.value);
 
 onMounted(async () => {
   try {
@@ -30,6 +37,13 @@ onMounted(async () => {
     // Check if auth config is available
     if (!authStore.authConfig) {
       console.debug("Authentication is enabled but configuration not available");
+      authStore.setAuthenticating(false);
+      return;
+    }
+
+    // If the user is on an anonymous route (like logged-out), don't trigger authentication
+    if (window.location.hash === `#${routeLinks.loggedOut}`) {
+      console.debug("User is on logged-out page, skipping authentication");
       authStore.setAuthenticating(false);
       return;
     }
@@ -70,13 +84,14 @@ onMounted(async () => {
     </div>
   </div>
   <template v-else-if="shouldShowApp">
-    <page-header />
-    <div class="container-fluid" id="main-content">
+    <page-header v-if="shouldShowFullLayout" />
+    <div v-if="shouldShowFullLayout" class="container-fluid" id="main-content">
       <RouterView />
     </div>
-    <LicenseNotifications />
-    <BackendChecksNotifications />
-    <page-footer />
+    <RouterView v-else />
+    <LicenseNotifications v-if="shouldShowFullLayout" />
+    <BackendChecksNotifications v-if="shouldShowFullLayout" />
+    <page-footer v-if="shouldShowFullLayout" />
   </template>
 </template>
 

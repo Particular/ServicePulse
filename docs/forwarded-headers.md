@@ -6,12 +6,12 @@ When ServicePulse is deployed behind a reverse proxy (like nginx, Traefik, or a 
 
 ### Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SERVICEPULSE_FORWARDEDHEADERS_ENABLED` | `true` | Enable forwarded headers processing |
-| `SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES` | `true` | Trust all proxies (auto-disabled if known proxies/networks set) |
-| `SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES` | (none) | Comma-separated IP addresses of trusted proxies |
-| `SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS` | (none) | Comma-separated CIDR networks (e.g., `10.0.0.0/8,172.16.0.0/12`) |
+| Variable                                        | Default | Description                                                      |
+|-------------------------------------------------|---------|------------------------------------------------------------------|
+| `SERVICEPULSE_FORWARDEDHEADERS_ENABLED`         | `true`  | Enable forwarded headers processing                              |
+| `SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES` | `true`  | Trust all proxies (auto-disabled if known proxies/networks set)  |
+| `SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES`    | (none)  | Comma-separated IP addresses of trusted proxies                  |
+| `SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS`   | (none)  | Comma-separated CIDR networks (e.g., `10.0.0.0/8,172.16.0.0/12`) |
 
 ### Docker Examples
 
@@ -47,12 +47,12 @@ When `SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES` or `SERVICEPULSE_FORWARDEDHEAD
 
 ### Command-Line Arguments
 
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `--forwardedheadersenabled=` | `true` | Enable forwarded headers processing |
-| `--forwardedheaderstrustallproxies=` | `true` | Trust all proxies (auto-disabled if known proxies/networks set) |
-| `--forwardedheadersknownproxies=` | (none) | Comma-separated IP addresses of trusted proxies |
-| `--forwardedheadersknownnetworks=` | (none) | Comma-separated CIDR networks |
+| Argument                             | Default | Description                                                     |
+|--------------------------------------|---------|-----------------------------------------------------------------|
+| `--forwardedheadersenabled=`         | `true`  | Enable forwarded headers processing                             |
+| `--forwardedheaderstrustallproxies=` | `true`  | Trust all proxies (auto-disabled if known proxies/networks set) |
+| `--forwardedheadersknownproxies=`    | (none)  | Comma-separated IP addresses of trusted proxies                 |
+| `--forwardedheadersknownnetworks=`   | (none)  | Comma-separated CIDR networks                                   |
 
 ### Examples
 
@@ -146,10 +146,10 @@ See [HTTPS Configuration](https-configuration.md) for more details.
 
 When processing `X-Forwarded-For` headers with multiple IPs (proxy chains), the behavior depends on trust configuration:
 
-| Configuration | ForwardLimit | Behavior |
-|---------------|--------------|----------|
-| `TrustAllProxies = true` | `null` (no limit) | Processes all IPs, returns original client IP |
-| `TrustAllProxies = false` | `1` (default) | Processes only the last proxy IP |
+| Configuration             | ForwardLimit      | Behavior                                      |
+|---------------------------|-------------------|-----------------------------------------------|
+| `TrustAllProxies = true`  | `null` (no limit) | Processes all IPs, returns original client IP |
+| `TrustAllProxies = false` | `1` (default)     | Processes only the last proxy IP              |
 
 For example, with `X-Forwarded-For: 203.0.113.50, 10.0.0.1, 192.168.1.1`:
 

@@ -107,6 +107,7 @@ const routeLinks = {
   messages: messagesLinks("/messages"),
   configuration: configurationLinks("/configuration"),
   throughput: throughputLinks("/usage"),
+  loggedOut: "/logged-out",
 };
 
 export default routeLinks;

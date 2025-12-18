@@ -45,13 +45,13 @@ When authentication is enabled:
 
 Authentication is configured in ServiceControl, not ServicePulse. The following settings are available:
 
-| Setting | Description |
-|---------|-------------|
-| `enabled` | Enable or disable authentication |
-| `authority` | The OIDC authority URL (identity provider) |
-| `client_id` | The OIDC client ID registered with your identity provider |
-| `api_scopes` | API scopes to request (space-separated or JSON array) |
-| `audience` | The audience claim for the access token (required by some identity providers) |
+| Setting      | Description                                                                   |
+|--------------|-------------------------------------------------------------------------------|
+| `enabled`    | Enable or disable authentication                                              |
+| `authority`  | The OIDC authority URL (identity provider)                                    |
+| `client_id`  | The OIDC client ID registered with your identity provider                     |
+| `api_scopes` | API scopes to request (space-separated or JSON array)                         |
+| `audience`   | The audience claim for the access token (required by some identity providers) |
 
 Refer to the [ServiceControl documentation](https://docs.particular.net/servicecontrol/) for instructions on configuring authentication settings.
 
@@ -59,13 +59,13 @@ Refer to the [ServiceControl documentation](https://docs.particular.net/servicec
 
 When registering ServicePulse with your identity provider, configure the following:
 
-| Setting | Value |
-|---------|-------|
-| Application type | Single Page Application (SPA) |
-| Grant type | Authorization Code with PKCE |
-| Redirect URI | `https://your-servicepulse-url/` |
-| Post-logout redirect URI | `https://your-servicepulse-url/` |
-| Silent renew URI | `https://your-servicepulse-url/silent-renew.html` |
+| Setting                  | Value                                             |
+|--------------------------|---------------------------------------------------|
+| Application type         | Single Page Application (SPA)                     |
+| Grant type               | Authorization Code with PKCE                      |
+| Redirect URI             | `https://your-servicepulse-url/`                  |
+| Post-logout redirect URI | `https://your-servicepulse-url/`                  |
+| Silent renew URI         | `https://your-servicepulse-url/silent-renew.html` |
 
 ### Required Scopes
 
