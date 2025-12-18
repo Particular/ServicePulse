@@ -257,7 +257,59 @@ describe("FEATURE: Audit capability card", () => {
     });
   });
 
-  // Note: Testing ServiceControl version < 6.6.0 requires more complex setup with environment store reset
-  // The version check happens at app initialization, so changing it mid-test doesn't work without
-  // resetting the pinia stores. This would be better tested as a component unit test.
+  describe("RULE: When ServiceControl version does not support 'All Messages' feature, show 'Endpoints Not Configured' status", () => {
+    test("EXAMPLE: ServiceControl version < 6.6.0 with successful messages still shows not configured status", async ({ driver }) => {
+      // Arrange
+      // Set up ServiceControl with version < 6.6.0 which does NOT support "All Messages" feature
+      await driver.setUp(precondition.hasActiveLicense);
+      await driver.setUp(precondition.hasLicensingSettingTest());
+      await driver.setUp(precondition.hasServiceControlMainInstance(precondition.serviceControlVersionNotSupportingAllMessages));
+      await driver.setUp(precondition.hasServiceControlMonitoringInstance);
+      await driver.setUp(precondition.hasUpToDateServiceControl);
+      await driver.setUp(precondition.hasUpToDateServicePulse);
+      await driver.setUp(precondition.errorsDefaultHandler);
+      await driver.setUp(precondition.hasCustomChecksEmpty);
+      await driver.setUp(precondition.hasNoDisconnectedEndpoints);
+      await driver.setUp(precondition.hasEventLogItems);
+      await driver.setUp(precondition.hasRecoverabilityGroups);
+      await driver.setUp(precondition.hasNoHeartbeatsEndpoints);
+      await driver.setUp(precondition.hasNoMonitoredEndpoints);
+      await driver.setUp(precondition.endpointRecoverabilityByInstanceDefaultHandler);
+      await driver.setUp(precondition.endpointRecoverabilityByNameDefaultHandler);
+      await driver.setUp(precondition.serviceControlMonitoringOptions);
+      await driver.setUp(precondition.serviceControlConfigurationDefaultHandler);
+      await driver.setUp(precondition.recoverabilityClassifiers);
+      await driver.setUp(precondition.recoverabilityHistoryDefaultHandler);
+      await driver.setUp(precondition.recoverabilityEditConfigDefaultHandler);
+      await driver.setUp(precondition.archivedGroupsWithClassifierDefaulthandler);
+      await driver.setUp(precondition.recoverabilityGroupsWithClassifierDefaulthandler);
+      await driver.setUp(precondition.hasLicensingReportAvailable());
+      await driver.setUp(precondition.hasLicensingEndpoints());
+      await driver.setUp(precondition.hasEndpointSettings([]));
+      await driver.setUp(precondition.redirectsDefaultHandler);
+      await driver.setUp(precondition.knownQueuesDefaultHandler);
+      // Audit instance is available and has successful messages
+      await driver.setUp(precondition.hasAvailableAuditInstance());
+      await driver.setUp(precondition.hasSuccessfulMessages());
+
+      // Act
+      await driver.goTo("/");
+
+      // Assert
+      await waitFor(async () => {
+        const card = await auditingCapabilityCard();
+        expect(card).toBeInTheDocument();
+      });
+
+      // Even though there are successful messages, the status should be "not configured"
+      // because the ServiceControl version doesn't support the "All Messages" feature
+      await waitFor(async () => {
+        expect(await isAuditingCardNotConfigured()).toBe(true);
+      });
+
+      const actionButton = await auditingActionButton();
+      expect(actionButton).toBeInTheDocument();
+      expect(actionButton?.textContent).toMatch(/Learn More/i);
+    });
+  });
 });

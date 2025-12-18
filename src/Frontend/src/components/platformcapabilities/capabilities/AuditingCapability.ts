@@ -12,14 +12,14 @@ import routeLinks from "@/router/routeLinks";
 /**
  * Checks if a remote instance is an audit instance using the cached instance type
  */
-function isAuditInstance(instance: RemoteInstance): boolean {
+export function isAuditInstance(instance: RemoteInstance): boolean {
   return instance.cachedInstanceType === RemoteInstanceType.Audit;
 }
 
 /**
  * Filters remote instances to only include audit instances
  */
-function filterAuditInstances(instances: RemoteInstance[] | null | undefined): RemoteInstance[] {
+export function filterAuditInstances(instances: RemoteInstance[] | null | undefined): RemoteInstance[] {
   if (!instances) {
     return [];
   }
@@ -60,7 +60,7 @@ enum AuditingIndicatorTooltip {
 /**
  * Checks if all audit remote instances are unavailable
  */
-function allAuditInstancesUnavailable(instances: RemoteInstance[] | null | undefined): boolean {
+export function allAuditInstancesUnavailable(instances: RemoteInstance[] | null | undefined): boolean {
   if (!instances || instances.length === 0) {
     return false;
   }
@@ -70,7 +70,7 @@ function allAuditInstancesUnavailable(instances: RemoteInstance[] | null | undef
 /**
  * Checks if any audit remote instances are unavailable (but not all)
  */
-function hasUnavailableAuditInstances(instances: RemoteInstance[] | null | undefined): boolean {
+export function hasUnavailableAuditInstances(instances: RemoteInstance[] | null | undefined): boolean {
   if (!instances || instances.length === 0) {
     return false;
   }
@@ -80,7 +80,7 @@ function hasUnavailableAuditInstances(instances: RemoteInstance[] | null | undef
 /**
  * Checks if any audit remote instances are available
  */
-function hasAvailableAuditInstances(instances: RemoteInstance[] | null | undefined): boolean {
+export function hasAvailableAuditInstances(instances: RemoteInstance[] | null | undefined): boolean {
   if (!instances || instances.length === 0) {
     return false;
   }
@@ -90,7 +90,7 @@ function hasAvailableAuditInstances(instances: RemoteInstance[] | null | undefin
 /**
  * Checks if some but not all audit instances are unavailable
  */
-function hasPartiallyUnavailableAuditInstances(instances: RemoteInstance[] | null | undefined): boolean {
+export function hasPartiallyUnavailableAuditInstances(instances: RemoteInstance[] | null | undefined): boolean {
   if (!instances || instances.length === 0) {
     return false;
   }
