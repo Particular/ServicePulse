@@ -34,7 +34,7 @@ export function recoverabilityCapabilityCardSync() {
 export async function recoverabilityStatusBadge() {
   const card = await recoverabilityCapabilityCard();
   if (!card) return null;
-  return within(card).queryByText(/Available|Unavailable|Degraded/);
+  return within(card).queryByText(/Available|Unavailable/);
 }
 
 /**
@@ -74,16 +74,7 @@ export async function isRecoverabilityCardUnavailable() {
 }
 
 /**
- * Checks if the Recoverability card has the "partially unavailable" / degraded styling (yellow border)
- */
-export async function isRecoverabilityCardPartiallyUnavailable() {
-  const card = await recoverabilityCapabilityCard();
-  if (!card) return false;
-  return card.classList.contains("capability-partially-unavailable");
-}
-
-/**
- * Gets the indicator for a specific label (e.g., "Instance", "Primary")
+ * Gets the indicator for a specific label (e.g., "Instance")
  */
 export async function recoverabilityIndicatorByLabel(label: string) {
   const indicators = await recoverabilityStatusIndicators();
