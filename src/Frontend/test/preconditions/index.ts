@@ -23,3 +23,4 @@ export { hasEndpointSettings } from "./hasEndpointSettings";
 export * from "./configuration";
 export * from "./auditCapability";
 export * from "./monitoringCapability";
+export * from "./recoverabilityCapability";

@@ -4,6 +4,11 @@ import * as precondition from "../../preconditions";
 import { waitFor } from "@testing-library/vue";
 import { recoverabilityCapabilityCard, recoverabilityStatusBadge, recoverabilityActionButton, recoverabilityStatusIndicators, isRecoverabilityCardAvailable, recoverabilityIndicatorByLabel } from "./questions/recoverabilityCapabilityCard";
 
+// NOTE: The Recoverability card has two states: Available and Unavailable.
+// However, the Unavailable state cannot be tested because when ServiceControl
+// is unavailable, the entire dashboard is replaced with a connection error view.
+// The recoverability card only displays when ServiceControl is connected.
+
 describe("FEATURE: Recoverability capability card", () => {
   describe("RULE: When ServiceControl instance is available, show 'Available' status", () => {
     test("EXAMPLE: Instance available shows available status", async ({ driver }) => {
