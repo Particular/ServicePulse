@@ -9,12 +9,12 @@ import { computed, onBeforeMount, ref, watch } from "vue";
 import RefreshConfig from "../RefreshConfig.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import useFetchWithAutoRefresh from "@/composables/autoRefresh";
-import FAIcon from "@/components/FAIcon.vue";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import WizardDialog from "@/components/platformcapabilities/WizardDialog.vue";
 import { getAuditingWizardPages } from "@/components/platformcapabilities/wizards/AuditingWizardPages";
 import { useAuditingCapability } from "@/components/platformcapabilities/capabilities/AuditingCapability";
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
+import PageBanner, { type BannerMessage } from "@/components/PageBanner.vue";
+import { useConfigurationStore } from "@/stores/ConfigurationStore";
 
 const store = useAuditStore();
 const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange } = storeToRefs(store);
@@ -26,6 +26,37 @@ const firstLoad = ref(true);
 const showWizard = ref(false);
 const { status: auditStatus } = useAuditingCapability();
 const wizardPages = computed(() => getAuditingWizardPages(auditStatus.value));
+const configurationStore = useConfigurationStore();
+const { isMassTransitConnected } = storeToRefs(configurationStore);
+
+const bannerMessage = computed<BannerMessage | null>(() => {
+  switch (auditStatus.value) {
+    case CapabilityStatus.InstanceNotConfigured:
+      return {
+        title: "No ServiceControl Audit instance configured.",
+        description: "A ServiceControl Audit instance is required to view processed messages. Click 'Get Started' to learn how to set one up.",
+      };
+    case CapabilityStatus.EndpointsNotConfigured:
+      return {
+        title: "No successful audit messages found.",
+        description: "Auditing may not be enabled on your endpoints. Click 'Get Started' to find out how to enable auditing.",
+      };
+    case CapabilityStatus.Unavailable:
+      return {
+        title: "All ServiceControl Audit instances are not responding.",
+        description: "The configured audit instances appears to be offline or unreachable. Check that the service is running and accessible.",
+      };
+    case CapabilityStatus.PartiallyUnavailable:
+      return {
+        title: "Some ServiceControl Audit instances are not responding.",
+        description: "One or more audit instances appear to be offline. Some audit data may be unavailable until all instances are restored.",
+      };
+    default:
+      return null;
+  }
+});
+
+const showBannerAction = computed(() => auditStatus.value !== CapabilityStatus.Unavailable && auditStatus.value !== CapabilityStatus.PartiallyUnavailable);
 
 onBeforeMount(() => {
   setQuery();
@@ -109,32 +140,7 @@ watch(autoRefreshValue, (newValue) => {
       <div class="row">
         <ResultsCount :displayed="messages.length" :total="totalCount" />
       </div>
-      <div v-if="auditStatus !== CapabilityStatus.Available" class="no-audit-banner">
-        <div class="banner-content">
-          <FAIcon :icon="faInfoCircle" class="banner-icon" />
-          <div class="banner-text">
-            <template v-if="auditStatus === CapabilityStatus.InstanceNotConfigured">
-              <strong>No ServiceControl Audit instance configured.</strong>
-              <p>A ServiceControl Audit instance is required to view processed messages. Click 'Get Started' to learn how to set one up.</p>
-            </template>
-            <template v-else-if="auditStatus === CapabilityStatus.EndpointsNotConfigured">
-              <strong>No successful audit messages found.</strong>
-              <p>Auditing may not be enabled on your endpoints. Click 'Get Started' to find out how to enable auditing.</p>
-            </template>
-            <template v-else-if="auditStatus === CapabilityStatus.Unavailable">
-              <strong>All ServiceControl Audit instances are not responding.</strong>
-              <p>The configured audit instances appears to be offline or unreachable. Check that the service is running and accessible.</p>
-            </template>
-            <template v-else-if="auditStatus === CapabilityStatus.PartiallyUnavailable">
-              <strong>Some ServiceControl Audit instances are not responding.</strong>
-              <p>One or more audit instances appear to be offline. Some audit data may be unavailable until all instances are restored.</p>
-            </template>
-          </div>
-          <template v-if="auditStatus !== CapabilityStatus.Unavailable && auditStatus !== CapabilityStatus.PartiallyUnavailable">
-            <button class="banner-link" @click="showWizard = true">Get Started</button>
-          </template>
-        </div>
-      </div>
+      <PageBanner v-if="bannerMessage && isMassTransitConnected === false" :message="bannerMessage" :show-action="showBannerAction" @action="showWizard = true" />
     </div>
     <WizardDialog v-if="showWizard" title="Getting Started with Auditing" :pages="wizardPages" @close="showWizard = false" />
     <div class="row results-table">
@@ -163,63 +169,5 @@ watch(autoRefreshValue, (newValue) => {
   margin-top: 1rem;
   margin-bottom: 5rem;
   background-color: #ffffff;
-}
-
-.no-audit-banner {
-  background: linear-gradient(135deg, #f6f9fc 0%, #e9f2f9 100%);
-  border: 1px solid #c3ddf5;
-  border-left: 4px solid #007bff;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 1rem;
-}
-
-.banner-content {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.banner-icon {
-  font-size: 24px;
-  flex-shrink: 0;
-  color: #007bff;
-}
-
-.banner-text {
-  flex: 1;
-}
-
-.banner-text strong {
-  display: block;
-  margin-bottom: 4px;
-  color: #333;
-  font-size: 14px;
-}
-
-.banner-text p {
-  margin: 0;
-  color: #666;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.banner-link {
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  white-space: nowrap;
-  align-self: center;
-  transition: background-color 0.2s ease;
-  cursor: pointer;
-}
-
-.banner-link:hover {
-  background-color: #0056b3;
 }
 </style>

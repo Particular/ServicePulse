@@ -1,35 +1,27 @@
 import { CapabilityStatus } from "../constants";
 import { WizardPage } from "../types";
+import WhatIsAuditing from "./auditing/WhatIsAuditing.vue";
+import DisplayAndDiscoverMessages from "./auditing/DisplayAndDiscoverMessages.vue";
+import TrackMessageFlow from "./auditing/TrackMessageFlow.vue";
+import ViewSequenceOfEvents from "./auditing/ViewSequenceOfEvents.vue";
+import VisualizeWorkflowState from "./auditing/VisualizeWorkflowState.vue";
+import DebugIssues from "./auditing/DebugIssues.vue";
+import SetupAuditInstance from "./auditing/SetupAuditInstance.vue";
+import EnableAuditing from "./auditing/EnableAuditing.vue";
+import ConfigureEndpoints from "./auditing/ConfigureEndpoints.vue";
+import VerifySetup from "./auditing/VerifySetup.vue";
 
 const AuditingInstanceNotConfiguredPages: WizardPage[] = [
   {
     title: "What is Auditing?",
-    content: `
-      <p>Auditing captures a copy of every successful message processed by your NServiceBus endpoints, allowing you to:</p>
-      <ul>
-        <li><strong>Display and discover messages</strong> - View processed messages in your system</li>
-        <li><strong>Track message flow</strong> - See the complete journey of messages through your system</li>
-        <li><strong>View the sequence of events</strong> - Understand how messages are processed over time</li>
-        <li><strong>Visualize saga state</strong> - Monitor and debug your saga workflows</li>
-        <li><strong>Debug issues</strong> - Inspect message contents and headers for troubleshooting</li>
-      </ul>
-    `,
+    content: WhatIsAuditing,
     images: [{ src: "/img/all-messages.png", caption: "Display and Discover Messages" }],
     learnMoreUrl: "https://docs.particular.net/nservicebus/operations/auditing",
     learnMoreText: "Learn more about auditing",
   },
   {
     title: "Display and Discover Messages",
-    content: `
-      <p>Browse and search through all processed messages in your system:</p>
-      <ul>
-        <li><strong>Message List</strong> - View all messages in a searchable list</li>
-        <li><strong>Advanced Filtering</strong> - Filter messages by endpoint, time range, and more</li>
-        <li><strong>Full-text Search</strong> - Search message contents to find specific data</li>
-        <li><strong>Sorting Options</strong> - Sort by time processed, endpoint, or message type</li>
-        <li><strong>Auto Refresh</strong> - Keep your message list up to date with the latest processed messages</li>
-      </ul>
-    `,
+    content: DisplayAndDiscoverMessages,
     images: [
       { src: "/img/all-messages-filter.png", caption: "Advanced Filtering and full-text search" },
       { src: "/img/all-messages-sort.png", caption: "Sorting Options" },
@@ -40,15 +32,7 @@ const AuditingInstanceNotConfiguredPages: WizardPage[] = [
   },
   {
     title: "Track Message Flow",
-    content: `
-      <p>Follow the complete journey of messages through your distributed system:</p>
-      <ul>
-        <li><strong>Conversation tracking</strong> - See all related messages grouped together by conversation ID</li>
-        <li><strong>Message timeline</strong> - View the sequence of events as messages flow between endpoints</li>
-        <li><strong>Endpoint mapping</strong> - Understand which endpoints send and receive each message type</li>
-        <li><strong>Flow visualization</strong> - Get a clear picture of your system's message-based interactions</li>
-      </ul>
-    `,
+    content: TrackMessageFlow,
     images: [
       { src: "/img/flow-diagram.png", caption: "Track Message Flow" },
       { src: "/img/flow-diagram-nodes.png", caption: "Message Nodes", maxHeight: "600px" },
@@ -58,29 +42,14 @@ const AuditingInstanceNotConfiguredPages: WizardPage[] = [
   },
   {
     title: "View the Sequence of Events",
-    content: `
-      <p>Understand the order and timing of message processing with sequence diagrams:</p>
-      <ul>
-        <li><strong>Timeline view</strong> - See messages arranged chronologically as they were processed</li>
-        <li><strong>Endpoint interactions</strong> - Visualize how endpoints communicate with each other</li>
-        <li><strong>Handler execution</strong> - Track which handlers processed each message</li>
-      </ul>
-    `,
+    content: ViewSequenceOfEvents,
     images: [{ src: "/img/sequence-diagram.png" }],
     learnMoreUrl: "https://docs.particular.net/servicepulse/sequence-diagram",
     learnMoreText: "Learn about sequence diagrams",
   },
   {
     title: "Visualize Workflow State",
-    content: `
-      <p>Monitor and debug your saga workflows with saga diagrams:</p>
-      <ul>
-        <li><strong>Saga lifecycle</strong> - View the complete history of a saga from start to completion</li>
-        <li><strong>State changes</strong> - Track how saga state evolves as messages are processed</li>
-        <li><strong>Message correlation</strong> - See which messages initiated and updated the saga</li>
-        <li><strong>Timeout tracking</strong> - Monitor saga timeouts and their triggers</li>
-      </ul>
-    `,
+    content: VisualizeWorkflowState,
     images: [
       { src: "/img/saga-diagram-overview.png", caption: "Saga Lifecycle" },
       { src: "/img/saga-diagram-state-change.png", caption: "Saga State Changes" },
@@ -91,15 +60,7 @@ const AuditingInstanceNotConfiguredPages: WizardPage[] = [
   },
   {
     title: "Debug Issues",
-    content: `
-      <p>Inspect message details to troubleshoot problems in your system:</p>
-      <ul>
-        <li><strong>Message headers</strong> - View all metadata including timestamps, correlation IDs, and custom headers</li>
-        <li><strong>Message body</strong> - Examine the full payload content of each message</li>
-        <li><strong>Processing details</strong> - See which endpoint processed the message and when</li>
-        <li><strong>Header Search</strong> - Quickly find specific message headers</li>
-      </ul>
-    `,
+    content: DebugIssues,
     images: [
       { src: "/img/message-details-headers.png", caption: "Message Headers" },
       { src: "/img/message-details-body.png", caption: "Message Body" },
@@ -110,15 +71,7 @@ const AuditingInstanceNotConfiguredPages: WizardPage[] = [
   },
   {
     title: "Setup ServiceControl Audit Instance",
-    content: `
-      <p>To enable auditing in ServicePulse, you need to setup a ServiceControl Audit instance. There are multiple ways to do this:</p>
-      <ul>
-        <li><strong><a href="https://docs.particular.net/servicecontrol/audit-instances/deployment/powershell" target="_blank">Scripted Deployment</a></strong> - Use a script to automate the installation and configuration of the audit instance</li>
-        <li><strong><a href="https://docs.particular.net/servicecontrol/audit-instances/deployment/containers" target="_blank">Containers</a></strong> - Run the audit instance inside a container</li>
-        <li><strong><a href="https://docs.particular.net/servicecontrol/audit-instances/deployment/scmu" target="_blank">ServiceControl Management Utility</a></strong> - Use the management utility to create and configure the audit instance</li>
-      </ul>
-      <p>The audit instance stores processed messages and makes them available for viewing in ServicePulse.</p>
-    `,
+    content: SetupAuditInstance,
     images: [{ src: "/img/audit-instance-overview.png", caption: "ServiceControl Audit Instance Architecture" }],
     learnMoreUrl: "https://docs.particular.net/servicecontrol/audit-instances/deployment/",
     learnMoreText: "Learn about deploying audit instances",
@@ -128,39 +81,19 @@ const AuditingInstanceNotConfiguredPages: WizardPage[] = [
 const AuditingEndpointsNotConfiguredPages: WizardPage[] = [
   {
     title: "Enable Auditing for Your Endpoints",
-    content: `
-      <p>Your ServiceControl Audit instance is connected, but no endpoints are sending audit messages yet.</p>
-      <p>To see messages in ServicePulse, you need to enable auditing in your NServiceBus endpoints:</p>
-      <ul>
-        <li><strong>Configure the audit queue</strong> - Tell your endpoints where to send audit copies</li>
-        <li><strong>Deploy your changes</strong> - Restart endpoints with the new configuration</li>
-        <li><strong>Process some messages</strong> - Send test messages to verify auditing works</li>
-      </ul>
-    `,
+    content: EnableAuditing,
     learnMoreUrl: "https://docs.particular.net/nservicebus/operations/auditing",
     learnMoreText: "Learn how to configure auditing",
   },
   {
     title: "Configure Your Endpoints",
-    content: `
-      <p>Add auditing configuration to your endpoint setup code:</p>
-      <p><code>endpointConfiguration.AuditProcessedMessagesTo("audit");</code></p>
-      <p>Make sure the audit queue name matches what your ServiceControl Audit instance is monitoring.</p>
-    `,
+    content: ConfigureEndpoints,
     learnMoreUrl: "https://docs.particular.net/nservicebus/operations/auditing#configuring-auditing",
     learnMoreText: "View configuration options",
   },
   {
     title: "Verify Your Setup",
-    content: `
-      <p>Once configured:</p>
-      <ul>
-        <li><strong>Send a test message</strong> through one of your endpoints</li>
-        <li><strong>Check this capability card</strong> - it will automatically update when messages are detected</li>
-        <li><strong>View the All Messages tab</strong> to see your processed messages</li>
-      </ul>
-      <p>If messages still don't appear after a few minutes, check your endpoint logs and ServiceControl logs for any errors.</p>
-    `,
+    content: VerifySetup,
     learnMoreUrl: "https://docs.particular.net/servicecontrol/troubleshooting",
     learnMoreText: "Troubleshooting guide",
   },

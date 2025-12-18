@@ -7,6 +7,7 @@ import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabil
 import useRemoteInstancesAutoRefresh from "@/composables/useRemoteInstancesAutoRefresh";
 import useAuditStoreAutoRefresh from "@/composables/useAuditStoreAutoRefresh";
 import { RemoteInstanceStatus, RemoteInstanceType, type RemoteInstance } from "@/resources/RemoteInstance";
+import routeLinks from "@/router/routeLinks";
 
 /**
  * Checks if a remote instance is an audit instance using the cached instance type
@@ -27,11 +28,11 @@ function filterAuditInstances(instances: RemoteInstance[] | null | undefined): R
 
 const AuditingDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.EndpointsNotConfigured]:
-    "A ServiceControl Auditing instance is connected but no successful messages have been processed yet or you don't have auditing enabled for any endpoints. Click 'Learn More' to find out how to set up auditing for your endpoints.",
-  [CapabilityStatus.InstanceNotConfigured]: "A ServiceControl Auditing instance has not been configured. Click 'Get Started' to learn more about setting up auditing.",
-  [CapabilityStatus.Unavailable]: "All ServiceControl Auditing instances are configured but not responding. Click 'Learn More' for troubleshooting steps.",
-  [CapabilityStatus.PartiallyUnavailable]: "Some ServiceControl Auditing instances are not responding.",
-  [CapabilityStatus.Available]: "All ServiceControl Auditing instances are available and endpoints have been configured to send audit messages.",
+    "A ServiceControl Audit instance is connected but no successful messages have been processed yet or you don't have auditing enabled for any endpoints. Click 'Learn More' to find out how to set up auditing for your endpoints.",
+  [CapabilityStatus.InstanceNotConfigured]: "A ServiceControl Audit instance has not been configured. Click 'Get Started' to learn more about setting up auditing.",
+  [CapabilityStatus.Unavailable]: "All ServiceControl Audit instances are configured but not responding. Click 'Learn More' for troubleshooting steps.",
+  [CapabilityStatus.PartiallyUnavailable]: "Some ServiceControl Audit instances are not responding.",
+  [CapabilityStatus.Available]: "All ServiceControl Audit instances are available and endpoints have been configured to send audit messages.",
 };
 
 const AuditingHelpButtonText: CapabilityStatusToStringMap = {
@@ -45,12 +46,12 @@ const AuditingHelpButtonUrl: CapabilityStatusToStringMap = {
   [CapabilityStatus.InstanceNotConfigured]: "https://docs.particular.net/servicecontrol/audit-instances/",
   [CapabilityStatus.Unavailable]: "https://docs.particular.net/servicecontrol/troubleshooting",
   [CapabilityStatus.PartiallyUnavailable]: "https://docs.particular.net/servicecontrol/troubleshooting",
-  [CapabilityStatus.Available]: "#/messages",
+  [CapabilityStatus.Available]: routeLinks.messages.root,
 };
 
 enum AuditingIndicatorTooltip {
-  InstanceAvailable = "The Auditing instance is configured and available",
-  InstanceUnavailable = "The Auditing instance is configured but not responding",
+  InstanceAvailable = "The Audit instance is configured and available",
+  InstanceUnavailable = "The Audit instance is configured but not responding",
   MessagesAvailable = "Endpoints have been configured to send audit messages",
   MessagesUnavailable = "No successful messages have been processed yet or auditing is not enabled for any endpoints",
   AllMessagesNotSupported = `The 'All Messages' feature requires ServiceControl ${minimumSCVersionForAllMessages} or higher`,

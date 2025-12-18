@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import FAIcon from "@/components/FAIcon.vue";
 import { IconDefinition, faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { StatusIndicator, WizardPage } from "@/components/platformcapabilities/types";
 import { Capability, CapabilityStatus } from "@/components/platformcapabilities/constants";
 import WizardDialog from "./WizardDialog.vue";
+
+const router = useRouter();
 
 const emit = defineEmits<{
   hide: [];
@@ -29,11 +32,17 @@ const shouldShowWizard = computed(() => {
   return props.wizardPages && props.wizardPages.length > 0 && (props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured);
 });
 
+function isExternalUrl(url: string): boolean {
+  return url.startsWith("http://") || url.startsWith("https://");
+}
+
 function handleButtonClick() {
   if (shouldShowWizard.value) {
     showWizard.value = true;
+  } else if (isExternalUrl(props.helpButtonUrl)) {
+    window.open(props.helpButtonUrl, "_blank");
   } else {
-    window.open(props.helpButtonUrl, props.status !== CapabilityStatus.Available ? "_blank" : "_self");
+    router.push(props.helpButtonUrl);
   }
 }
 </script>

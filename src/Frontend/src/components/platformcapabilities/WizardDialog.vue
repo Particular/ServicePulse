@@ -142,7 +142,9 @@ onUnmounted(() => {
         <div class="modal-body">
           <div class="wizard-page-content">
             <h4 class="page-title mb-3">{{ currentPage.title }}</h4>
-            <div class="page-content" v-html="currentPage.content"></div>
+            <div class="page-content">
+              <component :is="currentPage.content" />
+            </div>
             <div v-if="pageImages.length > 0" class="wizard-image text-center mb-4">
               <div class="image-carousel">
                 <button v-if="hasMultipleImages" type="button" class="carousel-nav carousel-prev" :disabled="currentImageIndex === 0" @click="previousImage" aria-label="Previous image">
