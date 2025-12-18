@@ -41,7 +41,7 @@
     "hex-to-css-filter": "6.0.0",
     "lossless-json": "4.3.0",
     "pinia": "3.0.4",
-    "vue": "3.5.25",
+    "vue": "3.5.26",
     "vue-codemirror6": "1.4.1",
     "vue-router": "4.6.4",
     "vue-tippy": "6.7.1",
