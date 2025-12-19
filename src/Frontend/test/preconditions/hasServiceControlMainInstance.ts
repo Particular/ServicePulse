@@ -1,6 +1,6 @@
 import { serviceControlMainInstance } from "../mocks/service-control-instance-template";
 import { SetupFactoryOptions } from "../driver";
-import { serviceControlVersionSupportingAllMessages } from "./auditCapability";
+import { serviceControlVersionSupportingAllMessages } from "./platformCapabilities";
 
 export const hasServiceControlMainInstance =
   (serviceControlVersion = serviceControlVersionSupportingAllMessages) =>

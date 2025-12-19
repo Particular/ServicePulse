@@ -1,6 +1,6 @@
 import { monitoredInstanceTemplate } from "../mocks/service-control-instance-template";
 import { SetupFactoryOptions } from "../driver";
-import { serviceControlVersionSupportingAllMessages } from "./auditCapability";
+import { serviceControlVersionSupportingAllMessages } from "./platformCapabilities";
 
 export const hasServiceControlMonitoringInstance = ({ driver }: SetupFactoryOptions) => {
   const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];

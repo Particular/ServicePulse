@@ -1,43 +1,85 @@
-import * as defaultScenario from "./default";
-import * as auditNoInstance from "./audit-no-instance";
-import * as auditUnavailable from "./audit-unavailable";
-import * as auditDegraded from "./audit-degraded";
-import * as auditAvailable from "./audit-available";
-import * as auditOldScVersion from "./audit-old-sc-version";
-import * as auditNoMessages from "./audit-no-messages";
-import * as auditMultipleInstances from "./audit-multiple-instances";
-import * as monitoringAvailable from "./monitoring-available";
-import * as monitoringUnavailable from "./monitoring-unavailable";
-import * as monitoringNoEndpoints from "./monitoring-no-endpoints";
-import * as recoverabilityAvailable from "./recoverability-available";
-import * as recoverabilityUnavailable from "./recoverability-unavailable";
+/**
+ * Mock Scenarios Index
+ *
+ * This file defines all mock scenarios for manual testing with MSW.
+ * Scenarios are loaded based on the VITE_MOCK_SCENARIO environment variable.
+ *
+ * Usage:
+ *   VITE_MOCK_SCENARIO=audit-available npm run dev:mocks
+ *
+ * Or on Windows:
+ *   set VITE_MOCK_SCENARIO=audit-available && npm run dev:mocks
+ */
+import { SetupWorker } from "msw/browser";
+import { createScenario } from "./scenario-helper";
+import * as precondition from "../../preconditions";
 
-export interface Scenario {
-  name: string;
-  description: string;
-  setup: (driver: import("../../driver").Driver) => Promise<void>;
+type ScenarioModule = {
+  worker: SetupWorker;
+  setupComplete: Promise<void>;
+};
+
+type ScenarioFactory = () => ScenarioModule;
+
+/**
+ * Creates a simple scenario that runs a single precondition.
+ */
+function makeScenario(scenarioFn: Parameters<ReturnType<typeof createScenario>["runScenario"]>[0]): ScenarioFactory {
+  return () => {
+    const { worker, runScenario } = createScenario();
+    return { worker, setupComplete: runScenario(scenarioFn) };
+  };
 }
 
-export const scenarios: Record<string, Scenario> = {
-  [defaultScenario.name]: defaultScenario,
-  [auditNoInstance.name]: auditNoInstance,
-  [auditUnavailable.name]: auditUnavailable,
-  [auditDegraded.name]: auditDegraded,
-  [auditAvailable.name]: auditAvailable,
-  [auditOldScVersion.name]: auditOldScVersion,
-  [auditNoMessages.name]: auditNoMessages,
-  [auditMultipleInstances.name]: auditMultipleInstances,
-  [monitoringAvailable.name]: monitoringAvailable,
-  [monitoringUnavailable.name]: monitoringUnavailable,
-  [monitoringNoEndpoints.name]: monitoringNoEndpoints,
-  [recoverabilityAvailable.name]: recoverabilityAvailable,
-  [recoverabilityUnavailable.name]: recoverabilityUnavailable,
+const scenarios: Record<string, ScenarioFactory> = {
+  // Audit scenarios
+  "audit-available": makeScenario(precondition.scenarioAuditAvailable),
+  "audit-unavailable": makeScenario(precondition.scenarioAuditUnavailable),
+  "audit-degraded": makeScenario(precondition.scenarioAuditDegraded),
+  "audit-no-instance": makeScenario(precondition.scenarioAuditNotConfigured),
+  "audit-no-messages": makeScenario(precondition.scenarioAuditNoMessages),
+  "audit-old-sc-version": makeScenario(precondition.scenarioAuditOldScVersion),
+  "audit-multiple-instances": makeScenario(precondition.scenarioAuditMultipleInstances),
+
+  // Monitoring scenarios
+  "monitoring-available": makeScenario(precondition.scenarioMonitoringAvailable),
+  "monitoring-unavailable": makeScenario(precondition.scenarioMonitoringUnavailable),
+  "monitoring-no-endpoints": makeScenario(precondition.scenarioMonitoringNoEndpoints),
+
+  // Recoverability scenarios
+  "recoverability-available": makeScenario(precondition.scenarioRecoverabilityAvailable),
+  "recoverability-unavailable": makeScenario(precondition.scenarioRecoverabilityUnavailable),
 };
 
 export function getScenarioNames(): string[] {
-  return Object.keys(scenarios);
+  return ["browser", ...Object.keys(scenarios)];
 }
 
-export function getScenario(name: string): Scenario | undefined {
-  return scenarios[name];
+async function loadBrowserScenario(): Promise<ScenarioModule> {
+  const browser = await import("../browser");
+  await browser.setupComplete;
+  return browser;
+}
+
+export async function loadScenario(): Promise<ScenarioModule> {
+  // Trim to handle Windows CMD whitespace issues (e.g., "set VAR=value && cmd" includes trailing space)
+  const scenarioName = import.meta.env.VITE_MOCK_SCENARIO?.trim() || "browser";
+
+  // Default browser scenario is in a separate file
+  if (scenarioName === "browser" || !scenarioName) {
+    return loadBrowserScenario();
+  }
+
+  const factory = scenarios[scenarioName];
+
+  if (!factory) {
+    console.warn(`Unknown mock scenario: "${scenarioName}", falling back to browser. Available: browser, ${Object.keys(scenarios).join(", ")}`);
+    return loadBrowserScenario();
+  }
+
+  console.log(`Loading mock scenario: ${scenarioName}`);
+  const module = factory();
+  await module.setupComplete;
+
+  return module;
 }

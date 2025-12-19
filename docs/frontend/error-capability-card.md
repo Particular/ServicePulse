@@ -14,10 +14,10 @@ Unlike the Monitoring and Auditing cards, the Recoverability card has a simpler 
 
 ## Card States
 
-| Status      | Condition                                    | Badge       | Action Button       |
-|-------------|----------------------------------------------|-------------|---------------------|
-| Unavailable | ServiceControl instance is not responding    | Unavailable | Learn More          |
-| Available   | ServiceControl instance is available         | Available   | View Failed Messages|
+| Status      | Condition                                 | Badge       | Action Button        |
+|-------------|-------------------------------------------|-------------|----------------------|
+| Unavailable | ServiceControl instance is not responding | Unavailable | Learn More           |
+| Available   | ServiceControl instance is available      | Available   | View Failed Messages |
 
 ## Manual Testing with Mock Scenarios
 
@@ -38,13 +38,26 @@ This starts the dev server at `http://localhost:5173` with MSW (Mock Service Wor
 
 ### Switching Between Scenarios
 
-Use the `?scenario=<name>` query parameter to switch scenarios. Open the browser console to see available scenarios.
+Set the `VITE_MOCK_SCENARIO` environment variable before running the dev server:
+
+```bash
+# Linux/macOS
+VITE_MOCK_SCENARIO=recoverability-available npm run dev:mocks
+
+# Windows CMD
+set VITE_MOCK_SCENARIO=recoverability-available && npm run dev:mocks
+
+# Windows PowerShell
+$env:VITE_MOCK_SCENARIO="recoverability-available"; npm run dev:mocks
+```
+
+Open the browser console to see available scenarios.
 
 #### Available Recoverability Scenarios
 
-| Scenario | Status | Badge | Button | Description | Indicators |
-|----------|--------|-------|--------|-------------|------------|
-| [`recoverability-available`](http://localhost:5173/?scenario=recoverability-available) | Available | Available | View Failed Messages | "The ServiceControl instance is available." | Instance: Available |
+| Scenario                   | Status    | Badge     | Button               | Description                                 | Indicators          |
+|----------------------------|-----------|-----------|----------------------|---------------------------------------------|---------------------|
+| `recoverability-available` | Available | Available | View Failed Messages | "The ServiceControl instance is available." | Instance: Available |
 
 ### Testing "Unavailable" State
 
@@ -58,30 +71,58 @@ To observe the connection error behavior:
 
 ### Adding New Scenarios
 
+1. Add a scenario precondition to `src/Frontend/test/preconditions/platformCapabilities.ts`:
+
+```typescript
+export const scenarioMyScenario = async ({ driver }: SetupFactoryOptions) => {
+  await driver.setUp(precondition.serviceControlWithMonitoring);
+  // Add scenario-specific preconditions here
+};
+```
+
 1. Create a new file in `src/Frontend/test/mocks/scenarios/` (e.g., `my-scenario.ts`):
 
 ```typescript
+import { setupWorker } from "msw/browser";
 import { Driver } from "../../driver";
+import { makeMockEndpoint, makeMockEndpointDynamic } from "../../mock-endpoint";
 import * as precondition from "../../preconditions";
 
-export const name = "my-scenario";
-export const description = "Description of what this scenario tests";
+export const worker = setupWorker();
+const mockEndpoint = makeMockEndpoint({ mockServer: worker });
+const mockEndpointDynamic = makeMockEndpointDynamic({ mockServer: worker });
 
-export async function setup(driver: Driver) {
-  await driver.setUp(precondition.serviceControlWithMonitoring);
-  // Add scenario-specific preconditions here
-}
+const makeDriver = (): Driver => ({
+  goTo() { throw new Error("Not implemented"); },
+  mockEndpoint,
+  mockEndpointDynamic,
+  setUp(factory) { return factory({ driver: this }); },
+  disposeApp() { throw new Error("Not implemented"); },
+});
+
+const driver = makeDriver();
+
+export const setupComplete = (async () => {
+  await driver.setUp(precondition.scenarioMyScenario);
+})();
 ```
 
-2. Import and register it in `src/Frontend/test/mocks/scenarios/index.ts`
+1. Register it in `src/Frontend/test/mocks/scenarios/index.ts`:
+
+```typescript
+const scenarios: Record<string, () => Promise<ScenarioModule>> = {
+  // ... existing scenarios
+  "my-scenario": () => import("./my-scenario"),
+};
+```
 
 ## Automated Tests
 
 ### Test Files
 
-| File                                                                                   | Type        | Description                             |
-|----------------------------------------------------------------------------------------|-------------|-----------------------------------------|
-| `src/Frontend/test/specs/platformcapabilities/recoverability-capability-card.spec.ts`  | Application | End-to-end tests for the card component |
+| File                                                                                  | Type        | Description                             |
+|---------------------------------------------------------------------------------------|-------------|-----------------------------------------|
+| `src/Frontend/test/specs/platformcapabilities/recoverability-capability-card.spec.ts` | Application | End-to-end tests for the card component |
 
 ### Running Automated Tests
 
@@ -99,21 +140,21 @@ npx vitest run test/specs/platformcapabilities/
 
 #### Application Tests (`recoverability-capability-card.spec.ts`)
 
-| Rule                               | Test Case                                        |
-|------------------------------------|--------------------------------------------------|
-| ServiceControl instance available  | Shows "Available" status + "View Failed Messages" button |
-| Instance indicator                 | Shows "Instance" indicator with version info     |
+| Rule                              | Test Case                                                |
+|-----------------------------------|----------------------------------------------------------|
+| ServiceControl instance available | Shows "Available" status + "View Failed Messages" button |
+| Instance indicator                | Shows "Instance" indicator with version info             |
 
 **Note:** The "Unavailable" state is not tested because when ServiceControl is unavailable, the entire dashboard is replaced with a connection error view, making the recoverability card inaccessible.
 
 ## Key Source Files
 
-| File                                                                                    | Purpose                                |
-|-----------------------------------------------------------------------------------------|----------------------------------------|
-| `src/Frontend/src/components/platformcapabilities/capabilities/ErrorCapability.ts`      | Main composable for recoverability card|
-| `src/Frontend/src/stores/ConnectionsAndStatsStore.ts`                                   | Connection state management            |
-| `src/Frontend/test/specs/platformcapabilities/questions/recoverabilityCapabilityCard.ts`| Test helper functions                  |
-| `src/Frontend/test/mocks/scenarios/`                                                    | Manual testing scenarios               |
+| File                                                                                     | Purpose                                 |
+|------------------------------------------------------------------------------------------|-----------------------------------------|
+| `src/Frontend/src/components/platformcapabilities/capabilities/ErrorCapability.ts`       | Main composable for recoverability card |
+| `src/Frontend/src/stores/ConnectionsAndStatsStore.ts`                                    | Connection state management             |
+| `src/Frontend/test/specs/platformcapabilities/questions/recoverabilityCapabilityCard.ts` | Test helper functions                   |
+| `src/Frontend/test/mocks/scenarios/`                                                     | Manual testing scenarios                |
 
 ## How Recoverability Status is Determined
 
