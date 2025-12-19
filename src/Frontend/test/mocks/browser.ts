@@ -1,11 +1,14 @@
-import { setupWorker } from "msw/browser";
-import { Driver } from "../driver";
-import { makeMockEndpoint, makeMockEndpointDynamic } from "../mock-endpoint";
-import { scenarios, getScenarioNames } from "./scenarios";
-
-export const worker = setupWorker();
-const mockEndpoint = makeMockEndpoint({ mockServer: worker });
-const mockEndpointDynamic = makeMockEndpointDynamic({ mockServer: worker });
+/**
+ * Default Browser Scenario
+ *
+ * Default scenario with monitoring, custom checks, and a failed message.
+ * This is the scenario loaded when no VITE_MOCK_SCENARIO is specified.
+ *
+ * Usage:
+ *   npm run dev:mocks
+ */
+import { createScenario } from "./scenarios/scenario-helper";
+import * as precondition from "../preconditions";
 
 const makeDriver = (): Driver => ({
   goTo() {

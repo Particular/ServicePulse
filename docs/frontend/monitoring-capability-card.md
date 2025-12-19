@@ -12,12 +12,12 @@ The Monitoring Capability Card displays on the ServicePulse dashboard and shows 
 
 ## Card States
 
-| Status                   | Condition                                            | Badge       | Action Button |
-|--------------------------|------------------------------------------------------|-------------|---------------|
-| Instance Not Configured  | Monitoring URL not configured in ServicePulse        | -           | Get Started   |
-| Unavailable              | Monitoring instance configured but not responding    | Unavailable | Learn More    |
-| Endpoints Not Configured | Instance available but no endpoints sending data     | -           | Learn More    |
-| Available                | Instance available with endpoints sending data       | Available   | View Metrics  |
+| Status                   | Condition                                         | Badge       | Action Button |
+|--------------------------|---------------------------------------------------|-------------|---------------|
+| Instance Not Configured  | Monitoring URL not configured in ServicePulse     | -           | Get Started   |
+| Unavailable              | Monitoring instance configured but not responding | Unavailable | Learn More    |
+| Endpoints Not Configured | Instance available but no endpoints sending data  | -           | Learn More    |
+| Available                | Instance available with endpoints sending data    | Available   | View Metrics  |
 
 ## Manual Testing with Mock Scenarios
 
@@ -38,15 +38,28 @@ This starts the dev server at `http://localhost:5173` with MSW (Mock Service Wor
 
 ### Switching Between Scenarios
 
-Use the `?scenario=<name>` query parameter to switch scenarios. Open the browser console to see available scenarios.
+Set the `VITE_MOCK_SCENARIO` environment variable before running the dev server:
+
+```bash
+# Linux/macOS
+VITE_MOCK_SCENARIO=monitoring-available npm run dev:mocks
+
+# Windows CMD
+set VITE_MOCK_SCENARIO=monitoring-available && npm run dev:mocks
+
+# Windows PowerShell
+$env:VITE_MOCK_SCENARIO="monitoring-available"; npm run dev:mocks
+```
+
+Open the browser console to see available scenarios.
 
 #### Available Monitoring Scenarios
 
-| Scenario | Status | Badge | Button | Description | Indicators |
-|----------|--------|-------|--------|-------------|------------|
-| [`monitoring-available`](http://localhost:5173/?scenario=monitoring-available) | Available | Available | View Metrics | "The ServiceControl Monitoring instance is available and endpoints have been configured to send throughput data." | Instance: ✅, Metrics: ✅ |
-| [`monitoring-unavailable`](http://localhost:5173/?scenario=monitoring-unavailable) | Unavailable | Unavailable | Learn More | "The ServiceControl Monitoring instance is configured but not responding..." | Instance: ❌ |
-| [`monitoring-no-endpoints`](http://localhost:5173/?scenario=monitoring-no-endpoints) | Endpoints Not Configured | - | Learn More | "The ServiceControl Monitoring instance is connected but no endpoints are sending throughput data..." | Instance: ✅, Metrics: ⚠️ |
+| Scenario                  | Status                   | Badge       | Button       | Description                                                                                                       | Indicators               |
+|---------------------------|--------------------------|-------------|--------------|-------------------------------------------------------------------------------------------------------------------|--------------------------|
+| `monitoring-available`    | Available                | Available   | View Metrics | "The ServiceControl Monitoring instance is available and endpoints have been configured to send throughput data." | Instance: ✅, Metrics: ✅  |
+| `monitoring-unavailable`  | Unavailable              | Unavailable | Learn More   | "The ServiceControl Monitoring instance is configured but not responding..."                                      | Instance: ❌              |
+| `monitoring-no-endpoints` | Endpoints Not Configured | -           | Learn More   | "The ServiceControl Monitoring instance is connected but no endpoints are sending throughput data..."             | Instance: ✅, Metrics: ⚠️ |
 
 **Indicator Legend:** ✅ = Available/Success, ❌ = Unavailable/Error, ⚠️ = Warning/Not Configured
 
@@ -67,30 +80,58 @@ window.defaultConfig = {
 
 ### Adding New Scenarios
 
+1. Add a scenario precondition to `src/Frontend/test/preconditions/platformCapabilities.ts`:
+
+```typescript
+export const scenarioMyScenario = async ({ driver }: SetupFactoryOptions) => {
+  await driver.setUp(precondition.serviceControlWithMonitoring);
+  // Add scenario-specific preconditions here
+};
+```
+
 1. Create a new file in `src/Frontend/test/mocks/scenarios/` (e.g., `my-scenario.ts`):
 
 ```typescript
+import { setupWorker } from "msw/browser";
 import { Driver } from "../../driver";
+import { makeMockEndpoint, makeMockEndpointDynamic } from "../../mock-endpoint";
 import * as precondition from "../../preconditions";
 
-export const name = "my-scenario";
-export const description = "Description of what this scenario tests";
+export const worker = setupWorker();
+const mockEndpoint = makeMockEndpoint({ mockServer: worker });
+const mockEndpointDynamic = makeMockEndpointDynamic({ mockServer: worker });
 
-export async function setup(driver: Driver) {
-  await driver.setUp(precondition.serviceControlWithMonitoring);
-  // Add scenario-specific preconditions here
-}
+const makeDriver = (): Driver => ({
+  goTo() { throw new Error("Not implemented"); },
+  mockEndpoint,
+  mockEndpointDynamic,
+  setUp(factory) { return factory({ driver: this }); },
+  disposeApp() { throw new Error("Not implemented"); },
+});
+
+const driver = makeDriver();
+
+export const setupComplete = (async () => {
+  await driver.setUp(precondition.scenarioMyScenario);
+})();
 ```
 
-2. Import and register it in `src/Frontend/test/mocks/scenarios/index.ts`
+1. Register it in `src/Frontend/test/mocks/scenarios/index.ts`:
+
+```typescript
+const scenarios: Record<string, () => Promise<ScenarioModule>> = {
+  // ... existing scenarios
+  "my-scenario": () => import("./my-scenario"),
+};
+```
 
 ## Automated Tests
 
 ### Test Files
 
-| File                                                                                | Type        | Description                             |
-|-------------------------------------------------------------------------------------|-------------|-----------------------------------------|
-| `src/Frontend/test/specs/platformcapabilities/monitoring-capability-card.spec.ts`   | Application | End-to-end tests for the card component |
+| File                                                                              | Type        | Description                             |
+|-----------------------------------------------------------------------------------|-------------|-----------------------------------------|
+| `src/Frontend/test/specs/platformcapabilities/monitoring-capability-card.spec.ts` | Application | End-to-end tests for the card component |
 
 ### Running Automated Tests
 
@@ -108,23 +149,23 @@ npx vitest run test/specs/platformcapabilities/
 
 #### Application Tests (`monitoring-capability-card.spec.ts`)
 
-| Rule                                    | Test Case                                              |
-|-----------------------------------------|--------------------------------------------------------|
-| Available with endpoints sending data   | Shows "Available" status + "View Metrics" button       |
-| Available but no endpoints sending data | Shows "Endpoints Not Configured" status                |
-| Instance configured but not responding  | Shows "Unavailable" status                             |
+| Rule                                      | Test Case                                            |
+|-------------------------------------------|------------------------------------------------------|
+| Available with endpoints sending data     | Shows "Available" status + "View Metrics" button     |
+| Available but no endpoints sending data   | Shows "Endpoints Not Configured" status              |
+| Instance configured but not responding    | Shows "Unavailable" status                           |
 | Monitoring not configured in ServicePulse | Shows "Get Started" button                           |
-| Instance indicator                      | Shows "Instance" label when monitoring is configured   |
-| Metrics indicator                       | Shows "Metrics" label when instance is connected       |
+| Instance indicator                        | Shows "Instance" label when monitoring is configured |
+| Metrics indicator                         | Shows "Metrics" label when instance is connected     |
 
 ## Key Source Files
 
-| File                                                                                   | Purpose                              |
-|----------------------------------------------------------------------------------------|--------------------------------------|
-| `src/Frontend/src/components/platformcapabilities/capabilities/MonitoringCapability.ts` | Main composable for monitoring card  |
-| `src/Frontend/src/components/monitoring/monitoringClient.ts`                            | Monitoring API client                |
-| `src/Frontend/test/preconditions/monitoringCapability.ts`                               | Test preconditions and fixtures      |
-| `src/Frontend/test/mocks/scenarios/`                                                    | Manual testing scenarios             |
+| File                                                                                    | Purpose                             |
+|-----------------------------------------------------------------------------------------|-------------------------------------|
+| `src/Frontend/src/components/platformcapabilities/capabilities/MonitoringCapability.ts` | Main composable for monitoring card |
+| `src/Frontend/src/components/monitoring/monitoringClient.ts`                            | Monitoring API client               |
+| `src/Frontend/test/preconditions/platformCapabilities.ts`                               | Test preconditions and fixtures     |
+| `src/Frontend/test/mocks/scenarios/`                                                    | Manual testing scenarios            |
 
 ## How Monitoring Status is Determined
 

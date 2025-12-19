@@ -40,40 +40,81 @@ This starts the dev server at `http://localhost:5173` with MSW (Mock Service Wor
 
 ### Switching Between Scenarios
 
-Use the `?scenario=<name>` query parameter to switch scenarios. Open the browser console to see available scenarios.
+Set the `VITE_MOCK_SCENARIO` environment variable before running the dev server:
+
+```bash
+# Linux/macOS
+VITE_MOCK_SCENARIO=audit-available npm run dev:mocks
+
+# Windows CMD
+set VITE_MOCK_SCENARIO=audit-available && npm run dev:mocks
+
+# Windows PowerShell
+$env:VITE_MOCK_SCENARIO="audit-available"; npm run dev:mocks
+```
+
+Open the browser console to see available scenarios.
 
 #### Available Audit Scenarios
 
-| Scenario | Status | Badge | Button | Description | Indicators |
-|----------|--------|-------|--------|-------------|------------|
-| [`audit-no-instance`](http://localhost:5173/?scenario=audit-no-instance) | Instance Not Configured | - | Get Started | "A ServiceControl Audit instance has not been configured..." | None |
-| [`audit-unavailable`](http://localhost:5173/?scenario=audit-unavailable) | Unavailable | Unavailable | Learn More | "All ServiceControl Audit instances are configured but not responding..." | Instance: ❌ |
-| [`audit-degraded`](http://localhost:5173/?scenario=audit-degraded) | Partially Unavailable | Degraded | - | "Some ServiceControl Audit instances are not responding." | Instance 1: ✅, Instance 2: ❌, Messages: ✅ |
-| [`audit-available`](http://localhost:5173/?scenario=audit-available) | Available | Available | View Messages | "All ServiceControl Audit instances are available and endpoints have been configured..." | Instance: ✅, Messages: ✅ |
-| [`audit-old-sc-version`](http://localhost:5173/?scenario=audit-old-sc-version) | Endpoints Not Configured | - | Learn More | "A ServiceControl Audit instance is connected but no successful messages..." | Instance: ✅, Messages: ⚠️ (SC < 6.6.0) |
-| [`audit-no-messages`](http://localhost:5173/?scenario=audit-no-messages) | Endpoints Not Configured | - | Learn More | "A ServiceControl Audit instance is connected but no successful messages have been processed yet..." | Instance: ✅, Messages: ⚠️ |
-| [`audit-multiple-instances`](http://localhost:5173/?scenario=audit-multiple-instances) | Available | Available | View Messages | "All ServiceControl Audit instances are available..." | Instance 1: ✅, Instance 2: ✅, Messages: ✅ |
+| Scenario                   | Status                   | Badge       | Button        | Description                                                                                          | Indicators                                |
+|----------------------------|--------------------------|-------------|---------------|------------------------------------------------------------------------------------------------------|-------------------------------------------|
+| `audit-no-instance`        | Instance Not Configured  | -           | Get Started   | "A ServiceControl Audit instance has not been configured..."                                         | None                                      |
+| `audit-unavailable`        | Unavailable              | Unavailable | Learn More    | "All ServiceControl Audit instances are configured but not responding..."                            | Instance: ❌                               |
+| `audit-degraded`           | Partially Unavailable    | Degraded    | -             | "Some ServiceControl Audit instances are not responding."                                            | Instance 1: ✅, Instance 2: ❌, Messages: ✅ |
+| `audit-available`          | Available                | Available   | View Messages | "All ServiceControl Audit instances are available and endpoints have been configured..."             | Instance: ✅, Messages: ✅                  |
+| `audit-old-sc-version`     | Endpoints Not Configured | -           | Learn More    | "A ServiceControl Audit instance is connected but no successful messages..."                         | Instance: ✅, Messages: ⚠️ (SC < 6.6.0)    |
+| `audit-no-messages`        | Endpoints Not Configured | -           | Learn More    | "A ServiceControl Audit instance is connected but no successful messages have been processed yet..." | Instance: ✅, Messages: ⚠️                 |
+| `audit-multiple-instances` | Available                | Available   | View Messages | "All ServiceControl Audit instances are available..."                                                | Instance 1: ✅, Instance 2: ✅, Messages: ✅ |
 
 **Indicator Legend:** ✅ = Available/Success, ❌ = Unavailable/Error, ⚠️ = Warning/Not Configured
 
 ### Adding New Scenarios
 
-1. Create a new file in `src/Frontend/test/mocks/scenarios/` (e.g., `my-scenario.ts`):
+1. Add a scenario precondition to `src/Frontend/test/preconditions/platformCapabilities.ts`:
 
 ```typescript
-import { Driver } from "../../driver";
-import * as precondition from "../../preconditions";
-
-export const name = "my-scenario";
-export const description = "Description of what this scenario tests";
-
-export async function setup(driver: Driver) {
+export const scenarioMyScenario = async ({ driver }: SetupFactoryOptions) => {
   await driver.setUp(precondition.serviceControlWithMonitoring);
   // Add scenario-specific preconditions here
-}
+};
 ```
 
-2. Import and register it in `src/Frontend/test/mocks/scenarios/index.ts`
+2. Create a new file in `src/Frontend/test/mocks/scenarios/` (e.g., `my-scenario.ts`):
+
+```typescript
+import { setupWorker } from "msw/browser";
+import { Driver } from "../../driver";
+import { makeMockEndpoint, makeMockEndpointDynamic } from "../../mock-endpoint";
+import * as precondition from "../../preconditions";
+
+export const worker = setupWorker();
+const mockEndpoint = makeMockEndpoint({ mockServer: worker });
+const mockEndpointDynamic = makeMockEndpointDynamic({ mockServer: worker });
+
+const makeDriver = (): Driver => ({
+  goTo() { throw new Error("Not implemented"); },
+  mockEndpoint,
+  mockEndpointDynamic,
+  setUp(factory) { return factory({ driver: this }); },
+  disposeApp() { throw new Error("Not implemented"); },
+});
+
+const driver = makeDriver();
+
+export const setupComplete = (async () => {
+  await driver.setUp(precondition.scenarioMyScenario);
+})();
+```
+
+1. Register it in `src/Frontend/test/mocks/scenarios/index.ts`:
+
+```typescript
+const scenarios: Record<string, () => Promise<ScenarioModule>> = {
+  // ... existing scenarios
+  "my-scenario": () => import("./my-scenario"),
+};
+```
 
 ## Automated Tests
 
@@ -132,7 +173,7 @@ npx vitest run test/specs/platformcapabilities/
 |---------------------------------------------------------------------------------------|----------------------------------------|
 | `src/Frontend/src/components/platformcapabilities/capabilities/AuditingCapability.ts` | Main composable and helper functions   |
 | `src/Frontend/src/components/audit/isAllMessagesSupported.ts`                         | Version check for All Messages feature |
-| `src/Frontend/test/preconditions/auditCapability.ts`                                  | Test preconditions and fixtures        |
+| `src/Frontend/test/preconditions/platformCapabilities.ts`                             | Test preconditions and fixtures        |
 | `src/Frontend/test/mocks/scenarios/`                                                  | Manual testing scenarios               |
 
 ## Troubleshooting
