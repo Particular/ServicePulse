@@ -6,16 +6,16 @@ ServicePulse can be configured to use HTTPS directly, enabling encrypted connect
 
 ### Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SERVICEPULSE_HTTPS_ENABLED` | `false` | Enable HTTPS with Kestrel |
-| `SERVICEPULSE_HTTPS_CERTIFICATEPATH` | (none) | Path to the certificate file (.pfx) |
-| `SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD` | (none) | Password for the certificate file |
-| `SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS` | `false` | Redirect HTTP requests to HTTPS |
-| `SERVICEPULSE_HTTPS_PORT` | (none) | HTTPS port for redirect (required for reverse proxy scenarios) |
-| `SERVICEPULSE_HTTPS_ENABLEHSTS` | `false` | Enable HTTP Strict Transport Security |
-| `SERVICEPULSE_HTTPS_HSTSMAXAGESECONDS` | `31536000` | HSTS max-age in seconds (default: 1 year) |
-| `SERVICEPULSE_HTTPS_HSTSINCLUDESUBDOMAINS` | `false` | Include subdomains in HSTS policy |
+| Variable                                   | Default    | Description                                                    |
+|--------------------------------------------|------------|----------------------------------------------------------------|
+| `SERVICEPULSE_HTTPS_ENABLED`               | `false`    | Enable HTTPS with Kestrel                                      |
+| `SERVICEPULSE_HTTPS_CERTIFICATEPATH`       | (none)     | Path to the certificate file (.pfx)                            |
+| `SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD`   | (none)     | Password for the certificate file                              |
+| `SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS`   | `false`    | Redirect HTTP requests to HTTPS                                |
+| `SERVICEPULSE_HTTPS_PORT`                  | (none)     | HTTPS port for redirect (required for reverse proxy scenarios) |
+| `SERVICEPULSE_HTTPS_ENABLEHSTS`            | `false`    | Enable HTTP Strict Transport Security                          |
+| `SERVICEPULSE_HTTPS_HSTSMAXAGESECONDS`     | `31536000` | HSTS max-age in seconds (default: 1 year)                      |
+| `SERVICEPULSE_HTTPS_HSTSINCLUDESUBDOMAINS` | `false`    | Include subdomains in HSTS policy                              |
 
 ### Docker Example
 
@@ -35,14 +35,14 @@ ServicePulse.Host uses Windows HttpListener which requires SSL certificate bindi
 
 ### Command-Line Arguments
 
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `--httpsenabled=` | `false` | Enable HTTPS features (HSTS, redirects) |
-| `--httpsredirecthttptohttps=` | `false` | Redirect HTTP requests to HTTPS |
-| `--httpsport=` | (none) | HTTPS port for redirect (required for reverse proxy scenarios) |
-| `--httpsenablehsts=` | `false` | Enable HTTP Strict Transport Security |
-| `--httpshstsmaxageseconds=` | `31536000` | HSTS max-age in seconds (default: 1 year) |
-| `--httpshstsincludesubdomains=` | `false` | Include subdomains in HSTS policy |
+| Argument                        | Default    | Description                                                    |
+|---------------------------------|------------|----------------------------------------------------------------|
+| `--httpsenabled=`               | `false`    | Enable HTTPS features (HSTS, redirects)                        |
+| `--httpsredirecthttptohttps=`   | `false`    | Redirect HTTP requests to HTTPS                                |
+| `--httpsport=`                  | (none)     | HTTPS port for redirect (required for reverse proxy scenarios) |
+| `--httpsenablehsts=`            | `false`    | Enable HTTP Strict Transport Security                          |
+| `--httpshstsmaxageseconds=`     | `31536000` | HSTS max-age in seconds (default: 1 year)                      |
+| `--httpshstsincludesubdomains=` | `false`    | Include subdomains in HSTS policy                              |
 
 ### Example
 
