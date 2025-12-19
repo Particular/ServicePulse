@@ -9,8 +9,6 @@ This guide provides scenario-based tests for ServicePulse's OIDC authentication.
 - **HTTPS configured** - Authentication requires HTTPS for secure token transmission. See [HTTPS Configuration](https-configuration.md) or [Reverse Proxy Testing](nginx-testing.md) for setup options.
 - (Optional) An OIDC identity provider for testing authenticated scenarios
 
-> **Security Note:** OAuth tokens transmitted over HTTP can be intercepted, compromising security. All authentication testing scenarios in this guide assume HTTPS is configured.
-
 ### Building the Frontend
 
 ```cmd
@@ -47,6 +45,34 @@ When `enabled` is `true`, ServicePulse redirects users to the identity provider 
 
 Verify that ServicePulse works without authentication when ServiceControl has auth disabled.
 
+#### Option A: Using Mocks (No ServiceControl Required)
+
+Use the mock scenario for frontend development without running ServiceControl.
+
+**Start with mocks:**
+
+```cmd
+cd src\Frontend
+set VITE_MOCK_SCENARIO=auth-disabled
+npm run dev:mocks
+```
+
+**Test in browser:**
+
+1. Open `http://localhost:5173`
+2. ServicePulse should load directly without any login prompt
+3. The user profile menu should NOT appear in the header
+4. Console should show: `Loading mock scenario: auth-disabled`
+
+**Run automated tests:**
+
+```cmd
+cd src\Frontend
+npx vitest run ./test/specs/authentication
+```
+
+#### Option B: Using Real ServiceControl
+
 **Prerequisites:**
 
 - ServiceControl running with authentication disabled (default)
@@ -76,6 +102,46 @@ curl http://localhost:5291/js/app.constants.js
 
 Test that ServiceControl returns the correct authentication configuration for ServicePulse.
 
+#### Option A: Using Mocks (No ServiceControl Required)
+
+Use the mock scenario to verify the auth configuration endpoint returns the expected response shape. Note: The app will attempt to redirect to the identity provider, which will fail without a real IdP - this is expected behavior.
+
+**Start with mocks:**
+
+```cmd
+cd src\Frontend
+set VITE_MOCK_SCENARIO=auth-enabled
+npm run dev:mocks
+```
+
+**Test in browser:**
+
+1. Open `http://localhost:5173`
+2. Open Developer Tools > Network tab
+3. Look for request to `/api/authentication/configuration`
+4. Verify response matches the expected mock values below
+
+**Expected mock response:**
+
+```json
+{
+  "enabled": true,
+  "client_id": "servicepulse-test",
+  "authority": "https://login.microsoftonline.com/test-tenant-id/v2.0",
+  "api_scopes": "[\"api://servicecontrol/access_as_user\"]",
+  "audience": "api://servicecontrol"
+}
+```
+
+**Run automated tests:**
+
+```cmd
+cd src\Frontend
+npx vitest run ./test/specs/authentication/auth-enabled
+```
+
+#### Option B: Using Real ServiceControl
+
 **Configure and start ServiceControl:**
 
 See ServiceControl docs for correct setup
@@ -104,6 +170,56 @@ The configuration endpoint is accessible without authentication and returns all 
 
 Verify the OIDC login flow when authentication is enabled.
 
+#### Using Mocks (No ServiceControl Required)
+
+Use the mock scenario to simulate an authenticated user state. This bypasses the actual OIDC redirect flow and injects a mock token directly.
+
+**Start with mocks:**
+
+```cmd
+cd src\Frontend
+set VITE_MOCK_SCENARIO=auth-authenticated
+npm run dev:mocks
+```
+
+**Test in browser:**
+
+1. Open `http://localhost:5173`
+2. Dashboard should load directly (no login redirect)
+3. User profile menu should appear in the header
+4. Check Developer Tools > Application > Session Storage for `auth_token`
+
+**Expected behavior:**
+
+- Console shows: `Existing user session found { name: 'Test User', email: 'test.user@example.com' }`
+- Console shows: `User authenticated successfully`
+- Dashboard loads without redirect
+
+**Check Session Storage (Developer Tools > Application > Session Storage):**
+
+Key: `oidc.user:https://login.microsoftonline.com/test-tenant-id/v2.0:servicepulse-test`
+
+```json
+{
+  "access_token": "mock-access-token-for-testing",
+  "token_type": "Bearer",
+  "profile": {
+    "name": "Test User",
+    "email": "test.user@example.com",
+    "sub": "user-123"
+  }
+}
+```
+
+**Run automated tests:**
+
+```cmd
+cd src\Frontend
+npx vitest run ./test/specs/authentication/auth-full-flow
+```
+
+#### Using Real ServiceControl and Identity Provider
+
 **Prerequisites:**
 
 - ServiceControl running with authentication enabled (see Scenario 2)
@@ -130,11 +246,16 @@ dotnet run
 
 Verify that authenticated requests include the Bearer token.
 
-**Prerequisites:**
+**Run automated tests:**
 
-- Completed Scenario 3 (logged in successfully)
+```cmd
+cd src\Frontend
+npx vitest run ./test/specs/authentication/auth-full-flow
+```
 
-**Test in browser:**
+**Manual test in browser:**
+
+Prerequisites: Completed Scenario 3 (logged in successfully)
 
 1. Open browser Developer Tools (F12)
 2. Go to the Network tab
@@ -169,11 +290,16 @@ curl -v -H "Authorization: Bearer %TOKEN%" http://localhost:5291/api/endpoints
 
 Verify that API requests without a token are rejected when auth is enabled.
 
-**Prerequisites:**
+**Run automated tests:**
 
-- ServiceControl running with authentication enabled
+```cmd
+cd src\Frontend
+npx vitest run ./test/specs/authentication/auth-unauthenticated
+```
 
-**Test with curl (no token):**
+**Manual test with curl (no token):**
+
+Prerequisites: ServiceControl running with authentication enabled
 
 ```cmd
 curl -v http://localhost:33333/api/endpoints
@@ -191,11 +317,16 @@ The request is rejected because no Bearer token was provided.
 
 Verify that the session persists within a browser tab.
 
-**Prerequisites:**
+**Run automated tests:**
 
-- Completed Scenario 3 (logged in successfully)
+```cmd
+cd src\Frontend
+npx vitest run ./test/specs/authentication/auth-full-flow
+```
 
-**Test in browser:**
+**Manual test in browser:**
+
+Prerequisites: Completed Scenario 3 (logged in successfully)
 
 1. After logging in, note that ServicePulse is working
 2. Refresh the page (F5)
@@ -208,11 +339,18 @@ Verify that the session persists within a browser tab.
 
 Verify that sessions are isolated between browser tabs.
 
-**Prerequisites:**
+**Run automated tests:**
 
-- Completed Scenario 3 (logged in successfully in one tab)
+```cmd
+cd src\Frontend
+npx vitest run ./test/specs/authentication/auth-full-flow
+```
 
-**Test in browser:**
+The automated test verifies that the auth token is stored in `sessionStorage` (tab-specific) and NOT in `localStorage` (shared across tabs).
+
+**Manual test in browser:**
+
+Prerequisites: Completed Scenario 3 (logged in successfully in one tab)
 
 1. Open a new browser tab
 2. Navigate to `http://localhost:5291`
@@ -226,11 +364,16 @@ Verify that sessions are isolated between browser tabs.
 
 Verify that logout clears the session and redirects to the logged-out page.
 
-**Prerequisites:**
+**Run automated tests:**
 
-- Completed Scenario 3 (logged in successfully)
+```cmd
+cd src\Frontend
+npx vitest run ./test/specs/authentication/auth-full-flow
+```
 
-**Test in browser:**
+**Manual test in browser:**
+
+Prerequisites: Completed Scenario 3 (logged in successfully)
 
 1. Click on the user profile menu in the header
 2. Click "Log out"
@@ -255,12 +398,20 @@ curl http://localhost:5291/#/logged-out
 
 Verify that tokens are renewed automatically before expiration.
 
-**Prerequisites:**
+**Run automated tests:**
 
+```cmd
+cd src\Frontend
+npx vitest run ./test/specs/authentication/auth-full-flow
+```
+
+The automated test verifies that the UserManager is initialized with silent renewal support (mocked `signinSilent` method).
+
+**Manual test in browser:**
+
+Prerequisites:
 - Completed Scenario 3 (logged in successfully)
 - Identity provider configured with short-lived access tokens (for testing)
-
-**Test in browser:**
 
 1. Open browser Developer Tools (F12)
 2. Go to the Network tab
@@ -276,12 +427,21 @@ Verify that tokens are renewed automatically before expiration.
 
 Verify behavior when silent renewal fails (e.g., IdP session expired).
 
-**Prerequisites:**
+**Run automated tests:**
+
+```cmd
+cd src\Frontend
+npx vitest run ./test/specs/authentication/auth-renewal-failure
+```
+
+The automated test uses a mock where `signinSilent` fails, verifying the app handles renewal failures gracefully.
+
+**Manual test in browser:**
+
+Prerequisites:
 
 - Completed Scenario 3 (logged in successfully)
 - Identity provider session expired or revoked
-
-**Test in browser:**
 
 1. Log in to ServicePulse
 2. In a separate tab, log out from your identity provider (or wait for IdP session to expire)
@@ -306,6 +466,15 @@ Verify error handling when redirect URI is misconfigured.
 3. After login, identity provider rejects the redirect
 
 **Expected:** Identity provider shows an error about invalid redirect URI. This indicates misconfiguration in the IdP application registration.
+
+**Automated test:**
+
+```bash
+cd src/Frontend
+npx vitest run test/specs/authentication/auth-invalid-redirect.spec.ts
+```
+
+Note: The automated test verifies the app's behavior when OAuth callbacks fail. The actual "invalid redirect URI" error is displayed by the identity provider itself, not the application.
 
 ### Scenario 12: YARP Reverse Proxy Token Forwarding
 
@@ -345,6 +514,13 @@ curl https://localhost:5291/js/app.constants.js
 
 When reverse proxy is enabled, `service_control_url` should be `"/api/"` (relative path).
 
+**Automated test:**
+
+```bash
+cd src/Frontend
+npx vitest run test/specs/authentication/auth-yarp-proxy.spec.ts
+```
+
 ### Scenario 13: Direct ServiceControl Access (Reverse Proxy Disabled)
 
 Verify authentication works when the reverse proxy is disabled and the frontend connects directly to ServiceControl.
@@ -381,6 +557,13 @@ When reverse proxy is disabled, `service_control_url` should be the full Service
 7. Verify responses are successful
 
 **Expected:** Direct requests to ServiceControl include the Bearer token and are accepted.
+
+**Automated test:**
+
+```bash
+cd src/Frontend
+npx vitest run test/specs/authentication/auth-direct-access.spec.ts
+```
 
 ### Scenario 14: Forwarded Headers with Authentication
 
@@ -427,6 +610,15 @@ Verify graceful handling when ServiceControl is unavailable during authenticatio
 
 **Expected:** ServicePulse should display an error message indicating it cannot connect to ServiceControl, rather than crashing or showing a blank screen.
 
+**Automated test:**
+
+```bash
+cd src/Frontend
+npx vitest run test/specs/authentication/auth-config-unavailable.spec.ts
+```
+
+Note: The automated tests verify the app handles auth config endpoint errors gracefully by falling back to "auth disabled" mode, allowing users to still access the dashboard.
+
 ### Scenario 16: OAuth Callback Error Handling
 
 Verify that OAuth errors returned in the callback are handled gracefully.
@@ -447,6 +639,13 @@ Verify that OAuth errors returned in the callback are handled gracefully.
 2. Observe the behavior
 
 **Expected:** ServicePulse should display the error message to the user and allow them to retry authentication.
+
+**Automated test:**
+
+```bash
+cd src/Frontend
+npx vitest run test/specs/authentication/auth-callback-error.spec.ts
+```
 
 ### Scenario 17: Monitoring Instance Authentication
 

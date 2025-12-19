@@ -4,6 +4,9 @@ import { SetupFactoryOptions } from "../driver";
 export const serviceControlWithMonitoring = async ({ driver }: SetupFactoryOptions) => {
   //Service control requests minimum setup. Todo: encapsulate for reuse.
 
+  //http://localhost:33333/api/authentication/configuration - auth disabled by default
+  await driver.setUp(precondition.hasAuthenticationDisabled());
+
   //http://localhost:33333/api/license
   await driver.setUp(precondition.hasActiveLicense);
 

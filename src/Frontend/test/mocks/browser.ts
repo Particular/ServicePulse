@@ -22,7 +22,8 @@ const makeDriver = (): Driver => ({
 
 const driver = makeDriver();
 
-(async () => {
+// Export a promise that resolves when all mock handlers are registered
+export const setupComplete = (async () => {
   await driver.setUp(precondition.serviceControlWithMonitoring);
   //override the default mocked endpoints with a custom list
   await driver.setUp(precondition.hasCustomChecks(3, 2));
