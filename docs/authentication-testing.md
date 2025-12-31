@@ -586,7 +586,7 @@ dotnet run
 
 **Test in browser:**
 
-1. Access ServicePulse through the external reverse proxy (e.g., `https://servicepulse.local/`)
+1. Access ServicePulse through the external reverse proxy (e.g., `https://servicepulse.localhost/`)
 2. Complete the login flow
 3. Verify the OAuth redirect URI uses the correct external URL
 4. Verify ServicePulse loads successfully after login
