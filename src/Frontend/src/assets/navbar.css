@@ -6,6 +6,8 @@
 .navbar {
   height: 60px;
   flex-wrap: nowrap;
+  position: relative;
+  z-index: 1000;
 }
 
 .navbar-inverse {
