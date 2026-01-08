@@ -104,7 +104,9 @@ Test that ServiceControl returns the correct authentication configuration for Se
 
 #### Option A: Using Mocks (No ServiceControl Required)
 
-Use the mock scenario to verify the auth configuration endpoint returns the expected response shape. Note: The app will attempt to redirect to the identity provider, which will fail without a real IdP - this is expected behavior.
+Use the mock scenario to verify the auth configuration endpoint returns the expected response shape. 
+
+| ⚠️ Warning: The app will attempt to redirect to the identity provider, which will fail without a real IdP - this is expected behavior.
 
 **Start with mocks:**
 
