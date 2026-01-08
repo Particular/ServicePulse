@@ -6,6 +6,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 var settings = Settings.GetFromEnvironmentVariables();
 
+// Configure Kestrel for HTTPS if enabled
+builder.ConfigureHttps(settings);
+
+// Configure HSTS options
+builder.Services.ConfigureHsts(settings);
+
+// Configure HTTPS redirection port (for reverse proxy scenarios)
+builder.Services.ConfigureHttpsRedirection(settings);
+
 if (settings.EnableReverseProxy)
 {
     var (routes, clusters) = ReverseProxy.GetConfiguration(settings);
@@ -13,6 +22,12 @@ if (settings.EnableReverseProxy)
 }
 
 var app = builder.Build();
+
+// Forwarded headers must be first in the pipeline for correct scheme/host detection
+app.UseForwardedHeaders(settings);
+
+// HTTPS middleware (HSTS and redirect)
+app.UseHttpsConfiguration(settings);
 
 var manifestEmbeddedFileProvider = new ManifestEmbeddedFileProvider(typeof(Program).Assembly, "wwwroot");
 var fileProvider = new CompositeFileProvider(builder.Environment.WebRootFileProvider, manifestEmbeddedFileProvider);

@@ -10,7 +10,8 @@ async function conditionallyEnableMocking() {
     return;
   }
 
-  const { worker } = await import("@/../test/mocks/browser");
+  const { loadScenario } = await import("@/../test/mocks/scenarios");
+  const { worker } = await loadScenario();
 
   // `worker.start()` returns a Promise that resolves
   // once the Service Worker is up and ready to intercept requests.

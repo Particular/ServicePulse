@@ -101,3 +101,10 @@ src/scaffolding.config
 
 # Visual Studio Code
 .vscode
+
+# AI
+.claude
+CLAUDE.md
+
+# local testing
+.local

@@ -25,6 +25,7 @@ const port = 5173;
 const defaultUrls = [
   "http://10.211.55.3:*", // The default Parallels url to access Windows VM
   "http://localhost:*",
+  "https://*",
 ];
 
 // https://vitejs.dev/config/
