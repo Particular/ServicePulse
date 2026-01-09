@@ -65,7 +65,7 @@
     "@vitest/coverage-v8": "4.0.12",
     "@vue/tsconfig": "0.8.1",
     "cross-env": "10.1.0",
-    "eslint": "9.39.1",
+    "eslint": "9.39.2",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.4",
     "eslint-plugin-promise": "7.2.1",
