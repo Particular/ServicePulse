@@ -1,6 +1,5 @@
 ﻿namespace ServicePulse;
 
-using System.Reflection;
 using System.Text.Json;
 
 public record ServicePulseSettings
@@ -48,23 +47,6 @@ public record ServicePulseSettings
         };
     }
 
-    static string GetVersionInformation()
-    {
-        var majorMinorPatch = "0.0.0";
-
-        var attributes = typeof(ServicePulseSettings).GetCustomAttributes<AssemblyMetadataAttribute>();
-
-        foreach (var attribute in attributes)
-        {
-            if (attribute.Key == "MajorMinorPatch")
-            {
-                majorMinorPatch = attribute.Value ?? "0.0.0";
-            }
-        }
-
-        return majorMinorPatch;
-    }
-
     static string? ParseLegacyMonitoringValue(string? value)
     {
         if (value is null)
@@ -100,15 +82,4 @@ public record ServicePulseSettings
     {
         public string[] Addresses { get; set; } = [];
     }
-
-    internal string GetConstantsFileContents()
-        => $$"""
-        window.defaultConfig = {
-            default_route: '{{DefaultRoute}}',
-            version: '{{GetVersionInformation()}}',
-            service_control_url: '{{ServiceControlUrl}}',
-            monitoring_urls: ['{{MonitoringUrl ?? "!"}}'],
-            showPendingRetry: {{(ShowPendingRetry ? "true" : "false")}},
-        }
-        """;
 }
