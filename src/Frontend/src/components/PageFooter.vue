@@ -21,6 +21,7 @@ const environment = environmentAndVersionsStore.environment;
 const licenseStore = useLicenseStore();
 const { licenseStatus, license } = licenseStore;
 const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
+const isEmbedded = window.defaultConfig.embedded;
 
 const scAddressTooltip = computed(() => {
   return `ServiceControl URL ${serviceControlClient.url}`;
@@ -43,26 +44,33 @@ const { configuration } = storeToRefs(configurationStore);
             <FAIcon class="footer-icon" :icon="faPlus" />
             <RouterLink :to="routeLinks.configuration.endpointConnection.link">Connect new endpoint</RouterLink>
           </span>
-
-          <span v-if="!newVersions.newSPVersion.newspversion && environment.sp_version"> ServicePulse v{{ environment.sp_version }} </span>
-          <span v-if="newVersions.newSPVersion.newspversion && environment.sp_version">
-            ServicePulse v{{ environment.sp_version }} (<FAIcon v-if="newVersions.newSPVersion.newspversionnumber" class="footer-icon fake-link" :icon="faArrowTurnUp" />
-            <a :href="newVersions.newSPVersion.newspversionlink" target="_blank">v{{ newVersions.newSPVersion.newspversionnumber }} available</a>)
-          </span>
-          <span :title="scAddressTooltip">
-            Service Control:
-            <span class="connected-status" v-if="connectionState.connected && !connectionState.connecting">
-              <div class="fa pa-connection-success"></div>
-              <span v-if="!environment.sc_version">Connected</span>
-              <span v-if="environment.sc_version" class="versionnumber">v{{ environment.sc_version }}</span>
-              <span v-if="newVersions.newSCVersion.newscversion" class="newscversion"
-                >(<FAIcon class="footer-icon fake-link" :icon="faArrowTurnUp" /> <a :href="newVersions.newSCVersion.newscversionlink" target="_blank">v{{ newVersions.newSCVersion.newscversionnumber }} available</a>)</span
-              >
+          <template v-if="!isEmbedded">
+            <span v-if="!newVersions.newSPVersion.newspversion && environment.sp_version"> ServicePulse v{{ environment.sp_version }} </span>
+            <span v-if="newVersions.newSPVersion.newspversion && environment.sp_version">
+              ServicePulse v{{ environment.sp_version }} (<FAIcon v-if="newVersions.newSPVersion.newspversionnumber" class="footer-icon fake-link" :icon="faArrowTurnUp" />
+              <a :href="newVersions.newSPVersion.newspversionlink" target="_blank">v{{ newVersions.newSPVersion.newspversionnumber }} available</a>)
             </span>
-            <span v-if="!connectionState.connected && !connectionState.connecting" class="connection-failed"> <i class="fa pa-connection-failed"></i> Not connected </span>
-            <span v-if="connectionState.connecting" class="connection-establishing"> <i class="fa pa-connection-establishing"></i> Connecting </span>
-          </span>
-
+            <span :title="scAddressTooltip">
+              Service Control:
+              <span class="connected-status" v-if="connectionState.connected && !connectionState.connecting">
+                <div class="fa pa-connection-success"></div>
+                <span v-if="!environment.sc_version">Connected</span>
+                <span v-if="environment.sc_version" class="versionnumber">v{{ environment.sc_version }}</span>
+                <span v-if="newVersions.newSCVersion.newscversion" class="newscversion"
+                  >(<FAIcon class="footer-icon fake-link" :icon="faArrowTurnUp" /> <a :href="newVersions.newSCVersion.newscversionlink" target="_blank">v{{ newVersions.newSCVersion.newscversionnumber }} available</a>)</span
+                >
+              </span>
+              <span v-if="!connectionState.connected && !connectionState.connecting" class="connection-failed"> <i class="fa pa-connection-failed"></i> Not connected </span>
+              <span v-if="connectionState.connecting" class="connection-establishing"> <i class="fa pa-connection-establishing"></i> Connecting </span>
+            </span>
+          </template>
+          <template v-else>
+            <span v-if="!newVersions.newSCVersion.newscversion && environment.sp_version"> ServicePulse v{{ environment.sp_version }} </span>
+            <span v-if="newVersions.newSCVersion.newscversion && environment.sp_version">
+              ServicePulse v{{ environment.sp_version }} (<FAIcon v-if="newVersions.newSCVersion.newscversion" class="footer-icon fake-link" :icon="faArrowTurnUp" />
+              <a :href="newVersions.newSCVersion.newscversionlink" target="_blank">v{{ newVersions.newSCVersion.newscversionnumber }} available</a>)
+            </span>
+          </template>
           <template v-if="isMonitoringEnabled">
             <span class="monitoring-connected" :title="scMonitoringAddressTooltip">
               SC Monitoring:

@@ -19,17 +19,19 @@ const environment = environmentStore.environment;
 const primaryConnectionFailure = computed(() => connectionState.unableToConnect);
 const monitoringConnectionFailure = computed(() => monitoringConnectionState.unableToConnect);
 
-watch(primaryConnectionFailure, (newValue, oldValue) => {
-  //NOTE to eliminate success msg showing everytime the screen is refreshed
-  if (newValue !== oldValue && !(oldValue === null && newValue === false)) {
-    const connectionUrl = router.resolve(routeLinks.configuration.connections.link).href;
-    if (newValue) {
-      useShowToast(TYPE.ERROR, "Error", `Could not connect to ServiceControl at ${serviceControlClient.url}. <a class="btn btn-default" href="${connectionUrl}">View connection settings</a>`);
-    } else {
-      useShowToast(TYPE.SUCCESS, "Success", `Connection to ServiceControl was successful at ${serviceControlClient.url}.`);
+if (!window.defaultConfig.embedded) {
+  watch(primaryConnectionFailure, (newValue, oldValue) => {
+    //NOTE to eliminate success msg showing everytime the screen is refreshed
+    if (newValue !== oldValue && !(oldValue === null && newValue === false)) {
+      const connectionUrl = router.resolve(routeLinks.configuration.connections.link).href;
+      if (newValue) {
+        useShowToast(TYPE.ERROR, "Error", `Could not connect to ServiceControl at ${serviceControlClient.url}. <a class="btn btn-default" href="${connectionUrl}">View connection settings</a>`);
+      } else {
+        useShowToast(TYPE.SUCCESS, "Success", `Connection to ServiceControl was successful at ${serviceControlClient.url}.`);
+      }
     }
-  }
-});
+  });
+}
 
 watch(monitoringConnectionFailure, (newValue, oldValue) => {
   // Only watch the state change if monitoring is enabled
