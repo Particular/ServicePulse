@@ -7,8 +7,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.FileProviders;
 
+/// <summary>
+/// Extension methods for hosting a ServicePulse instance.
+/// </summary>
 public static class ServicePulseExtensions
 {
+    /// <summary>
+    /// Adds ServicePulse static file hosting to the application builder.
+    /// </summary>
     public static IApplicationBuilder UseServicePulse(this IApplicationBuilder app, IFileProvider? overrideFileProvider = null)
     {
         var embeddedFileProvider = new ManifestEmbeddedFileProvider(typeof(ServicePulseExtensions).Assembly, "wwwroot");
@@ -28,6 +34,10 @@ public static class ServicePulseExtensions
             });
     }
 
+    /// <summary>
+    /// Maps the ServicePulse constants endpoint.
+    /// Used to pass settings to the frontend application.
+    /// </summary>
     public static IEndpointRouteBuilder MapServicePulseConstants(this IEndpointRouteBuilder app, ServicePulseSettings settings)
     {
         var constantsFile = GetConstantsFileContents(settings);

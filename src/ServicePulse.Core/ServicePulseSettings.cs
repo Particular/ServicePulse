@@ -2,13 +2,34 @@
 
 using System.Text.Json;
 
+/// <summary>
+/// The runtime settings of a ServicePulse instance.
+/// </summary>
 public record ServicePulseSettings
 {
+    /// <summary>
+    /// The default route to navigate to.
+    /// </summary>
     public required string DefaultRoute { get; init; }
+
+    /// <summary>
+    /// The location of the ServiceControl API.
+    /// </summary>
     public required string ServiceControlUrl { get; init; }
+
+    /// <summary>
+    /// The location of the ServiceControl Monitoring API.
+    /// </summary>
     public required string? MonitoringUrl { get; init; }
+
+    /// <summary>
+    /// Show the pending retry tab.
+    /// </summary>
     public required bool ShowPendingRetry { get; init; }
 
+    /// <summary>
+    /// Loads the settings from environment variables.
+    /// </summary>
     public static ServicePulseSettings GetFromEnvironmentVariables()
     {
         var serviceControlUrl = Environment.GetEnvironmentVariable("SERVICECONTROL_URL") ?? "http://localhost:33333/api/";
