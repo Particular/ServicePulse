@@ -29,6 +29,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
 
   const endpointList = ref<Endpoint[]>([]);
   const filterString = ref("");
+  const hasMonitoredEndpoints = ref(false);
   const endpointListCount = computed<number>(() => endpointList.value.length);
   const endpointListIsEmpty = computed<boolean>(() => endpointListCount.value === 0);
   const endpointListIsGrouped = computed<boolean>(() => grouping.value.selectedGrouping !== 0);
@@ -66,6 +67,20 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
       } else {
         sortEndpointList();
       }
+    }
+  }
+
+  async function checkForMonitoredEndpoints() {
+    try {
+      if (!monitoringClient.isMonitoringEnabled || connectionStore.monitoringConnectionState.unableToConnect) {
+        hasMonitoredEndpoints.value = false;
+        return;
+      }
+      // Minimal query: just need to check if any endpoints exist
+      const data = await monitoringClient.getMonitoredEndpoints(1);
+      hasMonitoredEndpoints.value = (data?.length ?? 0) > 0;
+    } catch {
+      hasMonitoredEndpoints.value = false;
     }
   }
 
@@ -202,6 +217,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     grouping,
     filterString,
     sortBy,
+    hasMonitoredEndpoints,
 
     //getters
     endpointListIsEmpty,
@@ -212,6 +228,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     updateSelectedGrouping,
     updateEndpointList,
     updateFilterString,
+    checkForMonitoredEndpoints,
   };
 });
 

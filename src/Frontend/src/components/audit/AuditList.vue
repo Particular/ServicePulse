@@ -5,10 +5,16 @@ import { useRoute, useRouter } from "vue-router";
 import ResultsCount from "@/components/ResultsCount.vue";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
 import AuditListItem from "@/components/audit/AuditListItem.vue";
-import { onBeforeMount, ref, watch } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import RefreshConfig from "../RefreshConfig.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import useFetchWithAutoRefresh from "@/composables/autoRefresh";
+import WizardDialog from "@/components/platformcapabilities/WizardDialog.vue";
+import { getAuditingWizardPages } from "@/components/platformcapabilities/wizards/AuditingWizardPages";
+import { useAuditingCapability } from "@/components/platformcapabilities/capabilities/AuditingCapability";
+import { CapabilityStatus } from "@/components/platformcapabilities/constants";
+import PageBanner, { type BannerMessage } from "@/components/PageBanner.vue";
+import { useConfigurationStore } from "@/stores/ConfigurationStore";
 
 const store = useAuditStore();
 const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange } = storeToRefs(store);
@@ -17,6 +23,40 @@ const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
 const { refreshNow, isRefreshing, updateInterval, isActive, start, stop } = useFetchWithAutoRefresh("audit-list", store.refresh, 0);
 const firstLoad = ref(true);
+const showWizard = ref(false);
+const { status: auditStatus } = useAuditingCapability();
+const wizardPages = computed(() => getAuditingWizardPages(auditStatus.value));
+const configurationStore = useConfigurationStore();
+const { isMassTransitConnected } = storeToRefs(configurationStore);
+
+const bannerMessage = computed<BannerMessage | null>(() => {
+  switch (auditStatus.value) {
+    case CapabilityStatus.InstanceNotConfigured:
+      return {
+        title: "No ServiceControl Audit instance configured.",
+        description: "A ServiceControl Audit instance is required to view processed messages. Click 'Get Started' to learn how to set one up.",
+      };
+    case CapabilityStatus.EndpointsNotConfigured:
+      return {
+        title: "No successful audit messages found.",
+        description: "Auditing may not be enabled on your endpoints. Click 'Get Started' to find out how to enable auditing.",
+      };
+    case CapabilityStatus.Unavailable:
+      return {
+        title: "All ServiceControl Audit instances are not responding.",
+        description: "The configured audit instances appears to be offline or unreachable. Check that the service is running and accessible.",
+      };
+    case CapabilityStatus.PartiallyUnavailable:
+      return {
+        title: "Some ServiceControl Audit instances are not responding.",
+        description: "One or more audit instances appear to be offline. Some audit data may be unavailable until all instances are restored.",
+      };
+    default:
+      return null;
+  }
+});
+
+const showBannerAction = computed(() => auditStatus.value !== CapabilityStatus.Unavailable && auditStatus.value !== CapabilityStatus.PartiallyUnavailable);
 
 onBeforeMount(() => {
   setQuery();
@@ -100,7 +140,9 @@ watch(autoRefreshValue, (newValue) => {
       <div class="row">
         <ResultsCount :displayed="messages.length" :total="totalCount" />
       </div>
+      <PageBanner v-if="bannerMessage && isMassTransitConnected === false" :message="bannerMessage" :show-action="showBannerAction" @action="showWizard = true" />
     </div>
+    <WizardDialog v-if="showWizard" title="Getting Started with Auditing" :pages="wizardPages" @close="showWizard = false" />
     <div class="row results-table">
       <LoadingSpinner v-if="firstLoad" />
       <template v-for="message in messages" :key="message.id">

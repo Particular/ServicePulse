@@ -1,30 +1,20 @@
-import { setupWorker } from "msw/browser";
-import { Driver } from "../driver";
-import { makeMockEndpoint, makeMockEndpointDynamic } from "../mock-endpoint";
+/**
+ * Default Browser Scenario
+ *
+ * Default scenario with monitoring, custom checks, and a failed message.
+ * This is the scenario loaded when no VITE_MOCK_SCENARIO is specified.
+ *
+ * Usage:
+ *   npm run dev:mocks
+ */
+import { createScenario } from "./scenarios/scenario-helper";
 import * as precondition from "../preconditions";
-export const worker = setupWorker();
-const mockEndpoint = makeMockEndpoint({ mockServer: worker });
-const mockEndpointDynamic = makeMockEndpointDynamic({ mockServer: worker });
 
-const makeDriver = (): Driver => ({
-  goTo() {
-    throw new Error("Not implemented");
-  },
-  mockEndpoint,
-  mockEndpointDynamic,
-  setUp(factory) {
-    return factory({ driver: this });
-  },
-  disposeApp() {
-    throw new Error("Not implemented");
-  },
-});
+const { worker, driver } = createScenario();
+export { worker };
 
-const driver = makeDriver();
-
-(async () => {
+export const setupComplete = (async () => {
   await driver.setUp(precondition.serviceControlWithMonitoring);
-  //override the default mocked endpoints with a custom list
   await driver.setUp(precondition.hasCustomChecks(3, 2));
 
   await driver.setUp(
