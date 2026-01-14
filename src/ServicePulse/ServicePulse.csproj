@@ -1,21 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.17" />
     <PackageReference Include="Particular.Packaging" Version="4.5.0" PrivateAssets="All" />
     <PackageReference Include="Yarp.ReverseProxy" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\Frontend\dist\**\*" Exclude="..\Frontend\dist\js\**\*" LinkBase="wwwroot" />
+    <ProjectReference Include="..\ServicePulse.Core\ServicePulse.Core.csproj" />
   </ItemGroup>
 
 </Project>

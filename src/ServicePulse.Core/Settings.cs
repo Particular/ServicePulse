@@ -2,7 +2,7 @@
 
 using System.Text.Json;
 
-class Settings
+public class Settings
 {
     public required Uri ServiceControlUri { get; init; }
 

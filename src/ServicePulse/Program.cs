@@ -1,5 +1,3 @@
-using System.Net.Mime;
-using Microsoft.Extensions.FileProviders;
 using ServicePulse;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,26 +12,13 @@ if (settings.EnableReverseProxy)
 
 var app = builder.Build();
 
-var manifestEmbeddedFileProvider = new ManifestEmbeddedFileProvider(typeof(Program).Assembly, "wwwroot");
-var fileProvider = new CompositeFileProvider(builder.Environment.WebRootFileProvider, manifestEmbeddedFileProvider);
-
-var defaultFilesOptions = new DefaultFilesOptions { FileProvider = fileProvider };
-app.UseDefaultFiles(defaultFilesOptions);
-
-var staticFileOptions = new StaticFileOptions { FileProvider = fileProvider };
-app.UseStaticFiles(staticFileOptions);
+app.UseServicePulse(builder.Environment.ContentRootFileProvider);
 
 if (settings.EnableReverseProxy)
 {
     app.MapReverseProxy();
 }
 
-var constantsFile = ConstantsFile.GetContent(settings);
-
-app.MapGet("/js/app.constants.js", (HttpContext context) =>
-{
-    context.Response.ContentType = MediaTypeNames.Text.JavaScript;
-    return constantsFile;
-});
+app.MapServicePulseConstants(settings);
 
 app.Run();
