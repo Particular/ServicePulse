@@ -2,23 +2,31 @@ using ServicePulse;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var settings = Settings.GetFromEnvironmentVariables();
+var hostSettings = ServicePulseHostSettings.GetFromEnvironmentVariables();
+var servicePulseSettings = ServicePulseSettings.GetFromEnvironmentVariables();
 
-if (settings.EnableReverseProxy)
+if (hostSettings.EnableReverseProxy)
 {
-    var (routes, clusters) = ReverseProxy.GetConfiguration(settings);
+    var (routes, clusters) = ReverseProxy.GetConfiguration(servicePulseSettings);
     builder.Services.AddReverseProxy().LoadFromMemory(routes, clusters);
+    servicePulseSettings = servicePulseSettings with
+    {
+        ServiceControlUrl = "/api/",
+        MonitoringUrl = servicePulseSettings.MonitoringUrl is not null
+            ? "/monitoring-api/"
+            : null
+    };
 }
 
 var app = builder.Build();
 
 app.UseServicePulse(builder.Environment.ContentRootFileProvider);
 
-if (settings.EnableReverseProxy)
+if (hostSettings.EnableReverseProxy)
 {
     app.MapReverseProxy();
 }
 
-app.MapServicePulseConstants(settings);
+app.MapServicePulseConstants(servicePulseSettings);
 
 app.Run();

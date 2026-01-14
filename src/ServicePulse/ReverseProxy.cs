@@ -5,7 +5,7 @@ using Yarp.ReverseProxy.Transforms;
 
 static class ReverseProxy
 {
-    public static (List<RouteConfig> routes, List<ClusterConfig> clusters) GetConfiguration(Settings settings)
+    public static (List<RouteConfig> routes, List<ClusterConfig> clusters) GetConfiguration(ServicePulseSettings settings)
     {
         var routes = new List<RouteConfig>();
         var clusters = new List<ClusterConfig>();
@@ -15,7 +15,7 @@ static class ReverseProxy
             ClusterId = "serviceControlInstance",
             Destinations = new Dictionary<string, DestinationConfig>
             {
-                { "instance", new DestinationConfig { Address = settings.ServiceControlUri.ToString() } }
+                { "instance", new DestinationConfig { Address = settings.ServiceControlUrl } }
             }
         };
         var serviceControlRoute = new RouteConfig
@@ -31,14 +31,14 @@ static class ReverseProxy
         clusters.Add(serviceControlInstance);
         routes.Add(serviceControlRoute);
 
-        if (settings.MonitoringUri != null)
+        if (settings.MonitoringUrl != null)
         {
             var monitoringInstance = new ClusterConfig
             {
                 ClusterId = "monitoringInstance",
                 Destinations = new Dictionary<string, DestinationConfig>
                 {
-                    { "instance", new DestinationConfig { Address = settings.MonitoringUri.ToString() } }
+                    { "instance", new DestinationConfig { Address = settings.MonitoringUrl } }
                 }
             };
 

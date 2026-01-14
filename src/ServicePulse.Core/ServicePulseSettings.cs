@@ -1,20 +1,16 @@
 ﻿namespace ServicePulse;
 
+using System.Reflection;
 using System.Text.Json;
 
-public class Settings
+public record ServicePulseSettings
 {
-    public required Uri ServiceControlUri { get; init; }
-
-    public required Uri? MonitoringUri { get; init; }
-
     public required string DefaultRoute { get; init; }
-
+    public required string ServiceControlUrl { get; init; }
+    public required string? MonitoringUrl { get; init; }
     public required bool ShowPendingRetry { get; init; }
 
-    public required bool EnableReverseProxy { get; init; }
-
-    public static Settings GetFromEnvironmentVariables()
+    public static ServicePulseSettings GetFromEnvironmentVariables()
     {
         var serviceControlUrl = Environment.GetEnvironmentVariable("SERVICECONTROL_URL") ?? "http://localhost:33333/api/";
 
@@ -43,21 +39,30 @@ public class Settings
         var showPendingRetryValue = Environment.GetEnvironmentVariable("SHOW_PENDING_RETRY");
         bool.TryParse(showPendingRetryValue, out var showPendingRetry);
 
-        var enableReverseProxyValue = Environment.GetEnvironmentVariable("ENABLE_REVERSE_PROXY");
-
-        if (!bool.TryParse(enableReverseProxyValue, out var enableReverseProxy))
+        return new()
         {
-            enableReverseProxy = true;
+            ServiceControlUrl = serviceControlUri.ToString(),
+            MonitoringUrl = monitoringUri?.ToString(),
+            DefaultRoute = defaultRoute,
+            ShowPendingRetry = showPendingRetry
+        };
+    }
+
+    static string GetVersionInformation()
+    {
+        var majorMinorPatch = "0.0.0";
+
+        var attributes = typeof(ServicePulseSettings).GetCustomAttributes<AssemblyMetadataAttribute>();
+
+        foreach (var attribute in attributes)
+        {
+            if (attribute.Key == "MajorMinorPatch")
+            {
+                majorMinorPatch = attribute.Value ?? "0.0.0";
+            }
         }
 
-        return new Settings
-        {
-            ServiceControlUri = serviceControlUri,
-            MonitoringUri = monitoringUri,
-            DefaultRoute = defaultRoute,
-            ShowPendingRetry = showPendingRetry,
-            EnableReverseProxy = enableReverseProxy
-        };
+        return majorMinorPatch;
     }
 
     static string? ParseLegacyMonitoringValue(string? value)
@@ -95,4 +100,15 @@ public class Settings
     {
         public string[] Addresses { get; set; } = [];
     }
+
+    internal string GetConstantsFileContents()
+        => $$"""
+        window.defaultConfig = {
+            default_route: '{{DefaultRoute}}',
+            version: '{{GetVersionInformation()}}',
+            service_control_url: '{{ServiceControlUrl}}',
+            monitoring_urls: ['{{MonitoringUrl ?? "!"}}'],
+            showPendingRetry: {{(ShowPendingRetry ? "true" : "false")}},
+        }
+        """;
 }
