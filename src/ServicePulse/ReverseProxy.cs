@@ -7,23 +7,17 @@ static class ReverseProxy
 {
     public static void AddServicePulseReverseProxy(this IServiceCollection services, ref ServicePulseSettings settings)
     {
-        var (routes, clusters) = GetConfiguration(settings);
-        services.AddReverseProxy().LoadFromMemory(routes, clusters);
-        settings = settings with
-        {
-            ServiceControlUrl = "/api/",
-            MonitoringUrl = settings.MonitoringUrl is not null
-                ? "/monitoring-api/"
-                : null
-        };
-
-    }
-
-    public static (List<RouteConfig> routes, List<ClusterConfig> clusters) GetConfiguration(ServicePulseSettings settings)
-    {
         var routes = new List<RouteConfig>();
         var clusters = new List<ClusterConfig>();
 
+        AddServiceControl(ref settings, routes, clusters);
+        AddMonitoringIfEnabled(ref settings, routes, clusters);
+
+        services.AddReverseProxy().LoadFromMemory(routes, clusters);
+    }
+
+    static void AddServiceControl(ref ServicePulseSettings settings, List<RouteConfig> routes, List<ClusterConfig> clusters)
+    {
         var serviceControlInstance = new ClusterConfig
         {
             ClusterId = "serviceControlInstance",
@@ -45,28 +39,41 @@ static class ReverseProxy
         clusters.Add(serviceControlInstance);
         routes.Add(serviceControlRoute);
 
-        if (settings.MonitoringUrl != null)
+        settings = settings with
         {
-            var monitoringInstance = new ClusterConfig
-            {
-                ClusterId = "monitoringInstance",
-                Destinations = new Dictionary<string, DestinationConfig>
-                {
-                    { "instance", new DestinationConfig { Address = settings.MonitoringUrl } }
-                }
-            };
+            ServiceControlUrl = "/api/"
+        };
+    }
 
-            var monitoringRoute = new RouteConfig
-            {
-                RouteId = "monitoringRoute",
-                ClusterId = nameof(monitoringInstance),
-                Match = new RouteMatch { Path = "/monitoring-api/{**catch-all}" }
-            }.WithTransformPathRemovePrefix("/monitoring-api");
-
-            clusters.Add(monitoringInstance);
-            routes.Add(monitoringRoute);
+    static void AddMonitoringIfEnabled(ref ServicePulseSettings settings, List<RouteConfig> routes, List<ClusterConfig> clusters)
+    {
+        if (settings.MonitoringUrl is null)
+        {
+            return;
         }
 
-        return (routes, clusters);
+        var monitoringInstance = new ClusterConfig
+        {
+            ClusterId = "monitoringInstance",
+            Destinations = new Dictionary<string, DestinationConfig>
+            {
+                { "instance", new DestinationConfig { Address = settings.MonitoringUrl } }
+            }
+        };
+
+        var monitoringRoute = new RouteConfig
+        {
+            RouteId = "monitoringRoute",
+            ClusterId = nameof(monitoringInstance),
+            Match = new RouteMatch { Path = "/monitoring-api/{**catch-all}" }
+        }.WithTransformPathRemovePrefix("/monitoring-api");
+
+        clusters.Add(monitoringInstance);
+        routes.Add(monitoringRoute);
+        settings = settings with
+        {
+            MonitoringUrl = "/monitoring-api/"
+        };
     }
+
 }
