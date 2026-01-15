@@ -5,7 +5,7 @@ using Yarp.ReverseProxy.Transforms;
 
 static class ReverseProxy
 {
-    public static (List<RouteConfig> routes, List<ClusterConfig> clusters) GetConfiguration(ref Settings settings)
+    public static (List<RouteConfig> routes, List<ClusterConfig> clusters) GetConfiguration(ref ServicePulseSettings settings)
     {
         var routes = new List<RouteConfig>();
         var clusters = new List<ClusterConfig>();
