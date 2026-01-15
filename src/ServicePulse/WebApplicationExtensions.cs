@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 static class WebApplicationExtensions
 {
-    public static void UseForwardedHeaders(this WebApplication app, Settings settings)
+    public static void UseForwardedHeaders(this WebApplication app, ServicePulseHostSettings settings)
     {
         // Register debug endpoint first (before early return) so it's always available in Development
         if (app.Environment.IsDevelopment())
@@ -83,7 +83,7 @@ static class WebApplicationExtensions
         app.UseForwardedHeaders(options);
     }
 
-    public static void UseHttpsConfiguration(this WebApplication app, Settings settings)
+    public static void UseHttpsConfiguration(this WebApplication app, ServicePulseHostSettings settings)
     {
         // EnableHsts is disabled by default
         // Hsts is automatically disabled in Development environments
