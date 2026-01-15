@@ -4,7 +4,7 @@ using System.Reflection;
 
 class ConstantsFile
 {
-    public static string GetContent(Settings settings)
+    public static string GetContent(ServicePulseSettings settings)
     {
         var version = GetVersionInformation();
 

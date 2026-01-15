@@ -12,7 +12,7 @@ public static class ServicePulseHostingExtensions
     /// <summary>
     /// Adds ServicePulse static file serving and configuration endpoint to the WebApplication.
     /// </summary>
-    public static void UseServicePulse(this WebApplication app, Settings settings, IFileProvider overrideFileProvider)
+    public static void UseServicePulse(this WebApplication app, ServicePulseSettings settings, IFileProvider overrideFileProvider)
     {
         var manifestEmbeddedFileProvider = new ManifestEmbeddedFileProvider(typeof(ServicePulseHostingExtensions).Assembly, "wwwroot");
         var fileProvider = new CompositeFileProvider(overrideFileProvider, manifestEmbeddedFileProvider);
