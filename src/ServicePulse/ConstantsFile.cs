@@ -8,26 +8,12 @@ class ConstantsFile
     {
         var version = GetVersionInformation();
 
-        string serviceControlUrl;
-        string monitoringUrl;
-
-        if (settings.EnableReverseProxy)
-        {
-            serviceControlUrl = "/api/";
-            monitoringUrl = settings.MonitoringUri == null ? "!" : "/monitoring-api/";
-        }
-        else
-        {
-            serviceControlUrl = settings.ServiceControlUri.ToString();
-            monitoringUrl = settings.MonitoringUri?.ToString() ?? "!";
-        }
-
         var constantsFile = $$"""
 window.defaultConfig = {
   default_route: '{{settings.DefaultRoute}}',
   version: '{{version}}',
-  service_control_url: '{{serviceControlUrl}}',
-  monitoring_urls: ['{{monitoringUrl}}'],
+  service_control_url: '{{settings.ServiceControlUrl}}',
+  monitoring_urls: ['{{settings.MonitoringUrl ?? "!"}}'],
   showPendingRetry: {{(settings.ShowPendingRetry ? "true" : "false")}},
 }
 """;

@@ -5,29 +5,30 @@ using ServicePulse;
 var builder = WebApplication.CreateBuilder(args);
 
 var settings = Settings.GetFromEnvironmentVariables();
+var hostSettings = ServicePulseHostSettings.GetFromEnvironmentVariables();
 
 // Configure Kestrel for HTTPS if enabled
-builder.ConfigureHttps(settings);
+builder.ConfigureHttps(hostSettings);
 
 // Configure HSTS options
-builder.Services.ConfigureHsts(settings);
+builder.Services.ConfigureHsts(hostSettings);
 
 // Configure HTTPS redirection port (for reverse proxy scenarios)
-builder.Services.ConfigureHttpsRedirection(settings);
+builder.Services.ConfigureHttpsRedirection(hostSettings);
 
-if (settings.EnableReverseProxy)
+if (hostSettings.EnableReverseProxy)
 {
-    var (routes, clusters) = ReverseProxy.GetConfiguration(settings);
+    var (routes, clusters) = ReverseProxy.GetConfiguration(ref settings);
     builder.Services.AddReverseProxy().LoadFromMemory(routes, clusters);
 }
 
 var app = builder.Build();
 
 // Forwarded headers must be first in the pipeline for correct scheme/host detection
-app.UseForwardedHeaders(settings);
+app.UseForwardedHeaders(hostSettings);
 
 // HTTPS middleware (HSTS and redirect)
-app.UseHttpsConfiguration(settings);
+app.UseHttpsConfiguration(hostSettings);
 
 var manifestEmbeddedFileProvider = new ManifestEmbeddedFileProvider(typeof(Program).Assembly, "wwwroot");
 var fileProvider = new CompositeFileProvider(builder.Environment.WebRootFileProvider, manifestEmbeddedFileProvider);
@@ -38,7 +39,7 @@ app.UseDefaultFiles(defaultFilesOptions);
 var staticFileOptions = new StaticFileOptions { FileProvider = fileProvider };
 app.UseStaticFiles(staticFileOptions);
 
-if (settings.EnableReverseProxy)
+if (hostSettings.EnableReverseProxy)
 {
     app.MapReverseProxy();
 }
