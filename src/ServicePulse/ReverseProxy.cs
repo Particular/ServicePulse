@@ -5,6 +5,20 @@ using Yarp.ReverseProxy.Transforms;
 
 static class ReverseProxy
 {
+    public static void AddServicePulseReverseProxy(this IServiceCollection services, ref ServicePulseSettings settings)
+    {
+        var (routes, clusters) = GetConfiguration(settings);
+        services.AddReverseProxy().LoadFromMemory(routes, clusters);
+        settings = settings with
+        {
+            ServiceControlUrl = "/api/",
+            MonitoringUrl = settings.MonitoringUrl is not null
+                ? "/monitoring-api/"
+                : null
+        };
+
+    }
+
     public static (List<RouteConfig> routes, List<ClusterConfig> clusters) GetConfiguration(ServicePulseSettings settings)
     {
         var routes = new List<RouteConfig>();

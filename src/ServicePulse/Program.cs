@@ -7,15 +7,7 @@ var servicePulseSettings = ServicePulseSettings.GetFromEnvironmentVariables();
 
 if (hostSettings.EnableReverseProxy)
 {
-    var (routes, clusters) = ReverseProxy.GetConfiguration(servicePulseSettings);
-    builder.Services.AddReverseProxy().LoadFromMemory(routes, clusters);
-    servicePulseSettings = servicePulseSettings with
-    {
-        ServiceControlUrl = "/api/",
-        MonitoringUrl = servicePulseSettings.MonitoringUrl is not null
-            ? "/monitoring-api/"
-            : null
-    };
+    builder.Services.AddServicePulseReverseProxy(ref servicePulseSettings);
 }
 
 var app = builder.Build();
