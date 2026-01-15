@@ -4,8 +4,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 using ServicePulse;
 
+/// <summary>
+/// Extensions for hosting ServicePulse within a WebApplication.
+/// </summary>
 public static class ServicePulseHostingExtensions
 {
+    /// <summary>
+    /// Adds ServicePulse static file serving and configuration endpoint to the WebApplication.
+    /// </summary>
     public static void UseServicePulse(this WebApplication app, Settings settings, IFileProvider overrideFileProvider)
     {
         var manifestEmbeddedFileProvider = new ManifestEmbeddedFileProvider(typeof(ServicePulseHostingExtensions).Assembly, "wwwroot");

@@ -24,7 +24,6 @@ app.UseForwardedHeaders(hostSettings);
 // HTTPS middleware (HSTS and redirect)
 app.UseHttpsConfiguration(hostSettings);
 
-
 if (hostSettings.EnableReverseProxy)
 {
     app.MapReverseProxy();
