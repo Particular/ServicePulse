@@ -346,7 +346,7 @@ class ServicePulseHostSettings
         }
     }
 
-    public void UpdateApplicationSettings(ref Settings settings)
+    public void UpdateApplicationSettings(ref ServicePulseSettings settings)
     {
         // When HTTPS is enabled on ServicePulse, assume ServiceControl (and Monitoring, if configured) also uses HTTPS
         if (HttpsEnabled)

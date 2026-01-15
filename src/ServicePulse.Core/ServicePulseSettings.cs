@@ -5,7 +5,7 @@ using System.Text.Json;
 /// <summary>
 /// Application Settings for ServicePulse.
 /// </summary>
-public record Settings
+public record ServicePulseSettings
 {
     /// <summary>
     /// The location of the ServiceControl API.
@@ -30,7 +30,7 @@ public record Settings
     /// <summary>
     /// Loads the settings from environment variables.
     /// </summary>
-    public static Settings GetFromEnvironmentVariables()
+    public static ServicePulseSettings GetFromEnvironmentVariables()
     {
         var serviceControlUrl = Environment.GetEnvironmentVariable("SERVICECONTROL_URL") ?? "http://localhost:33333/api/";
 
@@ -59,7 +59,7 @@ public record Settings
         var showPendingRetryValue = Environment.GetEnvironmentVariable("SHOW_PENDING_RETRY");
         bool.TryParse(showPendingRetryValue, out var showPendingRetry);
 
-        return new Settings
+        return new ServicePulseSettings
         {
             ServiceControlUrl = serviceControlUri.ToString(),
             MonitoringUrl = monitoringUri?.ToString(),

@@ -2,7 +2,7 @@ using ServicePulse;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var settings = Settings.GetFromEnvironmentVariables();
+var settings = ServicePulseSettings.GetFromEnvironmentVariables();
 var hostSettings = ServicePulseHostSettings.GetFromEnvironmentVariables();
 
 hostSettings.UpdateApplicationSettings(ref settings);
