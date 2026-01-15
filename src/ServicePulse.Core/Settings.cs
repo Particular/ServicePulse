@@ -2,7 +2,7 @@
 
 using System.Text.Json;
 
-record Settings
+public record Settings
 {
     public required string ServiceControlUrl { get; init; }
 
