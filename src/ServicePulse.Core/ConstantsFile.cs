@@ -25,7 +25,7 @@ window.defaultConfig = {
     {
         var majorMinorPatch = "0.0.0";
 
-        var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyMetadataAttribute>();
+        var attributes = typeof(ConstantsFile).Assembly.GetCustomAttributes<AssemblyMetadataAttribute>();
 
         foreach (var attribute in attributes)
         {

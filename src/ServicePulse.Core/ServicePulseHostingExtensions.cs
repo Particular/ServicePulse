@@ -1,12 +1,14 @@
 using System.Net.Mime;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 using ServicePulse;
 
-static class ServicePulseHostingExtensions
+public static class ServicePulseHostingExtensions
 {
     public static void UseServicePulse(this WebApplication app, Settings settings, IFileProvider overrideFileProvider)
     {
-        var manifestEmbeddedFileProvider = new ManifestEmbeddedFileProvider(typeof(Program).Assembly, "wwwroot");
+        var manifestEmbeddedFileProvider = new ManifestEmbeddedFileProvider(typeof(ServicePulseHostingExtensions).Assembly, "wwwroot");
         var fileProvider = new CompositeFileProvider(overrideFileProvider, manifestEmbeddedFileProvider);
 
         var defaultFilesOptions = new DefaultFilesOptions { FileProvider = fileProvider };
