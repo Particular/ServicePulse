@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 
 static class WebApplicationBuilderExtensions
 {
-    public static void ConfigureHttps(this WebApplicationBuilder builder, Settings settings)
+    public static void ConfigureHttps(this WebApplicationBuilder builder, ServicePulseHostSettings settings)
     {
         // EnableHsts is disabled by default
         // Hsts is automatically disabled in Development environments
@@ -51,7 +51,7 @@ static class WebApplicationBuilderExtensions
         }
     }
 
-    static X509Certificate2 LoadCertificate(Settings settings)
+    static X509Certificate2 LoadCertificate(ServicePulseHostSettings settings)
     {
         var certPath = settings.HttpsCertificatePath
             ?? throw new InvalidOperationException("HTTPS is enabled but HTTPS_CERTIFICATEPATH is not set.");

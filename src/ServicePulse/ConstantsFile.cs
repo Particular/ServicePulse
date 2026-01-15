@@ -8,41 +8,12 @@ class ConstantsFile
     {
         var version = GetVersionInformation();
 
-        string serviceControlUrl;
-        string monitoringUrl;
-
-        if (settings.EnableReverseProxy)
-        {
-            serviceControlUrl = "/api/";
-            monitoringUrl = settings.MonitoringUri == null ? "!" : "/monitoring-api/";
-        }
-        else
-        {
-            // When HTTPS is enabled, upgrade backend URLs to HTTPS
-            var scUri = settings.HttpsEnabled
-                ? UpgradeToHttps(settings.ServiceControlUri)
-                : settings.ServiceControlUri;
-            serviceControlUrl = scUri.ToString();
-
-            if (settings.MonitoringUri != null)
-            {
-                var mUri = settings.HttpsEnabled
-                    ? UpgradeToHttps(settings.MonitoringUri)
-                    : settings.MonitoringUri;
-                monitoringUrl = mUri.ToString();
-            }
-            else
-            {
-                monitoringUrl = "!";
-            }
-        }
-
         var constantsFile = $$"""
 window.defaultConfig = {
   default_route: '{{settings.DefaultRoute}}',
   version: '{{version}}',
-  service_control_url: '{{serviceControlUrl}}',
-  monitoring_urls: ['{{monitoringUrl}}'],
+  service_control_url: '{{settings.ServiceControlUrl}}',
+  monitoring_urls: ['{{settings.MonitoringUrl ?? "!"}}'],
   showPendingRetry: {{(settings.ShowPendingRetry ? "true" : "false")}},
 }
 """;
