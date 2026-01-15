@@ -1,39 +1,24 @@
-using System.Net.Mime;
-using Microsoft.Extensions.FileProviders;
 using ServicePulse;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var settings = Settings.GetFromEnvironmentVariables();
+var hostSettings = ServicePulseHostSettings.GetFromEnvironmentVariables();
+var servicePulseSettings = ServicePulseSettings.GetFromEnvironmentVariables();
 
-if (settings.EnableReverseProxy)
+if (hostSettings.EnableReverseProxy)
 {
-    var (routes, clusters) = ReverseProxy.GetConfiguration(settings);
-    builder.Services.AddReverseProxy().LoadFromMemory(routes, clusters);
+    builder.Services.AddServicePulseReverseProxy(ref servicePulseSettings);
 }
 
 var app = builder.Build();
 
-var manifestEmbeddedFileProvider = new ManifestEmbeddedFileProvider(typeof(Program).Assembly, "wwwroot");
-var fileProvider = new CompositeFileProvider(builder.Environment.WebRootFileProvider, manifestEmbeddedFileProvider);
+app.UseServicePulse(builder.Environment.ContentRootFileProvider);
 
-var defaultFilesOptions = new DefaultFilesOptions { FileProvider = fileProvider };
-app.UseDefaultFiles(defaultFilesOptions);
-
-var staticFileOptions = new StaticFileOptions { FileProvider = fileProvider };
-app.UseStaticFiles(staticFileOptions);
-
-if (settings.EnableReverseProxy)
+if (hostSettings.EnableReverseProxy)
 {
     app.MapReverseProxy();
 }
 
-var constantsFile = ConstantsFile.GetContent(settings);
-
-app.MapGet("/js/app.constants.js", (HttpContext context) =>
-{
-    context.Response.ContentType = MediaTypeNames.Text.JavaScript;
-    return constantsFile;
-});
+app.MapServicePulseConstants(servicePulseSettings);
 
 app.Run();

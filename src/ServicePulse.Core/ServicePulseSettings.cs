@@ -2,19 +2,35 @@
 
 using System.Text.Json;
 
-class Settings
+/// <summary>
+/// The runtime settings of a ServicePulse instance.
+/// </summary>
+public record ServicePulseSettings
 {
-    public required Uri ServiceControlUri { get; init; }
-
-    public required Uri? MonitoringUri { get; init; }
-
+    /// <summary>
+    /// The default route to navigate to.
+    /// </summary>
     public required string DefaultRoute { get; init; }
 
+    /// <summary>
+    /// The location of the ServiceControl API.
+    /// </summary>
+    public required string ServiceControlUrl { get; init; }
+
+    /// <summary>
+    /// The location of the ServiceControl Monitoring API.
+    /// </summary>
+    public required string? MonitoringUrl { get; init; }
+
+    /// <summary>
+    /// Show the pending retry tab.
+    /// </summary>
     public required bool ShowPendingRetry { get; init; }
 
-    public required bool EnableReverseProxy { get; init; }
-
-    public static Settings GetFromEnvironmentVariables()
+    /// <summary>
+    /// Loads the settings from environment variables.
+    /// </summary>
+    public static ServicePulseSettings GetFromEnvironmentVariables()
     {
         var serviceControlUrl = Environment.GetEnvironmentVariable("SERVICECONTROL_URL") ?? "http://localhost:33333/api/";
 
@@ -43,20 +59,12 @@ class Settings
         var showPendingRetryValue = Environment.GetEnvironmentVariable("SHOW_PENDING_RETRY");
         bool.TryParse(showPendingRetryValue, out var showPendingRetry);
 
-        var enableReverseProxyValue = Environment.GetEnvironmentVariable("ENABLE_REVERSE_PROXY");
-
-        if (!bool.TryParse(enableReverseProxyValue, out var enableReverseProxy))
+        return new()
         {
-            enableReverseProxy = true;
-        }
-
-        return new Settings
-        {
-            ServiceControlUri = serviceControlUri,
-            MonitoringUri = monitoringUri,
+            ServiceControlUrl = serviceControlUri.ToString(),
+            MonitoringUrl = monitoringUri?.ToString(),
             DefaultRoute = defaultRoute,
-            ShowPendingRetry = showPendingRetry,
-            EnableReverseProxy = enableReverseProxy
+            ShowPendingRetry = showPendingRetry
         };
     }
 
