@@ -82,7 +82,7 @@ jobs:
           $nugetsCount =  (Get-ChildItem -Recurse -File nugets).Count
 
           $expectedAssetsCount = 1
-          $expectedNugetsCount = 1
+          $expectedNugetsCount = 2
 
           if ($assetsCount -ne $expectedAssetsCount)
           {
