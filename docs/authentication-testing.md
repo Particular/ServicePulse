@@ -2,11 +2,12 @@
 
 This guide provides scenario-based tests for ServicePulse's OIDC authentication. Use this to verify authentication behavior during local development.
 
+For additional details on authentication in ServicePulse, see the [ServicePulse Security](https://docs.particular.net/servicepulse/security/configuration/authentication).
+
 ## Prerequisites
 
 - ServicePulse built locally (see main README for build instructions)
 - ServiceControl instance running (provides authentication configuration) - See the hosting guide in ServiceControl docs for more info.
-- **HTTPS configured** - Authentication requires HTTPS for secure token transmission. See [HTTPS Configuration](https-configuration.md) or [Reverse Proxy Testing](nginx-testing.md) for setup options.
 - (Optional) An OIDC identity provider for testing authenticated scenarios
 
 ### Building the Frontend
@@ -16,28 +17,6 @@ cd src\Frontend
 npm install
 npm run build
 ```
-
-## How Authentication Works
-
-ServicePulse fetches authentication configuration from ServiceControl:
-
-```text
-GET {serviceControlUrl}/api/authentication/configuration
-```
-
-The response determines whether authentication is required:
-
-```json
-{
-  "enabled": true,
-  "client_id": "servicepulse",
-  "authority": "https://your-idp.example.com",
-  "api_scopes": "[\"api\"]",
-  "audience": "servicecontrol-api"
-}
-```
-
-When `enabled` is `true`, ServicePulse redirects users to the identity provider for login.
 
 ## Test Scenarios
 
@@ -106,7 +85,8 @@ Test that ServiceControl returns the correct authentication configuration for Se
 
 Use the mock scenario to verify the auth configuration endpoint returns the expected response shape. 
 
-| ⚠️ Warning: The app will attempt to redirect to the identity provider, which will fail without a real IdP - this is expected behavior.
+> [!WARNING]
+> The app will attempt to redirect to the identity provider, which will fail without a real IdP - this is expected behavior.
 
 **Start with mocks:**
 
@@ -217,7 +197,7 @@ Key: `oidc.user:https://login.microsoftonline.com/test-tenant-id/v2.0:servicepul
 
 ```cmd
 cd src\Frontend
-npx vitest run ./test/specs/authentication/auth-full-flow
+npx vitest run ./test/specs/authentication/auth-authenticated
 ```
 
 #### Using Real ServiceControl and Identity Provider
@@ -252,7 +232,7 @@ Verify that authenticated requests include the Bearer token.
 
 ```cmd
 cd src\Frontend
-npx vitest run ./test/specs/authentication/auth-full-flow
+npx vitest run ./test/specs/authentication/auth-token-in-requests
 ```
 
 **Manual test in browser:**
@@ -323,7 +303,7 @@ Verify that the session persists within a browser tab.
 
 ```cmd
 cd src\Frontend
-npx vitest run ./test/specs/authentication/auth-full-flow
+npx vitest run ./test/specs/authentication/auth-session-persistence
 ```
 
 **Manual test in browser:**
@@ -345,7 +325,7 @@ Verify that sessions are isolated between browser tabs.
 
 ```cmd
 cd src\Frontend
-npx vitest run ./test/specs/authentication/auth-full-flow
+npx vitest run ./test/specs/authentication/auth-tab-isolation
 ```
 
 The automated test verifies that the auth token is stored in `sessionStorage` (tab-specific) and NOT in `localStorage` (shared across tabs).
@@ -360,7 +340,8 @@ Prerequisites: Completed Scenario 3 (logged in successfully in one tab)
 
 **Expected:** Each tab requires its own login because tokens are stored in `sessionStorage` (tab-specific).
 
-> **Note:** If your identity provider maintains a session (SSO), the login may complete automatically without prompting for credentials.
+> [!NOTE]
+> If your identity provider maintains a session (SSO), the login may complete automatically without prompting for credentials.
 
 ### Scenario 8: Logout Flow
 
@@ -370,7 +351,7 @@ Verify that logout clears the session and redirects to the logged-out page.
 
 ```cmd
 cd src\Frontend
-npx vitest run ./test/specs/authentication/auth-full-flow
+npx vitest run ./test/specs/authentication/auth-logout
 ```
 
 **Manual test in browser:**
@@ -404,7 +385,7 @@ Verify that tokens are renewed automatically before expiration.
 
 ```cmd
 cd src\Frontend
-npx vitest run ./test/specs/authentication/auth-full-flow
+npx vitest run ./test/specs/authentication/auth-silent-renewal
 ```
 
 The automated test verifies that the UserManager is initialized with silent renewal support (mocked `signinSilent` method).
@@ -412,6 +393,7 @@ The automated test verifies that the UserManager is initialized with silent rene
 **Manual test in browser:**
 
 Prerequisites:
+
 - Completed Scenario 3 (logged in successfully)
 - Identity provider configured with short-lived access tokens (for testing)
 
@@ -423,7 +405,8 @@ Prerequisites:
 
 **Expected:** Before the token expires, a silent renewal request is made via an iframe. The token is refreshed without user interaction.
 
-> **Note:** Silent renewal timing depends on your identity provider's token lifetime configuration.
+> [!NOTE]
+> Silent renewal timing depends on your identity provider's token lifetime configuration.
 
 ### Scenario 10: Silent Renewal Failure
 
@@ -476,7 +459,8 @@ cd src/Frontend
 npx vitest run test/specs/authentication/auth-invalid-redirect.spec.ts
 ```
 
-Note: The automated test verifies the app's behavior when OAuth callbacks fail. The actual "invalid redirect URI" error is displayed by the identity provider itself, not the application.
+> [!NOTE]
+> The automated test verifies the app's behavior when OAuth callbacks fail. The actual "invalid redirect URI" error is displayed by the identity provider itself, not the application.
 
 ### Scenario 12: YARP Reverse Proxy Token Forwarding
 
@@ -619,7 +603,8 @@ cd src/Frontend
 npx vitest run test/specs/authentication/auth-config-unavailable.spec.ts
 ```
 
-Note: The automated tests verify the app handles auth config endpoint errors gracefully by falling back to "auth disabled" mode, allowing users to still access the dashboard.
+> [!NOTE]
+> The automated tests verify the app handles auth config endpoint errors gracefully by falling back to "auth disabled" mode, allowing users to still access the dashboard.
 
 ### Scenario 16: OAuth Callback Error Handling
 

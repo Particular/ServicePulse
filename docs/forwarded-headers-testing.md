@@ -1,6 +1,6 @@
-# Local Testing Forwarded Headers (Without NGINX)
+# Local Testing Forward Headers (Without NGINX)
 
-This guide explains how to test forwarded headers configuration for ServicePulse without using NGINX or Docker. This approach uses curl to manually send `X-Forwarded-*` headers directly to the application.
+This guide explains how to test forward headers configuration for ServicePulse without using NGINX or Docker. This approach uses curl to manually send `X-Forwarded-*` headers directly to the application.
 
 ## Prerequisites
 
@@ -13,9 +13,12 @@ This guide explains how to test forwarded headers configuration for ServicePulse
 If testing the .NET Framework version, build ServicePulse.Host first:
 
 ```cmd
+REM Build the frontend
 cd src\Frontend
 npm install
 npm run build
+
+REM Copy the frontend build to the host
 cd ..\..
 xcopy /E /I /Y src\Frontend\dist src\ServicePulse.Host\app
 cd src\ServicePulse.Host
@@ -31,33 +34,51 @@ dotnet build
 
 ### Configuration Settings
 
-| Setting                  | .NET 8 Environment Variable                     | .NET Framework Argument              |
-|--------------------------|-------------------------------------------------|--------------------------------------|
-| Enable forwarded headers | `SERVICEPULSE_FORWARDEDHEADERS_ENABLED`         | `--forwardedheadersenabled=`         |
-| Trust all proxies        | `SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES` | `--forwardedheaderstrustallproxies=` |
-| Known proxies            | `SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES`    | `--forwardedheadersknownproxies=`    |
-| Known networks           | `SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS`   | `--forwardedheadersknownnetworks=`   |
+See [Forward Header Configuration](https://docs.particular.net/servicepulse/security/configuration/forward-headers)
 
-## How Forwarded Headers Work
+## Debug Endpoint
 
-When ServicePulse is behind a reverse proxy, the proxy sends headers to indicate the original request details:
+The `/debug/request-info` endpoint is only available in Development environment. It returns:
 
-- `X-Forwarded-For` - Original client IP address
-- `X-Forwarded-Proto` - Original protocol (http/https)
-- `X-Forwarded-Host` - Original host header
+```json
+{
+  "processed": {
+    "scheme": "https",
+    "host": "example.com",
+    "remoteIpAddress": "203.0.113.50"
+  },
+  "rawHeaders": {
+    "xForwardedFor": "",
+    "xForwardedProto": "",
+    "xForwardedHost": ""
+  },
+  "configuration": {
+    "enabled": true,
+    "trustAllProxies": false,
+    "knownProxies": ["127.0.0.1"],
+    "knownNetworks": []
+  }
+}
+```
 
-ServicePulse can be configured to trust these headers from specific proxies or trust all proxies.
+| Section         | Field             | Description                                                      |
+|-----------------|-------------------|------------------------------------------------------------------|
+| `processed`     | `scheme`          | The request scheme after forwarded headers processing            |
+| `processed`     | `host`            | The request host after forwarded headers processing              |
+| `processed`     | `remoteIpAddress` | The client IP after forwarded headers processing                 |
+| `rawHeaders`    | `xForwardedFor`   | Raw `X-Forwarded-For` header (empty if consumed by middleware)   |
+| `rawHeaders`    | `xForwardedProto` | Raw `X-Forwarded-Proto` header (empty if consumed by middleware) |
+| `rawHeaders`    | `xForwardedHost`  | Raw `X-Forwarded-Host` header (empty if consumed by middleware)  |
+| `configuration` | `enabled`         | Whether forwarded headers middleware is enabled                  |
+| `configuration` | `trustAllProxies` | Whether all proxies are trusted (security warning if true)       |
+| `configuration` | `knownProxies`    | List of trusted proxy IP addresses                               |
+| `configuration` | `knownNetworks`   | List of trusted CIDR network ranges                              |
 
-### Trust Evaluation Rules
+### Key Diagnostic Questions
 
-The middleware determines whether to process forwarded headers based on these rules:
-
-1. **If `TrustAllProxies` = true**: All requests are trusted, headers are always processed
-2. **If `TrustAllProxies` = false**: The caller's IP must match **either**:
-   - **KnownProxies**: Exact IP address match (e.g., `127.0.0.1`, `::1`)
-   - **KnownNetworks**: CIDR range match (e.g., `127.0.0.0/8`, `10.0.0.0/8`)
-
-> **Important:** KnownProxies and KnownNetworks use **OR logic** - a match in either grants trust. The check is against the **immediate caller's IP** (the proxy connecting to ServicePulse), not the original client IP from `X-Forwarded-For`.
+1. **Were headers applied?** - If `rawHeaders` are empty but `processed` values changed, the middleware consumed and applied them
+2. **Why weren't headers applied?** - If `rawHeaders` still contain values, the middleware didn't trust the caller. Check `knownProxies` and `knownNetworks` in `configuration`
+3. **Is forwarded headers enabled?** - Check `configuration.enabled`
 
 ## Test Scenarios
 
@@ -66,7 +87,8 @@ Each scenario shows configuration for both platforms:
 - **ServicePulse (.NET 8)**: Uses environment variables, run from `src\ServicePulse`
 - **ServicePulse.Host (.NET Framework)**: Uses command-line arguments, run from `src\ServicePulse.Host\bin\Debug\net48`
 
-> **Important:** For .NET 8, set environment variables in the same terminal where you run `dotnet run`. Environment variables are scoped to the terminal session.
+> [!IMPORTANT]
+> For .NET 8, set environment variables in the same terminal where you run `dotnet run`. Environment variables are scoped to the terminal session.
 
 ### Scenario 0: Direct Access (No Proxy)
 
@@ -256,7 +278,8 @@ dotnet run
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheadersknownproxies=127.0.0.1,::1
 ```
 
-> **Note:** Setting known proxies automatically disables trust all proxies. Both IPv4 (`127.0.0.1`) and IPv6 (`::1`) loopback addresses are included since curl may use either.
+> [!NOTE]
+> Setting known proxies automatically disables trust all proxies. Both IPv4 (`127.0.0.1`) and IPv6 (`::1`) loopback addresses are included since curl may use either.
 
 **Test with curl (from localhost - should work):**
 
@@ -313,7 +336,8 @@ dotnet run
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheadersknownnetworks=127.0.0.0/8,::1/128
 ```
 
-> **Note:** Both IPv4 (`127.0.0.0/8`) and IPv6 (`::1/128`) loopback networks are included since curl may use either.
+> [!NOTE]
+> Both IPv4 (`127.0.0.0/8`) and IPv6 (`::1/128`) loopback networks are included since curl may use either.
 
 **Test with curl:**
 
@@ -754,7 +778,8 @@ dotnet run
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheadersknownproxies=127.0.0.1
 ```
 
-> **Note:** Only IPv4 `127.0.0.1` is configured, not IPv6 `::1`.
+> [!NOTE]
+> Only IPv4 `127.0.0.1` is configured, not IPv6 `::1`.
 
 **Test with curl:**
 
@@ -788,51 +813,8 @@ curl -H "X-Forwarded-Proto: https" -H "X-Forwarded-Host: example.com" -H "X-Forw
 
 Headers are **ignored** because the request comes from `::1` (IPv6), but only `127.0.0.1` (IPv4) is in the known proxies list. This is a common gotcha - always include both IPv4 and IPv6 loopback addresses when testing locally, or use CIDR notation like `127.0.0.0/8` and `::1/128`.
 
-> **Tip:** If your output shows headers were applied, curl is using IPv4. The behavior depends on your system's DNS resolution for `localhost`.
-
-## Debug Endpoint
-
-The `/debug/request-info` endpoint is only available in Development environment. It returns:
-
-```json
-{
-  "processed": {
-    "scheme": "https",
-    "host": "example.com",
-    "remoteIpAddress": "203.0.113.50"
-  },
-  "rawHeaders": {
-    "xForwardedFor": "",
-    "xForwardedProto": "",
-    "xForwardedHost": ""
-  },
-  "configuration": {
-    "enabled": true,
-    "trustAllProxies": false,
-    "knownProxies": ["127.0.0.1"],
-    "knownNetworks": []
-  }
-}
-```
-
-| Section         | Field             | Description                                                      |
-|-----------------|-------------------|------------------------------------------------------------------|
-| `processed`     | `scheme`          | The request scheme after forwarded headers processing            |
-| `processed`     | `host`            | The request host after forwarded headers processing              |
-| `processed`     | `remoteIpAddress` | The client IP after forwarded headers processing                 |
-| `rawHeaders`    | `xForwardedFor`   | Raw `X-Forwarded-For` header (empty if consumed by middleware)   |
-| `rawHeaders`    | `xForwardedProto` | Raw `X-Forwarded-Proto` header (empty if consumed by middleware) |
-| `rawHeaders`    | `xForwardedHost`  | Raw `X-Forwarded-Host` header (empty if consumed by middleware)  |
-| `configuration` | `enabled`         | Whether forwarded headers middleware is enabled                  |
-| `configuration` | `trustAllProxies` | Whether all proxies are trusted (security warning if true)       |
-| `configuration` | `knownProxies`    | List of trusted proxy IP addresses                               |
-| `configuration` | `knownNetworks`   | List of trusted CIDR network ranges                              |
-
-### Key Diagnostic Questions
-
-1. **Were headers applied?** - If `rawHeaders` are empty but `processed` values changed, the middleware consumed and applied them
-2. **Why weren't headers applied?** - If `rawHeaders` still contain values, the middleware didn't trust the caller. Check `knownProxies` and `knownNetworks` in `configuration`
-3. **Is forwarded headers enabled?** - Check `configuration.enabled`
+> [!NOTE]
+> If your output shows headers were applied, curl is using IPv4. The behavior depends on your system's DNS resolution for `localhost`.
 
 ## Cleanup (.NET 8 only)
 
@@ -865,7 +847,8 @@ unset SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES
 unset SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS
 ```
 
-> **Note:** .NET Framework uses command-line arguments, so no cleanup is needed - just stop the application.
+> [!NOTE]
+> .NET Framework uses command-line arguments, so no cleanup is needed - just stop the application.
 
 ## See Also
 

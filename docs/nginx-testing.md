@@ -9,10 +9,14 @@ This guide provides scenario-based tests for ServicePulse behind an NGINX revers
 
 ## Application Reference
 
-| Application | Project Directory | Default Port | Hostname | Configuration |
-|-------------|-------------------|--------------|----------|---------------|
-| ServicePulse (.NET 8) | `src\ServicePulse` | 5291 | `servicepulse.localhost` | Environment variables with `SERVICEPULSE_` prefix |
-| ServicePulse.Host (.NET Framework) | `src\ServicePulse.Host` | 8081 | `servicepulse-host.localhost` | Command-line arguments with `--` prefix |
+| Application                        | Project Directory       | Default Port | Hostname                      | Configuration                                     |
+|------------------------------------|-------------------------|--------------|-------------------------------|---------------------------------------------------|
+| ServicePulse (.NET 8)              | `src\ServicePulse`      | 5291         | `servicepulse.localhost`      | Environment variables with `SERVICEPULSE_` prefix |
+| ServicePulse.Host (.NET Framework) | `src\ServicePulse.Host` | 8081         | `servicepulse-host.localhost` | Command-line arguments with `--` prefix           |
+
+## Configuration Reference
+
+See [ServicePulse Security](https://docs.particular.net/servicepulse/security).
 
 ## Prerequisites
 
@@ -207,6 +211,7 @@ Alternatively, build manually:
 cd src\Frontend
 npm install
 npm run build
+
 cd ..\..
 xcopy /E /I /Y src\Frontend\dist src\ServicePulse.Host\app
 cd src\ServicePulse.Host
@@ -223,8 +228,8 @@ netsh http add urlacl url=http://+:8081/ user=Everyone
 
 ## Test Scenarios
 
-> **Important:** ServicePulse must be running before testing. A 502 Bad Gateway error means NGINX cannot reach ServicePulse.
-> **Note:** Use `TRUSTALLPROXIES=true` for local Docker testing. The NGINX container's IP address varies based on Docker's network configuration (e.g., `172.x.x.x`), making it impractical to specify a fixed `KNOWNPROXIES` value.
+> [!IMPORTANT]
+> ServicePulse must be running before testing. A 502 Bad Gateway error means NGINX cannot reach ServicePulse. Use `TRUSTALLPROXIES=true` for local Docker testing. The NGINX container's IP address varies based on Docker's network configuration (e.g., `172.x.x.x`), making it impractical to specify a fixed `KNOWNPROXIES` value.
 
 ### Scenario 1: HTTPS Access (.NET 8)
 
@@ -261,7 +266,8 @@ The request succeeds over HTTPS through the NGINX reverse proxy.
 
 Verify that HTTPS is working through the reverse proxy with ServicePulse.Host.
 
-> **Prerequisite:** Complete the [.NET Framework Prerequisites](#net-framework-prerequisites) section first.
+> [!IMPORTANT]
+> Complete the [.NET Framework Prerequisites](#net-framework-prerequisites) section first.
 
 **Start ServicePulse.Host:**
 
@@ -436,7 +442,8 @@ HTTP requests are redirected to HTTPS with a 307 (Temporary Redirect) status.
 
 Verify that the HSTS header is included in HTTPS responses.
 
-> **Note:** You must use `--environment Production` because HSTS is disabled in Development.
+> [!NOTE]
+> You must use `--environment Production` because HSTS is disabled in Development.
 
 **Set environment variables and start ServicePulse:**
 
@@ -489,32 +496,6 @@ curl -k -v https://servicepulse-host.localhost 2>&1 | findstr /i strict-transpor
 ```
 
 The HSTS header is present with the default max-age of 1 year.
-
-## Configuration Reference
-
-### ServicePulse (.NET 8)
-
-| Environment Variable | Default | Description |
-|---------------------|---------|-------------|
-| `SERVICEPULSE_FORWARDEDHEADERS_ENABLED` | `true` | Enable forwarded headers processing |
-| `SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES` | `true` | Trust all proxies |
-| `SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS` | `false` | Redirect HTTP to HTTPS |
-| `SERVICEPULSE_HTTPS_PORT` | - | HTTPS port for redirect |
-| `SERVICEPULSE_HTTPS_ENABLEHSTS` | `false` | Enable HSTS |
-| `SERVICEPULSE_HTTPS_HSTSMAXAGESECONDS` | `31536000` | HSTS max-age (1 year) |
-| `SERVICEPULSE_HTTPS_HSTSINCLUDESUBDOMAINS` | `false` | Include subdomains in HSTS |
-
-### ServicePulse.Host (.NET Framework)
-
-| Command-Line Argument | Default | Description |
-|----------------------|---------|-------------|
-| `--forwardedheadersenabled=` | `true` | Enable forwarded headers processing |
-| `--forwardedheaderstrustallproxies=` | `true` | Trust all proxies |
-| `--httpsredirecthttptohttps=` | `false` | Redirect HTTP to HTTPS |
-| `--httpsport=` | - | HTTPS port for redirect |
-| `--httpsenablehsts=` | `false` | Enable HSTS |
-| `--httpshstsmaxageseconds=` | `31536000` | HSTS max-age (1 year) |
-| `--httpshstsincludesubdomains=` | `false` | Include subdomains in HSTS |
 
 ## Cleanup
 

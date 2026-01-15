@@ -2,8 +2,7 @@
 
 This guide provides scenario-based tests for ServicePulse's direct HTTPS features. Use this to verify HTTPS behavior without a reverse proxy.
 
-> **Note:** HTTP to HTTPS redirection (`RedirectHttpToHttps`) is designed for reverse proxy scenarios where the proxy forwards HTTP requests to ServicePulse. When running with direct HTTPS, ServicePulse only binds to a single port (HTTPS). To test HTTP to HTTPS redirection, see [Reverse Proxy Testing](nginx-testing.md).
-> **Note:** HSTS should not be tested on localhost because browsers cache the HSTS policy, which could break other local development. To test HSTS, use the [NGINX reverse proxy setup](nginx-testing.md) with a custom hostname (`servicepulse.localhost`).
+> [!NOTE] HTTP to HTTPS redirection (`RedirectHttpToHttps`) is designed for reverse proxy scenarios where the proxy forwards HTTP requests to ServicePulse. When running with direct HTTPS, ServicePulse only binds to a single port (HTTPS). To test HTTP to HTTPS redirection, see [Reverse Proxy Testing](nginx-testing.md). HSTS should not be tested on localhost because browsers cache the HSTS policy, which could break other local development. To test HSTS, use the [NGINX reverse proxy setup](nginx-testing.md) with a custom hostname (`servicepulse.localhost`).
 
 ## Application Reference
 
@@ -11,6 +10,10 @@ This guide provides scenario-based tests for ServicePulse's direct HTTPS feature
 |------------------------------------|-------------------------|--------------|---------------------------------------------------|
 | ServicePulse (.NET 8)              | `src\ServicePulse`      | 5291         | Environment variables with `SERVICEPULSE_` prefix |
 | ServicePulse.Host (.NET Framework) | `src\ServicePulse.Host` | 9090         | Command-line arguments with `--` prefix           |
+
+## HTTPS Configuration Reference
+
+See [ServicePulse TLS](https://docs.particular.net/servicepulse/security/configuration/tls).
 
 ## Prerequisites
 
@@ -47,7 +50,7 @@ mkdir .local\certs
 
 ### Step 2: Generate PFX Certificates
 
-Kestrel requires certificates in PFX format. Use mkcert to generate them:
+Kestrel used in the .NET 8 host requires certificates in PFX format. Use mkcert to generate them:
 
 ```cmd
 mkcert -install
@@ -75,13 +78,15 @@ Alternatively, build manually:
 cd src\Frontend
 npm install
 npm run build
+
 cd ..\..
 xcopy /E /I /Y src\Frontend\dist src\ServicePulse.Host\app
 cd src\ServicePulse.Host
 dotnet build
 ```
 
-> **Note:** The frontend files must be copied to `src/ServicePulse.Host/app/` *before* building because they are embedded into the assembly at compile time.
+> [!NOTE]
+> The frontend files must be copied to `src/ServicePulse.Host/app/` *before* building because they are embedded into the assembly at compile time.
 
 ### Import Certificate to Windows Store (Administrator)
 
@@ -137,7 +142,8 @@ dotnet run
 curl --ssl-no-revoke -v https://localhost:5291 2>&1 | findstr /C:"HTTP/" /C:"SSL"
 ```
 
-> **Note:** The `--ssl-no-revoke` flag is required on Windows because mkcert certificates don't have CRL distribution points, causing `CRYPT_E_NO_REVOCATION_CHECK` errors.
+> [!NOTE]
+> The `--ssl-no-revoke` flag is required on Windows because mkcert certificates don't have CRL distribution points, causing `CRYPT_E_NO_REVOCATION_CHECK` errors.
 
 **Expected output:**
 
@@ -184,7 +190,8 @@ HTTP requests fail because Kestrel is listening for HTTPS but receives plaintext
 
 Verify that HTTPS is working with ServicePulse.Host.
 
-> **Prerequisite:** Complete the [.NET Framework Prerequisites](#net-framework-prerequisites) section first.
+> [!NOTE]
+> Complete the [.NET Framework Prerequisites](#net-framework-prerequisites) section first.
 
 **Start ServicePulse.Host:**
 
@@ -233,32 +240,6 @@ curl: (56) Recv failure: Connection was reset
 ```
 
 HTTP requests fail because HttpListener is configured for HTTPS only. The exact error varies depending on timing.
-
-## HTTPS Configuration Reference
-
-### ServicePulse (.NET 8)
-
-| Environment Variable                       | Default    | Description                                          |
-|--------------------------------------------|------------|------------------------------------------------------|
-| `SERVICEPULSE_HTTPS_ENABLED`               | `false`    | Enable Kestrel HTTPS                                 |
-| `SERVICEPULSE_HTTPS_CERTIFICATEPATH`       | -          | Path to PFX certificate file                         |
-| `SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD`   | -          | Certificate password (empty string for no password)  |
-| `SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS`   | `false`    | Redirect HTTP requests to HTTPS (reverse proxy only) |
-| `SERVICEPULSE_HTTPS_ENABLEHSTS`            | `false`    | Enable HTTP Strict Transport Security                |
-| `SERVICEPULSE_HTTPS_HSTSMAXAGESECONDS`     | `31536000` | HSTS max-age (1 year)                                |
-| `SERVICEPULSE_HTTPS_HSTSINCLUDESUBDOMAINS` | `false`    | Include subdomains in HSTS                           |
-
-### ServicePulse.Host (.NET Framework)
-
-| Command-Line Argument           | Default    | Description                           |
-|---------------------------------|------------|---------------------------------------|
-| `--httpsenabled=`               | `false`    | Enable HTTPS                          |
-| `--httpsredirecthttptohttps=`   | `false`    | Redirect HTTP requests to HTTPS       |
-| `--httpsenablehsts=`            | `false`    | Enable HTTP Strict Transport Security |
-| `--httpshstsmaxageseconds=`     | `31536000` | HSTS max-age (1 year)                 |
-| `--httpshstsincludesubdomains=` | `false`    | Include subdomains in HSTS            |
-
-> **Note:** HSTS and HTTP to HTTPS redirection are not tested in this guide. These features are designed for reverse proxy scenarios. See [Reverse Proxy Testing](nginx-testing.md) for testing these features.
 
 ## Cleanup
 
