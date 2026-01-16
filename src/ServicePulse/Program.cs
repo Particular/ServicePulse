@@ -52,3 +52,6 @@ app.MapGet("/js/app.constants.js", (HttpContext context) =>
 });
 
 app.Run();
+
+// Make Program class accessible for WebApplicationFactory in tests
+public partial class Program { }

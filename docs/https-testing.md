@@ -15,7 +15,7 @@ This guide provides scenario-based tests for ServicePulse's direct HTTPS feature
 
 See [ServicePulse TLS](https://docs.particular.net/servicepulse/security/configuration/tls).
 
-## Prerequisites
+## .NET 8 Prerequisites
 
 - [mkcert](https://github.com/FiloSottile/mkcert) for generating local development certificates
 - ServicePulse built locally (see main README for build instructions)
@@ -37,9 +37,9 @@ scoop install mkcert
 
 After installing, run `mkcert -install` to install the local CA in your system trust store.
 
-## Setup
+### Setup
 
-### Step 1: Create the Local Development Folder
+#### Step 1: Create the Local Development Folder
 
 Create a `.local` folder in the repository root (this folder is gitignored):
 
@@ -48,7 +48,7 @@ mkdir .local
 mkdir .local\certs
 ```
 
-### Step 2: Generate PFX Certificates
+#### Step 2: Generate PFX Certificates
 
 Kestrel used in the .NET 8 host requires certificates in PFX format. Use mkcert to generate them:
 
@@ -58,7 +58,7 @@ cd .local\certs
 mkcert -p12-file localhost.pfx -pkcs12 localhost 127.0.0.1 ::1 servicepulse
 ```
 
-When prompted for a password, you can use an empty password by pressing Enter, or set a password and note it for the configuration step.
+When prompted for a password, you can use an empty password by pressing Enter, or set a password and note it for the configuration step (default is `changeit`).
 
 ## .NET Framework Prerequisites
 
@@ -118,7 +118,12 @@ Replace `YOUR_THUMBPRINT` with the thumbprint from the previous step.
 
 ## Test Scenarios
 
-### Scenario 1: Basic HTTPS Connectivity (.NET 8)
+### .NET 8
+
+> [!NOTE]
+> Complete the [.NET 8 Prerequisites](#net-8-prerequisites) section first.
+
+#### Scenario 1: Basic HTTPS Connectivity (.NET 8)
 
 Verify that HTTPS is working with a valid certificate.
 
@@ -127,7 +132,7 @@ Verify that HTTPS is working with a valid certificate.
 ```cmd
 set SERVICEPULSE_HTTPS_ENABLED=true
 set SERVICEPULSE_HTTPS_CERTIFICATEPATH=C:\path\to\repo\.local\certs\localhost.pfx
-set SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD=
+set SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD=changeit
 set SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS=
 set SERVICEPULSE_HTTPS_PORT=
 set SERVICEPULSE_HTTPS_ENABLEHSTS=
@@ -148,13 +153,14 @@ curl --ssl-no-revoke -v https://localhost:5291 2>&1 | findstr /C:"HTTP/" /C:"SSL
 **Expected output:**
 
 ```text
+* schannel: renegotiating SSL/TLS connection
 * schannel: SSL/TLS connection renegotiated
 < HTTP/1.1 200 OK
 ```
 
 The request succeeds over HTTPS. The exact SSL output varies by curl version, but you should see `HTTP/1.1 200 OK` confirming success.
 
-### Scenario 2: HTTP Disabled (.NET 8)
+#### Scenario 2: HTTP Disabled (.NET 8)
 
 Verify that HTTP requests fail when only HTTPS is enabled.
 
@@ -186,12 +192,14 @@ curl: (52) Empty reply from server
 
 HTTP requests fail because Kestrel is listening for HTTPS but receives plaintext HTTP, which it cannot process. The server closes the connection without responding.
 
-### Scenario 3: Basic HTTPS Connectivity (.NET Framework)
-
-Verify that HTTPS is working with ServicePulse.Host.
+### .NET Framework
 
 > [!NOTE]
 > Complete the [.NET Framework Prerequisites](#net-framework-prerequisites) section first.
+
+#### Scenario 3: Basic HTTPS Connectivity (.NET Framework)
+
+Verify that HTTPS is working with ServicePulse.Host.
 
 **Start ServicePulse.Host:**
 
@@ -209,13 +217,14 @@ curl --ssl-no-revoke -v https://localhost:9090 2>&1 | findstr /C:"HTTP/" /C:"SSL
 **Expected output:**
 
 ```text
+* schannel: renegotiating SSL/TLS connection
 * schannel: SSL/TLS connection renegotiated
 < HTTP/1.1 200 OK
 ```
 
 The request succeeds over HTTPS. You should see `HTTP/1.1 200 OK` confirming success.
 
-### Scenario 4: HTTP Disabled (.NET Framework)
+#### Scenario 4: HTTP Disabled (.NET Framework)
 
 Verify that HTTP requests fail when HTTPS is configured.
 

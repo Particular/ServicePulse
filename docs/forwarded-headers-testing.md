@@ -88,6 +88,8 @@ Each scenario shows configuration for both platforms:
 - **ServicePulse.Host (.NET Framework)**: Uses command-line arguments, run from `src\ServicePulse.Host\bin\Debug\net48`
 
 > [!IMPORTANT]
+> All commands assume you start in the repository root folder. Each scenario includes `cd` commands to navigate to the correct directory.
+>
 > For .NET 8, set environment variables in the same terminal where you run `dotnet run`. Environment variables are scoped to the terminal session.
 
 ### Scenario 0: Direct Access (No Proxy)
@@ -104,12 +106,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081
 ```
 
@@ -126,7 +130,7 @@ curl http://localhost:8081/debug/request-info | json
 {
   "processed": {
     "scheme": "http",
-    "host": "localhost:5291",
+    "host": "localhost:5291", // or localhost:8081 for .NET Framework
     "remoteIpAddress": "::1"
   },
   "rawHeaders": {
@@ -159,12 +163,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081
 ```
 
@@ -214,12 +220,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=true
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheadersenabled=true --forwardedheaderstrustallproxies=true
 ```
 
@@ -269,12 +277,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=127.0.0.1,::1
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheadersknownproxies=127.0.0.1,::1
 ```
 
@@ -327,12 +337,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=127.0.0.0/8,::1/128
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheadersknownnetworks=127.0.0.0/8,::1/128
 ```
 
@@ -385,12 +397,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=192.168.1.100
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheadersknownproxies=192.168.1.100
 ```
 
@@ -440,12 +454,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=10.0.0.0/8,192.168.0.0/16
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheadersknownnetworks=10.0.0.0/8,192.168.0.0/16
 ```
 
@@ -495,12 +511,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheadersenabled=false
 ```
 
@@ -550,12 +568,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=true
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheaderstrustallproxies=true
 ```
 
@@ -604,12 +624,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_ENABLED=true
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=127.0.0.1,::1
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheadersknownproxies=127.0.0.1,::1
 ```
 
@@ -659,12 +681,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=192.168.1.100
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=127.0.0.0/8,::1/128
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheadersknownproxies=192.168.1.100 --forwardedheadersknownnetworks=127.0.0.0/8,::1/128
 ```
 
@@ -714,12 +738,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=true
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheaderstrustallproxies=true
 ```
 
@@ -769,12 +795,14 @@ set SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES=
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES=127.0.0.1
 set SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS=
 
+cd src\ServicePulse
 dotnet run
 ```
 
 **.NET Framework:**
 
 ```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=http://localhost:8081 --forwardedheadersknownproxies=127.0.0.1
 ```
 
