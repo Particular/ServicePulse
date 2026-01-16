@@ -4,31 +4,18 @@ using System.Reflection;
 
 class ConstantsFile
 {
-    public static string GetContent(Settings settings)
+    public static string GetContent(ServicePulseSettings settings)
     {
         var version = GetVersionInformation();
-
-        string serviceControlUrl;
-        string monitoringUrl;
-
-        if (settings.EnableReverseProxy)
-        {
-            serviceControlUrl = "/api/";
-            monitoringUrl = settings.MonitoringUri == null ? "!" : "/monitoring-api/";
-        }
-        else
-        {
-            serviceControlUrl = settings.ServiceControlUri.ToString();
-            monitoringUrl = settings.MonitoringUri?.ToString() ?? "!";
-        }
 
         var constantsFile = $$"""
 window.defaultConfig = {
   default_route: '{{settings.DefaultRoute}}',
   version: '{{version}}',
-  service_control_url: '{{serviceControlUrl}}',
-  monitoring_urls: ['{{monitoringUrl}}'],
+  service_control_url: '{{settings.ServiceControlUrl}}',
+  monitoring_urls: ['{{settings.MonitoringUrl ?? "!"}}'],
   showPendingRetry: {{(settings.ShowPendingRetry ? "true" : "false")}},
+  isEmbedded: {{(settings.IsEmbedded ? "true" : "false")}}
 }
 """;
 
@@ -39,7 +26,7 @@ window.defaultConfig = {
     {
         var majorMinorPatch = "0.0.0";
 
-        var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyMetadataAttribute>();
+        var attributes = typeof(ConstantsFile).Assembly.GetCustomAttributes<AssemblyMetadataAttribute>();
 
         foreach (var attribute in attributes)
         {
