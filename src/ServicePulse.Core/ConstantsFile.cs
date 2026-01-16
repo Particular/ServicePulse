@@ -15,6 +15,7 @@ window.defaultConfig = {
   service_control_url: '{{settings.ServiceControlUrl}}',
   monitoring_urls: ['{{settings.MonitoringUrl ?? "!"}}'],
   showPendingRetry: {{(settings.ShowPendingRetry ? "true" : "false")}},
+  isEmbedded: {{(settings.IsEmbedded ? "true" : "false")}}
 }
 """;
 
