@@ -45,7 +45,7 @@ const { configuration } = storeToRefs(configurationStore);
             <RouterLink :to="routeLinks.configuration.endpointConnection.link">Connect new endpoint</RouterLink>
           </span>
 
-          <span v-if="isEmbedded"> ServicePulse (EMBEDDED) </span>
+          <span v-if="isEmbedded"> ServicePulse: Embedded </span>
           <span v-if="!isEmbedded && !newVersions.newSPVersion.newspversion && environment.sp_version"> ServicePulse v{{ environment.sp_version }} </span>
           <span v-if="!isEmbedded && newVersions.newSPVersion.newspversion && environment.sp_version">
             ServicePulse v{{ environment.sp_version }} (<FAIcon v-if="newVersions.newSPVersion.newspversionnumber" class="footer-icon fake-link" :icon="faArrowTurnUp" />
