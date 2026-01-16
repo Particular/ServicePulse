@@ -1,8 +1,11 @@
 import { createRouter, createWebHashHistory, type RouteRecordRaw, RouteRecordSingleViewWithChildren } from "vue-router";
 import config, { RouteItem } from "./config";
 
-function meta(item: { title: string }) {
-  return { title: `${item.title} • ServicePulse` };
+function meta(item: RouteItem) {
+  return {
+    title: `${item.title} • ServicePulse`,
+    allowAnonymous: item.allowAnonymous ?? false,
+  };
 }
 
 function addChildren(parent: RouteRecordSingleViewWithChildren, item: RouteItem) {

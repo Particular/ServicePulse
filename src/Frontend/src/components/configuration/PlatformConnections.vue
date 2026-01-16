@@ -5,6 +5,7 @@ import FAIcon from "@/components/FAIcon.vue";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import serviceControlClient from "@/components/serviceControlClient";
 import monitoringClient from "../monitoring/monitoringClient";
+import { authFetch } from "@/composables/useAuthenticatedFetch";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
@@ -24,7 +25,7 @@ async function testServiceControlUrl() {
   if (localServiceControlUrl.value) {
     testingServiceControl.value = true;
     try {
-      const response = await fetch(localServiceControlUrl.value);
+      const response = await authFetch(localServiceControlUrl.value);
       serviceControlValid.value = response.ok && response.headers.has("X-Particular-Version");
     } catch {
       serviceControlValid.value = false;
@@ -43,7 +44,7 @@ async function testMonitoringUrl() {
     }
 
     try {
-      const response = await fetch(localMonitoringUrl.value + "monitored-endpoints");
+      const response = await authFetch(localMonitoringUrl.value + "monitored-endpoints");
       monitoringValid.value = response.ok && response.headers.has("X-Particular-Version");
     } catch {
       monitoringValid.value = false;

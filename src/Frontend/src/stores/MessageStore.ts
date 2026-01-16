@@ -14,7 +14,6 @@ import { EditAndRetryConfig } from "@/resources/Configuration";
 import EditRetryResponse from "@/resources/EditRetryResponse";
 import { EditedMessage } from "@/resources/EditMessage";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
-import { timeSpanToDuration } from "@/composables/formatter";
 
 interface Model {
   id?: string;
@@ -78,7 +77,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
   const areSimpleHeadersSupported = environmentStore.serviceControlIsGreaterThan("5.2.0");
 
   const { configuration } = storeToRefs(configStore);
-  const error_retention_period = computed(() => timeSpanToDuration(configuration.value?.data_retention?.error_retention_period).asHours());
+  const error_retention_period = computed(() => dayjs.duration(configuration.value?.data_retention?.error_retention_period ?? "PT0S").asHours());
 
   async function loadEditAndRetryConfiguration() {
     try {

@@ -1,0 +1,16 @@
+[*.cs]
+
+# Justification: Test project
+dotnet_diagnostic.CA2007.severity = none
+
+# Justification: Tests don't support cancellation and don't need to forward IMessageHandlerContext.CancellationToken
+dotnet_diagnostic.NSB0002.severity = suggestion
+
+# Justification: Test middleware doesn't need cancellation token - it just sets RemoteIpAddress and calls next
+dotnet_diagnostic.PS0018.severity = suggestion
+
+# Justification: Test project - collection initialization style less critical
+dotnet_diagnostic.IDE0028.severity = suggestion
+
+# Justification: Test project - allow simplified collection expressions
+dotnet_diagnostic.IDE0305.severity = suggestion
