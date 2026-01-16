@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NServiceBus.Heartbeat" Version="3.0.1" />
+    <PackageReference Include="NServiceBus.Heartbeat" Version="6.0.0" />
   </ItemGroup>
 
 </Project>
