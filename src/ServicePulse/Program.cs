@@ -54,4 +54,6 @@ app.MapGet("/js/app.constants.js", (HttpContext context) =>
 app.Run();
 
 // Make Program class accessible for WebApplicationFactory in tests
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public partial class Program { }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
