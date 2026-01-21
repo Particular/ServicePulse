@@ -1,6 +1,5 @@
 namespace ServicePulse.Tests.Https;
 
-using Microsoft.AspNetCore.Mvc.Testing;
 using ServicePulse.Tests.Infrastructure;
 
 /// <summary>
@@ -8,81 +7,62 @@ using ServicePulse.Tests.Infrastructure;
 /// HSTS requires Production environment (disabled in Development by ASP.NET Core).
 /// </summary>
 [TestFixture]
-public class When_hsts_is_enabled
+public class When_hsts_is_enabled : HttpsTestBase
 {
     [Test]
     public async Task Should_add_hsts_header_for_https_request()
     {
-        // HSTS requires Production environment
-        using var factory = TestConfiguration.CreateWithHstsEnabled();
-        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            BaseAddress = new Uri("https://localhost")
-        });
+        Factory = TestConfiguration.CreateWithHstsEnabled();
+        Client = CreateHttpsClient();
 
-        var response = await client.GetAsync("/js/app.constants.js");
+        var response = await Client.GetAsync("/js/app.constants.js");
 
-        Assert.That(response.Headers.Contains("Strict-Transport-Security"), Is.True);
-        var hstsValue = string.Join("", response.Headers.GetValues("Strict-Transport-Security"));
+        var hstsValue = GetHstsHeaderValue(response);
+        Assert.That(hstsValue, Is.Not.Null);
         Assert.That(hstsValue, Does.Contain("max-age=31536000"));
     }
 
     [Test]
     public async Task Should_not_add_hsts_header_for_http_request()
     {
-        using var factory = TestConfiguration.CreateWithHstsEnabled();
-        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            BaseAddress = new Uri("http://localhost")
-        });
+        Factory = TestConfiguration.CreateWithHstsEnabled();
+        Client = CreateHttpClient();
 
-        var response = await client.GetAsync("/js/app.constants.js");
+        var response = await Client.GetAsync("/js/app.constants.js");
 
-        Assert.That(response.Headers.Contains("Strict-Transport-Security"), Is.False);
+        Assert.That(GetHstsHeaderValue(response), Is.Null);
     }
 
     [Test]
     public async Task Should_use_custom_max_age()
     {
-        using var factory = TestConfiguration.CreateWithHstsEnabled(maxAgeSeconds: 86400);
-        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            BaseAddress = new Uri("https://localhost")
-        });
+        Factory = TestConfiguration.CreateWithHstsEnabled(maxAgeSeconds: 86400);
+        Client = CreateHttpsClient();
 
-        var response = await client.GetAsync("/js/app.constants.js");
+        var response = await Client.GetAsync("/js/app.constants.js");
 
-        var hstsValue = string.Join("", response.Headers.GetValues("Strict-Transport-Security"));
-        Assert.That(hstsValue, Is.EqualTo("max-age=86400"));
+        Assert.That(GetHstsHeaderValue(response), Is.EqualTo("max-age=86400"));
     }
 
     [Test]
     public async Task Should_include_subdomains_when_configured()
     {
-        using var factory = TestConfiguration.CreateWithHstsEnabled(includeSubDomains: true);
-        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            BaseAddress = new Uri("https://localhost")
-        });
+        Factory = TestConfiguration.CreateWithHstsEnabled(includeSubDomains: true);
+        Client = CreateHttpsClient();
 
-        var response = await client.GetAsync("/js/app.constants.js");
+        var response = await Client.GetAsync("/js/app.constants.js");
 
-        var hstsValue = string.Join("", response.Headers.GetValues("Strict-Transport-Security"));
-        Assert.That(hstsValue, Does.Contain("includeSubDomains"));
+        Assert.That(GetHstsHeaderValue(response), Does.Contain("includeSubDomains"));
     }
 
     [Test]
     public async Task Should_not_include_subdomains_by_default()
     {
-        using var factory = TestConfiguration.CreateWithHstsEnabled(includeSubDomains: false);
-        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            BaseAddress = new Uri("https://localhost")
-        });
+        Factory = TestConfiguration.CreateWithHstsEnabled(includeSubDomains: false);
+        Client = CreateHttpsClient();
 
-        var response = await client.GetAsync("/js/app.constants.js");
+        var response = await Client.GetAsync("/js/app.constants.js");
 
-        var hstsValue = string.Join("", response.Headers.GetValues("Strict-Transport-Security"));
-        Assert.That(hstsValue, Does.Not.Contain("includeSubDomains"));
+        Assert.That(GetHstsHeaderValue(response), Does.Not.Contain("includeSubDomains"));
     }
 }

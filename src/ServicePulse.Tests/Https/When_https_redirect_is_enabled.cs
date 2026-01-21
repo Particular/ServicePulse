@@ -1,26 +1,25 @@
 namespace ServicePulse.Tests.Https;
 
 using System.Net;
-using Microsoft.AspNetCore.Mvc.Testing;
 using ServicePulse.Tests.Infrastructure;
 
 /// <summary>
 /// Tests HTTP to HTTPS redirect behavior.
 /// </summary>
 [TestFixture]
-public class When_https_redirect_is_enabled
+public class When_https_redirect_is_enabled : HttpsTestBase
 {
+    [SetUp]
+    public void SetUp()
+    {
+        Factory = TestConfiguration.CreateWithHttpsRedirectEnabled();
+        Client = CreateHttpClient(allowAutoRedirect: false);
+    }
+
     [Test]
     public async Task Should_redirect_http_to_https()
     {
-        using var factory = TestConfiguration.CreateWithHttpsRedirectEnabled();
-        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-            BaseAddress = new Uri("http://localhost")
-        });
-
-        var response = await client.GetAsync("/some/path");
+        var response = await Client.GetAsync("/some/path");
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
         Assert.That(response.Headers.Location?.ToString(), Does.StartWith("https://"));
@@ -29,14 +28,9 @@ public class When_https_redirect_is_enabled
     [Test]
     public async Task Should_not_redirect_https_request()
     {
-        using var factory = TestConfiguration.CreateWithHttpsRedirectEnabled();
-        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-            BaseAddress = new Uri("https://localhost")
-        });
+        using var httpsClient = CreateHttpsClient(allowAutoRedirect: false);
 
-        var response = await client.GetAsync("/js/app.constants.js");
+        var response = await httpsClient.GetAsync("/js/app.constants.js");
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
@@ -44,64 +38,50 @@ public class When_https_redirect_is_enabled
     [Test]
     public async Task Should_include_custom_port_in_redirect()
     {
-        using var factory = TestConfiguration.CreateWithHttpsRedirectEnabled(httpsPort: 8443);
-        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-            BaseAddress = new Uri("http://localhost")
-        });
+        Factory.Dispose();
+        Client.Dispose();
 
-        var response = await client.GetAsync("/test");
+        Factory = TestConfiguration.CreateWithHttpsRedirectEnabled(httpsPort: 8443);
+        Client = CreateHttpClient(allowAutoRedirect: false);
+
+        var response = await Client.GetAsync("/test");
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
         Assert.That(response.Headers.Location?.ToString(), Does.Contain(":8443"));
     }
 
     [Test]
-    public async Task Should_preserve_path_in_redirect()
+    public async Task Should_omit_port_443_in_redirect()
     {
-        using var factory = TestConfiguration.CreateWithHttpsRedirectEnabled();
-        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-            BaseAddress = new Uri("http://localhost")
-        });
-
-        var response = await client.GetAsync("/some/path");
+        // Port 443 is the default HTTPS port and should be omitted
+        var response = await Client.GetAsync("/test");
 
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
+        Assert.That(response.Headers.Location?.ToString(), Does.Not.Contain(":443"));
+    }
+
+    [Test]
+    public async Task Should_preserve_path_in_redirect()
+    {
+        var response = await Client.GetAsync("/some/path");
+
         Assert.That(response.Headers.Location?.ToString(), Does.Contain("/some/path"));
     }
 
     [Test]
     public async Task Should_preserve_query_string()
     {
-        using var factory = TestConfiguration.CreateWithHttpsRedirectEnabled();
-        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-            BaseAddress = new Uri("http://localhost")
-        });
+        var response = await Client.GetAsync("/test?foo=bar&baz=qux");
 
-        var response = await client.GetAsync("/test?foo=bar&baz=qux");
-
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
         Assert.That(response.Headers.Location?.ToString(), Does.Contain("foo=bar"));
         Assert.That(response.Headers.Location?.ToString(), Does.Contain("baz=qux"));
     }
 
     [Test]
-    public async Task Should_use_307_temporary_redirect()
+    public async Task Should_use_307_to_preserve_http_method()
     {
-        using var factory = TestConfiguration.CreateWithHttpsRedirectEnabled();
-        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-            BaseAddress = new Uri("http://localhost")
-        });
-
         var request = new HttpRequestMessage(HttpMethod.Post, "/api/data");
-        var response = await client.SendAsync(request);
+        var response = await Client.SendAsync(request);
 
         // 307 preserves the HTTP method (important for POST, PUT, etc.)
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));

@@ -16,29 +16,64 @@ class Settings
 
     public required bool EnableReverseProxy { get; init; }
 
+    /// <summary>
+    /// Indicates whether forwarded headers processing for reverse proxy scenarios is enabled.
+    /// </summary>
     public required bool ForwardedHeadersEnabled { get; init; }
 
+    /// <summary>
+    /// Indicates whether all proxies are trusted for forwarded headers.
+    /// </summary>
     public required bool ForwardedHeadersTrustAllProxies { get; init; }
 
+    /// <summary>
+    /// List of known proxy IP addresses for forwarded headers.
+    /// </summary>
     public required IReadOnlyList<IPAddress> ForwardedHeadersKnownProxies { get; init; }
 
+    /// <summary>
+    /// List of known networks for forwarded headers.
+    /// </summary>
     public required IReadOnlyList<IPNetwork> ForwardedHeadersKnownNetworks { get; init; }
 
-    // HTTPS settings
+    /// <summary>
+    /// Indicates whether HTTPS is enabled.
+    /// </summary>
     public required bool HttpsEnabled { get; init; }
 
+    /// <summary>
+    /// Path to the HTTPS certificate file.
+    /// </summary>
     public required string? HttpsCertificatePath { get; init; }
 
+    /// <summary>
+    /// Password for the HTTPS certificate.
+    /// </summary>
     public required string? HttpsCertificatePassword { get; init; }
 
+    /// <summary>
+    /// Indicates whether HTTP requests should be redirected to HTTPS.
+    /// </summary>
     public required bool HttpsRedirectHttpToHttps { get; init; }
 
+    /// <summary>
+    /// The HTTPS port to use.
+    /// </summary>
     public required int? HttpsPort { get; init; }
 
+    /// <summary>
+    /// Indicates whether HSTS is enabled.
+    /// </summary>
     public required bool HttpsEnableHsts { get; init; }
 
+    /// <summary>
+    /// The max age for HSTS in seconds.
+    /// </summary>
     public required int HttpsHstsMaxAgeSeconds { get; init; }
 
+    /// <summary>
+    /// Indicates whether HSTS should include subdomains.
+    /// </summary>
     public required bool HttpsHstsIncludeSubDomains { get; init; }
 
     public static Settings GetFromEnvironmentVariables()

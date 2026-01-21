@@ -1,9 +1,6 @@
 namespace ServicePulse.Host.Tests.AcceptanceTests.ForwardedHeaders
 {
-    using System.Net.Http;
-    using System.Text.Json;
     using System.Threading.Tasks;
-    using Microsoft.Owin.Testing;
     using NUnit.Framework;
 
     /// <summary>
@@ -11,100 +8,64 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.ForwardedHeaders
     /// The rightmost (last) entry should be used as it represents the most recent proxy.
     /// </summary>
     [TestFixture]
-    public class When_proxy_chain_headers_are_sent
+    public class When_proxy_chain_headers_are_sent : ForwardedHeadersTestBase
     {
         [SetUp]
         public void SetUp()
         {
             ForwardedHeadersTestStartup.ConfigureDefaults();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            ForwardedHeadersTestStartup.Reset();
+            CreateServer();
         }
 
         [Test]
-        public async Task Should_use_rightmost_ip_from_chain()
+        public async Task Should_use_leftmost_ip_when_trust_all_proxies()
         {
-            using (var server = TestServer.Create<ForwardedHeadersTestStartup>())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, "/debug/request-info");
-                // Proxy chain: client -> proxy1 -> proxy2 -> server
-                // X-Forwarded-For format: client, proxy1 (rightmost is added by most recent hop)
-                request.Headers.Add("X-Forwarded-For", "203.0.113.50, 10.0.0.1, 192.168.1.1");
+            // Proxy chain: client -> proxy1 -> proxy2 -> server
+            // X-Forwarded-For format: client, proxy1, proxy2
+            // TrustAllProxies=true processes all entries, ending with leftmost (original client)
+            var result = await SendRequestWithHeaders(
+                forwardedFor: "203.0.113.50, 10.0.0.1, 192.168.1.1");
 
-                var response = await server.HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-
-                var content = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<DebugRequestInfoResponse>(content);
-
-                // With ForwardLimit=1 (default), should use rightmost entry
-                Assert.That(result.Processed.RemoteIpAddress, Is.EqualTo("192.168.1.1"));
-            }
+            // TrustAllProxies=true processes entire chain, returns leftmost (original client)
+            Assert.That(result.Processed.RemoteIpAddress, Is.EqualTo("203.0.113.50"));
         }
 
         [Test]
         public async Task Should_use_rightmost_proto_from_chain()
         {
-            using (var server = TestServer.Create<ForwardedHeadersTestStartup>())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, "/debug/request-info");
-                request.Headers.Add("X-Forwarded-Proto", "https, http");
+            var result = await SendRequestWithHeaders(
+                forwardedProto: "https, http");
 
-                var response = await server.HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-
-                var content = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<DebugRequestInfoResponse>(content);
-
-                // Should use rightmost protocol
-                Assert.That(result.Processed.Scheme, Is.EqualTo("http"));
-            }
+            // Should use rightmost protocol
+            Assert.That(result.Processed.Scheme, Is.EqualTo("http"));
         }
 
         [Test]
         public async Task Should_use_rightmost_host_from_chain()
         {
-            using (var server = TestServer.Create<ForwardedHeadersTestStartup>())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, "/debug/request-info");
-                request.Headers.Add("X-Forwarded-Host", "first.example.com, second.example.com");
+            var result = await SendRequestWithHeaders(
+                forwardedHost: "first.example.com, second.example.com");
 
-                var response = await server.HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-
-                var content = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<DebugRequestInfoResponse>(content);
-
-                // Should use rightmost host
-                Assert.That(result.Processed.Host, Is.EqualTo("second.example.com"));
-            }
+            // Should use rightmost host
+            Assert.That(result.Processed.Host, Is.EqualTo("second.example.com"));
         }
 
         [Test]
-        public async Task Should_consume_only_processed_entries()
+        public async Task Should_consume_entries_after_processing()
         {
-            using (var server = TestServer.Create<ForwardedHeadersTestStartup>())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, "/debug/request-info");
-                request.Headers.Add("X-Forwarded-For", "203.0.113.50, 10.0.0.1, 192.168.1.1");
-                request.Headers.Add("X-Forwarded-Proto", "https, http");
-                request.Headers.Add("X-Forwarded-Host", "first.example.com, second.example.com");
+            // TrustAllProxies=true processes all X-Forwarded-For entries
+            // But Proto and Host only process ONE entry (rightmost) per pass
+            var result = await SendRequestWithHeaders(
+                forwardedFor: "203.0.113.50, 10.0.0.1, 192.168.1.1",
+                forwardedProto: "https, http",
+                forwardedHost: "first.example.com, second.example.com");
 
-                var response = await server.HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
+            // X-Forwarded-For: all entries consumed when TrustAllProxies=true
+            Assert.That(result.RawHeaders.XForwardedFor, Is.Empty);
 
-                var content = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<DebugRequestInfoResponse>(content);
-
-                // Remaining entries after processing (ForwardLimit=1)
-                Assert.That(result.RawHeaders.XForwardedFor, Is.EqualTo("203.0.113.50, 10.0.0.1"));
-                Assert.That(result.RawHeaders.XForwardedProto, Is.EqualTo("https"));
-                Assert.That(result.RawHeaders.XForwardedHost, Is.EqualTo("first.example.com"));
-            }
+            // Proto and Host: only rightmost entry consumed, rest remain
+            Assert.That(result.RawHeaders.XForwardedProto, Is.EqualTo("https"));
+            Assert.That(result.RawHeaders.XForwardedHost, Is.EqualTo("first.example.com"));
         }
     }
 }

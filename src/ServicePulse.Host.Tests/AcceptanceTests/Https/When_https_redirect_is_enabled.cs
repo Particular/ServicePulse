@@ -3,7 +3,6 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
-    using Microsoft.Owin.Testing;
     using NUnit.Framework;
 
     /// <summary>
@@ -11,33 +10,20 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
     /// HTTP requests should be redirected with 307 status code.
     /// </summary>
     [TestFixture]
-    public class When_https_redirect_is_enabled
+    public class When_https_redirect_is_enabled : HttpsTestBase
     {
-        [TearDown]
-        public void TearDown()
-        {
-            HttpsTestStartup.Reset();
-        }
-
         [Test]
         public async Task Should_redirect_http_to_https()
         {
             HttpsTestStartup.ConfigureRedirectEnabled();
             HttpsTestStartup.SimulatedScheme = "http";
             HttpsTestStartup.SimulatedHost = "example.com";
+            CreateServer();
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                // Disable auto-redirect to capture the redirect response
-                var handler = server.Handler;
-                var client = new HttpClient(handler) { BaseAddress = server.BaseAddress };
+            var response = await SendRequest("/some/path", followRedirects: false);
 
-                var request = new HttpRequestMessage(HttpMethod.Get, "/some/path");
-                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
-                Assert.That(response.Headers.Location.ToString(), Is.EqualTo("https://example.com/some/path"));
-            }
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
+            Assert.That(response.Headers.Location.ToString(), Is.EqualTo("https://example.com/some/path"));
         }
 
         [Test]
@@ -45,13 +31,11 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.ConfigureRedirectEnabled();
             HttpsTestStartup.SimulatedScheme = "https";
+            CreateServer();
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var response = await server.HttpClient.GetAsync("/debug/https-info");
+            var response = await SendRequest("/debug/https-info");
 
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            }
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
         [Test]
@@ -60,18 +44,12 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
             HttpsTestStartup.ConfigureRedirectEnabled(httpsPort: 8443);
             HttpsTestStartup.SimulatedScheme = "http";
             HttpsTestStartup.SimulatedHost = "example.com";
+            CreateServer();
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var handler = server.Handler;
-                var client = new HttpClient(handler) { BaseAddress = server.BaseAddress };
+            var response = await SendRequest("/test", followRedirects: false);
 
-                var request = new HttpRequestMessage(HttpMethod.Get, "/test");
-                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
-                Assert.That(response.Headers.Location.ToString(), Is.EqualTo("https://example.com:8443/test"));
-            }
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
+            Assert.That(response.Headers.Location.ToString(), Is.EqualTo("https://example.com:8443/test"));
         }
 
         [Test]
@@ -80,19 +58,13 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
             HttpsTestStartup.ConfigureRedirectEnabled(httpsPort: 443);
             HttpsTestStartup.SimulatedScheme = "http";
             HttpsTestStartup.SimulatedHost = "example.com";
+            CreateServer();
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var handler = server.Handler;
-                var client = new HttpClient(handler) { BaseAddress = server.BaseAddress };
+            var response = await SendRequest("/test", followRedirects: false);
 
-                var request = new HttpRequestMessage(HttpMethod.Get, "/test");
-                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
-                Assert.That(response.Headers.Location.ToString(), Is.EqualTo("https://example.com/test"));
-                Assert.That(response.Headers.Location.ToString(), Does.Not.Contain(":443"));
-            }
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
+            Assert.That(response.Headers.Location.ToString(), Is.EqualTo("https://example.com/test"));
+            Assert.That(response.Headers.Location.ToString(), Does.Not.Contain(":443"));
         }
 
         [Test]
@@ -101,18 +73,12 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
             HttpsTestStartup.ConfigureRedirectEnabled();
             HttpsTestStartup.SimulatedScheme = "http";
             HttpsTestStartup.SimulatedHost = "example.com";
+            CreateServer();
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var handler = server.Handler;
-                var client = new HttpClient(handler) { BaseAddress = server.BaseAddress };
+            var response = await SendRequest("/test?foo=bar&baz=qux", followRedirects: false);
 
-                var request = new HttpRequestMessage(HttpMethod.Get, "/test?foo=bar&baz=qux");
-                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
-                Assert.That(response.Headers.Location.ToString(), Is.EqualTo("https://example.com/test?foo=bar&baz=qux"));
-            }
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
+            Assert.That(response.Headers.Location.ToString(), Is.EqualTo("https://example.com/test?foo=bar&baz=qux"));
         }
 
         [Test]
@@ -121,18 +87,12 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
             HttpsTestStartup.ConfigureRedirectEnabled();
             HttpsTestStartup.SimulatedScheme = "http";
             HttpsTestStartup.SimulatedHost = "example.com:8080";
+            CreateServer();
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var handler = server.Handler;
-                var client = new HttpClient(handler) { BaseAddress = server.BaseAddress };
+            var response = await SendRequest("/test", followRedirects: false);
 
-                var request = new HttpRequestMessage(HttpMethod.Get, "/test");
-                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
-                Assert.That(response.Headers.Location.ToString(), Is.EqualTo("https://example.com/test"));
-            }
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
+            Assert.That(response.Headers.Location.ToString(), Is.EqualTo("https://example.com/test"));
         }
 
         [Test]
@@ -140,18 +100,41 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.ConfigureRedirectEnabled();
             HttpsTestStartup.SimulatedScheme = "http";
+            CreateServer();
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var handler = server.Handler;
-                var client = new HttpClient(handler) { BaseAddress = server.BaseAddress };
+            var response = await SendRequest("/api/data", method: HttpMethod.Post, followRedirects: false);
 
-                var request = new HttpRequestMessage(HttpMethod.Post, "/api/data");
-                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            // 307 preserves the HTTP method (important for POST, PUT, etc.)
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
+        }
 
-                // 307 preserves the HTTP method (important for POST, PUT, etc.)
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
-            }
+        [Test]
+        public async Task Should_handle_ipv6_host_in_redirect()
+        {
+            HttpsTestStartup.ConfigureRedirectEnabled();
+            HttpsTestStartup.SimulatedScheme = "http";
+            HttpsTestStartup.SimulatedHost = "[::1]";
+            CreateServer();
+
+            var response = await SendRequest("/test", followRedirects: false);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
+            Assert.That(response.Headers.Location.ToString(), Does.StartWith("https://[::1]"));
+        }
+
+        [Test]
+        public async Task Should_strip_port_from_ipv6_host()
+        {
+            HttpsTestStartup.ConfigureRedirectEnabled();
+            HttpsTestStartup.SimulatedScheme = "http";
+            HttpsTestStartup.SimulatedHost = "[::1]:8080";
+            CreateServer();
+
+            var response = await SendRequest("/test", followRedirects: false);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
+            Assert.That(response.Headers.Location.ToString(), Does.StartWith("https://[::1]"));
+            Assert.That(response.Headers.Location.ToString(), Does.Not.Contain(":8080"));
         }
     }
 }

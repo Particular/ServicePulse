@@ -38,6 +38,9 @@ public static class TestConfiguration
     {
         return new ServicePulseWebApplicationFactory()
             .WithEnvironmentVariable(ForwardedHeadersEnabled, "false")
+            .WithEnvironmentVariable(ForwardedHeadersTrustAllProxies, null)
+            .WithEnvironmentVariable(ForwardedHeadersKnownProxies, null)
+            .WithEnvironmentVariable(ForwardedHeadersKnownNetworks, null)
             .WithEnvironment("Development");
     }
 
@@ -132,7 +135,10 @@ public static class TestConfiguration
         return new ServicePulseWebApplicationFactory()
             .WithEnvironmentVariable(HttpsEnabled, "false")
             .WithEnvironmentVariable(HttpsRedirectHttpToHttps, "false")
+            .WithEnvironmentVariable(HttpsPort, null)
             .WithEnvironmentVariable(HttpsEnableHsts, "false")
+            .WithEnvironmentVariable(HttpsHstsMaxAgeSeconds, null)
+            .WithEnvironmentVariable(HttpsHstsIncludeSubDomains, null)
             .WithEnvironment("Development");
     }
 

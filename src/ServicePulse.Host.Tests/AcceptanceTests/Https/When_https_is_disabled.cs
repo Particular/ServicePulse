@@ -2,7 +2,6 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
 {
     using System.Net;
     using System.Threading.Tasks;
-    using Microsoft.Owin.Testing;
     using NUnit.Framework;
 
     /// <summary>
@@ -10,18 +9,13 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
     /// No HSTS header should be added and no redirects should occur.
     /// </summary>
     [TestFixture]
-    public class When_https_is_disabled
+    public class When_https_is_disabled : HttpsTestBase
     {
         [SetUp]
         public void SetUp()
         {
             HttpsTestStartup.ConfigureDisabled();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            HttpsTestStartup.Reset();
+            CreateServer();
         }
 
         [Test]
@@ -29,13 +23,10 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.SimulatedScheme = "https";
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var response = await server.HttpClient.GetAsync("/debug/https-info");
-                response.EnsureSuccessStatusCode();
+            var response = await SendRequest("/debug/https-info");
+            response.EnsureSuccessStatusCode();
 
-                Assert.That(response.Headers.Contains("Strict-Transport-Security"), Is.False);
-            }
+            Assert.That(response.Headers.Contains("Strict-Transport-Security"), Is.False);
         }
 
         [Test]
@@ -43,13 +34,10 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.SimulatedScheme = "http";
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var response = await server.HttpClient.GetAsync("/debug/https-info");
+            var response = await SendRequest("/debug/https-info");
 
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                Assert.That(response.Headers.Location, Is.Null);
-            }
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(response.Headers.Location, Is.Null);
         }
 
         [Test]
@@ -57,14 +45,11 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.SimulatedScheme = "http";
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var response = await server.HttpClient.GetAsync("/debug/https-info");
-                response.EnsureSuccessStatusCode();
+            var response = await SendRequest("/debug/https-info");
+            response.EnsureSuccessStatusCode();
 
-                var content = await response.Content.ReadAsStringAsync();
-                Assert.That(content, Does.Contain("\"scheme\": \"http\""));
-            }
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.That(content, Does.Contain("\"scheme\": \"http\""));
         }
     }
 }

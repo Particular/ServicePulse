@@ -1,9 +1,7 @@
 namespace ServicePulse.Host.Tests.AcceptanceTests.Https
 {
     using System.Net;
-    using System.Net.Http;
     using System.Threading.Tasks;
-    using Microsoft.Owin.Testing;
     using NUnit.Framework;
 
     /// <summary>
@@ -12,18 +10,13 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
     /// and forwards requests to the application over HTTP.
     /// </summary>
     [TestFixture]
-    public class When_https_with_forwarded_headers
+    public class When_https_with_forwarded_headers : HttpsTestBase
     {
         [SetUp]
         public void SetUp()
         {
             HttpsTestStartup.ConfigureWithForwardedHeaders();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            HttpsTestStartup.Reset();
+            CreateServer();
         }
 
         [Test]
@@ -31,16 +24,10 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.SimulatedScheme = "http"; // Original request is HTTP
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, "/debug/https-info");
-                request.Headers.Add("X-Forwarded-Proto", "https"); // But forwarded as HTTPS
+            var response = await SendRequest("/debug/https-info", forwardedProto: "https");
+            response.EnsureSuccessStatusCode();
 
-                var response = await server.HttpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-
-                Assert.That(response.Headers.Contains("Strict-Transport-Security"), Is.True);
-            }
+            Assert.That(response.Headers.Contains("Strict-Transport-Security"), Is.True);
         }
 
         [Test]
@@ -48,16 +35,10 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.SimulatedScheme = "http"; // Original request is HTTP
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, "/debug/https-info");
-                request.Headers.Add("X-Forwarded-Proto", "https"); // But forwarded as HTTPS
+            var response = await SendRequest("/debug/https-info", forwardedProto: "https");
 
-                var response = await server.HttpClient.SendAsync(request);
-
-                // Should NOT redirect because effective scheme is HTTPS
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            }
+            // Should NOT redirect because effective scheme is HTTPS
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
         [Test]
@@ -65,19 +46,10 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.SimulatedScheme = "http";
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var handler = server.Handler;
-                var client = new HttpClient(handler) { BaseAddress = server.BaseAddress };
+            var response = await SendRequest("/test", forwardedProto: "http", followRedirects: false);
 
-                var request = new HttpRequestMessage(HttpMethod.Get, "/test");
-                request.Headers.Add("X-Forwarded-Proto", "http"); // Forwarded as HTTP
-
-                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-
-                // Should redirect because effective scheme is HTTP
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
-            }
+            // Should redirect because effective scheme is HTTP
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
         }
 
         [Test]
@@ -86,21 +58,14 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
             HttpsTestStartup.SimulatedScheme = "http";
             HttpsTestStartup.SimulatedHost = "internal-server";
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var handler = server.Handler;
-                var client = new HttpClient(handler) { BaseAddress = server.BaseAddress };
+            var response = await SendRequest("/test",
+                forwardedProto: "http",
+                forwardedHost: "public.example.com",
+                followRedirects: false);
 
-                var request = new HttpRequestMessage(HttpMethod.Get, "/test");
-                request.Headers.Add("X-Forwarded-Proto", "http");
-                request.Headers.Add("X-Forwarded-Host", "public.example.com");
-
-                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
-                // Should use the forwarded host, not the original
-                Assert.That(response.Headers.Location.ToString(), Is.EqualTo("https://public.example.com/test"));
-            }
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
+            // Should use the forwarded host, not the original
+            Assert.That(response.Headers.Location.ToString(), Is.EqualTo("https://public.example.com/test"));
         }
 
         [Test]
@@ -108,20 +73,24 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.SimulatedScheme = "http";
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var handler = server.Handler;
-                var client = new HttpClient(handler) { BaseAddress = server.BaseAddress };
+            var response = await SendRequest("/debug/https-info", forwardedProto: "http", followRedirects: false);
 
-                var request = new HttpRequestMessage(HttpMethod.Get, "/debug/https-info");
-                request.Headers.Add("X-Forwarded-Proto", "http");
+            // Will redirect, but if we could check the pre-redirect response,
+            // it should not have HSTS since the effective scheme is HTTP
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
+        }
 
-                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+        [TestCase("HTTPS")]
+        [TestCase("Https")]
+        [TestCase("hTtPs")]
+        public async Task Should_handle_case_insensitive_forwarded_proto(string proto)
+        {
+            HttpsTestStartup.SimulatedScheme = "http";
 
-                // Will redirect, but if we could check the pre-redirect response,
-                // it should not have HSTS since the effective scheme is HTTP
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.TemporaryRedirect));
-            }
+            var response = await SendRequest("/debug/https-info", forwardedProto: proto);
+
+            // Should not redirect - HTTPS proto handling should be case-insensitive
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
     }
 }

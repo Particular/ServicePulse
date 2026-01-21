@@ -1,6 +1,5 @@
 namespace ServicePulse.Tests.ForwardedHeaders;
 
-using System.Text.Json;
 using ServicePulse.Tests.Infrastructure;
 
 /// <summary>
@@ -9,91 +8,44 @@ using ServicePulse.Tests.Infrastructure;
 /// when processing comma-separated header values.
 /// </summary>
 [TestFixture]
-public class When_proxy_chain_headers_are_sent
+public class When_proxy_chain_headers_are_sent : ForwardedHeadersTestBase
 {
-    ServicePulseWebApplicationFactory factory = null!;
-    HttpClient client = null!;
-
     [SetUp]
     public void SetUp()
     {
-        factory = TestConfiguration.CreateWithForwardedHeadersDefaults();
-        client = factory.CreateClient();
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        client.Dispose();
-        factory.Dispose();
+        Factory = TestConfiguration.CreateWithForwardedHeadersDefaults();
+        Client = Factory.CreateClient();
     }
 
     [Test]
-    public async Task Should_process_ip_from_chain()
+    public async Task Should_use_leftmost_ip_from_chain()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, "/debug/request-info");
         // Leftmost is original client, rightmost is the most recent proxy
-        request.Headers.Add("X-Forwarded-For", "203.0.113.50, 10.0.0.1, 192.168.1.1");
-        request.Headers.Add("X-Forwarded-Proto", "https");
+        var result = await SendRequestWithHeaders(
+            forwardedFor: "203.0.113.50, 10.0.0.1, 192.168.1.1",
+            forwardedProto: "https");
 
-        var response = await client.SendAsync(request);
-        response.EnsureSuccessStatusCode();
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<DebugRequestInfoResponse>(content);
-
-        // ASP.NET Core processes the chain and updates RemoteIpAddress
-        Assert.That(result!.Processed.RemoteIpAddress, Is.Not.Null);
+        // ASP.NET Core processes the chain from right to left and ends with the leftmost client IP
+        Assert.That(result.Processed.RemoteIpAddress, Is.EqualTo("203.0.113.50"));
     }
 
     [Test]
     public async Task Should_use_first_proto_from_chain()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, "/debug/request-info");
         // ASP.NET Core uses the first value in comma-separated list
-        request.Headers.Add("X-Forwarded-Proto", "https, http");
-
-        var response = await client.SendAsync(request);
-        response.EnsureSuccessStatusCode();
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<DebugRequestInfoResponse>(content);
+        var result = await SendRequestWithHeaders(forwardedProto: "https, http");
 
         // Should use the first (leftmost) protocol value
-        Assert.That(result!.Processed.Scheme, Is.EqualTo("https"));
+        Assert.That(result.Processed.Scheme, Is.EqualTo("https"));
     }
 
     [Test]
     public async Task Should_use_first_host_from_chain()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, "/debug/request-info");
         // ASP.NET Core uses the first value in comma-separated list
-        request.Headers.Add("X-Forwarded-Host", "public.example.com, proxy.internal, original.com");
-
-        var response = await client.SendAsync(request);
-        response.EnsureSuccessStatusCode();
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<DebugRequestInfoResponse>(content);
+        var result = await SendRequestWithHeaders(forwardedHost: "public.example.com, proxy.internal, original.com");
 
         // Should use the first (leftmost) host value
-        Assert.That(result!.Processed.Host, Is.EqualTo("public.example.com"));
-    }
-
-    [Test]
-    public async Task Should_consume_processed_entries()
-    {
-        var request = new HttpRequestMessage(HttpMethod.Get, "/debug/request-info");
-        request.Headers.Add("X-Forwarded-For", "203.0.113.50, 10.0.0.1");
-        request.Headers.Add("X-Forwarded-Proto", "https");
-
-        var response = await client.SendAsync(request);
-        response.EnsureSuccessStatusCode();
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<DebugRequestInfoResponse>(content);
-
-        // With TrustAllProxies and no ForwardLimit, all entries may be processed
-        Assert.That(result!.Processed.Scheme, Is.EqualTo("https"));
+        Assert.That(result.Processed.Host, Is.EqualTo("public.example.com"));
     }
 }

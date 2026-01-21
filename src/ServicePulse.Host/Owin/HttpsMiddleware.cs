@@ -52,8 +52,16 @@ namespace ServicePulse.Host.Owin
                     ? envHost?.ToString() ?? request.Host.ToString()
                     : request.Host.ToString();
 
+                // Skip redirect if host is empty or null (malformed request)
+                if (string.IsNullOrEmpty(host))
+                {
+                    await Next.Invoke(context).ConfigureAwait(false);
+                    return;
+                }
+
                 // Remove port from host if present, we'll add the HTTPS port
-                var hostWithoutPort = host.Contains(":") ? host.Substring(0, host.IndexOf(':')) : host;
+                // IPv6 addresses are enclosed in brackets (e.g., [::1]:8080), so we need to handle them specially
+                var hostWithoutPort = GetHostWithoutPort(host);
 
                 // Build the HTTPS URL with optional port
                 string httpsUrl;
@@ -72,6 +80,31 @@ namespace ServicePulse.Host.Owin
             }
 
             await Next.Invoke(context).ConfigureAwait(false);
+        }
+
+        static string GetHostWithoutPort(string host)
+        {
+            if (string.IsNullOrEmpty(host))
+            {
+                return host;
+            }
+
+            // IPv6 addresses are enclosed in brackets: [::1] or [::1]:8080
+            if (host.StartsWith("["))
+            {
+                var closingBracket = host.IndexOf(']');
+                if (closingBracket > 0)
+                {
+                    // Return just the bracketed IPv6 address without any port
+                    return host.Substring(0, closingBracket + 1);
+                }
+                // Malformed IPv6, return as-is
+                return host;
+            }
+
+            // IPv4 or hostname: look for port separator
+            var colonIndex = host.IndexOf(':');
+            return colonIndex > 0 ? host.Substring(0, colonIndex) : host;
         }
     }
 
@@ -97,6 +130,11 @@ namespace ServicePulse.Host.Owin
             if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
+            }
+
+            if (options.Port.HasValue && (options.Port.Value < 1 || options.Port.Value > 65535))
+            {
+                throw new ArgumentOutOfRangeException(nameof(options), "Port must be between 1 and 65535.");
             }
 
             return builder.Use<HttpsMiddleware>(options);

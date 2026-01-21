@@ -1,7 +1,6 @@
 namespace ServicePulse.Host.Tests.AcceptanceTests.Https
 {
     using System.Threading.Tasks;
-    using Microsoft.Owin.Testing;
     using NUnit.Framework;
 
     /// <summary>
@@ -9,29 +8,21 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
     /// HSTS should only be added to HTTPS responses.
     /// </summary>
     [TestFixture]
-    public class When_hsts_is_enabled
+    public class When_hsts_is_enabled : HttpsTestBase
     {
-        [TearDown]
-        public void TearDown()
-        {
-            HttpsTestStartup.Reset();
-        }
-
         [Test]
         public async Task Should_add_hsts_header_for_https_request()
         {
             HttpsTestStartup.ConfigureHstsEnabled();
             HttpsTestStartup.SimulatedScheme = "https";
+            CreateServer();
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var response = await server.HttpClient.GetAsync("/debug/https-info");
-                response.EnsureSuccessStatusCode();
+            var response = await SendRequest("/debug/https-info");
+            response.EnsureSuccessStatusCode();
 
-                Assert.That(response.Headers.Contains("Strict-Transport-Security"), Is.True);
-                var hstsValue = response.Headers.GetValues("Strict-Transport-Security");
-                Assert.That(hstsValue, Does.Contain("max-age=31536000"));
-            }
+            Assert.That(response.Headers.Contains("Strict-Transport-Security"), Is.True);
+            var hstsValue = GetHstsHeaderValue(response);
+            Assert.That(hstsValue, Does.Contain("max-age=31536000"));
         }
 
         [Test]
@@ -39,14 +30,12 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.ConfigureHstsEnabled();
             HttpsTestStartup.SimulatedScheme = "http";
+            CreateServer();
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var response = await server.HttpClient.GetAsync("/debug/https-info");
-                response.EnsureSuccessStatusCode();
+            var response = await SendRequest("/debug/https-info");
+            response.EnsureSuccessStatusCode();
 
-                Assert.That(response.Headers.Contains("Strict-Transport-Security"), Is.False);
-            }
+            Assert.That(response.Headers.Contains("Strict-Transport-Security"), Is.False);
         }
 
         [Test]
@@ -54,15 +43,12 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.ConfigureHstsEnabled(maxAgeSeconds: 86400);
             HttpsTestStartup.SimulatedScheme = "https";
+            CreateServer();
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var response = await server.HttpClient.GetAsync("/debug/https-info");
-                response.EnsureSuccessStatusCode();
+            var response = await SendRequest("/debug/https-info");
+            response.EnsureSuccessStatusCode();
 
-                var hstsValue = string.Join("", response.Headers.GetValues("Strict-Transport-Security"));
-                Assert.That(hstsValue, Is.EqualTo("max-age=86400"));
-            }
+            Assert.That(GetHstsHeaderValue(response), Is.EqualTo("max-age=86400"));
         }
 
         [Test]
@@ -70,15 +56,12 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.ConfigureHstsEnabled(includeSubDomains: true);
             HttpsTestStartup.SimulatedScheme = "https";
+            CreateServer();
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var response = await server.HttpClient.GetAsync("/debug/https-info");
-                response.EnsureSuccessStatusCode();
+            var response = await SendRequest("/debug/https-info");
+            response.EnsureSuccessStatusCode();
 
-                var hstsValue = string.Join("", response.Headers.GetValues("Strict-Transport-Security"));
-                Assert.That(hstsValue, Does.Contain("includeSubDomains"));
-            }
+            Assert.That(GetHstsHeaderValue(response), Does.Contain("includeSubDomains"));
         }
 
         [Test]
@@ -86,15 +69,12 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
         {
             HttpsTestStartup.ConfigureHstsEnabled(includeSubDomains: false);
             HttpsTestStartup.SimulatedScheme = "https";
+            CreateServer();
 
-            using (var server = TestServer.Create<HttpsTestStartup>())
-            {
-                var response = await server.HttpClient.GetAsync("/debug/https-info");
-                response.EnsureSuccessStatusCode();
+            var response = await SendRequest("/debug/https-info");
+            response.EnsureSuccessStatusCode();
 
-                var hstsValue = string.Join("", response.Headers.GetValues("Strict-Transport-Security"));
-                Assert.That(hstsValue, Does.Not.Contain("includeSubDomains"));
-            }
+            Assert.That(GetHstsHeaderValue(response), Does.Not.Contain("includeSubDomains"));
         }
     }
 }

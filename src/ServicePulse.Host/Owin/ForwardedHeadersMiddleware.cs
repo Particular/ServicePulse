@@ -78,15 +78,18 @@ namespace ServicePulse.Host.Owin
             {
                 var entries = forwardedFor.Split(',').Select(v => v.Trim()).ToList();
                 var entriesProcessed = 0;
-                var limit = options.ForwardLimit ?? int.MaxValue;
+                // When TrustAllProxies is enabled, ignore ForwardLimit (consistent with ASP.NET Core)
+                var limit = options.TrustAllProxies ? int.MaxValue : (options.ForwardLimit ?? int.MaxValue);
 
                 // Process from right to left
                 while (entries.Count > 0 && entriesProcessed < limit)
                 {
-                    var currentIp = entries[entries.Count - 1];
+                    var currentEntry = entries[entries.Count - 1];
                     entries.RemoveAt(entries.Count - 1);
                     entriesProcessed++;
 
+                    // Strip port from IP address if present (e.g., "192.168.1.1:8080" or "[::1]:8080")
+                    var currentIp = StripPort(currentEntry);
                     context.Environment["server.RemoteIpAddress"] = currentIp;
 
                     // If there are more entries, check if we should continue
@@ -115,6 +118,31 @@ namespace ServicePulse.Host.Owin
             return Next.Invoke(context);
         }
 
+        static string StripPort(string ipAddress)
+        {
+            if (string.IsNullOrEmpty(ipAddress))
+            {
+                return ipAddress;
+            }
+
+            // IPv6 addresses are enclosed in brackets: [::1] or [::1]:8080
+            if (ipAddress.StartsWith("["))
+            {
+                var closingBracket = ipAddress.IndexOf(']');
+                if (closingBracket > 0)
+                {
+                    // Return just the IPv6 address without brackets or port
+                    return ipAddress.Substring(1, closingBracket - 1);
+                }
+                // Malformed, return as-is
+                return ipAddress;
+            }
+
+            // IPv4 or hostname: look for port separator
+            var colonIndex = ipAddress.IndexOf(':');
+            return colonIndex > 0 ? ipAddress.Substring(0, colonIndex) : ipAddress;
+        }
+
         bool IsTrustedProxy(string remoteIpAddress)
         {
             if (options.TrustAllProxies)
@@ -137,10 +165,20 @@ namespace ServicePulse.Host.Owin
                 return false;
             }
 
-            // Check known proxies
-            if (options.KnownProxies.Any(proxy => proxy.Equals(ip)))
+            // Normalize IPv4-mapped IPv6 addresses (::ffff:192.168.1.1) to IPv4
+            if (ip.IsIPv4MappedToIPv6)
             {
-                return true;
+                ip = ip.MapToIPv4();
+            }
+
+            // Check known proxies (also normalizing for comparison)
+            foreach (var proxy in options.KnownProxies)
+            {
+                var normalizedProxy = proxy.IsIPv4MappedToIPv6 ? proxy.MapToIPv4() : proxy;
+                if (normalizedProxy.Equals(ip))
+                {
+                    return true;
+                }
             }
 
             // Check known networks

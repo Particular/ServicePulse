@@ -6,21 +6,37 @@ static class WebApplicationBuilderExtensions
 {
     public static void ConfigureHttps(this WebApplicationBuilder builder, Settings settings)
     {
-        if (!settings.HttpsEnabled)
+        // EnableHsts is disabled by default
+        // Hsts is automatically disabled in Development environments
+        if (settings.HttpsEnableHsts)
         {
-            return;
+            builder.Services.AddHsts(options =>
+            {
+                options.MaxAge = TimeSpan.FromSeconds(settings.HttpsHstsMaxAgeSeconds);
+                options.IncludeSubDomains = settings.HttpsHstsIncludeSubDomains;
+            });
         }
 
-        builder.WebHost.ConfigureKestrel(serverOptions =>
+        // RedirectHttpToHttps is disabled by default. HttpsPort is null by default.
+        if (settings.HttpsRedirectHttpToHttps && settings.HttpsPort.HasValue)
         {
-            serverOptions.ConfigureEndpointDefaults(listenOptions =>
+            builder.Services.AddHttpsRedirection(options =>
             {
-                if (settings.HttpsEnabled && !string.IsNullOrEmpty(settings.HttpsCertificatePath))
-                {
-                    listenOptions.UseHttps(LoadCertificate(settings));
-                }
+                options.HttpsPort = settings.HttpsPort.Value;
             });
-        });
+        }
+
+        // Kestrel HTTPS is disabled by default
+        if (settings.HttpsEnabled)
+        {
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.ConfigureHttpsDefaults(httpsOptions =>
+                {
+                    httpsOptions.ServerCertificate = LoadCertificate(settings);
+                });
+            });
+        }
     }
 
     static X509Certificate2 LoadCertificate(Settings settings)

@@ -7,29 +7,19 @@ using ServicePulse.Tests.Infrastructure;
 /// Tests behavior when all HTTPS features are disabled.
 /// </summary>
 [TestFixture]
-public class When_https_is_disabled
+public class When_https_is_disabled : HttpsTestBase
 {
-    ServicePulseWebApplicationFactory factory = null!;
-    HttpClient client = null!;
-
     [SetUp]
     public void SetUp()
     {
-        factory = TestConfiguration.CreateWithHttpsDisabled();
-        client = factory.CreateClient();
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        client.Dispose();
-        factory.Dispose();
+        Factory = TestConfiguration.CreateWithHttpsDisabled();
+        Client = CreateHttpClient();
     }
 
     [Test]
     public async Task Should_not_add_hsts_header()
     {
-        var response = await client.GetAsync("/");
+        var response = await Client.GetAsync("/js/app.constants.js");
 
         Assert.That(response.Headers.Contains("Strict-Transport-Security"), Is.False);
     }
@@ -37,21 +27,19 @@ public class When_https_is_disabled
     [Test]
     public async Task Should_not_redirect_http_request()
     {
-        var response = await client.GetAsync("/");
+        var response = await Client.GetAsync("/js/app.constants.js");
 
-        // Should not redirect - either OK or NotFound (if no route matches)
+        // Should not redirect
         Assert.That(response.StatusCode, Is.Not.EqualTo(HttpStatusCode.TemporaryRedirect));
         Assert.That(response.StatusCode, Is.Not.EqualTo(HttpStatusCode.PermanentRedirect));
         Assert.That(response.StatusCode, Is.Not.EqualTo(HttpStatusCode.MovedPermanently));
     }
 
     [Test]
-    public async Task Should_pass_through_to_next_middleware()
+    public async Task Should_serve_content_normally()
     {
-        // Request should reach the application (static files or endpoints)
-        var response = await client.GetAsync("/js/app.constants.js");
+        var response = await Client.GetAsync("/js/app.constants.js");
 
-        // The app.constants.js endpoint should be reachable
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 }

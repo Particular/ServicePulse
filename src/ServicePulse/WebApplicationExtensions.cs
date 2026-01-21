@@ -44,11 +44,13 @@ static class WebApplicationExtensions
             });
         }
 
+        // Forwarded headers processing is enabled by default
         if (!settings.ForwardedHeadersEnabled)
         {
             return;
         }
 
+        // Attempt to process all forwarded headers
         var options = new ForwardedHeadersOptions
         {
             ForwardedHeaders = ForwardedHeaders.All
@@ -58,6 +60,7 @@ static class WebApplicationExtensions
         options.KnownProxies.Clear();
         options.KnownNetworks.Clear();
 
+        // Enabled by default
         if (settings.ForwardedHeadersTrustAllProxies)
         {
             // Trust all proxies: remove hop limit
@@ -82,41 +85,17 @@ static class WebApplicationExtensions
 
     public static void UseHttpsConfiguration(this WebApplication app, Settings settings)
     {
+        // EnableHsts is disabled by default
+        // Hsts is automatically disabled in Development environments
         if (settings.HttpsEnableHsts && !app.Environment.IsDevelopment())
         {
             app.UseHsts();
         }
 
+        // RedirectHttpToHttps is disabled by default
         if (settings.HttpsRedirectHttpToHttps)
         {
             app.UseHttpsRedirection();
         }
-    }
-
-    public static void ConfigureHsts(this IServiceCollection services, Settings settings)
-    {
-        if (!settings.HttpsEnableHsts)
-        {
-            return;
-        }
-
-        services.AddHsts(options =>
-        {
-            options.MaxAge = TimeSpan.FromSeconds(settings.HttpsHstsMaxAgeSeconds);
-            options.IncludeSubDomains = settings.HttpsHstsIncludeSubDomains;
-        });
-    }
-
-    public static void ConfigureHttpsRedirection(this IServiceCollection services, Settings settings)
-    {
-        if (!settings.HttpsRedirectHttpToHttps || !settings.HttpsPort.HasValue)
-        {
-            return;
-        }
-
-        services.AddHttpsRedirection(options =>
-        {
-            options.HttpsPort = settings.HttpsPort.Value;
-        });
     }
 }
