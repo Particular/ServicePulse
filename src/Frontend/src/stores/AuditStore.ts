@@ -32,7 +32,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
   async function checkForSuccessfulMessages() {
     try {
       // Fetch the latest 10 messages and check if any are successful
-      // todo: ideally we would want to filter successful messages server-side, but the API doesn't currently support that
+      // ideally we would want to filter successful messages server-side, but the API doesn't currently support that
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<Message[]>(`messages2/?page_size=10&sort=time_sent&direction=desc`);
       hasSuccessfulMessages.value = data?.some((msg) => msg.status === MessageStatus.Successful) ?? false;
     } catch {
