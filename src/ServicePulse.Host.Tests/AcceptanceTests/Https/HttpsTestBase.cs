@@ -1,6 +1,7 @@
 namespace ServicePulse.Host.Tests.AcceptanceTests.Https
 {
     using System.Net.Http;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Owin.Testing;
     using NUnit.Framework;
@@ -40,7 +41,8 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
             HttpMethod method = null,
             string forwardedProto = null,
             string forwardedHost = null,
-            bool followRedirects = true)
+            bool followRedirects = true,
+            CancellationToken cancellationToken = default)
         {
             var request = new HttpRequestMessage(method ?? HttpMethod.Get, path);
 
@@ -55,13 +57,13 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.Https
 
             if (followRedirects)
             {
-                return await Server.HttpClient.SendAsync(request);
+                return await Server.HttpClient.SendAsync(request, cancellationToken);
             }
             else
             {
                 using (var client = CreateNonRedirectingClient())
                 {
-                    return await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                    return await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
                 }
             }
         }

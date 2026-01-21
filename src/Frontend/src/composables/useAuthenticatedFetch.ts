@@ -25,7 +25,7 @@ export function authFetch(input: RequestInfo, init?: RequestInit): Promise<Respo
   }
 
   // If authentication is enabled, require a token
-  // TODO: potentially handle token refresh here if expired, however it shouldnt be required due to silent renew
+  // potentially handle token refresh here if expired, however it shouldnt be required due to silent renew
   const token = authStore.token;
   if (!token) {
     throw new Error("No authentication token available. Please authenticate first.");

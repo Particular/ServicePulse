@@ -2,6 +2,7 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.ForwardedHeaders
 {
     using System.Net.Http;
     using System.Text.Json;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Owin.Testing;
     using NUnit.Framework;
@@ -28,7 +29,8 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.ForwardedHeaders
         protected async Task<DebugRequestInfoResponse> SendRequestWithHeaders(
             string forwardedFor = null,
             string forwardedProto = null,
-            string forwardedHost = null)
+            string forwardedHost = null,
+            CancellationToken cancellationToken = default)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "/debug/request-info");
 
@@ -45,7 +47,7 @@ namespace ServicePulse.Host.Tests.AcceptanceTests.ForwardedHeaders
                 request.Headers.Add("X-Forwarded-Host", forwardedHost);
             }
 
-            var response = await Server.HttpClient.SendAsync(request);
+            var response = await Server.HttpClient.SendAsync(request, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
