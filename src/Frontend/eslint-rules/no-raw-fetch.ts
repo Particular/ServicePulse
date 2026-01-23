@@ -1,10 +1,10 @@
+import type { Rule } from "eslint";
+
 /**
- * @fileoverview ESLint rule to disallow raw fetch() calls.
+ * ESLint rule to disallow raw fetch() calls.
  * Use authFetch from useAuthenticatedFetch.ts instead.
  */
-
-/** @type {import('eslint').Rule.RuleModule} */
-export default {
+const rule: Rule.RuleModule = {
   meta: {
     type: "problem",
     docs: {
@@ -16,14 +16,14 @@ export default {
     schema: [],
   },
   create(context) {
-    const sourceCode = context.sourceCode || context.getSourceCode();
+    const sourceCode = context.sourceCode;
 
     return {
       CallExpression(node) {
         // Check if it's a call to `fetch`
         if (node.callee.type === "Identifier" && node.callee.name === "fetch") {
           // Check if this file is the useAuthenticatedFetch composable itself
-          const filename = context.filename || context.getFilename();
+          const filename = context.filename;
           if (filename.includes("useAuthenticatedFetch")) {
             return; // Allow fetch in the wrapper file itself
           }
@@ -44,3 +44,5 @@ export default {
     };
   },
 };
+
+export default rule;

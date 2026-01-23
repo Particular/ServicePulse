@@ -2,12 +2,12 @@
 
 This guide provides scenario-based tests for ServicePulse's OIDC authentication. Use this to verify authentication behavior during local development.
 
-For additional details on authentication in ServicePulse, see the [ServicePulse Security](https://docs.particular.net/servicepulse/security/configuration/authentication).
+For additional details on authentication in ServicePulse, see the [ServicePulse Security](https://docs.particular.net/servicepulse/security/configuration/authentication) documentation.
 
 ## Prerequisites
 
-- ServicePulse built locally (see main README for build instructions)
-- ServiceControl instance running (provides authentication configuration) - See the hosting guide in ServiceControl docs for more info.
+- ServicePulse built locally (see [main README for instructions](../README.md#setting-up-the-project-for-development))
+- ServiceControl instance running (provides authentication configuration) - See the [hosting guide in ServiceControl docs](https://docs.particular.net/servicecontrol/security/hosting-guide) for more info.
 - (Optional) An OIDC identity provider for testing authenticated scenarios
 
 ### Building the Frontend
@@ -17,6 +17,36 @@ cd src\Frontend
 npm install
 npm run build
 ```
+
+## Host Options
+
+ServicePulse has two hosting options for local testing:
+
+### .NET 8 Host
+
+Uses ASP.NET Core with built-in YARP reverse proxy. Configuration via environment variables.
+
+```cmd
+cd src\ServicePulse
+dotnet run
+```
+
+Default URL: `http://localhost:5291`
+
+### .NET Framework Host
+
+Uses OWIN self-hosting. Configuration via command-line arguments.
+
+```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
+ServicePulse.Host.exe --url="http://localhost:8081"
+```
+
+Default URL: `http://localhost:8081`
+
+> [!NOTE]
+> The .NET Framework host does not have a built-in reverse proxy. The frontend connects directly to ServiceControl, which requires CORS configuration in ServiceControl.
+> For HTTPS with the .NET Framework host, you must bind the SSL certificate at the OS level using `netsh`. See [HTTPS Testing](https-testing.md) for details.
 
 ## Test Scenarios
 
@@ -56,7 +86,7 @@ npx vitest run ./test/specs/authentication
 
 - ServiceControl running with authentication disabled (default)
 
-**Start ServicePulse:**
+**Start ServicePulse (.NET 8 host):**
 
 ```cmd
 cd src\ServicePulse
@@ -73,6 +103,34 @@ dotnet run
 
 ```cmd
 curl http://localhost:5291/js/app.constants.js
+```
+
+**Expected:** The constants file loads successfully. Access to ServicePulse does not require authentication.
+
+#### Option C: Using .NET Framework Host
+
+**Prerequisites:**
+
+- ServiceControl running with authentication disabled (default)
+- ServicePulse.Host built
+
+**Start ServicePulse (.NET Framework host):**
+
+```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
+ServicePulse.Host.exe --url="http://localhost:8081"
+```
+
+**Test in browser:**
+
+1. Open `http://localhost:8081`
+2. ServicePulse should load directly without any login prompt
+3. The user profile menu should NOT appear in the header
+
+**Verify with curl:**
+
+```cmd
+curl http://localhost:8081/js/app.constants.js
 ```
 
 **Expected:** The constants file loads successfully. Access to ServicePulse does not require authentication.
@@ -122,16 +180,30 @@ cd src\Frontend
 npx vitest run ./test/specs/authentication/auth-enabled
 ```
 
-#### Option B: Using Real ServiceControl
+#### Option B: Using Real ServiceControl (.NET 8 Host)
 
 **Configure and start ServiceControl:**
 
 See ServiceControl docs for correct setup
 
+Set ServiceControl and ServicePulse with HTTPS.
+
+```cmd
+set SERVICEPULSE_HTTPS_ENABLED=true
+set SERVICEPULSE_HTTPS_CERTIFICATEPATH=C:\Users\warwi\source\repos\Particular\ServicePulse\.local\certs\localhost.pfx
+set SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD=changeit
+set SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS=
+set SERVICEPULSE_HTTPS_PORT=
+set SERVICEPULSE_HTTPS_ENABLEHSTS=
+
+cd src\ServicePulse
+dotnet run
+```
+
 **Test with curl:**
 
 ```cmd
-curl http://localhost:33333/api/authentication/configuration | json
+curl --ssl-no-revoke https://localhost:33333/api/authentication/configuration | json
 ```
 
 **Expected output:**
@@ -147,6 +219,46 @@ curl http://localhost:33333/api/authentication/configuration | json
 ```
 
 The configuration endpoint is accessible without authentication and returns all fields ServicePulse needs to initiate the OIDC flow.
+
+#### Option C: Using Real ServiceControl (.NET Framework Host)
+
+**Prerequisites:**
+
+- ServiceControl running with authentication enabled
+- SSL certificate bound at OS level via `netsh` (see [HTTPS Testing](https-testing.md))
+- ServicePulse.Host built (run `build.ps1` from repo root)
+
+See [HTTPS Testing](https-testing.md) for detailed certificate setup instructions.
+
+**Start ServicePulse (.NET Framework host with HTTPS):**
+
+```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
+ServicePulse.Host.exe --url="https://localhost:9090" --httpsenabled=true
+```
+
+Ensure you update the ServiceControl and Monitoring URLs to HTTLS
+
+**Test with curl:**
+
+```cmd
+curl --ssl-no-revoke https://localhost:33333/api/authentication/configuration | json
+```
+
+**Expected output:**
+
+```json
+{
+  "enabled": true,
+  "client_id": "{servicepulse-client-id}",
+  "authority": "https://login.microsoftonline.com/{tenant-id}/v2.0",
+  "audience": "api://servicecontrol",
+  "api_scopes": "[\"api://servicecontrol/access_as_user\"]"
+}
+```
+
+> [!NOTE]
+> The .NET Framework host does not have a reverse proxy. Authentication configuration is fetched directly from ServiceControl, so ensure ServiceControl has CORS configured to allow requests from the ServicePulse origin.
 
 ### Scenario 3: Authentication Enabled (Browser Flow)
 
@@ -200,7 +312,7 @@ cd src\Frontend
 npx vitest run ./test/specs/authentication/auth-authenticated
 ```
 
-#### Using Real ServiceControl and Identity Provider
+#### Using Real ServiceControl and Identity Provider (.NET 8 Host)
 
 **Prerequisites:**
 
@@ -216,13 +328,43 @@ dotnet run
 
 **Test in browser:**
 
-1. Open `http://localhost:5291`
+1. Open `https://localhost:5291`
 2. ServicePulse should show a loading screen while fetching auth config
 3. Browser should redirect to the identity provider login page
 4. Enter valid credentials (if not already authenticated in current session)
 5. After successful login, browser redirects back to ServicePulse
 6. ServicePulse dashboard should load
 7. User profile menu should appear in the header showing user name and email
+
+#### Using Real ServiceControl and Identity Provider (.NET Framework Host)
+
+**Prerequisites:**
+
+- ServiceControl running with authentication enabled (see Scenario 2)
+- OIDC identity provider configured (Microsoft Entra ID, Okta, Auth0, etc.)
+- SSL certificate bound at OS level via `netsh`
+- ServicePulse.Host built (run `build.ps1` from repo root)
+- Redirect URI registered in IdP: `https://localhost:8443/`
+
+**Start ServicePulse (.NET Framework host):**
+
+```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
+ServicePulse.Host.exe --url="https://localhost:8443" --httpsenabled=true
+```
+
+**Test in browser:**
+
+1. Open `https://localhost:8443`
+2. ServicePulse should show a loading screen while fetching auth config
+3. Browser should redirect to the identity provider login page
+4. Enter valid credentials (if not already authenticated in current session)
+5. After successful login, browser redirects back to ServicePulse
+6. ServicePulse dashboard should load
+7. User profile menu should appear in the header showing user name and email
+
+> [!IMPORTANT]
+> Ensure the redirect URI `https://localhost:8443/` is registered in your identity provider's application configuration. The .NET Framework host uses a different port than the .NET 8 host.
 
 ### Scenario 4: Token Included in API Requests
 
@@ -561,6 +703,8 @@ Verify that forwarded headers work correctly with authentication when behind a r
 - External reverse proxy (NGINX) configured (see [Reverse Proxy Testing](nginx-testing.md))
 - ServicePulse configured to trust forwarded headers
 
+#### Using .NET 8 Host
+
 **Configure ServicePulse:**
 
 ```cmd
@@ -578,6 +722,33 @@ dotnet run
 4. Verify ServicePulse loads successfully after login
 
 **Expected:** The forwarded headers (`X-Forwarded-Proto`, `X-Forwarded-Host`) are processed correctly, and OAuth redirects use the external URL.
+
+#### Using .NET Framework Host
+
+**Configure ServicePulse:**
+
+```cmd
+cd src\ServicePulse.Host\bin\Debug\net48
+ServicePulse.Host.exe --url="http://localhost:8081" --forwardedheadersenabled=true --forwardedheaderstrustallproxies=true
+```
+
+Or to restrict to specific proxy IPs:
+
+```cmd
+ServicePulse.Host.exe --url="http://localhost:8081" --forwardedheadersenabled=true --forwardedheaderstrustallproxies=false --forwardedheadersknownproxies="127.0.0.1,::1"
+```
+
+**Test in browser:**
+
+1. Access ServicePulse through the external reverse proxy (e.g., `https://servicepulse.localhost/`)
+2. Complete the login flow
+3. Verify the OAuth redirect URI uses the correct external URL
+4. Verify ServicePulse loads successfully after login
+
+**Expected:** The forwarded headers (`X-Forwarded-Proto`, `X-Forwarded-Host`) are processed correctly, and OAuth redirects use the external URL.
+
+> [!NOTE]
+> The .NET Framework host has forwarded headers enabled by default with `TrustAllProxies=true`. For production, consider specifying known proxies explicitly.
 
 ### Scenario 15: Auth Configuration Endpoint Unavailable
 
@@ -810,6 +981,6 @@ Copy the access token and paste it into [jwt.io](https://jwt.io) to view:
 
 ## See Also
 
-- [Authentication](authentication.md) - Authentication configuration reference
-- [HTTPS Configuration](https-configuration.md) - Secure token transmission with HTTPS
+- [Authentication](https://docs.particular.net/servicepulse/security/configuration/authentication) - Authentication configuration reference
+- [HTTPS Configuration](https://docs.particular.net/servicepulse/security/configuration/tls#configuration) - Secure token transmission with HTTPS
 - [Reverse Proxy Testing](nginx-testing.md) - Testing with NGINX reverse proxy

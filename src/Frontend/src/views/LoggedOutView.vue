@@ -13,10 +13,14 @@ function handleSignIn() {
 
 <template>
   <div class="logged-out-container">
-    <div class="logged-out-content">
+    <div class="logged-out-content" v-if="authEnabled">
       <h1 class="logged-out-title">You have been signed out</h1>
       <p class="logged-out-message">You have successfully signed out of ServicePulse.</p>
-      <button v-if="authEnabled" type="button" class="btn btn-primary sign-in-button" @click="handleSignIn">Sign in again</button>
+      <button type="button" class="btn btn-primary sign-in-button" @click="handleSignIn">Sign in again</button>
+    </div>
+    <div v-else>
+      <h1 class="logged-out-title">Authentication is disabled</h1>
+      <p class="logged-out-message">Authentication is currently disabled in ServicePulse</p>
     </div>
   </div>
 </template>

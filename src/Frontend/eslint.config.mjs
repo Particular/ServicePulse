@@ -4,7 +4,7 @@ import tseslint from "typescript-eslint";
 import pluginVue from "eslint-plugin-vue";
 import pluginPromise from "eslint-plugin-promise";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
-import noRawFetch from "./eslint-rules/no-raw-fetch.js";
+import noRawFetch from "./eslint-rules/no-raw-fetch.ts";
 
 const localPlugin = {
   rules: {

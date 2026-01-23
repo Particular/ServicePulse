@@ -31,44 +31,58 @@ namespace ServicePulse.Host.Owin
                 return Next.Invoke(context);
             }
 
-            // Process X-Forwarded-Proto (take rightmost value, consume header)
+            // Process X-Forwarded-Proto (take leftmost value - original client's scheme)
             var forwardedProto = request.Headers.Get("X-Forwarded-Proto");
             if (!string.IsNullOrEmpty(forwardedProto))
             {
                 var values = forwardedProto.Split(',').Select(v => v.Trim()).ToList();
-                var scheme = values[values.Count - 1];
+                var scheme = values[0];
                 context.Environment["owin.RequestScheme"] = scheme;
 
-                // Consume the header
-                values.RemoveAt(values.Count - 1);
-                if (values.Count > 0)
-                {
-                    request.Headers.Set("X-Forwarded-Proto", string.Join(", ", values));
-                }
-                else
+                // Consume the header - when TrustAllProxies, consume all values (consistent with ASP.NET Core)
+                if (options.TrustAllProxies)
                 {
                     request.Headers.Remove("X-Forwarded-Proto");
                 }
+                else
+                {
+                    values.RemoveAt(0);
+                    if (values.Count > 0)
+                    {
+                        request.Headers.Set("X-Forwarded-Proto", string.Join(", ", values));
+                    }
+                    else
+                    {
+                        request.Headers.Remove("X-Forwarded-Proto");
+                    }
+                }
             }
 
-            // Process X-Forwarded-Host (take rightmost value, consume header)
+            // Process X-Forwarded-Host (take leftmost value - original client's host)
             var forwardedHost = request.Headers.Get("X-Forwarded-Host");
             if (!string.IsNullOrEmpty(forwardedHost))
             {
                 var values = forwardedHost.Split(',').Select(v => v.Trim()).ToList();
-                var host = values[values.Count - 1];
+                var host = values[0];
                 context.Environment["host.RequestHost"] = host;
                 request.Headers.Set("Host", host);
 
-                // Consume the header
-                values.RemoveAt(values.Count - 1);
-                if (values.Count > 0)
+                // Consume the header - when TrustAllProxies, consume all values (consistent with ASP.NET Core)
+                if (options.TrustAllProxies)
                 {
-                    request.Headers.Set("X-Forwarded-Host", string.Join(", ", values));
+                    request.Headers.Remove("X-Forwarded-Host");
                 }
                 else
                 {
-                    request.Headers.Remove("X-Forwarded-Host");
+                    values.RemoveAt(0);
+                    if (values.Count > 0)
+                    {
+                        request.Headers.Set("X-Forwarded-Host", string.Join(", ", values));
+                    }
+                    else
+                    {
+                        request.Headers.Remove("X-Forwarded-Host");
+                    }
                 }
             }
 

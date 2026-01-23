@@ -1,9 +1,9 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref } from "vue";
-import { useServiceControlStore } from "./ServiceControlStore";
 import type { AuthConfig } from "@/types/auth";
 import { WebStorageStateStore } from "oidc-client-ts";
 import routeLinks from "@/router/routeLinks";
+import serviceControlClient from "@/components/serviceControlClient";
 
 interface AuthConfigResponse {
   enabled: boolean;
@@ -14,8 +14,6 @@ interface AuthConfigResponse {
 }
 
 export const useAuthStore = defineStore("auth", () => {
-  const serviceControlStore = useServiceControlStore();
-
   const token = ref<string | null>(null);
   const isAuthenticated = ref(false);
   const isAuthenticating = ref(false);
@@ -39,7 +37,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   async function getAuthConfig() {
     try {
-      const [, data] = await serviceControlStore.fetchTypedFromServiceControl<AuthConfigResponse>("authentication/configuration");
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<AuthConfigResponse>("authentication/configuration");
       return data;
     } catch (err) {
       console.error("Error fetching auth configuration", err);

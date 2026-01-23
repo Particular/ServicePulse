@@ -2,7 +2,8 @@
 
 This guide provides scenario-based tests for ServicePulse's direct HTTPS features. Use this to verify HTTPS behavior without a reverse proxy.
 
-> [!NOTE] HTTP to HTTPS redirection (`RedirectHttpToHttps`) is designed for reverse proxy scenarios where the proxy forwards HTTP requests to ServicePulse. When running with direct HTTPS, ServicePulse only binds to a single port (HTTPS). To test HTTP to HTTPS redirection, see [Reverse Proxy Testing](nginx-testing.md). HSTS should not be tested on localhost because browsers cache the HSTS policy, which could break other local development. To test HSTS, use the [NGINX reverse proxy setup](nginx-testing.md) with a custom hostname (`servicepulse.localhost`).
+> [!NOTE]
+> HTTP to HTTPS redirection (`RedirectHttpToHttps`) is designed for reverse proxy scenarios where the proxy forwards HTTP requests to ServicePulse. When running with direct HTTPS, ServicePulse only binds to a single port (HTTPS). To test HTTP to HTTPS redirection, see [Reverse Proxy Testing](nginx-testing.md). HSTS should not be tested on localhost because browsers cache the HSTS policy, which could break other local development. To test HSTS, use the [NGINX reverse proxy setup](nginx-testing.md) with a custom hostname (`servicepulse.localhost`).
 
 ## Application Reference
 
@@ -17,7 +18,7 @@ See [ServicePulse TLS](https://docs.particular.net/servicepulse/security/configu
 
 ## .NET 8 Prerequisites
 
-- [mkcert](https://github.com/FiloSottile/mkcert) for generating local development certificates
+- ServicePulse built locally (see [main README for instructions](../README.md#setting-up-the-project-for-development))
 - ServicePulse built locally (see main README for build instructions)
 - curl (included with Windows 10/11)
 
@@ -118,20 +119,18 @@ Replace `YOUR_THUMBPRINT` with the thumbprint from the previous step.
 
 ## Test Scenarios
 
-### .NET 8
+---
+
+### HTTPS Enabled (.NET 8)
 
 > [!NOTE]
 > Complete the [.NET 8 Prerequisites](#net-8-prerequisites) section first.
 
-#### Scenario 1: Basic HTTPS Connectivity (.NET 8)
-
-Verify that HTTPS is working with a valid certificate.
-
-**Set environment variables and start ServicePulse:**
+**Start the application:**
 
 ```cmd
 set SERVICEPULSE_HTTPS_ENABLED=true
-set SERVICEPULSE_HTTPS_CERTIFICATEPATH=C:\path\to\repo\.local\certs\localhost.pfx
+set SERVICEPULSE_HTTPS_CERTIFICATEPATH=C:\Users\warwi\source\repos\Particular\ServicePulse\.local\certs\localhost.pfx
 set SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD=changeit
 set SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS=
 set SERVICEPULSE_HTTPS_PORT=
@@ -140,6 +139,10 @@ set SERVICEPULSE_HTTPS_ENABLEHSTS=
 cd src\ServicePulse
 dotnet run
 ```
+
+#### Scenario 1: Basic HTTPS Connectivity
+
+Verify that HTTPS is working with a valid certificate.
 
 **Test with curl:**
 
@@ -160,23 +163,9 @@ curl --ssl-no-revoke -v https://localhost:5291 2>&1 | findstr /C:"HTTP/" /C:"SSL
 
 The request succeeds over HTTPS. The exact SSL output varies by curl version, but you should see `HTTP/1.1 200 OK` confirming success.
 
-#### Scenario 2: HTTP Disabled (.NET 8)
+#### Scenario 2: HTTP Disabled
 
 Verify that HTTP requests fail when only HTTPS is enabled.
-
-**Set environment variables and start ServicePulse** (same as Scenario 1):
-
-```cmd
-set SERVICEPULSE_HTTPS_ENABLED=true
-set SERVICEPULSE_HTTPS_CERTIFICATEPATH=C:\path\to\repo\.local\certs\localhost.pfx
-set SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD=
-set SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS=
-set SERVICEPULSE_HTTPS_PORT=
-set SERVICEPULSE_HTTPS_ENABLEHSTS=
-
-cd src\ServicePulse
-dotnet run
-```
 
 **Test with curl (HTTP):**
 
@@ -192,21 +181,23 @@ curl: (52) Empty reply from server
 
 HTTP requests fail because Kestrel is listening for HTTPS but receives plaintext HTTP, which it cannot process. The server closes the connection without responding.
 
-### .NET Framework
+---
+
+### HTTPS Enabled (.NET Framework)
 
 > [!NOTE]
 > Complete the [.NET Framework Prerequisites](#net-framework-prerequisites) section first.
 
-#### Scenario 3: Basic HTTPS Connectivity (.NET Framework)
-
-Verify that HTTPS is working with ServicePulse.Host.
-
-**Start ServicePulse.Host:**
+**Start the application:**
 
 ```cmd
 cd src\ServicePulse.Host\bin\Debug\net48
 ServicePulse.Host.exe --url=https://localhost:9090 --httpsenabled=true
 ```
+
+#### Scenario 3: Basic HTTPS Connectivity
+
+Verify that HTTPS is working with ServicePulse.Host.
 
 **Test with curl:**
 
@@ -224,16 +215,9 @@ curl --ssl-no-revoke -v https://localhost:9090 2>&1 | findstr /C:"HTTP/" /C:"SSL
 
 The request succeeds over HTTPS. You should see `HTTP/1.1 200 OK` confirming success.
 
-#### Scenario 4: HTTP Disabled (.NET Framework)
+#### Scenario 4: HTTP Disabled
 
 Verify that HTTP requests fail when HTTPS is configured.
-
-**Start ServicePulse.Host** (same as Scenario 3):
-
-```cmd
-cd src\ServicePulse.Host\bin\Debug\net48
-ServicePulse.Host.exe --url=https://localhost:9090 --httpsenabled=true
-```
 
 **Test with curl (HTTP):**
 
@@ -265,17 +249,6 @@ set SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD=
 set SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS=
 set SERVICEPULSE_HTTPS_PORT=
 set SERVICEPULSE_HTTPS_ENABLEHSTS=
-```
-
-**PowerShell:**
-
-```powershell
-$env:SERVICEPULSE_HTTPS_ENABLED = $null
-$env:SERVICEPULSE_HTTPS_CERTIFICATEPATH = $null
-$env:SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD = $null
-$env:SERVICEPULSE_HTTPS_REDIRECTHTTPTOHTTPS = $null
-$env:SERVICEPULSE_HTTPS_PORT = $null
-$env:SERVICEPULSE_HTTPS_ENABLEHSTS = $null
 ```
 
 ### Cleanup (.NET Framework)
@@ -385,7 +358,7 @@ If `curl --ssl-no-revoke https://localhost:9090` hangs with no response:
 
 ## See Also
 
-- [HTTPS Configuration](https-configuration.md) - Configuration reference for all HTTPS settings
-- [Forwarded Headers Configuration](forwarded-headers.md) - Configure forwarded headers when behind a reverse proxy
+- [HTTPS Configuration](https://docs.particular.net/servicepulse/security/configuration/tls#configuration) - Configuration reference for all HTTPS settings
+- [Forwarded Headers Configuration](https://docs.particular.net/servicepulse/security/configuration/forward-headers#configuration) - Configure forwarded headers when behind a reverse proxy
 - [Forwarded Headers Testing](forwarded-headers-testing.md) - Testing forwarded headers without a reverse proxy
 - [Reverse Proxy Testing](nginx-testing.md) - Testing with NGINX reverse proxy

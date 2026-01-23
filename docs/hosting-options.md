@@ -70,14 +70,14 @@ Not a hosting option - this is a NuGet package that bundles ServicePulse for emb
 
 ## Key Differences
 
-| Option | Technology | Reverse Proxy | Platform |
-|--------|-----------|---------------|----------|
-| Docker/ASP.NET Core | .NET 8.0 | Yes (YARP) | Cross-platform |
-| ServicePulse.Host | .NET 4.8 + OWIN | No | Windows only |
-| IIS Extract | Static files | No | Any web server |
+| Option              | Technology      | Reverse Proxy | Platform       |
+|---------------------|-----------------|---------------|----------------|
+| Docker/ASP.NET Core | .NET 8.0        | Yes (YARP)    | Cross-platform |
+| ServicePulse.Host   | .NET 4.8 + OWIN | No            | Windows only   |
+| IIS Extract         | Static files    | No            | Any web server |
 
 ## See Also
 
-- [HTTPS Configuration](https-configuration.md) - Configure direct HTTPS for either platform
-- [Forwarded Headers Configuration](forwarded-headers.md) - Configure forwarded headers when behind a reverse proxy
+- [HTTPS Configuration](https://docs.particular.net/servicepulse/security/configuration/tls#configuration) - Configure direct HTTPS for either platform
+- [Forwarded Headers Configuration](https://docs.particular.net/servicepulse/security/configuration/forward-headers#configuration) - Configure forwarded headers when behind a reverse proxy
 - [HTTPS Testing](https-testing.md) - Test HTTPS configuration locally

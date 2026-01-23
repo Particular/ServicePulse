@@ -22,7 +22,7 @@ See [ServicePulse Security](https://docs.particular.net/servicepulse/security).
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
 - [mkcert](https://github.com/FiloSottile/mkcert) for generating local development certificates
-- ServicePulse built locally (see main README for build instructions)
+- ServicePulse built locally (see [main README for instructions](../README.md#setting-up-the-project-for-development))
 - curl (included with Windows 10/11)
 
 ### Installing mkcert
@@ -601,8 +601,8 @@ The `/debug/request-info` endpoint is only available:
 
 ## See Also
 
-- [HTTPS Configuration](https-configuration.md) - Configuration reference for all HTTPS settings
-- [Forwarded Headers Configuration](forwarded-headers.md) - Configuration reference for all forwarded headers settings
+- [HTTPS Configuration](https://docs.particular.net/servicepulse/security/configuration/tls#configuration) - Configuration reference for all HTTPS settings
+- [Forwarded Headers Configuration](https://docs.particular.net/servicepulse/security/configuration/forward-headers#configuration) - Configuration reference for all forwarded headers settings
 - [HTTPS Testing](https-testing.md) - Testing direct HTTPS without a reverse proxy
 - [Forwarded Headers Testing](forwarded-headers-testing.md) - Testing forwarded headers without a reverse proxy
 - [Authentication Testing](authentication-testing.md) - Testing OIDC authentication

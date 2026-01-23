@@ -2,10 +2,13 @@
 
 using System.Net;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 class Settings
 {
+    static readonly ILogger<Settings> logger = LoggerUtil.CreateStaticLogger<Settings>();
+
     public required Uri ServiceControlUri { get; init; }
 
     public required Uri? MonitoringUri { get; init; }
@@ -159,7 +162,7 @@ class Settings
             Environment.GetEnvironmentVariable("SERVICEPULSE_HTTPS_HSTSINCLUDESUBDOMAINS"),
             defaultValue: false);
 
-        return new Settings
+        var settings = new Settings
         {
             ServiceControlUri = serviceControlUri,
             MonitoringUri = monitoringUri,
@@ -179,6 +182,12 @@ class Settings
             HttpsHstsMaxAgeSeconds = httpsHstsMaxAgeSeconds,
             HttpsHstsIncludeSubDomains = httpsHstsIncludeSubDomains
         };
+
+        settings.LogForwardedHeadersConfiguration();
+        settings.ValidateHttpsCertificateConfiguration();
+        settings.LogHttpsConfiguration();
+
+        return settings;
     }
 
     static bool ParseBool(string? value, bool defaultValue)
@@ -284,5 +293,131 @@ class Settings
     class MonitoringUrls
     {
         public string[] Addresses { get; set; } = [];
+    }
+
+    /// <summary>
+    /// Logs the forwarded headers configuration and warns about potential misconfigurations.
+    /// </summary>
+    void LogForwardedHeadersConfiguration()
+    {
+        var hasProxyConfig = ForwardedHeadersKnownProxies.Count > 0 || ForwardedHeadersKnownNetworks.Count > 0;
+        var knownProxiesDisplay = ForwardedHeadersKnownProxies.Count > 0
+            ? string.Join(", ", ForwardedHeadersKnownProxies)
+            : "(none)";
+        var knownNetworksDisplay = ForwardedHeadersKnownNetworks.Count > 0
+            ? string.Join(", ", ForwardedHeadersKnownNetworks)
+            : "(none)";
+
+        logger.LogInformation("Forwarded headers settings: Enabled={Enabled}, TrustAllProxies={TrustAllProxies}, KnownProxies={KnownProxies}, KnownNetworks={KnownNetworks}",
+            ForwardedHeadersEnabled, ForwardedHeadersTrustAllProxies, knownProxiesDisplay, knownNetworksDisplay);
+
+        // Warn about potential misconfigurations
+        if (!ForwardedHeadersEnabled && hasProxyConfig)
+        {
+            logger.LogWarning("Forwarded headers processing is disabled but proxy configuration is present. SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES and SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS settings will be ignored");
+        }
+
+        if (ForwardedHeadersEnabled && ForwardedHeadersTrustAllProxies)
+        {
+            logger.LogWarning("Forwarded headers is configured to trust all proxies. Any client can spoof X-Forwarded-* headers. Consider configuring SERVICEPULSE_FORWARDEDHEADERS_KNOWNPROXIES or SERVICEPULSE_FORWARDEDHEADERS_KNOWNNETWORKS for production environments");
+        }
+
+        if (!ForwardedHeadersEnabled && ForwardedHeadersTrustAllProxies)
+        {
+            logger.LogWarning("Forwarded headers is disabled but TrustAllProxies is true. SERVICEPULSE_FORWARDEDHEADERS_TRUSTALLPROXIES setting will be ignored");
+        }
+
+        if (ForwardedHeadersEnabled && !ForwardedHeadersTrustAllProxies && !hasProxyConfig)
+        {
+            logger.LogWarning("Forwarded headers is enabled but no trusted proxies are configured. X-Forwarded-* headers will not be processed");
+        }
+
+        if (ForwardedHeadersEnabled && ForwardedHeadersKnownProxies.Count > 0 && ForwardedHeadersKnownNetworks.Count > 0)
+        {
+            logger.LogInformation("Forwarded headers has both KnownProxies and KnownNetworks configured. Both settings will be used to determine trusted proxies");
+        }
+    }
+
+    /// <summary>
+    /// Validates the HTTPS certificate configuration when HTTPS is enabled.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when HTTPS is enabled but the certificate path is not set or the file does not exist.</exception>
+    void ValidateHttpsCertificateConfiguration()
+    {
+        if (!HttpsEnabled)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(HttpsCertificatePath))
+        {
+            var message = "SERVICEPULSE_HTTPS_CERTIFICATEPATH is required when HTTPS is enabled. Please specify the path to a valid HTTPS certificate file (.pfx or .pem)";
+            logger.LogCritical(message);
+            throw new InvalidOperationException(message);
+        }
+
+        if (!File.Exists(HttpsCertificatePath))
+        {
+            var message = $"SERVICEPULSE_HTTPS_CERTIFICATEPATH does not exist. Current value: '{HttpsCertificatePath}'";
+            logger.LogCritical(message);
+            throw new InvalidOperationException(message);
+        }
+    }
+
+    /// <summary>
+    /// Logs the HTTPS configuration and warns about potential misconfigurations.
+    /// </summary>
+    void LogHttpsConfiguration()
+    {
+        var httpsPortDisplay = HttpsPort.HasValue ? HttpsPort.Value.ToString() : "(null)";
+
+        logger.LogInformation("HTTPS settings: Enabled={Enabled}, CertificatePath={CertificatePath}, HasCertificatePassword={HasCertificatePassword}, RedirectHttpToHttps={RedirectHttpToHttps}, HttpsPort={HttpsPort}, EnableHsts={EnableHsts}, HstsMaxAgeSeconds={HstsMaxAgeSeconds}, HstsIncludeSubDomains={HstsIncludeSubDomains}",
+            HttpsEnabled, HttpsCertificatePath, !string.IsNullOrEmpty(HttpsCertificatePassword), HttpsRedirectHttpToHttps, httpsPortDisplay, HttpsEnableHsts, HttpsHstsMaxAgeSeconds, HttpsHstsIncludeSubDomains);
+
+        if (HttpsEnabled && EnableReverseProxy)
+        {
+            logger.LogInformation("HTTPS is enabled with reverse proxy. Backend connections to ServiceControl and Monitoring will be upgraded to HTTPS");
+        }
+
+        if (HttpsEnabled && !EnableReverseProxy)
+        {
+            logger.LogInformation("HTTPS is enabled without reverse proxy. ServiceControl and Monitoring URLs will be upgraded to HTTPS");
+        }
+
+        // Warn about potential misconfigurations
+        if (!HttpsEnabled)
+        {
+            logger.LogWarning("Kestrel HTTPS is disabled. Local communication will not be encrypted unless TLS is terminated by a reverse proxy");
+        }
+
+        if (!HttpsEnabled && (!string.IsNullOrEmpty(HttpsCertificatePath) || !string.IsNullOrEmpty(HttpsCertificatePassword)))
+        {
+            logger.LogWarning("HTTPS is disabled but certificate settings are provided. SERVICEPULSE_HTTPS_CERTIFICATEPATH and SERVICEPULSE_HTTPS_CERTIFICATEPASSWORD will be ignored");
+        }
+
+        if (HttpsRedirectHttpToHttps && !HttpsEnableHsts)
+        {
+            logger.LogWarning("HTTPS redirect is enabled but HSTS is disabled. Consider enabling SERVICEPULSE_HTTPS_ENABLEHSTS for better security");
+        }
+
+        if (!HttpsEnabled && HttpsEnableHsts)
+        {
+            logger.LogWarning("HSTS is enabled but Kestrel HTTPS is disabled. HSTS headers will only be effective if TLS is terminated by a reverse proxy");
+        }
+
+        if (!HttpsEnabled && HttpsRedirectHttpToHttps)
+        {
+            logger.LogWarning("HTTPS redirect is enabled but Kestrel HTTPS is disabled. Redirect will only work if TLS is terminated by a reverse proxy");
+        }
+
+        if (HttpsPort.HasValue && !HttpsRedirectHttpToHttps)
+        {
+            logger.LogWarning("SERVICEPULSE_HTTPS_PORT is configured but HTTPS redirect is disabled. The port setting will be ignored");
+        }
+
+        if (HttpsRedirectHttpToHttps && !HttpsPort.HasValue)
+        {
+            logger.LogInformation("SERVICEPULSE_HTTPS_PORT is not configured. HTTPS redirect will be ignored");
+        }
     }
 }

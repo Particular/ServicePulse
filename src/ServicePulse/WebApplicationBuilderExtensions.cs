@@ -29,13 +29,29 @@ static class WebApplicationBuilderExtensions
         // Kestrel HTTPS is disabled by default
         if (settings.HttpsEnabled)
         {
+            var certificate = LoadCertificate(settings);
+
             builder.WebHost.ConfigureKestrel(serverOptions =>
             {
                 serverOptions.ConfigureHttpsDefaults(httpsOptions =>
                 {
-                    httpsOptions.ServerCertificate = LoadCertificate(settings);
+                    httpsOptions.ServerCertificate = certificate;
                 });
             });
+
+            // Change URL scheme to HTTPS when HTTPS is enabled.
+            // If ASPNETCORE_URLS is set, convert http:// to https://.
+            // Otherwise, use a default HTTPS URL.
+            var configuredUrls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+            if (!string.IsNullOrEmpty(configuredUrls))
+            {
+                var httpsUrls = configuredUrls.Replace("http://", "https://");
+                builder.WebHost.UseUrls(httpsUrls);
+            }
+            else
+            {
+                builder.WebHost.UseUrls("https://*:5291");
+            }
         }
     }
 
