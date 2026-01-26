@@ -80,7 +80,7 @@
     "vite-plugin-checker": "0.12.0",
     "vite-plugin-vue-devtools": "8.0.5",
     "vitest": "4.0.12",
-    "vue-tsc": "3.2.2"
+    "vue-tsc": "3.2.4"
   },
   "msw": {
     "workerDirectory": [
