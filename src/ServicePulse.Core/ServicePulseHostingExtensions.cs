@@ -31,6 +31,6 @@ public static class ServicePulseHostingExtensions
         {
             context.Response.ContentType = MediaTypeNames.Text.JavaScript;
             return constantsFile;
-        });
+        }).AllowAnonymous();
     }
 }
