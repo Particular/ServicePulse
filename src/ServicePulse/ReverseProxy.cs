@@ -58,20 +58,4 @@ static class ReverseProxy
 
         return (routes, clusters);
     }
-
-    static Uri UpgradeToHttps(Uri uri)
-    {
-        if (uri.Scheme == Uri.UriSchemeHttps)
-        {
-            return uri;
-        }
-
-        var builder = new UriBuilder(uri)
-        {
-            Scheme = Uri.UriSchemeHttps,
-            Port = uri.IsDefaultPort ? -1 : uri.Port
-        };
-
-        return builder.Uri;
-    }
 }
