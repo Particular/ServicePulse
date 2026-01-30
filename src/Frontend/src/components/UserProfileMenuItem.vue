@@ -63,12 +63,24 @@ async function handleLogout() {
 
 .user-profile-menu .navbar-label {
   margin-left: 8px;
+  max-width: 135px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 @media (min-width: 768px) {
   .user-profile-menu .dropdown-toggle {
     padding-bottom: 15px;
     padding-top: 20px;
+  }
+}
+
+@media (max-width: 1685px) {
+  .user-profile-menu .navbar-label {
+    display: none;
   }
 }
 
