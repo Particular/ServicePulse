@@ -41,6 +41,10 @@ async function handleLogout() {
 @import "@/assets/header-menu-item.css";
 @import "@/assets/dropdown.css";
 
+.user-profile-menu {
+  max-width: 185px;
+}
+
 .user-profile-menu .dropdown-toggle {
   display: block;
   color: var(--bs-link-color);
@@ -54,6 +58,7 @@ async function handleLogout() {
 
 .user-profile-menu .dropdown-menu {
   min-width: 200px;
+  position: absolute;
 }
 
 .user-profile-menu .navbar-label {
