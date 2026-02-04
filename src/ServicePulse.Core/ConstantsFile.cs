@@ -14,8 +14,8 @@ window.defaultConfig = {
   version: '{{version}}',
   service_control_url: '{{settings.ServiceControlUrl}}',
   monitoring_urls: ['{{settings.MonitoringUrl ?? "!"}}'],
-  showPendingRetry: {{(settings.ShowPendingRetry ? "true" : "false")}},
-  isEmbedded: {{(settings.IsEmbedded.ToString().ToLower())}}
+  showPendingRetry: {{settings.ShowPendingRetry.ToString().ToLower()}},
+  isEmbedded: {{settings.IsEmbedded.ToString().ToLower()}}
 }
 """;
 
