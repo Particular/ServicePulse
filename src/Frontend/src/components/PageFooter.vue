@@ -46,11 +46,13 @@ const { configuration } = storeToRefs(configurationStore);
           </span>
 
           <span v-if="isEmbedded"> ServicePulse: Embedded </span>
-          <span v-if="!isEmbedded && !newVersions.newSPVersion.newspversion && environment.sp_version"> ServicePulse v{{ environment.sp_version }} </span>
-          <span v-if="!isEmbedded && newVersions.newSPVersion.newspversion && environment.sp_version">
+        <template v-else-if="environment.sp_version">
+          <span v-if="!newVersions.newSPVersion.newspversion"> ServicePulse v{{ environment.sp_version }} </span>
+          <span v-else>
             ServicePulse v{{ environment.sp_version }} (<FAIcon v-if="newVersions.newSPVersion.newspversionnumber" class="footer-icon fake-link" :icon="faArrowTurnUp" />
             <a :href="newVersions.newSPVersion.newspversionlink" target="_blank">v{{ newVersions.newSPVersion.newspversionnumber }} available</a>)
           </span>
+        </template>
           <span :title="scAddressTooltip">
             Service Control:
             <span class="connected-status" v-if="connectionState.connected && !connectionState.connecting">
