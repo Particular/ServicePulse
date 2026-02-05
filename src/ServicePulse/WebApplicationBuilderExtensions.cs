@@ -31,23 +31,20 @@ static class WebApplicationBuilderExtensions
         {
             var certificate = LoadCertificate(settings);
 
+            // Parse configured URLs and set up HTTPS endpoints explicitly
+            var configuredUrls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+            var endpoints = ParseEndpoints(configuredUrls);
+
             builder.WebHost.ConfigureKestrel(serverOptions =>
             {
-                serverOptions.ConfigureHttpsDefaults(httpsOptions =>
+                foreach (var endpoint in endpoints)
                 {
-                    httpsOptions.ServerCertificate = certificate;
-                });
+                    serverOptions.ListenAnyIP(endpoint.Port, listenOptions =>
+                    {
+                        listenOptions.UseHttps(certificate);
+                    });
+                }
             });
-
-            // Change URL scheme to HTTPS when HTTPS is enabled.
-            // If ASPNETCORE_URLS is set with http://, convert to https://.
-            // Otherwise, let ASP.NET Core use its default configuration.
-            var configuredUrls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
-            if (!string.IsNullOrEmpty(configuredUrls) && configuredUrls.Contains("http://"))
-            {
-                var httpsUrls = configuredUrls.Replace("http://", "https://");
-                builder.WebHost.UseUrls(httpsUrls);
-            }
         }
     }
 
@@ -65,4 +62,62 @@ static class WebApplicationBuilderExtensions
             ? new X509Certificate2(certPath)
             : new X509Certificate2(certPath, settings.HttpsCertificatePassword);
     }
+
+    static List<EndpointConfig> ParseEndpoints(string? configuredUrls)
+    {
+        var endpoints = new List<EndpointConfig>();
+
+        if (string.IsNullOrEmpty(configuredUrls))
+        {
+            // Default to port 443 for HTTPS
+            endpoints.Add(new EndpointConfig(443));
+            return endpoints;
+        }
+
+        // ASPNETCORE_URLS can contain multiple URLs separated by semicolons
+        var urls = configuredUrls.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        foreach (var url in urls)
+        {
+            if (TryParsePort(url, out var port))
+            {
+                endpoints.Add(new EndpointConfig(port));
+            }
+        }
+
+        // Fall back to default if no valid URLs were parsed
+        if (endpoints.Count == 0)
+        {
+            endpoints.Add(new EndpointConfig(443));
+        }
+
+        return endpoints;
+    }
+
+    static bool TryParsePort(string url, out int port)
+    {
+        port = 0;
+
+        // Handle formats like:
+        // http://+:5000, http://*:5000, http://0.0.0.0:5000
+        // http://[::]:5000, http://localhost:5000
+        var colonIndex = url.LastIndexOf(':');
+        if (colonIndex == -1)
+        {
+            return false;
+        }
+
+        var portPart = url[(colonIndex + 1)..];
+
+        // Remove any trailing path
+        var slashIndex = portPart.IndexOf('/');
+        if (slashIndex != -1)
+        {
+            portPart = portPart[..slashIndex];
+        }
+
+        return int.TryParse(portPart, out port) && port > 0 && port <= 65535;
+    }
+
+    record EndpointConfig(int Port);
 }
