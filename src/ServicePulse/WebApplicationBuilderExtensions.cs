@@ -40,17 +40,13 @@ static class WebApplicationBuilderExtensions
             });
 
             // Change URL scheme to HTTPS when HTTPS is enabled.
-            // If ASPNETCORE_URLS is set, convert http:// to https://.
-            // Otherwise, use a default HTTPS URL.
+            // If ASPNETCORE_URLS is set with http://, convert to https://.
+            // Otherwise, let ASP.NET Core use its default configuration.
             var configuredUrls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
-            if (!string.IsNullOrEmpty(configuredUrls))
+            if (!string.IsNullOrEmpty(configuredUrls) && configuredUrls.Contains("http://"))
             {
                 var httpsUrls = configuredUrls.Replace("http://", "https://");
                 builder.WebHost.UseUrls(httpsUrls);
-            }
-            else
-            {
-                builder.WebHost.UseUrls("https://*:5291");
             }
         }
     }
