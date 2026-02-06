@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ServicePulse.Core\ServicePulse.Core.csproj" />
+    <ProjectReference Include="..\Particular.ServicePulse.Core\Particular.ServicePulse.Core.csproj" />
   </ItemGroup>
 
 </Project>

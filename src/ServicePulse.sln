@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.1.11312.151 d18.0
+VisualStudioVersion = 18.1.11312.151
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicePulse.Host", "ServicePulse.Host\ServicePulse.Host.csproj", "{D120B791-BD1B-4E06-B4E1-69801A73209B}"
 EndProject
@@ -38,7 +38,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse", "ServicePuls
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse.Tests", "ServicePulse.Tests\ServicePulse.Tests.csproj", "{9B75F526-937E-4B25-A9F6-2862129993EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse.Core", "ServicePulse.Core\ServicePulse.Core.csproj", "{8FCA3827-719C-49B7-A143-E48461D60F3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Particular.ServicePulse.Core", "Particular.ServicePulse.Core\Particular.ServicePulse.Core.csproj", "{8FCA3827-719C-49B7-A143-E48461D60F3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
