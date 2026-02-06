@@ -28,6 +28,8 @@ jobs:
           fetch-depth: 0
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v5.1.0
+        with:
+          global-json-file: global.json
       - name: Set up Node.js
         uses: actions/setup-node@v6.2.0
         with:
