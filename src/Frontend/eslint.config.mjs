@@ -4,6 +4,13 @@ import tseslint from "typescript-eslint";
 import pluginVue from "eslint-plugin-vue";
 import pluginPromise from "eslint-plugin-promise";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import noRawFetch from "./eslint-rules/no-raw-fetch.ts";
+
+const localPlugin = {
+  rules: {
+    "no-raw-fetch": noRawFetch,
+  },
+};
 
 export default tseslint.config(
   {
@@ -12,6 +19,9 @@ export default tseslint.config(
   {
     files: ["**/*.{js,mjs,ts,vue}"],
     languageOptions: { globals: globals.browser, ecmaVersion: "latest", parserOptions: { parser: tseslint.parser } },
+    plugins: {
+      local: localPlugin,
+    },
     extends: [pluginJs.configs.recommended, ...tseslint.configs.recommended, ...pluginVue.configs["flat/essential"], pluginPromise.configs["flat/recommended"], eslintPluginPrettierRecommended],
     rules: {
       "no-duplicate-imports": "error",
@@ -24,6 +34,7 @@ export default tseslint.config(
       "prefer-const": "error",
       eqeqeq: ["error", "smart"],
       "no-throw-literal": "warn",
+      "local/no-raw-fetch": "error",
     },
   }
 );

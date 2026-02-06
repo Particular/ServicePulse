@@ -6,6 +6,8 @@
 .navbar {
   height: 60px;
   flex-wrap: nowrap;
+  position: relative;
+  z-index: 1000;
 }
 
 .navbar-inverse {
@@ -148,7 +150,7 @@
   }
 }
 
-@media (max-width: 1450px) {
+@media (max-width: 1685px) {
   .navbar-label {
     display: none;
   }

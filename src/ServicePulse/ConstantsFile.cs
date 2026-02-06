@@ -18,8 +18,23 @@ class ConstantsFile
         }
         else
         {
-            serviceControlUrl = settings.ServiceControlUri.ToString();
-            monitoringUrl = settings.MonitoringUri?.ToString() ?? "!";
+            // When HTTPS is enabled, upgrade backend URLs to HTTPS
+            var scUri = settings.HttpsEnabled
+                ? UpgradeToHttps(settings.ServiceControlUri)
+                : settings.ServiceControlUri;
+            serviceControlUrl = scUri.ToString();
+
+            if (settings.MonitoringUri != null)
+            {
+                var mUri = settings.HttpsEnabled
+                    ? UpgradeToHttps(settings.MonitoringUri)
+                    : settings.MonitoringUri;
+                monitoringUrl = mUri.ToString();
+            }
+            else
+            {
+                monitoringUrl = "!";
+            }
         }
 
         var constantsFile = $$"""
@@ -50,5 +65,21 @@ window.defaultConfig = {
         }
 
         return majorMinorPatch;
+    }
+
+    static Uri UpgradeToHttps(Uri uri)
+    {
+        if (uri.Scheme == Uri.UriSchemeHttps)
+        {
+            return uri;
+        }
+
+        var builder = new UriBuilder(uri)
+        {
+            Scheme = Uri.UriSchemeHttps,
+            Port = uri.IsDefaultPort ? -1 : uri.Port
+        };
+
+        return builder.Uri;
     }
 }

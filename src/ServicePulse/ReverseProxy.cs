@@ -10,12 +10,17 @@ static class ReverseProxy
         var routes = new List<RouteConfig>();
         var clusters = new List<ClusterConfig>();
 
+        // When HTTPS is enabled on ServicePulse, assume ServiceControl also uses HTTPS
+        var serviceControlUri = settings.HttpsEnabled
+            ? UpgradeToHttps(settings.ServiceControlUri)
+            : settings.ServiceControlUri;
+
         var serviceControlInstance = new ClusterConfig
         {
             ClusterId = "serviceControlInstance",
             Destinations = new Dictionary<string, DestinationConfig>
             {
-                { "instance", new DestinationConfig { Address = settings.ServiceControlUri.ToString() } }
+                { "instance", new DestinationConfig { Address = serviceControlUri.ToString() } }
             }
         };
         var serviceControlRoute = new RouteConfig
@@ -33,12 +38,17 @@ static class ReverseProxy
 
         if (settings.MonitoringUri != null)
         {
+            // When HTTPS is enabled on ServicePulse, assume Monitoring also uses HTTPS
+            var monitoringUri = settings.HttpsEnabled
+                ? UpgradeToHttps(settings.MonitoringUri)
+                : settings.MonitoringUri;
+
             var monitoringInstance = new ClusterConfig
             {
                 ClusterId = "monitoringInstance",
                 Destinations = new Dictionary<string, DestinationConfig>
                 {
-                    { "instance", new DestinationConfig { Address = settings.MonitoringUri.ToString() } }
+                    { "instance", new DestinationConfig { Address = monitoringUri.ToString() } }
                 }
             };
 
@@ -54,5 +64,21 @@ static class ReverseProxy
         }
 
         return (routes, clusters);
+    }
+
+    static Uri UpgradeToHttps(Uri uri)
+    {
+        if (uri.Scheme == Uri.UriSchemeHttps)
+        {
+            return uri;
+        }
+
+        var builder = new UriBuilder(uri)
+        {
+            Scheme = Uri.UriSchemeHttps,
+            Port = uri.IsDefaultPort ? -1 : uri.Port
+        };
+
+        return builder.Uri;
     }
 }

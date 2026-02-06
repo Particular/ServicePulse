@@ -1,7 +1,7 @@
 import { watch, ref, shallowReadonly, type WatchStopHandle } from "vue";
 import { useCounter, useDocumentVisibility, useTimeoutPoll } from "@vueuse/core";
 
-export default function useFetchWithAutoRefresh(name: string, fetch: () => Promise<void>, intervalMs: number) {
+export default function useFetchWithAutoRefresh(name: string, fetchFn: () => Promise<void>, intervalMs: number) {
   let watchStop: WatchStopHandle | null = null;
   const { count, inc, dec, reset } = useCounter(0);
   const interval = ref(intervalMs);
@@ -11,7 +11,7 @@ export default function useFetchWithAutoRefresh(name: string, fetch: () => Promi
       return;
     }
     isRefreshing.value = true;
-    await fetch();
+    await fetchFn();
     isRefreshing.value = false;
   };
   const { isActive, pause, resume } = useTimeoutPoll(

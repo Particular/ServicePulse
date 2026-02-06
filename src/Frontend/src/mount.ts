@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import type { Router } from "vue-router";
-import App from "./App.vue";
+import AuthApp from "./AuthApp.vue";
 import Toast, { type PluginOptions, POSITION } from "vue-toastification";
 import VueTippy from "vue-tippy";
 import { createPinia } from "pinia";
@@ -22,7 +22,7 @@ export function mount({ router }: { router: Router }) {
     next();
   });
 
-  const app = createApp(App);
+  const app = createApp(AuthApp);
   app.use(router).use(Toast, toastOptions).use(SimpleTypeahead).use(createPinia()).use(VueTippy);
   app.mount(`#app`);
 
