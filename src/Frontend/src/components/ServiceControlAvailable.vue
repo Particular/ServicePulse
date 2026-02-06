@@ -6,6 +6,7 @@ import serviceControlClient from "@/components/serviceControlClient";
 
 const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
 const connectionState = connectionStore.connectionState;
+const isEmbedded = window.defaultConfig.embedded;
 </script>
 
 <template>
@@ -19,7 +20,7 @@ const connectionState = connectionStore.connectionState;
           <span id="serviceControlUrl">{{ serviceControlClient.url }}</span
           >. Please ensure that ServiceControl is running and accessible from your machine.
         </p>
-        <div class="action-toolbar">
+        <div v-if="!isEmbedded" class="action-toolbar">
           <RouterLink :to="routeLinks.configuration.connections.link"><span class="btn btn-default btn-primary whiteText">View Connection Details</span></RouterLink>
           <a class="btn btn-default btn-secondary" href="https://docs.particular.net/monitoring/metrics/">Learn more</a>
         </div>
