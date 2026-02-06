@@ -28,9 +28,9 @@ public record ServicePulseSettings
     public required bool ShowPendingRetry { get; init; }
 
     /// <summary>
-    /// Flag to indicate if ServicePulse is running in embedded mode.
+    /// Flag to indicate if ServicePulse is running in integrated mode.
     /// </summary>
-    public required bool IsEmbedded { get; init; }
+    public required bool IsIntegrated { get; init; }
 
     /// <summary>
     /// Loads the settings from environment variables.
@@ -70,7 +70,7 @@ public record ServicePulseSettings
             MonitoringUrl = monitoringUri?.ToString(),
             DefaultRoute = defaultRoute,
             ShowPendingRetry = showPendingRetry,
-            IsEmbedded = false
+            IsIntegrated = false
         };
     }
 

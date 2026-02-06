@@ -20,7 +20,7 @@ const serviceControlValid = ref<boolean | null>(null);
 const testingMonitoring = ref(false);
 const monitoringValid = ref<boolean | null>(null);
 const connectionSaved = ref<boolean | null>(null);
-const isEmbedded = window.defaultConfig.isEmbedded;
+const isIntegrated = window.defaultConfig.isIntegrated;
 
 async function testServiceControlUrl() {
   if (localServiceControlUrl.value) {
@@ -67,7 +67,7 @@ function saveConnections() {
 function updateServiceControlUrls() {
   const params = new URLSearchParams();
 
-  if (!isEmbedded) {
+  if (!isIntegrated) {
     if (!localServiceControlUrl.value) {
       throw new Error("ServiceControl URL is mandatory");
     } else if (!localServiceControlUrl.value.endsWith("/")) {
@@ -98,14 +98,14 @@ function updateServiceControlUrls() {
               <div class="col-7 form-group">
                 <label for="serviceControlUrl">
                   CONNECTION URL
-                  <template v-if="isEmbedded">
-                    <span>(EMBEDDED)</span>
+                  <template v-if="isIntegrated">
+                    <span>(INTEGRATED)</span>
                   </template>
                   <template v-if="connectionState.unableToConnect">
                     <span class="failed-validation"><FAIcon :icon="faExclamationTriangle" /> Unable to connect </span>
                   </template>
                 </label>
-                <input type="text" id="serviceControlUrl" name="serviceControlUrl" v-model="localServiceControlUrl" class="form-control" style="color: #000" required :disabled="isEmbedded" />
+                <input type="text" id="serviceControlUrl" name="serviceControlUrl" v-model="localServiceControlUrl" class="form-control" style="color: #000" required :disabled="isIntegrated" />
               </div>
 
               <div class="col-5 no-side-padding">
