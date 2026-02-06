@@ -2,7 +2,6 @@
 
 using System.Net;
 using Microsoft.Extensions.Logging;
-using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 class ServicePulseHostSettings
 {
