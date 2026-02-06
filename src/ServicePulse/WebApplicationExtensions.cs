@@ -27,7 +27,7 @@ static class WebApplicationExtensions
 
                 // Configuration
                 var knownProxies = settings.ForwardedHeadersKnownProxies.Select(p => p.ToString()).ToArray();
-                var knownNetworks = settings.ForwardedHeadersKnownNetworks.Select(n => $"{n.Prefix}/{n.PrefixLength}").ToArray();
+                var knownNetworks = settings.ForwardedHeadersKnownNetworks.Select(n => n.ToString()).ToArray();
 
                 return new
                 {
@@ -58,7 +58,7 @@ static class WebApplicationExtensions
 
         // Clear default loopback-only restrictions
         options.KnownProxies.Clear();
-        options.KnownNetworks.Clear();
+        options.KnownIPNetworks.Clear();
 
         // Enabled by default
         if (settings.ForwardedHeadersTrustAllProxies)
@@ -76,7 +76,7 @@ static class WebApplicationExtensions
 
             foreach (var network in settings.ForwardedHeadersKnownNetworks)
             {
-                options.KnownNetworks.Add(network);
+                options.KnownIPNetworks.Add(network);
             }
         }
 
