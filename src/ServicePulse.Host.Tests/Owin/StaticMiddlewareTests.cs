@@ -129,7 +129,7 @@
                 }
             };
             await middleware.Invoke(context);
-            const long sizeOfFileOnDisk = 237; // this is the /app/js/app.constants.js file
+            const long sizeOfFileOnDisk = 239; // this is the /app/js/app.constants.js file
             Assert.That(context.Response.ContentLength, Is.EqualTo(sizeOfFileOnDisk));
             Assert.That(context.Response.ContentType, Is.EqualTo("application/javascript"));
         }

@@ -96,7 +96,7 @@ class ServiceControlClient {
   }
 
   private getUrl() {
-    if (window.defaultConfig?.isEmbedded && window.defaultConfig.service_control_url?.length) {
+    if (window.defaultConfig?.isIntegrated && window.defaultConfig.service_control_url?.length) {
       return window.defaultConfig.service_control_url;
     }
 

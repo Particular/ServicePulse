@@ -21,7 +21,7 @@ const environment = environmentAndVersionsStore.environment;
 const licenseStore = useLicenseStore();
 const { licenseStatus, license } = licenseStore;
 const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
-const isEmbedded = window.defaultConfig.isEmbedded;
+const isIntegrated = window.defaultConfig.isIntegrated;
 
 const scAddressTooltip = computed(() => {
   return `ServiceControl URL ${serviceControlClient.url}`;
@@ -45,7 +45,7 @@ const { configuration } = storeToRefs(configurationStore);
             <RouterLink :to="routeLinks.configuration.endpointConnection.link">Connect new endpoint</RouterLink>
           </span>
 
-          <span v-if="isEmbedded"> ServicePulse: Embedded </span>
+          <span v-if="isIntegrated"> ServicePulse: Integrated </span>
           <template v-else-if="environment.sp_version">
             <span v-if="!newVersions.newSPVersion.newspversion"> ServicePulse v{{ environment.sp_version }} </span>
             <span v-else>
