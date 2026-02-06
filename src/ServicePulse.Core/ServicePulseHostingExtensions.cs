@@ -1,8 +1,9 @@
+namespace ServicePulse;
+
 using System.Net.Mime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
-using ServicePulse;
 
 /// <summary>
 /// Extensions for hosting ServicePulse within a WebApplication.
