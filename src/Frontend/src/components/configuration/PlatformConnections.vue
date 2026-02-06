@@ -20,6 +20,7 @@ const serviceControlValid = ref<boolean | null>(null);
 const testingMonitoring = ref(false);
 const monitoringValid = ref<boolean | null>(null);
 const connectionSaved = ref<boolean | null>(null);
+const isIntegrated = window.defaultConfig.isIntegrated;
 
 async function testServiceControlUrl() {
   if (localServiceControlUrl.value) {
@@ -64,10 +65,15 @@ function saveConnections() {
 }
 
 function updateServiceControlUrls() {
-  if (!localServiceControlUrl.value) {
-    throw new Error("ServiceControl URL is mandatory");
-  } else if (!localServiceControlUrl.value.endsWith("/")) {
-    localServiceControlUrl.value += "/";
+  const params = new URLSearchParams();
+
+  if (!isIntegrated) {
+    if (!localServiceControlUrl.value) {
+      throw new Error("ServiceControl URL is mandatory");
+    } else if (!localServiceControlUrl.value.endsWith("/")) {
+      localServiceControlUrl.value += "/";
+    }
+    params.set("scu", localServiceControlUrl.value);
   }
 
   if (!localMonitoringUrl.value) {
@@ -76,8 +82,6 @@ function updateServiceControlUrls() {
     localMonitoringUrl.value += "/";
   }
 
-  const params = new URLSearchParams();
-  params.set("scu", localServiceControlUrl.value);
   params.set("mu", localMonitoringUrl.value);
   window.location.search = `?${params.toString()}`;
 }
@@ -94,11 +98,14 @@ function updateServiceControlUrls() {
               <div class="col-7 form-group">
                 <label for="serviceControlUrl">
                   CONNECTION URL
+                  <template v-if="isIntegrated">
+                    <span>(INTEGRATED)</span>
+                  </template>
                   <template v-if="connectionState.unableToConnect">
                     <span class="failed-validation"><FAIcon :icon="faExclamationTriangle" /> Unable to connect </span>
                   </template>
                 </label>
-                <input type="text" id="serviceControlUrl" name="serviceControlUrl" v-model="localServiceControlUrl" class="form-control" style="color: #000" required />
+                <input type="text" id="serviceControlUrl" name="serviceControlUrl" v-model="localServiceControlUrl" class="form-control" style="color: #000" required :disabled="isIntegrated" />
               </div>
 
               <div class="col-5 no-side-padding">

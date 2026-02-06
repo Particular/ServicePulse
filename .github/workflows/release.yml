@@ -29,7 +29,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v5.1.0
         with:
-          dotnet-version: 7.0.x
+          global-json-file: global.json
       - name: Set up Node.js
         uses: actions/setup-node@v6.1.0
         with:
@@ -82,7 +82,7 @@ jobs:
           $nugetsCount =  (Get-ChildItem -Recurse -File nugets).Count
 
           $expectedAssetsCount = 1
-          $expectedNugetsCount = 1
+          $expectedNugetsCount = 2
 
           if ($assetsCount -ne $expectedAssetsCount)
           {

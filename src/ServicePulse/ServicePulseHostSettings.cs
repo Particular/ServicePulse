@@ -1,21 +1,11 @@
 ﻿namespace ServicePulse;
 
 using System.Net;
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
-class Settings
+class ServicePulseHostSettings
 {
-    static readonly ILogger<Settings> logger = LoggerUtil.CreateStaticLogger<Settings>();
-
-    public required Uri ServiceControlUri { get; init; }
-
-    public required Uri? MonitoringUri { get; init; }
-
-    public required string DefaultRoute { get; init; }
-
-    public required bool ShowPendingRetry { get; init; }
+    static readonly ILogger<ServicePulseHostSettings> logger = LoggerUtil.CreateStaticLogger<ServicePulseHostSettings>();
 
     public required bool EnableReverseProxy { get; init; }
 
@@ -79,35 +69,8 @@ class Settings
     /// </summary>
     public required bool HttpsHstsIncludeSubDomains { get; init; }
 
-    public static Settings GetFromEnvironmentVariables()
+    public static ServicePulseHostSettings GetFromEnvironmentVariables()
     {
-        var serviceControlUrl = Environment.GetEnvironmentVariable("SERVICECONTROL_URL") ?? "http://localhost:33333/api/";
-
-        if (!serviceControlUrl.EndsWith("/", StringComparison.Ordinal))
-        {
-            serviceControlUrl += "/";
-        }
-
-        if (!serviceControlUrl.EndsWith("api/", StringComparison.Ordinal))
-        {
-            serviceControlUrl += "api/";
-        }
-
-        var serviceControlUri = new Uri(serviceControlUrl);
-
-        var monitoringUrls = ParseLegacyMonitoringValue(Environment.GetEnvironmentVariable("MONITORING_URLS"));
-        var monitoringUrl = Environment.GetEnvironmentVariable("MONITORING_URL");
-
-        monitoringUrl ??= monitoringUrls;
-        monitoringUrl ??= "http://localhost:33633/";
-
-        var monitoringUri = monitoringUrl == "!" ? null : new Uri(monitoringUrl);
-
-        var defaultRoute = Environment.GetEnvironmentVariable("DEFAULT_ROUTE") ?? "/dashboard";
-
-        var showPendingRetryValue = Environment.GetEnvironmentVariable("SHOW_PENDING_RETRY");
-        bool.TryParse(showPendingRetryValue, out var showPendingRetry);
-
         var enableReverseProxyValue = Environment.GetEnvironmentVariable("ENABLE_REVERSE_PROXY");
 
         if (!bool.TryParse(enableReverseProxyValue, out var enableReverseProxy))
@@ -162,12 +125,8 @@ class Settings
             Environment.GetEnvironmentVariable("SERVICEPULSE_HTTPS_HSTSINCLUDESUBDOMAINS"),
             defaultValue: false);
 
-        var settings = new Settings
+        var settings = new ServicePulseHostSettings
         {
-            ServiceControlUri = serviceControlUri,
-            MonitoringUri = monitoringUri,
-            DefaultRoute = defaultRoute,
-            ShowPendingRetry = showPendingRetry,
             EnableReverseProxy = enableReverseProxy,
             ForwardedHeadersEnabled = forwardedHeadersEnabled,
             ForwardedHeadersTrustAllProxies = forwardedHeadersTrustAllProxies,
@@ -186,6 +145,7 @@ class Settings
         settings.LogForwardedHeadersConfiguration();
         settings.ValidateHttpsCertificateConfiguration();
         settings.LogHttpsConfiguration();
+
 
         return settings;
     }
@@ -257,42 +217,6 @@ class Settings
         }
 
         return networks;
-    }
-
-    static string? ParseLegacyMonitoringValue(string? value)
-    {
-        if (value is null)
-        {
-            return null;
-        }
-
-        var cleanedValue = value.Replace('\'', '"');
-        var json = $$"""{"Addresses":{{cleanedValue}}}""";
-
-        MonitoringUrls? result;
-
-        try
-        {
-            result = JsonSerializer.Deserialize<MonitoringUrls>(json);
-        }
-        catch (JsonException)
-        {
-            return null;
-        }
-
-        var addresses = result?.Addresses;
-
-        if (addresses is not null && addresses.Length > 0)
-        {
-            return addresses[0];
-        }
-
-        return null;
-    }
-
-    class MonitoringUrls
-    {
-        public string[] Addresses { get; set; } = [];
     }
 
     /// <summary>
@@ -419,5 +343,38 @@ class Settings
         {
             logger.LogInformation("SERVICEPULSE_HTTPS_PORT is not configured. HTTPS redirect will be ignored");
         }
+    }
+
+    public void UpdateApplicationSettings(ref ServicePulseSettings settings)
+    {
+        // When HTTPS is enabled on ServicePulse, assume ServiceControl (and Monitoring, if configured) also uses HTTPS
+        if (HttpsEnabled)
+        {
+            settings = settings with
+            {
+                ServiceControlUrl = UpgradeToHttps(settings.ServiceControlUrl),
+                MonitoringUrl = settings.MonitoringUrl is not null
+                    ? UpgradeToHttps(settings.MonitoringUrl)
+                    : null
+            };
+        }
+    }
+
+    static string UpgradeToHttps(string url)
+    {
+        var uri = new Uri(url);
+
+        if (uri.Scheme == Uri.UriSchemeHttps)
+        {
+            return url;
+        }
+
+        var builder = new UriBuilder(uri)
+        {
+            Scheme = Uri.UriSchemeHttps,
+            Port = uri.IsDefaultPort ? -1 : uri.Port
+        };
+
+        return builder.Uri.ToString();
     }
 }
