@@ -86,4 +86,10 @@ export const serviceControlWithMonitoring = async ({ driver }: SetupFactoryOptio
 
   //default handler for /api/queues/addresses
   await driver.setUp(precondition.knownQueuesDefaultHandler);
+
+  //default handler for /api/configuration/remotes
+  await driver.setUp(precondition.hasRemoteInstances());
+
+  //default handler for /api/messages2
+  await driver.setUp(precondition.hasMessages());
 };

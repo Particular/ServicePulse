@@ -18,9 +18,25 @@ type ScenarioModule = {
 
 const scenarios: Record<string, () => Promise<ScenarioModule>> = {
   default: () => import("../browser"),
+  // Authentication scenarios
   "auth-disabled": () => import("./authentication/auth-disabled"),
   "auth-enabled": () => import("./authentication/auth-enabled"),
   "auth-authenticated": () => import("./authentication/auth-authenticated"),
+  // Audit scenarios
+  "audit-available": () => import("./audit/audit-available"),
+  "audit-unavailable": () => import("./audit/audit-unavailable"),
+  "audit-degraded": () => import("./audit/audit-degraded"),
+  "audit-no-instance": () => import("./audit/audit-no-instance"),
+  "audit-no-messages": () => import("./audit/audit-no-messages"),
+  "audit-old-sc-version": () => import("./audit/audit-old-sc-version"),
+  "audit-multiple-instances": () => import("./audit/audit-multiple-instances"),
+  // Monitoring scenarios
+  "monitoring-available": () => import("./monitoring/monitoring-available"),
+  "monitoring-unavailable": () => import("./monitoring/monitoring-unavailable"),
+  "monitoring-no-endpoints": () => import("./monitoring/monitoring-no-endpoints"),
+  // Recoverability scenarios
+  "recoverability-available": () => import("./recoverability/recoverability-available"),
+  "recoverability-unavailable": () => import("./recoverability/recoverability-unavailable"),
 };
 
 export async function loadScenario(): Promise<ScenarioModule> {

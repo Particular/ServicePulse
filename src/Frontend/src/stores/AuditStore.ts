@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref } from "vue";
 import type { SortInfo } from "@/components/SortInfo";
-import Message from "@/resources/Message";
+import Message, { MessageStatus } from "@/resources/Message";
 import { EndpointsView } from "@/resources/EndpointView";
 import type { DateRange } from "@/types/date";
 import serviceControlClient from "@/components/serviceControlClient";
@@ -26,6 +26,19 @@ export const useAuditStore = defineStore("AuditStore", () => {
   const messages = ref<Message[]>([]);
   const selectedEndpointName = ref<string>("");
   const endpoints = ref<EndpointsView[]>([]);
+
+  const hasSuccessfulMessages = ref(false);
+
+  async function checkForSuccessfulMessages() {
+    try {
+      // Fetch the latest 10 messages and check if any are successful
+      // ideally we would want to filter successful messages server-side, but the API doesn't currently support that
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<Message[]>(`messages2/?page_size=10&sort=time_sent&direction=desc`);
+      hasSuccessfulMessages.value = data?.some((msg) => msg.status === MessageStatus.Successful) ?? false;
+    } catch {
+      hasSuccessfulMessages.value = false;
+    }
+  }
 
   async function loadEndpoints() {
     try {
@@ -56,8 +69,10 @@ export const useAuditStore = defineStore("AuditStore", () => {
   return {
     refresh,
     loadEndpoints,
+    checkForSuccessfulMessages,
     sortBy: sortByInstances,
     messages,
+    hasSuccessfulMessages,
     messageFilterString,
     selectedEndpointName,
     itemsPerPage,

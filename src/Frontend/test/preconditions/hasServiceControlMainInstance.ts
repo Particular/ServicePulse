@@ -1,8 +1,9 @@
 import { serviceControlMainInstance } from "../mocks/service-control-instance-template";
 import { SetupFactoryOptions } from "../driver";
+import { serviceControlVersionSupportingAllMessages } from "./platformCapabilities";
 
 export const hasServiceControlMainInstance =
-  (serviceControlVersion = "6.1.1") =>
+  (serviceControlVersion = serviceControlVersionSupportingAllMessages) =>
   ({ driver }: SetupFactoryOptions) => {
     const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
     driver.mockEndpoint(serviceControlInstanceUrl, {
