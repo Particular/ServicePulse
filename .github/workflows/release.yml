@@ -31,7 +31,7 @@ jobs:
         with:
           dotnet-version: 7.0.x
       - name: Set up Node.js
-        uses: actions/setup-node@v6.1.0
+        uses: actions/setup-node@v6.2.0
         with:
           node-version: 24.x
       - name: Build Frontend
@@ -144,7 +144,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.12.0
       - name: Log in to GitHub container registry
-        uses: docker/login-action@v3.6.0
+        uses: docker/login-action@v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -153,7 +153,7 @@ jobs:
         id: date
         run: echo "date=$(date '+%FT%TZ')" >> $GITHUB_OUTPUT
       - name: Build and push image to GitHub container registry
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v6.19.1
         with:
           context: .
           push: true
