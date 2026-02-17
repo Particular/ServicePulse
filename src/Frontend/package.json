@@ -43,7 +43,7 @@
     "oidc-client-ts": "3.4.1",
     "pinia": "3.0.4",
     "vue": "3.5.28",
-    "vue-codemirror6": "1.4.1",
+    "vue-codemirror6": "1.4.2",
     "vue-router": "4.6.4",
     "vue-tippy": "6.7.1",
     "vue-toastification": "2.0.0-rc.5",
