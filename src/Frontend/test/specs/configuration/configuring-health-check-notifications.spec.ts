@@ -137,7 +137,7 @@ describe("FEATURE: Health check notifications", () => {
       expect(saveButton).not.toBeNull();
       expect(saveButton).toBeDisabled();
     });
-    test.todo("EXAMPLE: The save button should be disabled when the form is invalid");
+
     test.todo("EXAMPLE: The save button should update the email configuration and close the popup when clicked");
 
     /* SCENARIO
