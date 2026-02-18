@@ -62,7 +62,7 @@ function close() {
 <template>
   <div class="modal-mask">
     <div class="modal-wrapper">
-      <div class="modal-container modal-content">
+      <div class="modal-container modal-content" role="dialog" aria-label="Email Configuration">
         <div class="modal-header">
           <h3 class="modal-title">Email configuration</h3>
         </div>
