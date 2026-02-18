@@ -87,7 +87,7 @@ onMounted(async () => {
                     <div class="col-xs-9 col-sm-10 col-lg-11">
                       <div class="row box-header">
                         <div class="col-12">
-                          <p class="lead">Email notifications</p>
+                          <p class="lead" role="heading">Email notifications</p>
                           <p class="endpoint-metadata">
                             <ActionButton variant="link" size="sm" :icon="faEdit" @click="editEmailNotifications">Configure</ActionButton>
                           </p>
