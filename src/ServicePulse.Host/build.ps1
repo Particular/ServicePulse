@@ -9,7 +9,7 @@ if (Test-Path $AppOutputFolder) {
 New-Item -ItemType Directory -Force -Path $AppOutputFolder
 
 Push-Location $FrontendSourceFolder
-npm audit --audit-level=low
+npm audit --audit-level=low --omit=dev
 
 if ( $? -eq $false ) {
     exit $LastExitCode
