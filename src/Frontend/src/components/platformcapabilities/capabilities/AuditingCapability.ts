@@ -173,7 +173,7 @@ export function useAuditingCapability(): CapabilityComposable {
     if (hasAvailableAuditInstances(auditInstances.value)) {
       const messagesAvailable = isAllMessagesSupported.value && hasSuccessfulMessages.value;
 
-      let messageTooltip = "";
+      let messageTooltip: string;
       if (messagesAvailable) {
         messageTooltip = AuditingIndicatorTooltip.MessagesAvailable;
       } else if (!isAllMessagesSupported.value) {

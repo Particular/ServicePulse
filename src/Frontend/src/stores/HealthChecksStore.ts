@@ -22,7 +22,7 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
   const hasResponseStatusInHeaders = environmentStore.serviceControlIsGreaterThan("5.2");
 
   async function refresh() {
-    let result: EmailNotifications | null = null;
+    let result: EmailNotifications | null;
     try {
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EmailNotifications>("notifications/email");
       result = data;

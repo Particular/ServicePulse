@@ -21,7 +21,7 @@ export default tseslint.config(
     plugins: {
       local: localPlugin,
     },
-    extends: [pluginJs.configs.recommended, ...tseslint.configs.recommended, ...pluginVue.configs["flat/essential"],eslintPluginPrettierRecommended],
+    extends: [pluginJs.configs.recommended, ...tseslint.configs.recommended, ...pluginVue.configs["flat/essential"], eslintPluginPrettierRecommended],
     rules: {
       "no-duplicate-imports": "error",
       "require-await": "error",
