@@ -2,7 +2,6 @@ import globals from "globals";
 import pluginJs from "@eslint/js";
 import tseslint from "typescript-eslint";
 import pluginVue from "eslint-plugin-vue";
-import pluginPromise from "eslint-plugin-promise";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 import noRawFetch from "./eslint-rules/no-raw-fetch.ts";
 
@@ -22,10 +21,9 @@ export default tseslint.config(
     plugins: {
       local: localPlugin,
     },
-    extends: [pluginJs.configs.recommended, ...tseslint.configs.recommended, ...pluginVue.configs["flat/essential"], pluginPromise.configs["flat/recommended"], eslintPluginPrettierRecommended],
+    extends: [pluginJs.configs.recommended, ...tseslint.configs.recommended, ...pluginVue.configs["flat/essential"],eslintPluginPrettierRecommended],
     rules: {
       "no-duplicate-imports": "error",
-      "promise/prefer-await-to-then": "error",
       "require-await": "error",
       "no-await-in-loop": "warn",
       "prefer-rest-params": "error",
