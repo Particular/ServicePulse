@@ -73,7 +73,12 @@ export const hasEmailNotificationsWithCompleteSettings = (overrides: Partial<typ
     driver.mockEndpoint(`${serviceControlUrl}notifications/email`, {
       body: completeTemplate,
     });
-
+    // Mock the test endpoint to return success
+    driver.mockEndpoint(`${serviceControlUrl}notifications/email/test`, {
+      method: "post",
+      status: 200,
+      body: {},
+    });
     return {
       template: completeTemplate,
       getTemplate: () => completeTemplate,
@@ -96,7 +101,12 @@ export const hasEmailNotificationsWithIncompleteSettings = (overrides: Partial<t
     driver.mockEndpoint(`${serviceControlUrl}notifications/email`, {
       body: incompleteTemplate,
     });
-
+    // Mock the test endpoint to return failure
+    driver.mockEndpoint(`${serviceControlUrl}notifications/email/test`, {
+      method: "post",
+      status: 400,
+      body: {},
+    });
     return {
       template: incompleteTemplate,
       getTemplate: () => incompleteTemplate,

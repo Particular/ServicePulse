@@ -4,7 +4,7 @@ import * as precondition from "../../preconditions";
 import { waitFor } from "@testing-library/vue";
 import UserEvent from "@testing-library/user-event";
 import { emailNotificationsLabel, emailNotificationsToggleLabel, emailNotificationsToggleCheckBox } from "./questions/emailNotificationsLabel";
-import { configureEmailButton, emailConfigurationPopup, saveButton } from "./questions/emailConfiguration";
+import { configureEmailButton, emailConfigurationPopup, saveButton, sendTestNotificationButton, testFailedMessage, testSuccessMessage } from "./questions/emailConfiguration";
 describe("FEATURE: Health check notifications", () => {
   describe("RULE: Email notification should be able to toggled on and off", () => {
     test("EXAMPLE: Email notification is toggled on", async ({ driver }) => {
@@ -182,20 +182,50 @@ describe("FEATURE: Health check notifications", () => {
         */
   });
   describe("RULE: Sending a test notification should indicate success or failure", () => {
-    test.todo("EXAMPLE: Invalid Configuration");
-
-    /* SCENARIO
+    test("EXAMPLE: Invalid Configuration", async ({ driver }) => {
+      /* SCENARIO
           Given an invalid configuration
           When "Send test notification" is clicked
-          Then "TEST FAILED" is displayed
-        */
+          Then "TEST FAILED" is displayed*/
+      // Arrange - set up with invalid email configuration
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasEmailNotificationsWithIncompleteSettings());
+      await driver.goTo("/configuration/health-check-notifications");
 
-    test.todo("EXAMPLE: Valid Configuration");
-    /* SCENARIO          
+      // Act - Click the "Send test notification" button
+      const testButton = await sendTestNotificationButton();
+      expect(testButton).not.toBeNull();
+      await UserEvent.click(testButton);
 
-          Given a valid configuration
+      // Assert - "TEST FAILED" message is displayed
+      await waitFor(async () => {
+        const failedMsg = await testFailedMessage();
+        expect(failedMsg).not.toBeNull();
+        expect((failedMsg as HTMLElement).textContent).toMatch(/test failed/i);
+      });
+    });
+    test("EXAMPLE: Valid Configurationalid Configuration", async ({ driver }) => {
+      /* SCENARIO
+            Given a valid configuration
           When "Send test notification" is clicked
-          Then "Test email sent successfully" is displayed
-        */
+          Then "Test email sent successfully" is displayed*/
+
+      // Arrange - set up with invalid email configuration
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasEmailNotificationsWithCompleteSettings());
+      await driver.goTo("/configuration/health-check-notifications");
+
+      // Act - Click the "Send test notification" button
+      const testButton = await sendTestNotificationButton();
+      expect(testButton).not.toBeNull();
+      await UserEvent.click(testButton);
+
+      // Assert - "Test email sent successfully" message is displayed
+      await waitFor(async () => {
+        const successMsg = await testSuccessMessage();
+        expect(successMsg).not.toBeNull();
+        expect((successMsg as HTMLElement).textContent).toMatch(/test email sent successfully/i);
+      });
+    });
   });
 });

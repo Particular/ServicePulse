@@ -6,10 +6,10 @@ export async function emailNotificationsLabel() {
 }
 
 export async function emailNotificationsToggleLabel() {
-  const inputId = "onoffswitchemailNotifications";
-  return await waitFor(() => document.querySelector(`label[for="${inputId}"]`) as HTMLElement);
+  const checkbox = await emailNotificationsToggleCheckBox();
+  return checkbox.labels?.[0] as HTMLElement;
 }
 export async function emailNotificationsToggleCheckBox() {
   const inputId = "onoffswitchemailNotifications";
-  return await waitFor(() => document.querySelector(`input[id="${inputId}"]`) as HTMLInputElement);
+  return await waitFor(() => document.getElementById(inputId) as HTMLInputElement);
 }
