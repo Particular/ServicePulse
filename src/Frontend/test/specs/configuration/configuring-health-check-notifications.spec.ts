@@ -4,7 +4,7 @@ import * as precondition from "../../preconditions";
 import { waitFor } from "@testing-library/vue";
 import UserEvent from "@testing-library/user-event";
 import { emailNotificationsLabel, emailNotificationsToggleLabel, emailNotificationsToggleCheckBox } from "./questions/emailNotificationsLabel";
-import { getConfigureEmailButton, getEmailConfigurationPopup, getSaveButton } from "./questions/emailConfiguration";
+import { configureEmailButton, emailConfigurationPopup, saveButton } from "./questions/emailConfiguration";
 describe("FEATURE: Health check notifications", () => {
   describe("RULE: Email notification should be able to toggled on and off", () => {
     test("EXAMPLE: Email notification is toggled on", async ({ driver }) => {
@@ -73,16 +73,16 @@ describe("FEATURE: Health check notifications", () => {
       await driver.goTo("/configuration/health-check-notifications");
 
       // Assert - the email configuration popup is not visible initially
-      expect(await getEmailConfigurationPopup()).toBeNull();
+      expect(await emailConfigurationPopup()).toBeNull();
 
       // Act - find and click the "Configure" button
-      const configureButton = await getConfigureEmailButton();
+      const configureButton = await configureEmailButton();
       expect(configureButton).not.toBeNull();
       await UserEvent.click(configureButton);
 
       // Assert - the email configuration popup is now visible
       await waitFor(async () => {
-        expect(await getEmailConfigurationPopup()).not.toBeNull();
+        expect(await emailConfigurationPopup()).not.toBeNull();
       });
     });
 
@@ -93,23 +93,23 @@ describe("FEATURE: Health check notifications", () => {
       await driver.goTo("/configuration/health-check-notifications");
 
       // Assert - the email configuration popup is not visible initially
-      expect(await getEmailConfigurationPopup()).toBeNull();
+      expect(await emailConfigurationPopup()).toBeNull();
 
       // Act - find and click the "Configure" button
-      const configureButton = await getConfigureEmailButton();
+      const configureButton = await configureEmailButton();
       expect(configureButton).not.toBeNull();
       await UserEvent.click(configureButton);
 
       // Assert - the email configuration popup is now visible
       const popUpDialog = (await waitFor(async () => {
-        return await getEmailConfigurationPopup();
+        return await emailConfigurationPopup();
       })) as HTMLElement;
       expect(popUpDialog).not.toBeNull();
 
       // Assert - Save button is enabled
-      const saveButton = await getSaveButton();
-      expect(saveButton).not.toBeNull();
-      expect(saveButton).toBeEnabled();
+      const dialogSaveButton = await saveButton();
+      expect(dialogSaveButton).not.toBeNull();
+      expect(dialogSaveButton).toBeEnabled();
     });
 
     test("EXAMPLE:   The save button should be disabled when the form is invalid", async ({ driver }) => {
@@ -119,23 +119,23 @@ describe("FEATURE: Health check notifications", () => {
       await driver.goTo("/configuration/health-check-notifications");
 
       // Assert - the email configuration popup is not visible initially
-      expect(await getEmailConfigurationPopup()).toBeNull();
+      expect(await emailConfigurationPopup()).toBeNull();
 
       // Act - find and click the "Configure" button
-      const configureButton = await getConfigureEmailButton();
+      const configureButton = await configureEmailButton();
       expect(configureButton).not.toBeNull();
       await UserEvent.click(configureButton);
 
       // Assert - the email configuration popup is now visible
       const popUpDialog = (await waitFor(async () => {
-        return await getEmailConfigurationPopup();
+        return await emailConfigurationPopup();
       })) as HTMLElement;
       expect(popUpDialog).not.toBeNull();
 
       // Assert - Save button is enabled
-      const saveButton = await getSaveButton();
-      expect(saveButton).not.toBeNull();
-      expect(saveButton).toBeDisabled();
+      const dialogSaveButton = await saveButton();
+      expect(dialogSaveButton).not.toBeNull();
+      expect(dialogSaveButton).toBeDisabled();
     });
 
     test.todo("EXAMPLE: The save button should update the email configuration and close the popup when clicked");
