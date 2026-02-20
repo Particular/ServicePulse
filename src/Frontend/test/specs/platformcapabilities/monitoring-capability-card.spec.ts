@@ -71,8 +71,8 @@ describe("FEATURE: Monitoring capability card", () => {
 
   describe("RULE: When monitoring instance is configured but not responding, show 'Unavailable' status", () => {
     test("EXAMPLE: Monitoring instance unavailable shows unavailable status", async ({ driver }) => {
-      // Arrange - Set up monitoring as unavailable first
-      await driver.setUp(precondition.hasMonitoringUnavailable);
+      // Arrange - Set up base preconditions first
+      await driver.setUp(precondition.hasAuthenticationDisabled());
       await driver.setUp(precondition.hasActiveLicense);
       await driver.setUp(precondition.hasLicensingSettingTest());
       await driver.setUp(precondition.hasServiceControlMainInstance());
@@ -100,6 +100,8 @@ describe("FEATURE: Monitoring capability card", () => {
       await driver.setUp(precondition.knownQueuesDefaultHandler);
       await driver.setUp(precondition.hasRemoteInstances());
       await driver.setUp(precondition.hasMessages());
+      // Set up monitoring as unavailable LAST to override any earlier mocks
+      await driver.setUp(precondition.hasMonitoringUnavailable);
 
       // Act
       await driver.goTo("/");

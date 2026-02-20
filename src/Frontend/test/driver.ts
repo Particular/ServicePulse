@@ -7,10 +7,12 @@ export type Method = "get" | "post" | "patch" | "put" | "delete" | "options";
 
 export type MockEndpointOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  body: Record<string, any> | string | number | boolean | null | undefined;
+  body?: Record<string, any> | string | number | boolean | null | undefined;
   method?: Method;
   status?: number;
   headers?: { [key: string]: string };
+  /** If true, simulates a network error (fetch rejection) instead of returning a response */
+  networkError?: boolean;
 };
 
 export type MockEndpointDynamicOptions = {
