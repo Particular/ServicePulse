@@ -197,12 +197,9 @@ describe("FEATURE: Health check notifications", () => {
       expect(testButton).not.toBeNull();
       await UserEvent.click(testButton);
 
-      // Assert - "TEST FAILED" message is displayed
-      await waitFor(async () => {
-        const failedMsg = await testFailedMessage();
-        expect(failedMsg).not.toBeNull();
-        expect((failedMsg as HTMLElement).textContent).toMatch(/test failed/i);
-      });
+      // Assert - "Test failed" message is displayed
+      const failedMsg = await testFailedMessage();
+      expect(failedMsg).toBeInTheDocument();
     });
     test("EXAMPLE: Valid Configurationalid Configuration", async ({ driver }) => {
       /* SCENARIO
@@ -210,7 +207,7 @@ describe("FEATURE: Health check notifications", () => {
           When "Send test notification" is clicked
           Then "Test email sent successfully" is displayed*/
 
-      // Arrange - set up with invalid email configuration
+      // Arrange - set up with valid email configuration
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasEmailNotificationsWithCompleteSettings());
       await driver.goTo("/configuration/health-check-notifications");
@@ -221,11 +218,8 @@ describe("FEATURE: Health check notifications", () => {
       await UserEvent.click(testButton);
 
       // Assert - "Test email sent successfully" message is displayed
-      await waitFor(async () => {
-        const successMsg = await testSuccessMessage();
-        expect(successMsg).not.toBeNull();
-        expect((successMsg as HTMLElement).textContent).toMatch(/test email sent successfully/i);
-      });
+      const successMsg = await testSuccessMessage();
+      expect(successMsg).toBeInTheDocument();
     });
   });
 });
