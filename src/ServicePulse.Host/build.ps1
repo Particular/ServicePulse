@@ -16,6 +16,7 @@ if ( $? -eq $false ) {
 }
 
 npm install
+npm run lint
 npm run build
 Remove-Item -Path "./dist/mockServiceWorker.js" -ErrorAction SilentlyContinue
 Pop-Location
