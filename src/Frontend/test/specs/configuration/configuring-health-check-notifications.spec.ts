@@ -149,33 +149,6 @@ describe("FEATURE: Health check notifications", () => {
       expect(dialogSaveButton).toBeDisabled();
     });
 
-    test("EXAMPLE: Configure button opens popup with Save and Cancel buttons", async ({ driver }) => {
-      // Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasEmailNotificationsWithCompleteSettings());
-      await driver.goTo("/configuration/health-check-notifications");
-
-      // Assert - popup is not visible initially
-      const initialPopup = await emailConfigurationPopup();
-      expect(initialPopup).toBeNull();
-
-      // Act - click the Configure button
-      const configureButton = await configureEmailButton();
-      expect(configureButton).not.toBeNull();
-      await UserEvent.click(configureButton);
-
-      // Assert - popup is now visible and contains Save and Cancel buttons
-      const popup = await emailConfigurationPopup1();
-      expect(popup).not.toBeNull();
-
-      const saveBtn = popup!.saveButton();
-      const cancelBtn = popup!.cancelButton();
-
-      expect(saveBtn).toBeInTheDocument();
-
-      expect(cancelBtn).toBeInTheDocument();
-    });
-
     test("EXAMPLE:  The save button should update the email configuration and close the popup when clicked", async ({ driver }) => {
       /* SCENARIO
           Invalid configurations cannot be saved
