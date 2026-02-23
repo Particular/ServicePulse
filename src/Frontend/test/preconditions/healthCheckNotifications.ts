@@ -1,3 +1,4 @@
+import UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
 import { SetupFactoryOptions } from "../driver";
 
 const emailNotificationsTemplate = {
@@ -54,6 +55,54 @@ export const hasEmailNotificationsEnabledWithToggleCapture = () => {
     return {
       enabledTemplate,
       getCapturedBody: () => capturedBody,
+    };
+  };
+};
+export const hasEmailNotificationsWithSaveCapture = () => {
+  let currentConfig = {
+    enabled: false,
+    enable_tls: false,
+    smtp_server: "smtp.example.com",
+    smtp_port: 25,
+    authentication_account: "",
+    authentication_password: "",
+    from: "from@example.com",
+    to: "to@example.com",
+  };
+
+  return ({ driver }: SetupFactoryOptions) => {
+    const serviceControlUrl = window.defaultConfig.service_control_url;
+
+    // GET returns the currentConfig
+    driver.mockEndpointDynamic(`${serviceControlUrl}notifications/email`, "get", () => {
+      return Promise.resolve({ body: currentConfig, status: 200 });
+    });
+
+    // POST updates currentConfig from the request body
+    driver.mockEndpointDynamic(`${serviceControlUrl}notifications/email`, "post", async (_url, _params, request) => {
+      const newSettings = (await request.json()) as UpdateEmailNotificationsSettingsRequest;
+
+      currentConfig = {
+        ...currentConfig,
+        enable_tls: newSettings.enable_tls,
+        smtp_server: newSettings.smtp_server,
+        smtp_port: newSettings.smtp_port,
+        authentication_account: newSettings.authorization_account,
+        authentication_password: newSettings.authorization_password,
+        from: newSettings.from,
+        to: newSettings.to,
+      };
+
+      return Promise.resolve({ body: currentConfig, status: 200 });
+    });
+
+    // test endpoint
+    driver.mockEndpointDynamic(`${serviceControlUrl}notifications/email/test`, "post",  () => {
+      return Promise.resolve({ body: {}, status: 200 });
+    });
+
+    return {
+      getCurrentConfig: () => currentConfig,
     };
   };
 };

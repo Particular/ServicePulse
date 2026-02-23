@@ -108,7 +108,7 @@ function close() {
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary" type="submit" :disabled="!formIsValid" aria-label="save">Save</button>
-            <button type="button" class="btn btn-default" @click="close">Cancel</button>
+            <button class="btn btn-default" type="button"  @click="close" aria-label="cancel">Cancel</button>
           </div>
         </form>
       </div>
