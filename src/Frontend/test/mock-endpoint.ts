@@ -5,8 +5,15 @@ import { MockEndpointDynamicOptions, MockEndpointOptions, Method } from "./drive
 
 export const makeMockEndpoint =
   ({ mockServer }: { mockServer: SetupServer | SetupWorker }) =>
-  (endpoint: string, { body, method = "get", status = 200, headers = {} }: MockEndpointOptions) => {
-    mockServer.use(http[method](endpoint, () => HttpResponse.json(body, { status: status, headers: headers })));
+  (endpoint: string, { body, method = "get", status = 200, headers = {}, networkError = false }: MockEndpointOptions) => {
+    mockServer.use(
+      http[method](endpoint, () => {
+        if (networkError) {
+          return HttpResponse.error();
+        }
+        return HttpResponse.json(body, { status: status, headers: headers });
+      })
+    );
   };
 
 export const makeMockEndpointDynamic =

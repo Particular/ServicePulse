@@ -10,12 +10,10 @@ export const useConfigurationStore = defineStore("ConfigurationStore", () => {
 
   serviceControlClient
     .fetchFromServiceControl("configuration")
-    // eslint-disable-next-line promise/prefer-await-to-then
     .then(async (response) => {
       configuration.value = await response.json();
       return configuration.value;
     })
-    // eslint-disable-next-line promise/prefer-await-to-then
     .catch((error) => {
       console.error("Failed to fetch configuration:", error);
     });

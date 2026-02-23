@@ -25,7 +25,7 @@ describe("FEATURE: Endpoint details", () => {
     });
   });
   describe("RULE: Endpoint detail metric data should be updated immediately after changing the history period", () => {
-    test(`EXAMPLE: As history periods are selected the graph data values should update immediately`, async ({ driver }) => {
+    test(`EXAMPLE: Default graph values are shown on page load`, async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
 
@@ -36,43 +36,108 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo(`/monitoring/endpoint/Endpoint1`);
 
       // Assert
-      // Wait for the default values of the page to be updated after the page is loaded
       await waitFor(async () => expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "0", "0", "0", "0"]));
       expect(await endpointDetailsGraphsAverageValues()).toEqual(["2", "1.97", "0", "74", "239"]);
+    });
 
+    test(`EXAMPLE: Selecting 5 minute history period updates graph values`, async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const endpointDetails = structuredClone(monitoredEndpointDetails);
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
+      await driver.goTo(`/monitoring/endpoint/Endpoint1`);
+      await waitFor(async () => expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "0", "0", "0", "0"]));
+
+      //Act
       await driver.setUp(precondition.hasEndpointWithMetricValues(2, 2, 8, 9.56, 13.24, 10, 81, 78, 215, 220));
       await selectHistoryPeriod(5);
 
+      //Assert
       expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "8", "13.24", "81", "215"]);
       expect(await endpointDetailsGraphsAverageValues()).toEqual(["2", "9.56", "10", "78", "220"]);
+    });
 
+    test(`EXAMPLE: Selecting 10 minute history period updates graph values`, async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const endpointDetails = structuredClone(monitoredEndpointDetails);
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
+      await driver.goTo(`/monitoring/endpoint/Endpoint1`);
+      await waitFor(async () => expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "0", "0", "0", "0"]));
+
+      //Act
       await driver.setUp(precondition.hasEndpointWithMetricValues(5, 3.1, 12, 7.4, 2.2, 1, 124, 105.7, 201, 198));
       await selectHistoryPeriod(10);
 
+      //Assert
       expect(await endpointDetailsGraphsCurrentValues()).toEqual(["5", "12", "2.2", "124", "201"]);
       expect(await endpointDetailsGraphsAverageValues()).toEqual(["3.1", "7.4", "1", "105", "198"]);
+    });
 
+    test(`EXAMPLE: Selecting 15 minute history period updates graph values`, async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const endpointDetails = structuredClone(monitoredEndpointDetails);
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
+      await driver.goTo(`/monitoring/endpoint/Endpoint1`);
+      await waitFor(async () => expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "0", "0", "0", "0"]));
+
+      //Act
       await driver.setUp(precondition.hasEndpointWithMetricValues(8, 6.5, 15, 12.6, 3.1, 2.4, 278, 255.3, 403, 387.8));
       await selectHistoryPeriod(15);
 
+      //Assert
       expect(await endpointDetailsGraphsCurrentValues()).toEqual(["8", "15", "3.1", "278", "403"]);
       expect(await endpointDetailsGraphsAverageValues()).toEqual(["6.5", "12.6", "2.4", "255", "387"]);
+    });
 
+    test(`EXAMPLE: Selecting 30 minute history period updates graph values`, async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const endpointDetails = structuredClone(monitoredEndpointDetails);
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
+      await driver.goTo(`/monitoring/endpoint/Endpoint1`);
+      await waitFor(async () => expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "0", "0", "0", "0"]));
+
+      //Act
       await driver.setUp(precondition.hasEndpointWithMetricValues(1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 777.7, 888.8, 999.9, 800.8));
       await selectHistoryPeriod(30);
 
+      //Assert
       expect(await endpointDetailsGraphsCurrentValues()).toEqual(["1.1", "3.3", "5.5", "777", "999"]);
       expect(await endpointDetailsGraphsAverageValues()).toEqual(["2.2", "4.4", "6.6", "888", "800"]);
+    });
 
+    test(`EXAMPLE: Selecting 60 minute history period updates graph values`, async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const endpointDetails = structuredClone(monitoredEndpointDetails);
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
+      await driver.goTo(`/monitoring/endpoint/Endpoint1`);
+      await waitFor(async () => expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "0", "0", "0", "0"]));
+
+      //Act
       await driver.setUp(precondition.hasEndpointWithMetricValues(9.999, 8.888, 7.777, 6.666, 5.555, 4.444, 333.333, 222.222, 111.111, 100.123));
       await selectHistoryPeriod(60);
 
+      //Assert
       expect(await endpointDetailsGraphsCurrentValues()).toEqual(["10", "7.78", "5.55", "333", "111"]);
       expect(await endpointDetailsGraphsAverageValues()).toEqual(["8.89", "6.67", "4.44", "222", "100"]);
+    });
 
+    test(`EXAMPLE: Selecting 1 minute history period updates graph values`, async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const endpointDetails = structuredClone(monitoredEndpointDetails);
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
+      await driver.goTo(`/monitoring/endpoint/Endpoint1`);
+      await waitFor(async () => expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "0", "0", "0", "0"]));
+
+      //Act
       await driver.setUp(precondition.hasEndpointWithMetricValues(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
       await selectHistoryPeriod(1);
 
+      //Assert
       expect(await endpointDetailsGraphsCurrentValues()).toEqual(["1", "3", "5", "7", "9"]);
       expect(await endpointDetailsGraphsAverageValues()).toEqual(["2", "4", "6", "8", "10"]);
     });

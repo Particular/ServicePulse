@@ -18,7 +18,6 @@ async function conditionallyEnableMocking() {
   return worker.start();
 }
 
-// eslint-disable-next-line promise/catch-or-return,promise/always-return
 conditionallyEnableMocking().then(() => {
   mount({ router: makeRouter() });
 });

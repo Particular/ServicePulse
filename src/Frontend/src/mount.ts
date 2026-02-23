@@ -17,9 +17,8 @@ const toastOptions: PluginOptions = {
 };
 
 export function mount({ router }: { router: Router }) {
-  router.beforeEach((to, _from, next) => {
+  router.beforeEach((to) => {
     document.title = to.meta.title || "ServicePulse";
-    next();
   });
 
   const app = createApp(AuthApp);

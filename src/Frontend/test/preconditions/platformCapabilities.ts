@@ -159,13 +159,19 @@ export const hasMonitoringWithNoEndpoints = ({ driver }: SetupFactoryOptions) =>
 /** Precondition: Monitoring instance is unavailable (returns error) */
 export const hasMonitoringUnavailable = ({ driver }: SetupFactoryOptions) => {
   const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+  // Only use network error for the disconnected endpoint - it goes through fetchAndSetConnectionState
+  // which properly catches errors and sets unableToConnect=true.
+  // Other endpoints return empty responses to avoid unhandled rejections in auto-refresh code.
   driver.mockEndpoint(monitoringInstanceUrl, {
-    body: { error: "Service unavailable" },
-    status: 500,
+    body: {},
+    status: 503,
   });
   driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints`, {
-    body: { error: "Service unavailable" },
-    status: 500,
+    body: [],
+    status: 503,
+  });
+  driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints/disconnected`, {
+    networkError: true,
   });
 };
 
