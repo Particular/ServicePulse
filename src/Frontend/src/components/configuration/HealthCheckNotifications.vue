@@ -89,7 +89,7 @@ onMounted(async () => {
                         <div class="col-12">
                           <p class="lead" role="heading">Email notifications</p>
                           <p class="endpoint-metadata">
-                            <ActionButton variant="link" size="sm" :icon="faEdit" @click="editEmailNotifications">Configure</ActionButton>
+                            <ActionButton variant="link" size="sm" :icon="faEdit" @click="editEmailNotifications" aria-label="configure">Configure</ActionButton>
                           </p>
                           <p class="endpoint-metadata">
                             <ActionButton variant="link" size="sm" :icon="faEnvelope" @click="testEmailNotifications" :disabled="!!emailTestInProgress">Send test notification</ActionButton>
