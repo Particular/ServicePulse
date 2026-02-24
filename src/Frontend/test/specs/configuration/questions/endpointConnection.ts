@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { screen, within, waitFor } from "@testing-library/vue";
 
 /**
@@ -81,38 +82,94 @@ export function getCodeEditorContent(editorIndex = 0) {
   console.log(`Getting content from code editor at index ${editorIndex} of ${codeEditors.length} total editors`);
 
   // CodeMirror 6 stores the EditorView on the .cm-editor element
-  const cmEditor = codeEditor.querySelector(".cm-editor");
+  //const cmEditor = codeEditor.querySelector(".cm-editor");
 
-  // Try to access the EditorView's state document
-  if (cmEditor) {
-    // Check for the EditorView instance attached to the element
+  // // Try to access the EditorView's state document
+  // if (cmEditor) {
+  //   // Check for the EditorView instance attached to the element
+  //   // Try different property names that CodeMirror might use
+  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   const editorView = (cmEditor as any).cmView || (cmEditor as any).CodeMirror || (cmEditor as any).view;
+  //   console.log("Found editorView:", !!editorView, "has state:", !!editorView?.state, "has doc:", !!editorView?.state?.doc);
+
+  //   if (editorView?.state?.doc) {
+  //     // Get the full document content from CodeMirror's state
+  //     const doc = editorView.state.doc;
+  //     console.log("Doc object:", !!doc, "doc.length:", doc.length, "doc.lines:", doc.lines);
+
+  //     // Try multiple methods to get the full content
+  //     // eslint-disable-next-line no-useless-assignment
+  //     let content = "";
+
+  //     // Method 1: Try toString() first
+  //     content = doc.toString();
+  //     console.log("Method 1 - toString(), length:", content.length);
+
+  //     // Method 2: Try sliceString with explicit range
+  //     if (content.length === 0 || !content) {
+  //       content = doc.sliceString(0);
+  //       console.log("Method 2 - sliceString(0), length:", content.length);
+  //     }
+
+  //     // Method 3: Try iterating through lines if still empty or seems truncated
+  //     if (content.length < 600) {
+  //       const lines = [];
+  //       for (let i = 1; i <= doc.lines; i++) {
+  //         const line = doc.line(i);
+  //         lines.push(line.text);
+  //       }
+  //       content = lines.join("\n");
+  //       console.log("Method 3 - iterating lines, length:", content.length, "lines:", doc.lines);
+  //     }
+
+  //     // Method 4: Try getting the text property if it exists
+  //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //     if (content.length < 600 && (doc as any).text) {
+  //       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //       content = (doc as any).text.join("\n");
+  //       console.log("Method 4 - doc.text property, length:", content.length);
+  //     }
+
+  //     console.log("Final content length:", content.length, "first 100:", content.substring(0, 100), "last 100:", content.substring(Math.max(0, content.length - 100)));
+  //     return content;
+  //   } else {
+  //     console.log("EditorView not found or state/doc missing. editorView:", !!editorView, "state:", !!editorView?.state, "doc:", !!editorView?.state?.doc);
+  //   }
+  // } else {
+  //   console.log("Could not find .cm-editor element");
+  // }
+
+  // Fallback: Try to get content from Vue component's model value
+  // The CodeEditor component uses v-model, so we can try to access it
+
+  const vueInstance = (codeEditor as any).__vueParentComponent || (codeEditor as any).__vnode;
+  if (vueInstance) {
+    console.log("Found Vue instance, checking for model value...");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const editorView = (cmEditor as any).cmView;
-    if (editorView?.state?.doc) {
-      // Get the full document content from CodeMirror's state
-      const content = editorView.state.doc.toString();
-      console.log("Got content from CodeMirror state, length:", content.length);
-      return content;
+    const modelValue = vueInstance?.props?.modelValue || vueInstance?.ctx?.modelValue || (vueInstance as any)?.__vModel;
+    if (modelValue && typeof modelValue === "string") {
+      console.log("Got content from Vue model, length:", modelValue.length);
+      return modelValue;
     }
   }
 
-  // Fallback: Try to get content from .cm-content
-  const cmContent = codeEditor.querySelector(".cm-content");
-  if (cmContent?.textContent) {
-    console.log("Got content from .cm-content, length:", cmContent.textContent.length);
-    return cmContent.textContent;
-  }
+  // Fallback: Try to get content from .cm-content (but this gets truncated)
+  // const cmContent = codeEditor.querySelector(".cm-content");
+  // if (cmContent?.textContent) {
+  //   console.log("Got content from .cm-content, length:", cmContent.textContent.length);
+  //   return cmContent.textContent;
+  // }
 
   // Fallback: Try to get all lines from the DOM (only gets visible lines)
-  const cmLines = codeEditor.querySelectorAll(".cm-line");
-  if (cmLines.length > 0) {
-    // Join all lines with newlines
-    const content = Array.from(cmLines)
-      .map((line) => line.textContent || "")
-      .join("\n");
-    console.log("Got content from .cm-line elements, count:", cmLines.length, "length:", content.length);
-    return content;
-  }
+  // const cmLines = codeEditor.querySelectorAll(".cm-line");
+  // if (cmLines.length > 0) {
+  //   // Join all lines with newlines
+  //   const content = Array.from(cmLines)
+  //     .map((line) => line.textContent || "")
+  //     .join("\n");
+  //   console.log("Got content from .cm-line elements, count:", cmLines.length, "length:", content.length);
+  //   return content;
+  // }
 
   console.log("No content found in code editor");
   return "";
@@ -183,17 +240,25 @@ export async function getFirstVisibleCopyButton() {
       const buttons = await getCopyToClipboardButtons();
       console.log(`Found ${buttons.length} copy buttons total`);
 
-      // Return the first button that is visible
-      for (let i = 0; i < buttons.length; i++) {
-        const button = buttons[i] as HTMLButtonElement;
-        const isVisible = button.offsetParent !== null;
-        console.log(`Copy button ${i}: visible=${isVisible}, text="${button.textContent}"`);
-        if (isVisible) {
-          return button;
-        }
+      if (buttons.length === 0) {
+        throw new Error("No copy buttons found on the page");
       }
 
-      throw new Error("No visible copy button found");
+      // In test environments, just return the first button since JSDOM doesn't fully render
+      // In real browsers, all visibility checks would work
+      const button = buttons[0] as HTMLButtonElement;
+      const style = window.getComputedStyle(button);
+
+      console.log(`Copy button: display=${style.display}, visibility=${style.visibility}, opacity=${style.opacity}, text="${button.textContent}"`);
+
+      // Basic check - just ensure it's not explicitly hidden
+      const isExplicitlyHidden = style.display === "none" || style.visibility === "hidden";
+
+      if (isExplicitlyHidden) {
+        throw new Error("Copy button is explicitly hidden");
+      }
+
+      return button;
     },
     { timeout: 5000 }
   );

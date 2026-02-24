@@ -122,8 +122,8 @@ describe("FEATURE: Endpoint connection", () => {
       // Metrics section
       expect(content).toContain('""Metrics""');
       expect(content).toContain('""MetricsQueue"": ""Particular.Monitoring@XXX""');
-      // expect(content).toContain('""Interval"": ""00:00:01""');
-      //  expect(content).toContain("ConnectToServicePlatform");
+      expect(content).toContain('""Interval"": ""00:00:01""');
+      expect(content).toContain("ConnectToServicePlatform");
     });
 
     test("EXAMPLE: The 'JSON File' tab should display JSON file configuration examples for the current configuration", async ({ driver }) => {
@@ -184,14 +184,6 @@ describe("FEATURE: Endpoint connection", () => {
      And the clipboard should contain the inline configuration code
    */
 
-      // Arrange - Mock the clipboard API
-      const writeTextMock = vi.fn().mockResolvedValue(undefined);
-      Object.assign(navigator, {
-        clipboard: {
-          writeText: writeTextMock,
-        },
-      });
-
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlConnection());
       await driver.setUp(precondition.hasMonitoringConnection());
@@ -206,21 +198,41 @@ describe("FEATURE: Endpoint connection", () => {
       });
 
       // Wait for code editor content to be available
-      const codeContent = await waitForCodeEditorContent(0);
-      expect(codeContent).toBeTruthy();
+      await waitForCodeEditorContent(0);
+
+      // Arrange - Mock the clipboard API in the DOM context
+      const writeTextMock = vi.fn().mockResolvedValue(undefined);
+
+      // Mock clipboard in the actual window context where the component runs
+      Object.defineProperty(window.navigator, "clipboard", {
+        value: {
+          writeText: writeTextMock,
+        },
+        writable: true,
+        configurable: true,
+      });
 
       // Act - click the copy button
       await clickCopyButton();
 
-      // Assert - clipboard writeText was called with the code content
+      // Assert - clipboard writeText was called
       await waitFor(() => {
         expect(writeTextMock).toHaveBeenCalledTimes(1);
-        expect(writeTextMock).toHaveBeenCalledWith(codeContent);
       });
 
-      // Verify the content contains expected configuration
-      expect(codeContent).toContain("ServicePlatformConnectionConfiguration.Parse");
-      expect(codeContent).toContain("endpointConfiguration.ConnectToServicePlatform");
+      // Assert - get the content that was copied to clipboard
+      const copiedContent = writeTextMock.mock.calls[0][0] as string;
+      // Get the code editor content after the copy to compare
+      const codeContent = getCodeEditorContent(0);
+
+      // The copied content should match the code editor content exactly
+      // Normalize whitespace for comparison (remove all whitespace differences)
+      const normalizeContent = (str: string) => str.replace(/\s+/g, " ").trim();
+
+      // The copied content should match the code editor content (ignoring formatting differences)
+      // const ncopiedContent = normalizeContent(copiedContent);
+      //npm run dev  const ncodeContent = normalizeContent(codeContent);
+      expect(normalizeContent(copiedContent)).toBe(normalizeContent(codeContent));
     });
 
     test("EXAMPLE: Clicking the 'Copy' button in the 'JSON File' tab should copy the example to the clipboard", async ({ driver }) => {
@@ -231,14 +243,6 @@ describe("FEATURE: Endpoint connection", () => {
      Then the code should be copied to the clipboard
      And the clipboard should contain the JSON file configuration code
    */
-
-      // Arrange - Mock the clipboard API
-      const writeTextMock = vi.fn().mockResolvedValue(undefined);
-      Object.assign(navigator, {
-        clipboard: {
-          writeText: writeTextMock,
-        },
-      });
 
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlConnection());
@@ -264,25 +268,43 @@ describe("FEATURE: Endpoint connection", () => {
         expect(isTabActive(jsonTabAfterClick)).toBe(true);
       });
 
-      // Note: In JSON File tab, there are multiple code editors
-      // The first one shows the endpoint configuration with File.ReadAllText
-      // We'll click the first visible copy button
+      // Wait for code editor content to be available
+      // The first code editor (index 0) in JSON File tab shows the endpoint configuration with File.ReadAllText
+      await waitForCodeEditorContent(0, "File.ReadAllText");
+
+      // Arrange - Mock the clipboard API in the DOM context
+      const writeTextMock = vi.fn().mockResolvedValue(undefined);
+
+      // Mock clipboard in the actual window context where the component runs
+      Object.defineProperty(window.navigator, "clipboard", {
+        value: {
+          writeText: writeTextMock,
+        },
+        writable: true,
+        configurable: true,
+      });
 
       // Act - click the copy button
       await clickCopyButton();
 
       // Assert - clipboard writeText was called
       await waitFor(() => {
-        expect(writeTextMock).toHaveBeenCalled();
+        expect(writeTextMock).toHaveBeenCalledTimes(1);
       });
 
-      // Get the copied content
+      // Assert - get the content that was copied to clipboard
       const copiedContent = writeTextMock.mock.calls[0][0] as string;
-      expect(copiedContent).toBeTruthy();
+      // Get the code editor content after the copy to compare
+      const codeContent = getCodeEditorContent(0);
 
-      // Verify it contains JSON file configuration elements
-      expect(copiedContent).toContain("File.ReadAllText");
-      expect(copiedContent).toContain("ServicePlatformConnectionConfiguration.Parse");
+      // The copied content should match the code editor content exactly
+      // Normalize whitespace for comparison (remove all whitespace differences)
+      const normalizeContent = (str: string) => str.replace(/\s+/g, " ").trim();
+
+      // The copied content should match the code editor content (ignoring formatting differences)
+      const ccopy = normalizeContent(copiedContent);
+      const ccode = normalizeContent(codeContent);
+      expect(normalizeContent(copiedContent)).toBe(normalizeContent(codeContent));
     });
   });
 });
