@@ -34,7 +34,6 @@ export const hasServiceControlConnection =
       body: {
         settings: defaultSettings,
         errors: [],
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any as ServiceControlInstanceConnection,
     });
   };

@@ -225,85 +225,11 @@ describe("FEATURE: Endpoint connection", () => {
       // Get the code editor content after the copy to compare
       const codeContent = getCodeEditorContent(0);
 
-      // The copied content should match the code editor content exactly
       // Normalize whitespace for comparison (remove all whitespace differences)
       const normalizeContent = (str: string) => str.replace(/\s+/g, " ").trim();
 
       // The copied content should match the code editor content (ignoring formatting differences)
-      // const ncopiedContent = normalizeContent(copiedContent);
-      //npm run dev  const ncodeContent = normalizeContent(codeContent);
-      expect(normalizeContent(copiedContent)).toBe(normalizeContent(codeContent));
-    });
 
-    test("EXAMPLE: OLD Clicking the 'Copy' button in the 'JSON File' tab should copy the example to the clipboard", async ({ driver }) => {
-      /* SCENARIO
-     Given the user is on the endpoint connection page
-     When the user clicks on the 'JSON File' tab
-     And clicks the 'Copy to clipboard' button for the endpoint configuration section
-     Then the code should be copied to the clipboard
-     And the clipboard should contain the JSON file configuration code
-   */
-
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasServiceControlConnection());
-      await driver.setUp(precondition.hasMonitoringConnection());
-
-      // Act - navigate to the page
-      await driver.goTo("/configuration/endpoint-connection");
-
-      // Wait for page to load
-      await waitFor(async () => {
-        const endpointTab = await endpointConfigurationOnlyTab();
-        expect(endpointTab).toBeInTheDocument();
-      });
-
-      // Act - switch to JSON File tab
-      const jsonTab = await jsonFileTab();
-      expect(jsonTab).not.toBeNull();
-      await clickTab(jsonTab!);
-
-      // Wait for JSON tab to be active
-      await waitFor(async () => {
-        const jsonTabAfterClick = await jsonFileTab();
-        expect(isTabActive(jsonTabAfterClick)).toBe(true);
-      });
-
-      // Wait for code editor content to be available
-      // The first code editor (index 0) in JSON File tab shows the endpoint configuration with File.ReadAllText
-      await waitForCodeEditorContent(0, "File.ReadAllText");
-
-      // Arrange - Mock the clipboard API in the DOM context
-      const writeTextMock = vi.fn().mockResolvedValue(undefined);
-
-      // Mock clipboard in the actual window context where the component runs
-      Object.defineProperty(window.navigator, "clipboard", {
-        value: {
-          writeText: writeTextMock,
-        },
-        writable: true,
-        configurable: true,
-      });
-
-      // Act - click the copy button
-      await clickCopyButton();
-
-      // Assert - clipboard writeText was called
-      await waitFor(() => {
-        expect(writeTextMock).toHaveBeenCalledTimes(1);
-      });
-
-      // Assert - get the content that was copied to clipboard
-      const copiedContent = writeTextMock.mock.calls[0][0] as string;
-      // Get the code editor content after the copy to compare
-      const codeContent = getCodeEditorContent(0);
-
-      // The copied content should match the code editor content exactly
-      // Normalize whitespace for comparison (remove all whitespace differences)
-      const normalizeContent = (str: string) => str.replace(/\s+/g, " ").trim();
-
-      // The copied content should match the code editor content (ignoring formatting differences)
-      const ccopy = normalizeContent(copiedContent);
-      const ccode = normalizeContent(codeContent);
       expect(normalizeContent(copiedContent)).toBe(normalizeContent(codeContent));
     });
 
@@ -342,7 +268,7 @@ describe("FEATURE: Endpoint connection", () => {
 
       // Wait for both code editors to be available
       await waitForCodeEditorContent(0, "File.ReadAllText"); // C# snippet Endpoint configuration:
-      await waitForCodeEditorContent(1, "{"); // JSON configuration file:
+      await waitForCodeEditorContent(1, "{"); // JSON configuration file
 
       // Arrange - Mock the clipboard API in the DOM context
       const writeTextMock = vi.fn().mockResolvedValue(undefined);
@@ -355,7 +281,7 @@ describe("FEATURE: Endpoint connection", () => {
         writable: true,
         configurable: true,
       });
-
+      // C# snippet Endpoint configuration:
       // Act - click the first copy button (C# snippet)
       await clickCopyButton(0);
 
@@ -370,10 +296,9 @@ describe("FEATURE: Endpoint connection", () => {
 
       // Normalize whitespace for comparison
       const normalizeContent = (str: string) => str.replace(/\s+/g, " ").trim();
-      const ncopiedContent1 = normalizeContent(copiedContent1);
-      const ncodeContent1 = normalizeContent(codeContent1);
       expect(normalizeContent(copiedContent1)).toBe(normalizeContent(codeContent1));
 
+      // JSON configuration file:
       // Act - click the second copy button (JSON config)
       await clickCopyButton(1);
 
@@ -385,8 +310,6 @@ describe("FEATURE: Endpoint connection", () => {
       // Assert - get the content that was copied to clipboard for the second button
       const copiedContent2 = writeTextMock.mock.calls[1][0] as string;
       const codeContent2 = getCodeEditorContent(1);
-      const ncopiedContent2 = normalizeContent(copiedContent2);
-      const ncodeContent2 = normalizeContent(codeContent2);
       expect(normalizeContent(copiedContent2)).toBe(normalizeContent(codeContent2));
     });
   });
