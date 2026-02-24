@@ -23,19 +23,8 @@ window.defaultConfig = {
     }
 
     static string GetVersionInformation()
-    {
-        var majorMinorPatch = "0.0.0";
-
-        var attributes = typeof(ConstantsFile).Assembly.GetCustomAttributes<AssemblyMetadataAttribute>();
-
-        foreach (var attribute in attributes)
-        {
-            if (attribute.Key == "MajorMinorPatch")
-            {
-                majorMinorPatch = attribute.Value ?? "0.0.0";
-            }
-        }
-
-        return majorMinorPatch;
-    }
+        => typeof(ConstantsFile).Assembly
+            .GetCustomAttributes<AssemblyMetadataAttribute>()
+            .SingleOrDefault(attribute => attribute.Key == "MajorMinorPatch")
+            ?.Value ?? "0.0.0";
 }

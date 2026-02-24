@@ -45,7 +45,7 @@ const { configuration } = storeToRefs(configurationStore);
             <RouterLink :to="routeLinks.configuration.endpointConnection.link">Connect new endpoint</RouterLink>
           </span>
 
-          <span v-if="isIntegrated"> ServicePulse: Integrated </span>
+          <span v-if="isIntegrated"> Integrated ServicePulse </span>
           <template v-else-if="environment.sp_version">
             <span v-if="!newVersions.newSPVersion.newspversion"> ServicePulse v{{ environment.sp_version }} </span>
             <span v-else>
