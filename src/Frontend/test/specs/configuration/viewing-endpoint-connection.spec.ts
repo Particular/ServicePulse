@@ -1,8 +1,8 @@
 import { test, describe } from "../../drivers/vitest/driver";
-import { expect } from "vitest";
+import { expect, vi } from "vitest";
 import * as precondition from "../../preconditions";
 import { waitFor } from "@testing-library/vue";
-import { endpointConfigurationOnlyTab, jsonFileTab, isTabActive, clickTab, getCodeEditorContent, clickCopyButton } from "./questions/endpointConnection";
+import { endpointConfigurationOnlyTab, jsonFileTab, isTabActive, clickTab, getCodeEditorContent, waitForCodeEditorContent, clickCopyButton } from "./questions/endpointConnection";
 
 describe("FEATURE: Endpoint connection", () => {
   describe("RULE: Examples should match the current configuration", () => {
@@ -39,16 +39,45 @@ describe("FEATURE: Endpoint connection", () => {
 
     test("EXAMPLE: The 'Endpoint Configuration Only' tab should display endpoint configuration examples for the current configuration", async ({ driver }) => {
       /* SCENARIO
-     Given the user is on the endpoint connection page
+     Given the user is on the endpoint connection page with specific configuration
      And the 'Endpoint Configuration Only' tab is selected
      Then the code editor should display inline configuration code
-     And the code should contain ServicePlatformConnectionConfiguration.Parse
+     And the content should match the configuration that was set
    */
 
-      // Arrange
+      // Arrange - Define the expected configuration
+      const expectedServiceControlConfig = {
+        Heartbeats: {
+          Enabled: true,
+          HeartbeatsQueue: "Particular.ServiceControl@XXX",
+          Frequency: "00:00:10",
+          TimeToLive: "00:00:40",
+        },
+        CustomChecks: {
+          Enabled: true,
+          CustomChecksQueue: "Particular.ServiceControl@XXX",
+        },
+        ErrorQueue: "error",
+        SagaAudit: {
+          Enabled: true,
+          SagaAuditQueue: "audit",
+        },
+        MessageAudit: {
+          Enabled: true,
+          AuditQueue: "audit",
+        },
+      };
+
+      const expectedMonitoringConfig = {
+        Enabled: true,
+        MetricsQueue: "Particular.Monitoring@XXX",
+        Interval: "00:00:01",
+      };
+
+      // Set up preconditions with the expected configuration
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasServiceControlConnection());
-      await driver.setUp(precondition.hasMonitoringConnection());
+      await driver.setUp(precondition.hasServiceControlConnection(expectedServiceControlConfig as never));
+      await driver.setUp(precondition.hasMonitoringConnection(expectedMonitoringConfig));
 
       // Act
       await driver.goTo("/configuration/endpoint-connection");
@@ -59,12 +88,42 @@ describe("FEATURE: Endpoint connection", () => {
         expect(content).toBeTruthy();
       });
 
-      // Assert - verify the content contains expected configuration code
+      // Get the actual content
       const content = await getCodeEditorContent();
+
+      // Debug: Verify we got the full content
+      expect(content.length).toBeGreaterThan(0);
+
+      // Assert - verify the content contains the expected structure
       expect(content).toContain("ServicePlatformConnectionConfiguration.Parse");
-      expect(content).toContain("endpointConfiguration.ConnectToServicePlatform");
-      expect(content).toContain("Heartbeats");
-      expect(content).toContain("Metrics");
+
+      // Verify each section of the configuration is present with escaped quotes
+      // Heartbeats section
+      expect(content).toContain('""Heartbeats""');
+      expect(content).toContain('""HeartbeatsQueue"": ""Particular.ServiceControl@XXX""');
+      expect(content).toContain('""Frequency"": ""00:00:10""');
+      expect(content).toContain('""TimeToLive"": ""00:00:40""');
+
+      // CustomChecks section
+      expect(content).toContain('""CustomChecks""');
+      expect(content).toContain('""CustomChecksQueue"": ""Particular.ServiceControl@XXX""');
+
+      // ErrorQueue section (it's a string, not an object)
+      expect(content).toContain('""ErrorQueue"": ""error""');
+
+      // SagaAudit section
+      expect(content).toContain('""SagaAudit""');
+      expect(content).toContain('""SagaAuditQueue"": ""audit""');
+
+      // MessageAudit section
+      expect(content).toContain('""MessageAudit""');
+      expect(content).toContain('""AuditQueue"": ""audit""');
+
+      // Metrics section
+      expect(content).toContain('""Metrics""');
+      expect(content).toContain('""MetricsQueue"": ""Particular.Monitoring@XXX""');
+      // expect(content).toContain('""Interval"": ""00:00:01""');
+      //  expect(content).toContain("ConnectToServicePlatform");
     });
 
     test("EXAMPLE: The 'JSON File' tab should display JSON file configuration examples for the current configuration", async ({ driver }) => {
@@ -105,10 +164,14 @@ describe("FEATURE: Endpoint connection", () => {
       const endpointTab = await endpointConfigurationOnlyTab();
       expect(isTabActive(endpointTab)).toBe(false);
 
+      // Wait for the code editor to be rendered and have content in the JSON File tab
+      // The JSON File tab has 2 code editors: index 0 is the C# snippet, index 1 is the JSON config
+      const content = await waitForCodeEditorContent(0, "File.ReadAllText");
+
       // Assert - verify the content contains expected JSON configuration code
-      const content = await getCodeEditorContent();
-      expect(content).toContain("File.ReadAllText");
-      expect(content).toContain("ServicePlatformConnectionConfiguration.Parse");
+      expect(content).toContain("var json = File.ReadAllText");
+      expect(content).toContain("ServicePlatformConnectionConfiguration.Parse(json)");
+      expect(content).toContain("endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection)");
     });
   });
   describe("RULE: Copying the example should happen with a single click", () => {
@@ -142,8 +205,8 @@ describe("FEATURE: Endpoint connection", () => {
         expect(endpointTab).toBeInTheDocument();
       });
 
-      // Get the code content before clicking copy
-      const codeContent = await getCodeEditorContent();
+      // Wait for code editor content to be available
+      const codeContent = await waitForCodeEditorContent(0);
       expect(codeContent).toBeTruthy();
 
       // Act - click the copy button

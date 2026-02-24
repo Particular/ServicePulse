@@ -103,10 +103,10 @@ async function serviceControlConnections() {
               <!-- Nav tabs -->
               <div v-if="!loading" class="tabs" role="tablist">
                 <h5 :class="{ active: showCodeOnlyTab }">
-                  <a @click="switchCodeOnlyTab()" class="ng-binding">Endpoint configuration only</a>
+                  <a @click="switchCodeOnlyTab()" class="ng-binding" role="link">Endpoint configuration only</a>
                 </h5>
                 <h5 :class="{ active: !showCodeOnlyTab }">
-                  <a @click="switchJsonTab()" class="ng-binding">JSON file</a>
+                  <a @click="switchJsonTab()" class="ng-binding" role="link">JSON file</a>
                 </h5>
               </div>
 
@@ -119,24 +119,24 @@ async function serviceControlConnections() {
                 </ul>
               </div>
 
-              <section v-if="showCodeOnlyTab && !loading">
+              <section v-if="showCodeOnlyTab && !loading" role="tabpanel" aria-label="Endpoint configuration only">
                 <div class="row">
                   <div class="col-12 h-100">
-                    <CodeEditor :model-value="inlineSnippet" language="csharp" :show-gutter="false"></CodeEditor>
+                    <CodeEditor :model-value="inlineSnippet" language="csharp" :show-gutter="false" :show-copy-to-clipboard="true"></CodeEditor>
                   </div>
                 </div>
               </section>
 
-              <section v-if="!showCodeOnlyTab && !loading">
+              <section v-if="!showCodeOnlyTab && !loading" role="tabpanel" aria-label="JSON file">
                 <div class="row">
                   <div class="col-12 h-100">
                     <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
                     <p><strong>Endpoint configuration:</strong></p>
-                    <CodeEditor :model-value="jsonSnippet" language="csharp" :show-gutter="false"></CodeEditor>
+                    <CodeEditor :model-value="jsonSnippet" language="csharp" :show-gutter="false" :show-copy-to-clipboard="true"></CodeEditor>
                     <p style="margin-top: 15px">
                       <strong>JSON configuration file:</strong>
                     </p>
-                    <CodeEditor :model-value="jsonConfig" language="json" :show-gutter="false"></CodeEditor>
+                    <CodeEditor :model-value="jsonConfig" language="json" :show-gutter="false" :show-copy-to-clipboard="true"></CodeEditor>
                   </div>
                 </div>
               </section>

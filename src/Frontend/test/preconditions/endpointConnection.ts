@@ -10,17 +10,15 @@ export const hasServiceControlConnection =
     const defaultSettings = {
       Heartbeats: {
         Enabled: true,
-        HeartbeatsQueue: "Particular.ServiceControl.Heartbeats",
-        HeartbeatsInterval: "00:00:30",
+        HeartbeatsQueue: "Particular.ServiceControl@XXX",
+        Frequency: "00:00:10",
+        TimeToLive: "00:00:40",
       },
       CustomChecks: {
         Enabled: true,
-        CustomChecksQueue: "Particular.ServiceControl.CustomChecks",
+        CustomChecksQueue: "Particular.ServiceControl@XXX",
       },
-      ErrorQueue: {
-        Enabled: true,
-        ErrorQueue: "error",
-      },
+      ErrorQueue: "error",
       SagaAudit: {
         Enabled: true,
         SagaAuditQueue: "audit",
@@ -33,13 +31,13 @@ export const hasServiceControlConnection =
     };
 
     driver.mockEndpoint(`${serviceControlUrl}connection`, {
-      body: <ServiceControlInstanceConnection>{
+      body: {
         settings: defaultSettings,
         errors: [],
-      },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any as ServiceControlInstanceConnection,
     });
   };
-
 export const hasMonitoringConnection =
   (settings: Partial<MetricsConnectionDetails> = {}) =>
   ({ driver }: SetupFactoryOptions) => {
@@ -48,7 +46,7 @@ export const hasMonitoringConnection =
     const defaultSettings: MetricsConnectionDetails = {
       Enabled: true,
       MetricsQueue: "Particular.Monitoring",
-      Interval: "00:00:30",
+      Interval: "00:00:01",
       ...settings,
     };
 
