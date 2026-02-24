@@ -21,7 +21,7 @@ export async function jsonFileTab() {
 }
 
 /**
- * Checks if a tab is currently active (selected)
+ * Checks if a selelcted tab is currently active
  */
 export function isTabActive(tabElement: HTMLElement | null): boolean {
   if (!tabElement) return false;
@@ -30,10 +30,6 @@ export function isTabActive(tabElement: HTMLElement | null): boolean {
 
 /**
  * Waits for the code editor to be rendered and have content
- * @param editorIndex - Index of the editor to wait for (0 = first, 1 = second)
- * @param expectedContent - Optional substring that should be present in the content
- * @param timeout - Maximum time to wait in milliseconds (default 5000)
- * @returns The editor content once found
  */
 export async function waitForCodeEditorContent(editorIndex = 0, expectedContent?: string, timeout = 5000): Promise<string> {
   let content = "";
@@ -59,8 +55,6 @@ export async function waitForCodeEditorContent(editorIndex = 0, expectedContent?
 }
 
 export function getCodeEditorContent(editorIndex = 0) {
-  // The CodeEditor component has role="code" and contains a CodeMirror editor
-  // Get all code editors in the document
   const codeEditors = screen.queryAllByRole("code");
 
   if (codeEditors.length === 0) {
@@ -86,7 +80,6 @@ export function getCodeEditorContent(editorIndex = 0) {
       return modelValue;
     }
   }
-
   console.log("No content found in code editor");
   return "";
 }
@@ -101,81 +94,25 @@ export function clickTab(tabElement: HTMLElement) {
 /**
  * Gets all "Copy to clipboard" buttons on the page
  */
-export async function getCopyToClipboardButtons() {
-  // Strategy 1: Find by text content
+export function getCopyToClipboardButtons() {
   const buttonsByText = Array.from(document.querySelectorAll("button")).filter((btn) => btn.textContent?.includes("Copy to clipboard"));
 
   if (buttonsByText.length > 0) {
     return buttonsByText;
   }
-
-  // Strategy 2: Find by aria-label
-  const buttonsByAriaLabel = Array.from(document.querySelectorAll("button[aria-label*='Copy']"));
-
-  if (buttonsByAriaLabel.length > 0) {
-    return buttonsByAriaLabel as HTMLButtonElement[];
-  }
-
-  // Strategy 3: Use Testing Library (this might throw if not found)
-  try {
-    return await screen.findAllByRole("button", { name: /copy/i });
-  } catch {
-    return [];
-  }
+  return [];
 }
 
-/**
- * Gets the first visible "Copy to clipboard" button
- */
-export async function getFirstVisibleCopyButton() {
-  return await waitFor(
-    async () => {
-      const buttons = await getCopyToClipboardButtons();
-      console.log(`Found ${buttons.length} copy buttons total`);
-
-      if (buttons.length === 0) {
-        throw new Error("No copy buttons found on the page");
-      }
-
-      // In test environments, just return the first button since JSDOM doesn't fully render
-      // In real browsers, all visibility checks would work
-      const button = buttons[0] as HTMLButtonElement;
-      const style = window.getComputedStyle(button);
-
-      console.log(`Copy button: display=${style.display}, visibility=${style.visibility}, opacity=${style.opacity}, text="${button.textContent}"`);
-
-      // Basic check - just ensure it's not explicitly hidden
-      const isExplicitlyHidden = style.display === "none" || style.visibility === "hidden";
-
-      if (isExplicitlyHidden) {
-        throw new Error("Copy button is explicitly hidden");
-      }
-
-      return button;
-    },
-    { timeout: 5000 }
-  );
-}
-
-/**
- * Gets the first visible "Copy to clipboard" button
- */
 export async function getVisibleCopyButton(index = 0) {
   return await waitFor(
     async () => {
       const buttons = await getCopyToClipboardButtons();
-      console.log(`Found ${buttons.length} copy buttons total`);
-
       if (buttons.length === 0) {
         throw new Error("No copy buttons found on the page");
       }
 
-      // In test environments, just return the first button since JSDOM doesn't fully render
-      // In real browsers, all visibility checks would work
       const button = buttons[index] as HTMLButtonElement;
       const style = window.getComputedStyle(button);
-
-      console.log(`Copy button: display=${style.display}, visibility=${style.visibility}, opacity=${style.opacity}, text="${button.textContent}"`);
 
       // Basic check - just ensure it's not explicitly hidden
       const isExplicitlyHidden = style.display === "none" || style.visibility === "hidden";
@@ -183,7 +120,6 @@ export async function getVisibleCopyButton(index = 0) {
       if (isExplicitlyHidden) {
         throw new Error("Copy button is explicitly hidden");
       }
-
       return button;
     },
     { timeout: 5000 }

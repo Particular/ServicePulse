@@ -2,18 +2,11 @@ import { test, describe } from "../../drivers/vitest/driver";
 import { expect, vi } from "vitest";
 import * as precondition from "../../preconditions";
 import { waitFor } from "@testing-library/vue";
-import { endpointConfigurationOnlyTab, jsonFileTab, isTabActive, clickTab, getCodeEditorContent, waitForCodeEditorContent, clickCopyButton, clickCopyButton_test } from "./questions/endpointConnection";
+import { endpointConfigurationOnlyTab, jsonFileTab, isTabActive, clickTab, getCodeEditorContent, waitForCodeEditorContent, clickCopyButton } from "./questions/endpointConnection";
 
 describe("FEATURE: Endpoint connection", () => {
   describe("RULE: Examples should match the current configuration", () => {
     test("EXAMPLE: The 'Endpoint Configuration Only' tab should be selected by default", async ({ driver }) => {
-      /* SCENARIO
-     Given the user navigates to the endpoint connection page
-     When the page loads
-     Then the 'Endpoint Configuration Only' tab should be selected by default
-     And the 'JSON File' tab should not be selected
-   */
-
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlConnection());
@@ -38,13 +31,6 @@ describe("FEATURE: Endpoint connection", () => {
     });
 
     test("EXAMPLE: The 'Endpoint Configuration Only' tab should display endpoint configuration examples for the current configuration", async ({ driver }) => {
-      /* SCENARIO
-     Given the user is on the endpoint connection page with specific configuration
-     And the 'Endpoint Configuration Only' tab is selected
-     Then the code editor should display inline configuration code
-     And the content should match the configuration that was set
-   */
-
       // Arrange - Define the expected configuration
       const expectedServiceControlConfig = {
         Heartbeats: {
@@ -127,14 +113,6 @@ describe("FEATURE: Endpoint connection", () => {
     });
 
     test("EXAMPLE: The 'JSON File' tab should display JSON file configuration examples for the current configuration", async ({ driver }) => {
-      /* SCENARIO
-      Given the user is on the endpoint connection page
-      When the user clicks on the 'JSON File' tab
-      Then the tab should become active
-      And the code editor should display JSON file configuration code
-      And the code should contain File.ReadAllText
-    */
-
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlConnection());
@@ -165,7 +143,6 @@ describe("FEATURE: Endpoint connection", () => {
       expect(isTabActive(endpointTab)).toBe(false);
 
       // Wait for the code editor to be rendered and have content in the JSON File tab
-      // The JSON File tab has 2 code editors: index 0 is the C# snippet, index 1 is the JSON config
       const content = await waitForCodeEditorContent(0, "File.ReadAllText");
 
       // Assert - verify the content contains expected JSON configuration code
@@ -176,14 +153,6 @@ describe("FEATURE: Endpoint connection", () => {
   });
   describe("RULE: Copying the example should happen with a single click", () => {
     test("EXAMPLE: Clicking the 'Copy' button in the 'Endpoint Configuration Only' tab should copy the example to the clipboard", async ({ driver }) => {
-      /* SCENARIO
-     Given the user is on the endpoint connection page
-     And the 'Endpoint Configuration Only' tab is selected
-     When the user clicks the 'Copy to clipboard' button
-     Then the code should be copied to the clipboard
-     And the clipboard should contain the inline configuration code
-   */
-
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlConnection());
       await driver.setUp(precondition.hasMonitoringConnection());
@@ -227,21 +196,10 @@ describe("FEATURE: Endpoint connection", () => {
 
       // Normalize whitespace for comparison (remove all whitespace differences)
       const normalizeContent = (str: string) => str.replace(/\s+/g, " ").trim();
-
-      // The copied content should match the code editor content (ignoring formatting differences)
-
       expect(normalizeContent(copiedContent)).toBe(normalizeContent(codeContent));
     });
 
     test("EXAMPLE: Clicking the 'Copy' button in the 'JSON File' tab should copy the example to the clipboard", async ({ driver }) => {
-      /* SCENARIO
-     Given the user is on the endpoint connection page
-     When the user clicks on the 'JSON File' tab
-     And clicks the 'Copy to clipboard' button for the endpoint configuration section
-     Then the code should be copied to the clipboard
-     And the clipboard should contain the JSON file configuration code
-   */
-
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlConnection());
       await driver.setUp(precondition.hasMonitoringConnection());
