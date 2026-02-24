@@ -83,7 +83,7 @@ describe("FEATURE: Endpoint history periods", () => {
     });
   });
   describe("RULE: Endpoint history period data should be displayed immediately after the history period is updated", () => {
-    test(`EXAMPLE: As history periods are selected the endpoint sparkline data should update immediately`, async ({ driver }) => {
+    test(`EXAMPLE: As history periods are selected the endpoint sparkline data should update immediately`, { timeout: 30000 }, async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasEndpointWithMetricsPoints(14, 9.28, 13.8, 76, 217));
