@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { screen, within, waitFor } from "@testing-library/vue";
 
 /**
@@ -58,29 +57,22 @@ export function getCodeEditorContent(editorIndex = 0) {
   const codeEditors = screen.queryAllByRole("code");
 
   if (codeEditors.length === 0) {
-    console.log("No code editors found in DOM");
     return "";
   }
 
   if (editorIndex >= codeEditors.length) {
-    console.log(`Editor index ${editorIndex} out of range, only ${codeEditors.length} editors found`);
     return "";
   }
 
   const codeEditor = codeEditors[editorIndex];
-  console.log(`Getting content from code editor at index ${editorIndex} of ${codeEditors.length} total editors`);
 
   const vueInstance = (codeEditor as any).__vueParentComponent || (codeEditor as any).__vnode;
   if (vueInstance) {
-    console.log("Found Vue instance, checking for model value...");
-
     const modelValue = vueInstance?.props?.modelValue || vueInstance?.ctx?.modelValue || (vueInstance as any)?.__vModel;
     if (modelValue && typeof modelValue === "string") {
-      console.log("Got content from Vue model, length:", modelValue.length);
       return modelValue;
     }
   }
-  console.log("No content found in code editor");
   return "";
 }
 
