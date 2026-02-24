@@ -9,6 +9,7 @@ import { mockServer } from "../../mock-server";
 
 function makeDriver() {
   let app: App<Element>;
+
   const driver = <Driver>{
     async goTo(path) {
       const router = makeRouter();
@@ -25,6 +26,15 @@ function makeDriver() {
 
       document.body.innerHTML = '<div id="app"></div><div id="modalDisplay"></div>';
       app = mount({ router });
+
+      // For /configuration/* routes, flush promises and re-navigate to ensure
+      // the route is correctly loaded after async connection state is established.
+      // This is needed because ConfigurationView.vue checks connectionState.connected
+      // on mount and may redirect before the mocked API responses resolve.
+      if (path.startsWith("/configuration/")) {
+        await flushPromises();
+        await router.push(path);
+      }
     },
     mockEndpoint,
     mockEndpointDynamic: mockEndpointDynamic,
