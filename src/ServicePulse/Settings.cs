@@ -3,7 +3,6 @@
 using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 class Settings
 {

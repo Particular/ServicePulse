@@ -355,8 +355,7 @@ namespace ServicePulse.Host.Hosting
                     goto case ExecutionMode.Run;
 
                 case ExecutionMode.Run:
-                    Uri spUri;
-                    if (!Uri.TryCreate(Url, UriKind.Absolute, out spUri) || (!validProtocols.Contains(spUri.Scheme, StringComparer.OrdinalIgnoreCase)))
+                    if (!Uri.TryCreate(Url, UriKind.Absolute, out Uri spUri) || (!validProtocols.Contains(spUri.Scheme, StringComparer.OrdinalIgnoreCase)))
                     {
                         throw new Exception("The value specified for 'url' is not a valid URL");
                     }

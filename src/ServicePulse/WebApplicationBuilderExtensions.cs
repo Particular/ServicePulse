@@ -62,7 +62,7 @@ static class WebApplicationBuilderExtensions
         }
 
         return string.IsNullOrEmpty(settings.HttpsCertificatePassword)
-            ? new X509Certificate2(certPath)
-            : new X509Certificate2(certPath, settings.HttpsCertificatePassword);
+            ? X509CertificateLoader.LoadCertificateFromFile(certPath)
+            : X509CertificateLoader.LoadPkcs12FromFile(certPath, settings.HttpsCertificatePassword);
     }
 }
