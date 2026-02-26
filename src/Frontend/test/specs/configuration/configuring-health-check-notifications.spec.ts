@@ -1,54 +1,43 @@
 import { test, describe } from "../../drivers/vitest/driver";
 
 describe("FEATURE: Health check notifications", () => {
-  describe("RULE: Email notification should be able to toggled on and off", () => {
-    test.todo("EXAMPLE: Email notification is toggled on");
+  describe("RULE: Email notifications can be enabled and disabled", () => {
+    test.todo("EXAMPLE: Email notifications are currently disabled");
 
     /* SCENARIO
-          Enable email notifications
+          Enabling email notifications from an off state
           
           Given Email notifications are OFF
           When the toggle button is clicked
           Then Email notifications are ON
         */
 
-    test.todo("EXAMPLE: Email notification is toggled off");
+    test.todo("EXAMPLE: Email notifications are currently enabled");
     /* SCENARIO
-          Disable email notifications
+          Disabling email notifications from an on state
           
           Given Email notifications are ON
           When the toggle button is clicked
           Then Email notifications are OFF
         */
   });
-  describe("RULE: Email notifications should be configurable", () => {
-    test.todo("EXAMPLE: Clicking the configure button should open the email configuration popup");
+
+  describe("RULE: The email configuration dialog can be opened and closed", () => {
+    test.todo("EXAMPLE: The configuration dialog is not currently visible");
 
     /* SCENARIO
-          Open email configuration
-
+          Opening the email configuration dialog
+          
           Given the Email configuration popup is not visible
           When the "Configure" button is clicked
           Then the Email configuration popup is displayed
         */
 
-    test.todo("EXAMPLE: The save button should be enabled when the form is valid");
-    test.todo("EXAMPLE: The save button should be disabled when the form is invalid");
-    test.todo("EXAMPLE: The save button should update the email configuration and close the popup when clicked");
+    test.todo("EXAMPLE: Edits have been made in the configuration dialog");
 
     /* SCENARIO
-          Invalid configurations cannot be saved
-
-          Given the Email configuration popup is visible
-          When invalid or incomplete data is entered into the form
-          Then the Save button is not enabled
-    */
-
-    test.todo("EXAMPLE: The cancel button should close the email configuration popup without saving changes");
-
-    /* SCENARIO
-          Email configuration changed can be cancelled
-
+          Cancelling out of the configuration dialog
+          
           Given the Email configuration popup is visible
           And edits have been made to the email configuration
           When the Cancel button is pressed
@@ -56,38 +45,70 @@ describe("FEATURE: Health check notifications", () => {
           And no changes have been made to the email configuration
         */
   });
-  describe("RULE: Health check notification configuration should be persistent", () => {
-    test.todo("EXAMPLE: Updated email configuration should remain after a page refresh");
+
+  describe("RULE: Email configuration can only be saved when the form is valid", () => {
+    test.todo("EXAMPLE: All required fields are present and valid");
+    test.todo("EXAMPLE: Required fields are missing or contain invalid values");
 
     /* SCENARIO
-          Email configuration
+          Attempting to save with incomplete or invalid inputs
+
+          Given the Email configuration popup is visible
+          When invalid or incomplete data is entered into the form
+          Then the Save button is not enabled
+    */
+  });
+
+  describe("RULE: Saving email configuration updates the stored settings and closes the dialog", () => {
+    test.todo("EXAMPLE: A valid configuration has been entered");
+
+    /* SCENARIO
+          Saving changes to email configuration
+          
+          Given the Email configuration popup is visible
+          And a valid configuration has been entered
+          When the Save button is clicked
+          Then the email configuration is updated
+          And the Email configuration popup is closed
+        */
+  });
+
+  describe("RULE: Health check notification settings persist after a page refresh", () => {
+    test.todo("EXAMPLE: Email configuration has been updated");
+
+    /* SCENARIO
+          Previously saved email configuration after refresh
 
           When the email configuration has been changed
           And the screen is refreshed
           Then the email notification configuration matches what was last saved
         */
 
-    test.todo("EXAMPLE: Email notification are on and remain on after a page refresh");
-    test.todo("EXAMPLE: Email notification are off and remain off after a page refresh");
+    test.todo("EXAMPLE: Email notifications were enabled before refresh");
+    test.todo("EXAMPLE: Email notifications were disabled before refresh");
     /* SCENARIO
-          Email notifications toggle
+          Email notifications enabled after refresh
 
           Given the Email notifications are ON
           When the page is refreshed
           Then the Email notifications are ON
         */
   });
-  describe("RULE: Sending a test notification should indicate success or failure", () => {
-    test.todo("EXAMPLE: Invalid Configuration");
+
+  describe("RULE: Sending a test notification indicates whether delivery succeeded or failed", () => {
+    test.todo("EXAMPLE: The email configuration is invalid");
 
     /* SCENARIO
+          Sending a test email with an invalid configuration
+
           Given an invalid configuration
           When "Send test notification" is clicked
           Then "TEST FAILED" is displayed
         */
 
-    test.todo("EXAMPLE: Valid Configuration");
+    test.todo("EXAMPLE: The email configuration is valid");
     /* SCENARIO          
+          Sending a test email with a valid configuration
 
           Given a valid configuration
           When "Send test notification" is clicked
