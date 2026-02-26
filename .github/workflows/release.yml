@@ -173,7 +173,7 @@ jobs:
             org.opencontainers.image.created=${{ steps.date.outputs.date }}
             org.opencontainers.image.title=ServicePulse
             org.opencontainers.image.description=ServicePulse provides real-time production monitoring for distributed applications. It monitors the health of a system's endpoints, detects processing errors, sends failed messages for reprocessing, and ensures the specific environment's needs are met, all in one consolidated dashboard.
-            org.opencontainers.image.base.name=mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite
+            org.opencontainers.image.base.name=mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled-composite
           annotations: |
             index:org.opencontainers.image.source=https://github.com/Particular/ServicePulse/tree/${{ github.sha }}
             index:org.opencontainers.image.authors="Particular Software"
@@ -185,7 +185,7 @@ jobs:
             index:org.opencontainers.image.created=${{ steps.date.outputs.date }}
             index:org.opencontainers.image.title=ServicePulse
             index:org.opencontainers.image.description=ServicePulse provides real-time production monitoring for distributed applications. It monitors the health of a system's endpoints, detects processing errors, sends failed messages for reprocessing, and ensures the specific environment's needs are met, all in one consolidated dashboard.
-            index:org.opencontainers.image.base.name=mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite
+            index:org.opencontainers.image.base.name=mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled-composite
           file: src/ServicePulse/Dockerfile
           tags: ghcr.io/particular/servicepulse:${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || env.MinVerVersion }}
 
