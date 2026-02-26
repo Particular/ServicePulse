@@ -96,6 +96,10 @@ class ServiceControlClient {
   }
 
   private getUrl() {
+    if (window.defaultConfig?.isIntegrated && window.defaultConfig.service_control_url?.length) {
+      return window.defaultConfig.service_control_url;
+    }
+
     const searchParams = new URLSearchParams(window.location.search);
     const scu = searchParams.get("scu");
     const existingScu = window.localStorage.getItem("scu");

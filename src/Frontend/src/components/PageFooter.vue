@@ -21,6 +21,7 @@ const environment = environmentAndVersionsStore.environment;
 const licenseStore = useLicenseStore();
 const { licenseStatus, license } = licenseStore;
 const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
+const isIntegrated = window.defaultConfig.isIntegrated;
 
 const scAddressTooltip = computed(() => {
   return `ServiceControl URL ${serviceControlClient.url}`;
@@ -44,11 +45,14 @@ const { configuration } = storeToRefs(configurationStore);
             <RouterLink :to="routeLinks.configuration.endpointConnection.link">Connect new endpoint</RouterLink>
           </span>
 
-          <span v-if="!newVersions.newSPVersion.newspversion && environment.sp_version"> ServicePulse v{{ environment.sp_version }} </span>
-          <span v-if="newVersions.newSPVersion.newspversion && environment.sp_version">
-            ServicePulse v{{ environment.sp_version }} (<FAIcon v-if="newVersions.newSPVersion.newspversionnumber" class="footer-icon fake-link" :icon="faArrowTurnUp" />
-            <a :href="newVersions.newSPVersion.newspversionlink" target="_blank">v{{ newVersions.newSPVersion.newspversionnumber }} available</a>)
-          </span>
+          <span v-if="isIntegrated"> Integrated ServicePulse </span>
+          <template v-else-if="environment.sp_version">
+            <span v-if="!newVersions.newSPVersion.newspversion"> ServicePulse v{{ environment.sp_version }} </span>
+            <span v-else>
+              ServicePulse v{{ environment.sp_version }} (<FAIcon v-if="newVersions.newSPVersion.newspversionnumber" class="footer-icon fake-link" :icon="faArrowTurnUp" />
+              <a :href="newVersions.newSPVersion.newspversionlink" target="_blank">v{{ newVersions.newSPVersion.newspversionnumber }} available</a>)
+            </span>
+          </template>
           <span :title="scAddressTooltip">
             Service Control:
             <span class="connected-status" v-if="connectionState.connected && !connectionState.connecting">

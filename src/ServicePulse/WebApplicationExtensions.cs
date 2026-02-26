@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 static class WebApplicationExtensions
 {
-    public static void UseForwardedHeaders(this WebApplication app, Settings settings)
+    public static void UseForwardedHeaders(this WebApplication app, ServicePulseHostSettings settings)
     {
         // Register debug endpoint first (before early return) so it's always available in Development
         if (app.Environment.IsDevelopment())
@@ -27,7 +27,7 @@ static class WebApplicationExtensions
 
                 // Configuration
                 var knownProxies = settings.ForwardedHeadersKnownProxies.Select(p => p.ToString()).ToArray();
-                var knownNetworks = settings.ForwardedHeadersKnownNetworks.Select(n => $"{n.Prefix}/{n.PrefixLength}").ToArray();
+                var knownNetworks = settings.ForwardedHeadersKnownNetworks.Select(n => n.ToString()).ToArray();
 
                 return new
                 {
@@ -58,7 +58,7 @@ static class WebApplicationExtensions
 
         // Clear default loopback-only restrictions
         options.KnownProxies.Clear();
-        options.KnownNetworks.Clear();
+        options.KnownIPNetworks.Clear();
 
         // Enabled by default
         if (settings.ForwardedHeadersTrustAllProxies)
@@ -76,14 +76,14 @@ static class WebApplicationExtensions
 
             foreach (var network in settings.ForwardedHeadersKnownNetworks)
             {
-                options.KnownNetworks.Add(network);
+                options.KnownIPNetworks.Add(network);
             }
         }
 
         app.UseForwardedHeaders(options);
     }
 
-    public static void UseHttpsConfiguration(this WebApplication app, Settings settings)
+    public static void UseHttpsConfiguration(this WebApplication app, ServicePulseHostSettings settings)
     {
         // EnableHsts is disabled by default
         // Hsts is automatically disabled in Development environments

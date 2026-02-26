@@ -1,5 +1,6 @@
 import { expect } from "vitest";
 import { test, describe } from "../../drivers/vitest/driver";
+import { waitFor } from "@testing-library/vue";
 import { groupEndpointsBy } from "./actions/groupEndpointsBy";
 import { endpointGroupNames } from "./questions/endpointGroupNames";
 import { endpointGroup } from "./questions/endpointGroup";
@@ -68,10 +69,12 @@ describe("FEATURE: Endpoint sorting", () => {
       await sortEndpointsBy({ column: columnName.ENDPOINTNAME });
 
       //Assert
-      expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Venus", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Earth"]);
-      expect(endpointGroup("Universe.Solarsystem.Venus").Endpoints).toEqual(["Endpoint4", "Endpoint3"]);
-      expect(endpointGroup("Universe.Solarsystem.Mercury").Endpoints).toEqual(["Endpoint2", "Endpoint1"]);
-      expect(endpointGroup("Universe.Solarsystem.Earth").Endpoints).toEqual(["Endpoint6", "Endpoint5"]);
+      await waitFor(() => {
+        expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Venus", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Earth"]);
+        expect(endpointGroup("Universe.Solarsystem.Venus").Endpoints).toEqual(["Endpoint4", "Endpoint3"]);
+        expect(endpointGroup("Universe.Solarsystem.Mercury").Endpoints).toEqual(["Endpoint2", "Endpoint1"]);
+        expect(endpointGroup("Universe.Solarsystem.Earth").Endpoints).toEqual(["Endpoint6", "Endpoint5"]);
+      });
     });
 
     test("EXAMPLE: Endpoints inside of the groups and group names should be sorted in ascending order when clicking twice on the endpoint name column title", async ({ driver }) => {
@@ -95,10 +98,12 @@ describe("FEATURE: Endpoint sorting", () => {
       await sortEndpointsBy({ column: columnName.ENDPOINTNAME }); //Click the column title again for ascending
 
       //Assert
-      expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Earth", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Venus"]);
-      expect(endpointGroup("Universe.Solarsystem.Earth").Endpoints).toEqual(["Endpoint5", "Endpoint6"]);
-      expect(endpointGroup("Universe.Solarsystem.Mercury").Endpoints).toEqual(["Endpoint1", "Endpoint2"]);
-      expect(endpointGroup("Universe.Solarsystem.Venus").Endpoints).toEqual(["Endpoint3", "Endpoint4"]);
+      await waitFor(() => {
+        expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Earth", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Venus"]);
+        expect(endpointGroup("Universe.Solarsystem.Earth").Endpoints).toEqual(["Endpoint5", "Endpoint6"]);
+        expect(endpointGroup("Universe.Solarsystem.Mercury").Endpoints).toEqual(["Endpoint1", "Endpoint2"]);
+        expect(endpointGroup("Universe.Solarsystem.Venus").Endpoints).toEqual(["Endpoint3", "Endpoint4"]);
+      });
     });
   });
 
