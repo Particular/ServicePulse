@@ -97,7 +97,7 @@ export const hasEmailNotificationsWithSaveCapture = () => {
     });
 
     // test endpoint
-    driver.mockEndpointDynamic(`${serviceControlUrl}notifications/email/test`, "post",  () => {
+    driver.mockEndpointDynamic(`${serviceControlUrl}notifications/email/test`, "post", () => {
       return Promise.resolve({ body: {}, status: 200 });
     });
 
