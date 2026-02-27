@@ -50,7 +50,7 @@ const extensions = computed(() => {
 </script>
 
 <template>
-  <div class="wrapper" :aria-label="ariaLabel">
+  <div class="wrapper" role="code" :aria-label="ariaLabel">
     <div v-if="props.showCopyToClipboard || $slots.toolbarLeft || $slots.toolbarRight" class="toolbar">
       <div><slot name="toolbarLeft"></slot></div>
       <div>

@@ -1,28 +1,274 @@
 import { test, describe } from "../../drivers/vitest/driver";
+import { expect, vi } from "vitest";
+import * as precondition from "../../preconditions";
+import { waitFor } from "@testing-library/vue";
+import { endpointConfigurationOnlyTab, jsonFileTab, isTabActive, clickTab, getCodeEditorContent, waitForCodeEditorContent, clickCopyButton } from "./questions/endpointConnection";
 
-describe("FEATURE: Endpoint connection", () => {
-  describe("RULE: Examples should match the current configuration", () => {
-    test.todo("EXAMPLE: The 'Endpoint Configuration Only' tab should be selected by default");
-    test.todo("EXAMPLE: The 'Endpoint Configuration Only' tab should display endpoint configuration examples for the current configuration");
-    /* SCENARIO
-        Endpoint Configuration only
-      */
+describe("FEATURE: Viewing endpoint connection", () => {
+  describe("RULE:  Connection status should match the current configuration", () => {
+    test("EXAMPLE: The 'Endpoint Configuration Only' tab is selected by default", async ({ driver }) => {
+      // Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasServiceControlConnection());
+      await driver.setUp(precondition.hasMonitoringConnection());
 
-    test.todo("EXAMPLE: The 'JSON File' tab should display JSON file configuration examples for the current configuration");
-    /* SCENARIO
-        Json file
-      */
+      // Act - navigate to the endpoint connection configuration page
+      await driver.goTo("/configuration/endpoint-connection");
+
+      // Assert - wait for the tabs to load
+      await waitFor(async () => {
+        const endpointTab = await endpointConfigurationOnlyTab();
+        expect(endpointTab).toBeInTheDocument();
+      });
+
+      // Assert - "Endpoint Configuration Only" tab should be active
+      const endpointTab = await endpointConfigurationOnlyTab();
+      expect(isTabActive(endpointTab)).toBe(true);
+
+      // Assert - "JSON File" tab should not be active
+      const jsonTab = await jsonFileTab();
+      expect(isTabActive(jsonTab)).toBe(false);
+    });
+
+    test("EXAMPLE: The 'Endpoint Configuration Only' tab displays endpoint configuration examples for the current configuration", async ({ driver }) => {
+      // Arrange - Define the expected configuration
+      const expectedServiceControlConfig = {
+        Heartbeats: {
+          Enabled: true,
+          HeartbeatsQueue: "Particular.ServiceControl@XXX",
+          Frequency: "00:00:10",
+          TimeToLive: "00:00:40",
+        },
+        CustomChecks: {
+          Enabled: true,
+          CustomChecksQueue: "Particular.ServiceControl@XXX",
+        },
+        ErrorQueue: "error",
+        SagaAudit: {
+          Enabled: true,
+          SagaAuditQueue: "audit",
+        },
+        MessageAudit: {
+          Enabled: true,
+          AuditQueue: "audit",
+        },
+      };
+
+      const expectedMonitoringConfig = {
+        Enabled: true,
+        MetricsQueue: "Particular.Monitoring@XXX",
+        Interval: "00:00:01",
+      };
+
+      // Set up preconditions with the expected configuration
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasServiceControlConnection(expectedServiceControlConfig as never));
+      await driver.setUp(precondition.hasMonitoringConnection(expectedMonitoringConfig));
+
+      // Act
+      await driver.goTo("/configuration/endpoint-connection");
+
+      // Assert - wait for content to load
+      await waitFor(async () => {
+        const content = await getCodeEditorContent();
+        expect(content).toBeTruthy();
+      });
+
+      // Get the actual content
+      const content = await getCodeEditorContent();
+
+      // Debug: Verify we got the full content
+      expect(content.length).toBeGreaterThan(0);
+
+      // Assert - verify the content contains the expected structure
+      expect(content).toContain("ServicePlatformConnectionConfiguration.Parse");
+
+      // Verify each section of the configuration is present with escaped quotes
+      // Heartbeats section
+      expect(content).toContain('""Heartbeats""');
+      expect(content).toContain('""HeartbeatsQueue"": ""Particular.ServiceControl@XXX""');
+      expect(content).toContain('""Frequency"": ""00:00:10""');
+      expect(content).toContain('""TimeToLive"": ""00:00:40""');
+
+      // CustomChecks section
+      expect(content).toContain('""CustomChecks""');
+      expect(content).toContain('""CustomChecksQueue"": ""Particular.ServiceControl@XXX""');
+
+      // ErrorQueue section (it's a string, not an object)
+      expect(content).toContain('""ErrorQueue"": ""error""');
+
+      // SagaAudit section
+      expect(content).toContain('""SagaAudit""');
+      expect(content).toContain('""SagaAuditQueue"": ""audit""');
+
+      // MessageAudit section
+      expect(content).toContain('""MessageAudit""');
+      expect(content).toContain('""AuditQueue"": ""audit""');
+
+      // Metrics section
+      expect(content).toContain('""Metrics""');
+      expect(content).toContain('""MetricsQueue"": ""Particular.Monitoring@XXX""');
+      expect(content).toContain('""Interval"": ""00:00:01""');
+      expect(content).toContain("ConnectToServicePlatform");
+    });
+
+    test("EXAMPLE: The 'JSON File' tab is displayed with JSON file configuration examples for the current configuration", async ({ driver }) => {
+      // Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasServiceControlConnection());
+      await driver.setUp(precondition.hasMonitoringConnection());
+
+      // Act
+      await driver.goTo("/configuration/endpoint-connection");
+
+      // Wait for page to load
+      await waitFor(async () => {
+        const endpointTab = await endpointConfigurationOnlyTab();
+        expect(endpointTab).toBeInTheDocument();
+      });
+
+      // Act - click on JSON File tab
+      const jsonTab = await jsonFileTab();
+      expect(jsonTab).toBeInTheDocument();
+      clickTab(jsonTab!);
+
+      // Assert - JSON File tab should now be active
+      await waitFor(async () => {
+        const jsonTabAfterClick = await jsonFileTab();
+        expect(isTabActive(jsonTabAfterClick)).toBe(true);
+      });
+
+      // Assert - Endpoint Configuration Only tab should not be active
+      const endpointTab = await endpointConfigurationOnlyTab();
+      expect(isTabActive(endpointTab)).toBe(false);
+
+      // Wait for the code editor to be rendered and have content in the JSON File tab
+      const content = await waitForCodeEditorContent(0, "File.ReadAllText");
+
+      // Assert - verify the content contains expected JSON configuration code
+      expect(content).toContain("var json = File.ReadAllText");
+      expect(content).toContain("ServicePlatformConnectionConfiguration.Parse(json)");
+      expect(content).toContain("endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection)");
+    });
   });
-  describe("RULE: Copying the example should happen with a single click", () => {
-    test.todo("EXAMPLE: Clicking the 'Copy' button in the 'Endpoint Configuration Only' tab should copy the example to the clipboard");
+  describe("RULE: Copying the configuration/text should happen with a single click", () => {
+    test("EXAMPLE: Clicking the 'Copy' button in the 'Endpoint Configuration Only' tab copies the example to the clipboard", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasServiceControlConnection());
+      await driver.setUp(precondition.hasMonitoringConnection());
 
-    /* SCENARIO
-        Endpoint Configuration only
-      */
+      // Act - navigate to the page
+      await driver.goTo("/configuration/endpoint-connection");
 
-    test.todo("EXAMPLE: Clicking the 'Copy' button in the 'JSON File' tab should copy the example to the clipboard");
-    /* SCENARIO
-        Json file
-      */
+      // Wait for page to load
+      await waitFor(async () => {
+        const endpointTab = await endpointConfigurationOnlyTab();
+        expect(endpointTab).toBeInTheDocument();
+      });
+
+      // Wait for code editor content to be available
+      await waitForCodeEditorContent(0);
+
+      // Arrange - Mock the clipboard API in the DOM context
+      const writeTextMock = vi.fn().mockResolvedValue(undefined);
+
+      // Mock clipboard in the actual window context where the component runs
+      Object.defineProperty(window.navigator, "clipboard", {
+        value: {
+          writeText: writeTextMock,
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      // Act - click the copy button
+      await clickCopyButton();
+
+      // Assert - clipboard writeText was called
+      await waitFor(() => {
+        expect(writeTextMock).toHaveBeenCalledTimes(1);
+      });
+
+      // Assert - get the content that was copied to clipboard
+      const copiedContent = writeTextMock.mock.calls[0][0] as string;
+      // Get the code editor content after the copy to compare
+      const codeContent = getCodeEditorContent(0);
+
+      // Normalize whitespace for comparison (remove all whitespace differences)
+      const normalizeContent = (str: string) => str.replace(/\s+/g, " ").trim();
+      expect(normalizeContent(copiedContent)).toBe(normalizeContent(codeContent));
+    });
+
+    test("EXAMPLE: Clicking the 'Copy' button in the 'JSON File' tab copies the example to the clipboard", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasServiceControlConnection());
+      await driver.setUp(precondition.hasMonitoringConnection());
+
+      // Act - navigate to the page
+      await driver.goTo("/configuration/endpoint-connection");
+
+      // Wait for page to load
+      await waitFor(async () => {
+        const endpointTab = await endpointConfigurationOnlyTab();
+        expect(endpointTab).toBeInTheDocument();
+      });
+
+      // Act - switch to JSON File tab
+      const jsonTab = await jsonFileTab();
+      expect(jsonTab).not.toBeNull();
+      await clickTab(jsonTab!);
+
+      // Wait for JSON tab to be active
+      await waitFor(async () => {
+        const jsonTabAfterClick = await jsonFileTab();
+        expect(isTabActive(jsonTabAfterClick)).toBe(true);
+      });
+
+      // Wait for both code editors to be available
+      await waitForCodeEditorContent(0, "File.ReadAllText"); // C# snippet Endpoint configuration:
+      await waitForCodeEditorContent(1, "{"); // JSON configuration file
+
+      // Arrange - Mock the clipboard API in the DOM context
+      const writeTextMock = vi.fn().mockResolvedValue(undefined);
+
+      // Mock clipboard in the actual window context where the component runs
+      Object.defineProperty(window.navigator, "clipboard", {
+        value: {
+          writeText: writeTextMock,
+        },
+        writable: true,
+        configurable: true,
+      });
+      // C# snippet Endpoint configuration:
+      // Act - click the first copy button (C# snippet)
+      await clickCopyButton(0);
+
+      // Assert - clipboard writeText was called for the first button
+      await waitFor(() => {
+        expect(writeTextMock).toHaveBeenCalledTimes(1);
+      });
+
+      // Assert - get the content that was copied to clipboard for the first button
+      const copiedContent1 = writeTextMock.mock.calls[0][0] as string;
+      const codeContent1 = getCodeEditorContent(0);
+
+      // Normalize whitespace for comparison
+      const normalizeContent = (str: string) => str.replace(/\s+/g, " ").trim();
+      expect(normalizeContent(copiedContent1)).toBe(normalizeContent(codeContent1));
+
+      // JSON configuration file:
+      // Act - click the second copy button (JSON config)
+      await clickCopyButton(1);
+
+      // Assert - clipboard writeText was called for the second button
+      await waitFor(() => {
+        expect(writeTextMock).toHaveBeenCalledTimes(2);
+      });
+
+      // Assert - get the content that was copied to clipboard for the second button
+      const copiedContent2 = writeTextMock.mock.calls[1][0] as string;
+      const codeContent2 = getCodeEditorContent(1);
+      expect(normalizeContent(copiedContent2)).toBe(normalizeContent(codeContent2));
+    });
   });
 });
