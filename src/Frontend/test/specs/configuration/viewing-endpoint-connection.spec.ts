@@ -4,9 +4,9 @@ import * as precondition from "../../preconditions";
 import { waitFor } from "@testing-library/vue";
 import { endpointConfigurationOnlyTab, jsonFileTab, isTabActive, clickTab, getCodeEditorContent, waitForCodeEditorContent, clickCopyButton } from "./questions/endpointConnection";
 
-describe("FEATURE: Endpoint connection", () => {
-  describe("RULE: Examples should match the current configuration", () => {
-    test("EXAMPLE: The 'Endpoint Configuration Only' tab should be selected by default", async ({ driver }) => {
+describe("FEATURE: Viewing endpoint connection", () => {
+  describe("RULE:  Connection status should match the current configuration", () => {
+    test("EXAMPLE: The 'Endpoint Configuration Only' tab is selected by default", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlConnection());
@@ -30,7 +30,7 @@ describe("FEATURE: Endpoint connection", () => {
       expect(isTabActive(jsonTab)).toBe(false);
     });
 
-    test("EXAMPLE: The 'Endpoint Configuration Only' tab should display endpoint configuration examples for the current configuration", async ({ driver }) => {
+    test("EXAMPLE: The 'Endpoint Configuration Only' tab displays endpoint configuration examples for the current configuration", async ({ driver }) => {
       // Arrange - Define the expected configuration
       const expectedServiceControlConfig = {
         Heartbeats: {
@@ -112,7 +112,7 @@ describe("FEATURE: Endpoint connection", () => {
       expect(content).toContain("ConnectToServicePlatform");
     });
 
-    test("EXAMPLE: The 'JSON File' tab should display JSON file configuration examples for the current configuration", async ({ driver }) => {
+    test("EXAMPLE: The 'JSON File' tab is displayed with JSON file configuration examples for the current configuration", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlConnection());
@@ -151,8 +151,8 @@ describe("FEATURE: Endpoint connection", () => {
       expect(content).toContain("endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection)");
     });
   });
-  describe("RULE: Copying the example should happen with a single click", () => {
-    test("EXAMPLE: Clicking the 'Copy' button in the 'Endpoint Configuration Only' tab should copy the example to the clipboard", async ({ driver }) => {
+  describe("RULE: Copying the configuration/text should happen with a single click", () => {
+    test("EXAMPLE: Clicking the 'Copy' button in the 'Endpoint Configuration Only' tab copies the example to the clipboard", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlConnection());
       await driver.setUp(precondition.hasMonitoringConnection());
@@ -199,7 +199,7 @@ describe("FEATURE: Endpoint connection", () => {
       expect(normalizeContent(copiedContent)).toBe(normalizeContent(codeContent));
     });
 
-    test("EXAMPLE: Clicking the 'Copy' button in the 'JSON File' tab should copy the example to the clipboard", async ({ driver }) => {
+    test("EXAMPLE: Clicking the 'Copy' button in the 'JSON File' tab copies the example to the clipboard", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlConnection());
       await driver.setUp(precondition.hasMonitoringConnection());
