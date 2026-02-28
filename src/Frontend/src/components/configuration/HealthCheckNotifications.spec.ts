@@ -9,27 +9,27 @@ import type EmailSettings from "@/components/configuration/EmailSettings";
 
 interface ComponentDSL {
   actions: {
-    clickEmailToggle(): Promise<void>;
-    clickConfigureButton(): Promise<void>;
-    clickSaveButton(): Promise<void>;
-    clickCancelButton(): Promise<void>;
-    clickSendTestNotification(): Promise<void>;
-    fillValidEmailConfiguration(): Promise<void>;
+    toggleEmailNotifications(): Promise<void>;
+    openEmailConfiguration(): Promise<void>;
+    confirmEmailConfigurationChanges(): Promise<void>;
+    discardEmailConfigurationChanges(): Promise<void>;
+    requestTestNotification(): Promise<void>;
+    provideValidEmailConfiguration(): Promise<void>;
   };
   assert: {
-    emailToggleIsOn(): void;
-    emailToggleIsOff(): void;
-    emailConfigDialogIsVisible(): void;
-    emailConfigDialogIsNotVisible(): void;
-    saveButtonIsEnabled(): void;
-    saveButtonIsDisabled(): void;
-    testEmailSentSuccessfullyIsDisplayed(): Promise<void>;
-    testFailedIsDisplayed(): Promise<void>;
-    toggleEmailNotificationsActionWasCalled(): void;
-    testEmailNotificationsActionWasCalled(): void;
-    saveEmailNotificationsActionWasCalled(): void;
-    saveEmailNotificationsActionWasNotCalled(): void;
-    emailConfigFormReflects(config: Partial<EmailSettings>): void;
+    emailNotificationsAreEnabled(): void;
+    emailNotificationsAreDisabled(): void;
+    emailConfigurationIsAccessible(): void;
+    emailConfigurationIsNotAccessible(): void;
+    userCanSaveConfiguration(): void;
+    userCannotSaveConfiguration(): void;
+    testNotificationWasSuccessful(): Promise<void>;
+    testNotificationFailed(): Promise<void>;
+    emailNotificationsWereToggled(): void;
+    testNotificationWasRequested(): void;
+    emailConfigurationWasSaved(): void;
+    emailConfigurationWasNotSaved(): void;
+    emailConfigurationMatches(config: Partial<EmailSettings>): void;
   };
 }
 
@@ -67,11 +67,9 @@ describe("FEATURE: Health check notifications", () => {
         },
       });
 
-      componentDriver.assert.emailToggleIsOff();
-
-      await componentDriver.actions.clickEmailToggle();
-
-      componentDriver.assert.toggleEmailNotificationsActionWasCalled();
+      componentDriver.assert.emailNotificationsAreDisabled();
+      await componentDriver.actions.toggleEmailNotifications();
+      componentDriver.assert.emailNotificationsWereToggled();
     });
 
     test("EXAMPLE: Email notifications are currently enabled", async () => {
@@ -88,11 +86,9 @@ describe("FEATURE: Health check notifications", () => {
         },
       });
 
-      componentDriver.assert.emailToggleIsOn();
-
-      await componentDriver.actions.clickEmailToggle();
-
-      componentDriver.assert.toggleEmailNotificationsActionWasCalled();
+      componentDriver.assert.emailNotificationsAreEnabled();
+      await componentDriver.actions.toggleEmailNotifications();
+      componentDriver.assert.emailNotificationsWereToggled();
     });
   });
 
@@ -105,11 +101,9 @@ describe("FEATURE: Health check notifications", () => {
        */
       const componentDriver = renderComponent();
 
-      componentDriver.assert.emailConfigDialogIsNotVisible();
-
-      await componentDriver.actions.clickConfigureButton();
-
-      componentDriver.assert.emailConfigDialogIsVisible();
+      componentDriver.assert.emailConfigurationIsNotAccessible();
+      await componentDriver.actions.openEmailConfiguration();
+      componentDriver.assert.emailConfigurationIsAccessible();
     });
 
     test("EXAMPLE: Edits have been made in the configuration dialog", async () => {
@@ -122,15 +116,12 @@ describe("FEATURE: Health check notifications", () => {
        */
       const componentDriver = renderComponent();
 
-      await componentDriver.actions.clickConfigureButton();
-      componentDriver.assert.emailConfigDialogIsVisible();
-
-      await componentDriver.actions.fillValidEmailConfiguration();
-
-      await componentDriver.actions.clickCancelButton();
-
-      componentDriver.assert.emailConfigDialogIsNotVisible();
-      componentDriver.assert.saveEmailNotificationsActionWasNotCalled();
+      await componentDriver.actions.openEmailConfiguration();
+      componentDriver.assert.emailConfigurationIsAccessible();
+      await componentDriver.actions.provideValidEmailConfiguration();
+      await componentDriver.actions.discardEmailConfigurationChanges();
+      componentDriver.assert.emailConfigurationIsNotAccessible();
+      componentDriver.assert.emailConfigurationWasNotSaved();
     });
   });
 
@@ -150,10 +141,8 @@ describe("FEATURE: Health check notifications", () => {
         },
       });
 
-      await componentDriver.actions.clickConfigureButton();
-
-      // With all required fields empty the form is invalid; Save must be disabled
-      componentDriver.assert.saveButtonIsDisabled();
+      await componentDriver.actions.openEmailConfiguration();
+      componentDriver.assert.userCannotSaveConfiguration();
     });
 
     test("EXAMPLE: All required fields are present and valid", async () => {
@@ -170,12 +159,10 @@ describe("FEATURE: Health check notifications", () => {
         },
       });
 
-      await componentDriver.actions.clickConfigureButton();
-      componentDriver.assert.saveButtonIsDisabled();
-
-      await componentDriver.actions.fillValidEmailConfiguration();
-
-      componentDriver.assert.saveButtonIsEnabled();
+      await componentDriver.actions.openEmailConfiguration();
+      componentDriver.assert.userCannotSaveConfiguration();
+      await componentDriver.actions.provideValidEmailConfiguration();
+      componentDriver.assert.userCanSaveConfiguration();
     });
   });
 
@@ -196,14 +183,12 @@ describe("FEATURE: Health check notifications", () => {
         },
       });
 
-      await componentDriver.actions.clickConfigureButton();
-      await componentDriver.actions.fillValidEmailConfiguration();
-      componentDriver.assert.saveButtonIsEnabled();
-
-      await componentDriver.actions.clickSaveButton();
-
-      componentDriver.assert.saveEmailNotificationsActionWasCalled();
-      componentDriver.assert.emailConfigDialogIsNotVisible();
+      await componentDriver.actions.openEmailConfiguration();
+      await componentDriver.actions.provideValidEmailConfiguration();
+      componentDriver.assert.userCanSaveConfiguration();
+      await componentDriver.actions.confirmEmailConfigurationChanges();
+      componentDriver.assert.emailConfigurationWasSaved();
+      componentDriver.assert.emailConfigurationIsNotAccessible();
     });
   });
 
@@ -236,8 +221,8 @@ describe("FEATURE: Health check notifications", () => {
         },
       });
 
-      await componentDriver.actions.clickConfigureButton();
-      componentDriver.assert.emailConfigFormReflects(savedConfig);
+      await componentDriver.actions.openEmailConfiguration();
+      componentDriver.assert.emailConfigurationMatches(savedConfig);
     });
 
     test("EXAMPLE: Email notifications were enabled before refresh", () => {
@@ -254,7 +239,7 @@ describe("FEATURE: Health check notifications", () => {
         },
       });
 
-      componentDriver.assert.emailToggleIsOn();
+      componentDriver.assert.emailNotificationsAreEnabled();
     });
 
     test("EXAMPLE: Email notifications were disabled before refresh", () => {
@@ -271,7 +256,7 @@ describe("FEATURE: Health check notifications", () => {
         },
       });
 
-      componentDriver.assert.emailToggleIsOff();
+      componentDriver.assert.emailNotificationsAreDisabled();
     });
   });
 
@@ -288,10 +273,9 @@ describe("FEATURE: Health check notifications", () => {
       // Stub the action so it returns false (test notification failed)
       vi.mocked(store.testEmailNotifications).mockResolvedValue(false);
 
-      await componentDriver.actions.clickSendTestNotification();
-
-      componentDriver.assert.testEmailNotificationsActionWasCalled();
-      await componentDriver.assert.testFailedIsDisplayed();
+      await componentDriver.actions.requestTestNotification();
+      componentDriver.assert.testNotificationWasRequested();
+      await componentDriver.assert.testNotificationFailed();
     });
 
     test("EXAMPLE: The email configuration is valid", async () => {
@@ -306,10 +290,9 @@ describe("FEATURE: Health check notifications", () => {
       // Stub the action so it returns true (test notification succeeded)
       vi.mocked(store.testEmailNotifications).mockResolvedValue(true);
 
-      await componentDriver.actions.clickSendTestNotification();
-
-      componentDriver.assert.testEmailNotificationsActionWasCalled();
-      await componentDriver.assert.testEmailSentSuccessfullyIsDisplayed();
+      await componentDriver.actions.requestTestNotification();
+      componentDriver.assert.testNotificationWasRequested();
+      await componentDriver.assert.testNotificationWasSuccessful();
     });
   });
 });
@@ -348,90 +331,66 @@ function renderComponent({ initialState = {} }: { initialState?: Record<string, 
 
   return {
     actions: {
-      async clickEmailToggle() {
-        // OnOffSwitch renders a styled <label role="switch"> as the interactive element.
-        // Clicking the label fires a synthetic click on its associated hidden checkbox,
-        // which in turn calls store.toggleEmailNotifications via the component handler.
+      async toggleEmailNotifications() {
         await user.click(screen.getByRole("switch", { name: /emailNotifications/i }));
       },
-
-      async clickConfigureButton() {
+      async openEmailConfiguration() {
         await user.click(screen.getByRole("button", { name: /configure/i }));
       },
-
-      async clickSaveButton() {
+      async confirmEmailConfigurationChanges() {
         await user.click(screen.getByRole("button", { name: /save/i }));
       },
-
-      async clickCancelButton() {
+      async discardEmailConfigurationChanges() {
         await user.click(screen.getByRole("button", { name: /cancel/i }));
       },
-
-      async clickSendTestNotification() {
+      async requestTestNotification() {
         await user.click(screen.getByRole("button", { name: /send test notification/i }));
       },
-
-      async fillValidEmailConfiguration() {
+      async provideValidEmailConfiguration() {
         await user.type(screen.getByLabelText(/smtp server address/i), "smtp.example.com");
         await user.type(screen.getByLabelText(/smtp server port/i), "587");
         await user.type(screen.getByLabelText(/from address/i), "from@example.com");
-        // "To address" label contains extra text after a <br>; the regex matches the beginning
         await user.type(screen.getByLabelText(/to address/i), "to@example.com");
       },
     },
-
     assert: {
-      emailToggleIsOn() {
+      emailNotificationsAreEnabled() {
         expect(screen.getByRole("switch", { name: /emailNotifications/i })).toHaveAttribute("aria-checked", "true");
       },
-
-      emailToggleIsOff() {
+      emailNotificationsAreDisabled() {
         expect(screen.getByRole("switch", { name: /emailNotifications/i })).toHaveAttribute("aria-checked", "false");
       },
-
-      emailConfigDialogIsVisible() {
-        // The modal has role="dialog" and aria-labelledby pointing to "Email configuration"
+      emailConfigurationIsAccessible() {
         expect(screen.getByRole("dialog", { name: /email configuration/i })).toBeInTheDocument();
       },
-
-      emailConfigDialogIsNotVisible() {
+      emailConfigurationIsNotAccessible() {
         expect(screen.queryByRole("dialog", { name: /email configuration/i })).not.toBeInTheDocument();
       },
-
-      saveButtonIsEnabled() {
+      userCanSaveConfiguration() {
         expect(screen.getByRole("button", { name: /save/i })).not.toBeDisabled();
       },
-
-      saveButtonIsDisabled() {
+      userCannotSaveConfiguration() {
         expect(screen.getByRole("button", { name: /save/i })).toBeDisabled();
       },
-
-      async testEmailSentSuccessfullyIsDisplayed() {
-        // The result appears asynchronously; findByText polls until the element is in the DOM
+      async testNotificationWasSuccessful() {
         expect(await screen.findByText(/test email sent successfully/i)).toBeInTheDocument();
       },
-
-      async testFailedIsDisplayed() {
+      async testNotificationFailed() {
         expect(await screen.findByText(/test failed/i)).toBeInTheDocument();
       },
-
-      toggleEmailNotificationsActionWasCalled() {
+      emailNotificationsWereToggled() {
         expect(store.toggleEmailNotifications).toHaveBeenCalled();
       },
-
-      testEmailNotificationsActionWasCalled() {
+      testNotificationWasRequested() {
         expect(store.testEmailNotifications).toHaveBeenCalled();
       },
-
-      saveEmailNotificationsActionWasCalled() {
+      emailConfigurationWasSaved() {
         expect(store.saveEmailNotifications).toHaveBeenCalled();
       },
-
-      saveEmailNotificationsActionWasNotCalled() {
+      emailConfigurationWasNotSaved() {
         expect(store.saveEmailNotifications).not.toHaveBeenCalled();
       },
-
-      emailConfigFormReflects(config: Partial<EmailSettings>) {
+      emailConfigurationMatches(config: Partial<EmailSettings>) {
         if (config.smtp_server !== undefined) {
           expect(screen.getByLabelText(/smtp server address/i)).toHaveValue(config.smtp_server);
         }
