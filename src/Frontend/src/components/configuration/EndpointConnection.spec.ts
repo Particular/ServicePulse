@@ -5,56 +5,78 @@ import EndpointConnection from "@/components/configuration/EndpointConnection.vu
 import { useEndpointConnectionStore } from "@/stores/EndpointConnectionStore";
 
 /**
- * DSL for interacting with the EndpointConnection component from a user's perspective.
- * Abstracts away UI details and focuses on business capabilities.
+ * DSL for the Endpoint Connection Configuration feature.
+ * Expresses user capabilities and business outcomes without exposing implementation details.
+ *
+ * This specification is intentionally UI-agnostic. Users don't interact with "tabs" or "buttons"—
+ * they accomplish business tasks like "view configuration in C# format" or "copy code to clipboard".
+ * If the UI changes to use dropdowns, buttons, or a different navigation pattern, only the
+ * implementation helper functions below need updating—the tests remain unchanged.
  */
 interface EndpointConnectionDSL {
   /**
-   * User actions
+   * User capabilities: what users can do with this feature
    */
-  actions: {
-    clickEndpointConfigurationOnlyTab(): void;
-    clickJsonFileTab(): void;
-    clickCopyButtonForEndpointConfiguration(): void;
-    clickCopyButtonForJsonFileConfiguration(): void;
-    clickCopyButtonForJsonFile(): void;
+  user: {
+    /**
+     * View the endpoint configuration in C# inline code format
+     */
+    viewEndpointConfigurationCode(): void;
+
+    /**
+     * View the file-based configuration approach (both C# and JSON formats)
+     */
+    viewJsonFileConfiguration(): void;
+
+    /**
+     * Copy the endpoint configuration code to clipboard
+     */
+    copyEndpointConfigurationCode(): Promise<string>;
+
+    /**
+     * Copy the C# sample for JSON file-based configuration
+     */
+    copyJsonFileConfigurationSample(): Promise<string>;
+
+    /**
+     * Copy the JSON content to clipboard
+     */
+    copyJsonContent(): Promise<string>;
   };
 
   /**
-   * Assertions about component state and outcomes
+   * Business outcome verifications: what should be true after user actions
    */
-  assert: {
+  verify: {
     /**
-     * Verify that the endpoint configuration only tab is visible and active
+     * Configuration code is displayed with all required settings
      */
-    endpointConfigurationOnlyTabIsActive(): void;
-    jsonFileTabIsActive(): void;
+    configurationCodeShowsAllSettings(expectedSettings: string[]): void;
 
     /**
-     * Verify the endpoint configuration code is displayed with expected content
+     * Both configuration formats (C# and JSON) are available in JSON file view
      */
-    endpointConfigurationCodeIsDisplayed(expectedContent: string[]): void;
+    jsonFileViewProvidesAllFormats(): void;
 
     /**
-     * Verify the JSON file tab shows both C# and JSON code sections
+     * System communicates connection errors to the user
      */
-    jsonFileTabShowsCSharpAndJsonCode(): void;
+    connectionErrorsAreVisible(expectedErrors: string[]): void;
 
     /**
-     * Verify that error messages are displayed when connection fails
+     * Data is being loaded (shows loading state)
      */
-    errorMessagesAreDisplayed(expectedErrors: string[]): void;
+    systemIsLoading(): void;
 
     /**
-     * Verify loading spinner is shown/hidden
+     * Data has finished loading
      */
-    loadingIndicatorIsShown(): void;
-    loadingIndicatorIsHidden(): void;
+    systemIsReady(): void;
 
     /**
-     * Verify the code content matches expected value
+     * Content has been successfully copied (returns the content that was copied)
      */
-    codeEditorContentMatches(ariaLabel: string, expectedContent: string): void;
+    contentWasCopied(copiedContent: string, expectedContent: string[]): void;
   };
 }
 
@@ -283,15 +305,7 @@ describe("FEATURE: Endpoint connection configuration", () => {
       });
 
       // Assert - verify the content contains configuration structure with escaped quotes
-      componentDSL.assert.endpointConfigurationCodeIsDisplayed([
-        "ServicePlatformConnectionConfiguration.Parse",
-        "Heartbeats",
-        "CustomChecks",
-        "ErrorQueue",
-        "SagaAudit",
-        "MessageAudit",
-        "Metrics",
-      ]);
+      componentDSL.assert.endpointConfigurationCodeIsDisplayed(["ServicePlatformConnectionConfiguration.Parse", "Heartbeats", "CustomChecks", "ErrorQueue", "SagaAudit", "MessageAudit", "Metrics"]);
     });
   });
 
