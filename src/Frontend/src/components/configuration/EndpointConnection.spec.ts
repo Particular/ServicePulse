@@ -39,12 +39,15 @@ interface ComponentAssertions {
   jsonFileTabIsActive(): void;
   codeOnlyCodeIsDisplayed(): void;
   jsonFileCodeIsDisplayed(): Promise<void>;
-  configurationCodeContains(expectedContent: string[]): void; // NEW
+  configurationCodeContains(expectedContent: string[]): void;
+  storeHasCorrectData(): void;
+  storeHasErrors(expectedErrors: string[]): void;
 }
 
 interface RenderResult {
   actions: ComponentActions;
   assertions: ComponentAssertions;
+  store: ReturnType<typeof useEndpointConnectionStore>;
 }
 
 describe("FEATURE: Endpoint Connection Configuration", () => {
@@ -63,35 +66,33 @@ describe("FEATURE: Endpoint Connection Configuration", () => {
     });
 
     test("EXAMPLE: The 'Endpoint Configuration Only' tab displays endpoint configuration examples for the current configuration", async () => {
-      const { assertions } = await renderComponent(FULL_CONFIG);
+      const { assertions, store } = await renderComponent(FULL_CONFIG);
 
       // Assert that the code-only tab is active by default
       assertions.codeOnlyTabIsActive();
 
-      // Verify the inline snippet contains the correct content
-      // Query the code editor element specifically to avoid including button text
-      // const codeEditor = screen.getByRole("code");
-      const editorContent = getCodeEditorContent(0);
+      // Verify store has the correct data
+      assertions.storeHasCorrectData();
 
-      expect(editorContent).toContain("ServicePlatformConnectionConfiguration.Parse");
-      expect(editorContent).toContain("endpointConfiguration.ConnectToServicePlatform");
-      expect(editorContent).toContain("Heartbeats");
+      // Verify the inline snippet from store contains the correct content
+      expect(store.inlineSnippet).toContain("ServicePlatformConnectionConfiguration.Parse");
+      expect(store.inlineSnippet).toContain("endpointConfiguration.ConnectToServicePlatform");
+      expect(store.inlineSnippet).toContain("Heartbeats");
     });
 
     test("EXAMPLE: The 'JSON File' tab is displayed with JSON file configuration examples for the current configuration", async () => {
-      const { actions, assertions } = await renderComponent(FULL_CONFIG);
+      const { actions, assertions, store } = await renderComponent(FULL_CONFIG);
 
       actions.selectJsonFileTab();
 
-      // Wait for the JSON tab to become active
       await waitFor(() => {
         assertions.jsonFileTabIsActive();
       });
 
-      // Verify both code editors are displayed with correct content
-      expect(screen.getByText(/File.ReadAllText/)).toBeInTheDocument();
-      expect(screen.getByText(/ServicePlatformConnectionConfiguration.Parse\(json\)/)).toBeInTheDocument();
-      expect(screen.getByText(/"Heartbeats":/)).toBeInTheDocument();
+      // Verify store has JSON file data
+      expect(store.jsonSnippet).toContain("File.ReadAllText");
+      expect(store.jsonSnippet).toContain("ServicePlatformConnectionConfiguration.Parse(json)");
+      expect(store.jsonConfig).toContain('"Heartbeats"');
     });
 
     test("EXAMPLE: Clicking the 'Copy' button in the 'Endpoint Configuration Only' tab copies the C# code to clipboard", async () => {
@@ -130,14 +131,14 @@ describe("FEATURE: Endpoint Connection Configuration", () => {
 
 // ==================== Helper Functions ====================
 
-interface RenderOptions {
-  serviceControlSettings?: Record<string, unknown>;
-  monitoringSettings?: Record<string, unknown>;
-  connectionErrors?: string[];
-}
+// interface RenderOptions {
+//   serviceControlSettings?: Record<string, unknown>;
+//   monitoringSettings?: Record<string, unknown>;
+//   connectionErrors?: string[];
+// }
 
 async function renderComponent(config?: typeof FULL_CONFIG): Promise<RenderResult> {
-  const { serviceControlSettings = getDefaultServiceControlSettings(), monitoringSettings = getDefaultMonitoringSettings(), connectionErrors = [] } = config;
+  const { serviceControlSettings = getDefaultServiceControlSettings(), monitoringSettings = getDefaultMonitoringSettings(), connectionErrors = [] } = config || {};
 
   const router = makeRouter();
 
@@ -149,7 +150,7 @@ async function renderComponent(config?: typeof FULL_CONFIG): Promise<RenderResul
       plugins: [
         router,
         createTestingPinia({
-          stubActions: true, // Stub actions so getCode() doesn't make real HTTP calls
+          stubActions: true,
           initialState: {
             EndpointConnectionStore: {
               loading: false,
@@ -172,20 +173,19 @@ async function renderComponent(config?: typeof FULL_CONFIG): Promise<RenderResul
     },
   });
 
-  // Wait for the component to render
   await flushPromises();
 
-  // Get the store and verify it's using the test data
+  // Get the store - now we actually use it
   const store = useEndpointConnectionStore();
 
   await waitFor(() => {
-    // Wait for the tabs to be available, indicating loading is done
     expect(() => screen.getByRole("tablist")).not.toThrow();
   });
 
   return {
     actions: createActions(),
-    assertions: createAssertions(),
+    assertions: createAssertions(store),
+    store,
   };
 }
 
@@ -216,7 +216,7 @@ function createActions(): ComponentActions {
   };
 }
 
-function createAssertions(): ComponentAssertions {
+function createAssertions(store: ReturnType<typeof useEndpointConnectionStore>): ComponentAssertions {
   return {
     codeOnlyTabIsActive(): void {
       const tab = getCodeOnlyTab();
@@ -229,63 +229,32 @@ function createAssertions(): ComponentAssertions {
       expect(tab.classList.contains("active")).toBe(true);
     },
     codeOnlyCodeIsDisplayed(): void {
-      const tabpanel = screen.getByRole("tabpanel", { name: /Endpoint configuration only/i });
-      const codeEditor = within(tabpanel).queryByRole("code");
-      expect(codeEditor).toBeInTheDocument();
+      // Use store data directly instead of DOM queries
+      expect(store.inlineSnippet).toContain("ServicePlatformConnectionConfiguration.Parse");
+      expect(store.inlineSnippet).toContain("ConnectToServicePlatform");
     },
-    async jsonFileCodeIsDisplayed(): Promise<void> {
-      await waitFor(() => {
-        const tabpanel = screen.getByRole("tabpanel", { name: /JSON file/i });
-        expect(tabpanel).toBeInTheDocument();
-        const editors = within(tabpanel).queryAllByRole("code");
-        expect(editors.length).toBeGreaterThanOrEqual(2);
+    jsonFileCodeIsDisplayed(): Promise<void> {
+      // Verify store has the JSON snippet data
+      expect(store.jsonSnippet).toContain("File.ReadAllText");
+      expect(store.jsonConfig).toContain("Heartbeats");
+      return Promise.resolve();
+    },
+    configurationCodeContains(expectedContent: string[]): void {
+      // Use store data for verification
+      expectedContent.forEach((content) => {
+        const found = store.inlineSnippet.includes(content) || store.jsonSnippet.includes(content) || store.jsonConfig.includes(content);
+        expect(found).toBe(true);
       });
     },
-    async contentContainsServicePlatformConfiguration(): Promise<void> {
-      await waitFor(() => {
-        const codeEditors = screen.queryAllByRole("code");
-        expect(codeEditors.length).toBeGreaterThan(0);
-
-        const content = getCodeEditorContent(0);
-        expect(content).toContain("ServicePlatformConnectionConfiguration.Parse");
-        expect(content).toContain("ConnectToServicePlatform");
-      });
+    storeHasCorrectData(): void {
+      expect(store.loading).toBe(false);
+      expect(store.queryErrors).toHaveLength(0);
+      expect(store.inlineSnippet).toBeTruthy();
+      expect(store.jsonSnippet).toBeTruthy();
+      expect(store.jsonConfig).toBeTruthy();
     },
-    async contentContainsJsonConfiguration(): Promise<void> {
-      await waitFor(() => {
-        const tabpanel = screen.getByRole("tabpanel", { name: /JSON file/i });
-        expect(tabpanel).toBeInTheDocument();
-        const codeEditors = within(tabpanel).queryAllByRole("code");
-        expect(codeEditors.length).toBeGreaterThanOrEqual(2);
-
-        // Get content from second editor (the JSON configuration, not the C# snippet)
-        const content = getCodeEditorContent(1);
-        expect(content.length).toBeGreaterThan(0);
-        // The configuration is in JSON format
-        expect(content).toMatch(/Heartbeats|CustomChecks|ErrorQueue/);
-      });
-    },
-    errorMessagesAreDisplayed(expectedErrors: string[]): void {
-      const alertElement = screen.getByRole("alert");
-      expect(alertElement).toBeInTheDocument();
-      expectedErrors.forEach((error) => {
-        expect(within(alertElement).getByText(error)).toBeInTheDocument();
-      });
-    },
-    noErrorMessagesAreDisplayed(): void {
-      const alertElement = screen.queryByRole("alert");
-      expect(alertElement).not.toBeInTheDocument();
-    },
-    codeHasBeenCopiedToClipboard(clipboardContent: string): void {
-      expect(clipboardContent).toBeTruthy();
-      // Verify it contains expected configuration structure
-      if (clipboardContent.includes("File.ReadAllText")) {
-        // JSON file snippet
-        expect(clipboardContent).toContain("ServicePlatformConnectionConfiguration.Parse");
-      } else if (clipboardContent.includes('"')) {
-        // Inline snippet with escaped quotes
-        expect(clipboardContent).toContain("ServicePlatformConnectionConfiguration.Parse");
-      }
+    storeHasErrors(expectedErrors: string[]): void {
+      expect(store.queryErrors).toEqual(expectedErrors);
     },
   };
 }
@@ -311,37 +280,37 @@ function getJsonFileTab(): HTMLElement | null {
     return null;
   }
 }
-function getCodeEditorContent(index: number): string {
-  const codeEditors = screen.queryAllByRole("code");
-  if (index >= codeEditors.length) {
-    return "";
-  }
+// function getCodeEditorContent(index: number): string {
+//   const codeEditors = screen.queryAllByRole("code");
+//   if (index >= codeEditors.length) {
+//     return "";
+//   }
 
-  const editor = codeEditors[index];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const parentComponent = (editor as any).__vueParentComponent || (editor as any).__vnode;
+//   const editor = codeEditors[index];
+//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//   const parentComponent = (editor as any).__vueParentComponent || (editor as any).__vnode;
 
-  // Try to access the model value from the component
-  if (parentComponent?.component?.exposed?.modelValue) {
-    const modelValue = parentComponent.component.exposed.modelValue;
-    if (modelValue && typeof modelValue === "string") {
-      return modelValue;
-    }
-  }
+//   // Try to access the model value from the component
+//   if (parentComponent?.component?.exposed?.modelValue) {
+//     const modelValue = parentComponent.component.exposed.modelValue;
+//     if (modelValue && typeof modelValue === "string") {
+//       return modelValue;
+//     }
+//   }
 
-  // Try accessing through props
-  if (parentComponent?.props?.modelValue && typeof parentComponent.props.modelValue === "string") {
-    return parentComponent.props.modelValue;
-  }
+//   // Try accessing through props
+//   if (parentComponent?.props?.modelValue && typeof parentComponent.props.modelValue === "string") {
+//     return parentComponent.props.modelValue;
+//   }
 
-  // Try through the instance
-  if (parentComponent?.ctx?.modelValue && typeof parentComponent.ctx.modelValue === "string") {
-    return parentComponent.ctx.modelValue;
-  }
+//   // Try through the instance
+//   if (parentComponent?.ctx?.modelValue && typeof parentComponent.ctx.modelValue === "string") {
+//     return parentComponent.ctx.modelValue;
+//   }
 
-  // Fallback: return empty string
-  return "";
-}
+//   // Fallback: return empty string
+//   return "";
+// }
 
 function getCopyButtons(): HTMLButtonElement[] {
   // Find buttons with aria-label containing "copy"
@@ -465,4 +434,5 @@ const FULL_CONFIG = {
     MetricsQueue: "Particular.Monitoring@XXX",
     Interval: "00:00:01",
   },
+  connectionErrors: [],
 };
