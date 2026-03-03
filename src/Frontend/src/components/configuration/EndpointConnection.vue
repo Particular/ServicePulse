@@ -3,53 +3,14 @@ import { onMounted, ref } from "vue";
 import LicenseNotExpired from "../LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
-import serviceControlClient, { ServiceControlInstanceConnection } from "@/components/serviceControlClient";
 import LoadingSpinner from "../LoadingSpinner.vue";
-import monitoringClient, { MetricsConnectionDetails } from "../monitoring/monitoringClient";
+import { useEndpointConnectionStore } from "@/stores/endpointConnectionStore";
 
-const loading = ref(true);
 const showCodeOnlyTab = ref(true);
-const jsonSnippet = ref("");
-const inlineSnippet = ref("");
-const jsonConfig = ref("");
-const queryErrors = ref<string[]>([]);
-
-async function getCode() {
-  loading.value = true;
-
-  const snippetTemplate = `var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(@"<json>");
-
-    endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
-    `;
-
-  jsonSnippet.value = `var json = File.ReadAllText("<path-to-json-file>.json");
-var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(json);
-endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
-`;
-  const connections = await serviceControlConnections();
-  const config = {
-    Heartbeats: connections.serviceControl.settings.Heartbeats,
-    CustomChecks: connections.serviceControl.settings.CustomChecks,
-    ErrorQueue: connections.serviceControl.settings.ErrorQueue,
-    SagaAudit: connections.serviceControl.settings.SagaAudit,
-    MessageAudit: connections.serviceControl.settings.MessageAudit,
-    Metrics: connections.monitoring.settings,
-  };
-  let jsonText = JSON.stringify(config, null, 4);
-  jsonConfig.value = jsonText;
-
-  jsonText = jsonText.replaceAll('"', '""');
-  inlineSnippet.value = snippetTemplate.replace("<json>", jsonText);
-
-  queryErrors.value = [];
-  queryErrors.value = queryErrors.value.concat(connections.serviceControl.errors || []);
-  queryErrors.value = queryErrors.value.concat(connections.monitoring.errors || []);
-
-  loading.value = false;
-}
+const store = useEndpointConnectionStore();
 
 onMounted(async () => {
-  await getCode();
+  await store.getCode();
 });
 
 function switchCodeOnlyTab() {
@@ -58,23 +19,6 @@ function switchCodeOnlyTab() {
 
 function switchJsonTab() {
   showCodeOnlyTab.value = false;
-}
-
-async function serviceControlConnections() {
-  const scConnectionResult = serviceControlClient.getServiceControlConnection();
-  const monitoringConnectionResult = monitoringClient.getMonitoringConnection();
-
-  const [scConnection, mConnection] = await Promise.all([scConnectionResult, monitoringConnectionResult]);
-  return {
-    serviceControl: {
-      settings: scConnection?.settings ?? {},
-      errors: scConnection?.errors ?? [],
-    } as ServiceControlInstanceConnection,
-    monitoring: {
-      settings: mConnection?.Metrics ?? ({ Enabled: false } as MetricsConnectionDetails),
-      errors: mConnection?.errors ?? [],
-    },
-  };
 }
 </script>
 
@@ -98,10 +42,10 @@ async function serviceControlConnections() {
           </div>
           <div class="row tabs-config-snippets">
             <div class="col-12">
-              <LoadingSpinner v-show="loading"></LoadingSpinner>
+              <LoadingSpinner v-show="store.loading"></LoadingSpinner>
 
               <!-- Nav tabs -->
-              <div v-if="!loading" class="tabs" role="tablist">
+              <div v-if="!store.loading" class="tabs" role="tablist">
                 <h5 :class="{ active: showCodeOnlyTab }">
                   <a @click="switchCodeOnlyTab()" class="ng-binding" role="link">Endpoint configuration only</a>
                 </h5>
@@ -110,33 +54,33 @@ async function serviceControlConnections() {
                 </h5>
               </div>
 
-              <div v-if="queryErrors.length > 0 && !loading" class="alert alert-warning" role="alert">
+              <div v-if="store.hasErrors && !store.loading" class="alert alert-warning" role="alert">
                 There were problems reaching some ServiceControl instances and the configuration does not contain all connectivity information.
                 <ul>
-                  <li v-for="error in queryErrors" :key="error">
+                  <li v-for="error in store.queryErrors" :key="error">
                     {{ error }}
                   </li>
                 </ul>
               </div>
 
-              <section v-if="showCodeOnlyTab && !loading" role="tabpanel" aria-label="Endpoint configuration only">
+              <section v-if="showCodeOnlyTab && !store.loading" role="tabpanel" aria-label="Endpoint configuration only">
                 <div class="row">
                   <div class="col-12 h-100">
-                    <CodeEditor :model-value="inlineSnippet" language="csharp" :show-gutter="false" :show-copy-to-clipboard="true"></CodeEditor>
+                    <CodeEditor :model-value="store.inlineSnippet" language="csharp" :show-gutter="false" :show-copy-to-clipboard="true" aria-label="Endpoint configuration code example"></CodeEditor>
                   </div>
                 </div>
               </section>
 
-              <section v-if="!showCodeOnlyTab && !loading" role="tabpanel" aria-label="JSON file">
+              <section v-if="!showCodeOnlyTab && !store.loading" role="tabpanel" aria-label="JSON file">
                 <div class="row">
                   <div class="col-12 h-100">
                     <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
                     <p><strong>Endpoint configuration:</strong></p>
-                    <CodeEditor :model-value="jsonSnippet" language="csharp" :show-gutter="false" :show-copy-to-clipboard="true"></CodeEditor>
+                    <CodeEditor :model-value="store.jsonSnippet" language="csharp" :show-gutter="false" :show-copy-to-clipboard="true" aria-label="JSON file endpoint configuration code"></CodeEditor>
                     <p style="margin-top: 15px">
                       <strong>JSON configuration file:</strong>
                     </p>
-                    <CodeEditor :model-value="jsonConfig" language="json" :show-gutter="false" :show-copy-to-clipboard="true"></CodeEditor>
+                    <CodeEditor :model-value="store.jsonConfig" language="json" :show-gutter="false" :show-copy-to-clipboard="true" aria-label="JSON file configuration"></CodeEditor>
                   </div>
                 </div>
               </section>
