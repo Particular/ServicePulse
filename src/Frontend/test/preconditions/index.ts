@@ -23,4 +23,3 @@ export { hasEndpointSettings } from "./hasEndpointSettings";
 export * from "./configuration";
 export * from "./authentication";
 export * from "./platformCapabilities";
-export * from "./endpointConnection";
