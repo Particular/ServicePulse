@@ -17,7 +17,12 @@ export const useEndpointConnectionStore = defineStore("EndpointConnectionStore",
       loading.value = true;
       queryErrors.value = [];
 
-      const [serviceControlSettings, monitoringSettings] = await serviceControlConnections();
+      const [serviceControlSettings, monitoringSettings, errors] = await fetchConnectionSettings();
+
+      if (errors.length > 0) {
+        queryErrors.value = errors;
+        return;
+      }
 
       const snippets = generateSnippets(serviceControlSettings, monitoringSettings);
 
@@ -31,22 +36,35 @@ export const useEndpointConnectionStore = defineStore("EndpointConnectionStore",
     }
   }
 
-  async function serviceControlConnections(): Promise<[Record<string, unknown>, Record<string, unknown>]> {
-    const [serviceControl, monitoring] = await Promise.all([serviceControlClient.serviceControlConnectionSettings(), monitoringClient.monitoring()]);
+  async function fetchConnectionSettings(): Promise<[Record<string, unknown>, Record<string, unknown>, string[]]> {
+    const errors: string[] = [];
 
-    return [serviceControl || {}, monitoring || {}];
+    // Fetch ServiceControl connection settings
+    const serviceControlConnection = await serviceControlClient.getServiceControlConnection();
+    if (serviceControlConnection?.errors?.length) {
+      errors.push(...serviceControlConnection.errors);
+    }
+
+    // Fetch Monitoring connection settings
+    const monitoringConnection = await monitoringClient.getMonitoringConnection();
+    if (monitoringConnection?.errors?.length) {
+      errors.push(...monitoringConnection.errors);
+    }
+
+    const serviceControlSettings = serviceControlConnection?.settings ?? {};
+    const monitoringSettings = monitoringConnection?.Metrics ?? {};
+
+    return [serviceControlSettings, monitoringSettings, errors];
   }
 
   function generateSnippets(serviceControlSettings: Record<string, unknown>, monitoringSettings: Record<string, unknown>) {
     const inlineSnippetTemplate = `var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(@"{json}");
 
-    endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
-    `;
+endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);`;
 
     const jsonSnippetTemplate = `var json = File.ReadAllText("<path-to-json-file>.json");
 var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(json);
-endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
-`;
+endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);`;
 
     const config = {
       Heartbeats: serviceControlSettings.Heartbeats,
