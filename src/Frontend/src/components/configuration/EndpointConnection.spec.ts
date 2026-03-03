@@ -70,7 +70,7 @@ describe("FEATURE: Endpoint Connection Configuration", () => {
 
       // Verify the inline snippet contains the correct content
       // Query the code editor element specifically to avoid including button text
-      const codeEditor = screen.getByRole("code");
+      // const codeEditor = screen.getByRole("code");
       const editorContent = getCodeEditorContent(0);
 
       expect(editorContent).toContain("ServicePlatformConnectionConfiguration.Parse");
@@ -96,7 +96,7 @@ describe("FEATURE: Endpoint Connection Configuration", () => {
 
     test("EXAMPLE: Clicking the 'Copy' button in the 'Endpoint Configuration Only' tab copies the C# code to clipboard", async () => {
       const mockClipboard = setupClipboardMock();
-      const { actions, assertions } = await renderComponent(FULL_CONFIG);
+      const { actions } = await renderComponent(FULL_CONFIG);
 
       await actions.copyCurrentTabCode();
       const copiedContent = mockClipboard.writeText.mock.calls[0]?.[0];
