@@ -62,9 +62,9 @@ function close() {
 <template>
   <div class="modal-mask">
     <div class="modal-wrapper">
-      <div class="modal-container modal-content">
+      <div class="modal-container modal-content" role="dialog" aria-labelledby="email-config-dialog-title">
         <div class="modal-header">
-          <h3 class="modal-title">Email configuration</h3>
+          <h3 class="modal-title" id="email-config-dialog-title">Email configuration</h3>
         </div>
 
         <form name="notificationsForm" class="notificationsForm" novalidate @submit.prevent="save">
