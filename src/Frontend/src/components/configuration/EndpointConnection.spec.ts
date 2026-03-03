@@ -5,7 +5,7 @@ import makeRouter from "@/router";
 import { createTestingPinia } from "@pinia/testing";
 import { vi, describe, test, beforeEach, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
-import { useEndpointConnectionStore } from "@/stores/EndpointConnectionStore";
+import { useEndpointSettingsStore } from "@/stores/EndpointSettingsStore";
 
 /**
  * DSL for the Endpoint Connection Configuration feature.
@@ -47,7 +47,7 @@ interface ComponentAssertions {
 interface RenderResult {
   actions: ComponentActions;
   assertions: ComponentAssertions;
-  store: ReturnType<typeof useEndpointConnectionStore>;
+  store: ReturnType<typeof useEndpointSettingsStore>;
 }
 
 describe("FEATURE: Endpoint Connection Configuration", () => {
@@ -152,7 +152,7 @@ async function renderComponent(config?: typeof FULL_CONFIG): Promise<RenderResul
         createTestingPinia({
           stubActions: true,
           initialState: {
-            EndpointConnectionStore: {
+            EndpointSettingsStore: {
               loading: false,
               queryErrors: connectionErrors,
               jsonSnippet: snippets.jsonSnippet,
@@ -176,7 +176,7 @@ async function renderComponent(config?: typeof FULL_CONFIG): Promise<RenderResul
   await flushPromises();
 
   // Get the store - now we actually use it
-  const store = useEndpointConnectionStore();
+  const store = useEndpointSettingsStore();
 
   await waitFor(() => {
     expect(() => screen.getByRole("tablist")).not.toThrow();
@@ -216,7 +216,7 @@ function createActions(): ComponentActions {
   };
 }
 
-function createAssertions(store: ReturnType<typeof useEndpointConnectionStore>): ComponentAssertions {
+function createAssertions(store: ReturnType<typeof useEndpointSettingsStore>): ComponentAssertions {
   return {
     codeOnlyTabIsActive(): void {
       const tab = getCodeOnlyTab();
