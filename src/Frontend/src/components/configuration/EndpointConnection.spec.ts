@@ -5,7 +5,7 @@ import makeRouter from "@/router";
 import { createTestingPinia } from "@pinia/testing";
 import { vi, describe, test, beforeEach, afterEach } from "vitest";
 import { flushPromises } from "@vue/test-utils";
-import { useEndpointConnectionStore } from "@/stores/endpointConnectionStore";
+import { useEndpointConnectionStore } from "@/stores/EndpointConnectionStore";
 
 /**
  * DSL for the Endpoint Connection Configuration feature.

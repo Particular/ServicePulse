@@ -4,7 +4,7 @@ import LicenseNotExpired from "../LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
 import LoadingSpinner from "../LoadingSpinner.vue";
-import { useEndpointConnectionStore } from "@/stores/endpointConnectionStore";
+import { useEndpointConnectionStore } from "@/stores/EndpointConnectionStore";
 
 const showCodeOnlyTab = ref(true);
 const store = useEndpointConnectionStore();
