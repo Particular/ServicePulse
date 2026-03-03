@@ -8,6 +8,21 @@ import { flushPromises } from "@vue/test-utils";
 import { useEndpointConnectionStore } from "@/stores/endpointConnectionStore";
 
 /**
+ * DSL for the Endpoint Connection Configuration feature.
+ *
+ * This specification focuses on user capabilities and business outcomes,
+ * not UI implementation details like "tabs" or "buttons".
+ *
+ * Structure:
+ * - renderComponent(): Sets up the component with mock store data
+ * - actions: What users can do (select tabs, copy code)
+ * - assertions: What should be true (tab is active, code is displayed)
+ *
+ * If the UI changes (e.g., tabs become dropdowns), only the helper
+ * functions need updating—the tests remain unchanged.
+ */
+
+/**
  * Domain-specific language for user actions
  */
 interface ComponentActions {
@@ -22,13 +37,9 @@ interface ComponentActions {
 interface ComponentAssertions {
   codeOnlyTabIsActive(): void;
   jsonFileTabIsActive(): void;
-  endpointConfigurationCodeIsDisplayed(): Promise<void>;
+  codeOnlyCodeIsDisplayed(): void;
   jsonFileCodeIsDisplayed(): Promise<void>;
-  contentContainsServicePlatformConfiguration(): Promise<void>;
-  contentContainsJsonConfiguration(): Promise<void>;
-  errorMessagesAreDisplayed(expectedErrors: string[]): void;
-  noErrorMessagesAreDisplayed(): void;
-  codeHasBeenCopiedToClipboard(clipboardContent: string): void;
+  configurationCodeContains(expectedContent: string[]): void; // NEW
 }
 
 interface RenderResult {
@@ -47,39 +58,12 @@ describe("FEATURE: Endpoint Connection Configuration", () => {
 
   describe("RULE: Connection status should match the current configuration", () => {
     test("EXAMPLE: The 'Endpoint Configuration Only' tab is selected by default", async () => {
-      const { assertions } = await renderComponent();
+      const { assertions } = await renderComponent(FULL_CONFIG);
       assertions.codeOnlyTabIsActive();
     });
 
     test("EXAMPLE: The 'Endpoint Configuration Only' tab displays endpoint configuration examples for the current configuration", async () => {
-      const { assertions } = await renderComponent({
-        serviceControlSettings: {
-          Heartbeats: {
-            Enabled: true,
-            HeartbeatsQueue: "Particular.ServiceControl@XXX",
-            Frequency: "00:00:10",
-            TimeToLive: "00:00:40",
-          },
-          CustomChecks: {
-            Enabled: true,
-            CustomChecksQueue: "Particular.ServiceControl@XXX",
-          },
-          ErrorQueue: "error",
-          SagaAudit: {
-            Enabled: true,
-            SagaAuditQueue: "audit",
-          },
-          MessageAudit: {
-            Enabled: true,
-            AuditQueue: "audit",
-          },
-        },
-        monitoringSettings: {
-          Enabled: true,
-          MetricsQueue: "Particular.Monitoring@XXX",
-          Interval: "00:00:01",
-        },
-      });
+      const { assertions } = await renderComponent(FULL_CONFIG);
 
       // Assert that the code-only tab is active by default
       assertions.codeOnlyTabIsActive();
@@ -95,34 +79,7 @@ describe("FEATURE: Endpoint Connection Configuration", () => {
     });
 
     test("EXAMPLE: The 'JSON File' tab is displayed with JSON file configuration examples for the current configuration", async () => {
-      const { actions, assertions } = await renderComponent({
-        serviceControlSettings: {
-          Heartbeats: {
-            Enabled: true,
-            HeartbeatsQueue: "Particular.ServiceControl@XXX",
-            Frequency: "00:00:10",
-            TimeToLive: "00:00:40",
-          },
-          CustomChecks: {
-            Enabled: true,
-            CustomChecksQueue: "Particular.ServiceControl@XXX",
-          },
-          ErrorQueue: "error",
-          SagaAudit: {
-            Enabled: true,
-            SagaAuditQueue: "audit",
-          },
-          MessageAudit: {
-            Enabled: true,
-            AuditQueue: "audit",
-          },
-        },
-        monitoringSettings: {
-          Enabled: true,
-          MetricsQueue: "Particular.Monitoring@XXX",
-          Interval: "00:00:01",
-        },
-      });
+      const { actions, assertions } = await renderComponent(FULL_CONFIG);
 
       actions.selectJsonFileTab();
 
@@ -139,16 +96,7 @@ describe("FEATURE: Endpoint Connection Configuration", () => {
 
     test("EXAMPLE: Clicking the 'Copy' button in the 'Endpoint Configuration Only' tab copies the C# code to clipboard", async () => {
       const mockClipboard = setupClipboardMock();
-      const { actions, assertions } = await renderComponent({
-        serviceControlSettings: {
-          Heartbeats: { Enabled: true, HeartbeatsQueue: "Particular.ServiceControl@XXX", Frequency: "00:00:10", TimeToLive: "00:00:40" },
-          CustomChecks: { Enabled: true, CustomChecksQueue: "Particular.ServiceControl@XXX" },
-          ErrorQueue: "error",
-          SagaAudit: { Enabled: true, SagaAuditQueue: "audit" },
-          MessageAudit: { Enabled: true, AuditQueue: "audit" },
-        },
-        monitoringSettings: { Enabled: true, MetricsQueue: "Particular.Monitoring@XXX", Interval: "00:00:01" },
-      });
+      const { actions, assertions } = await renderComponent(FULL_CONFIG);
 
       await actions.copyCurrentTabCode();
       const copiedContent = mockClipboard.writeText.mock.calls[0]?.[0];
@@ -158,16 +106,7 @@ describe("FEATURE: Endpoint Connection Configuration", () => {
 
     test("EXAMPLE: Clicking the 'Copy' button in the 'JSON File' tab copies the example to the clipboard", async () => {
       const mockClipboard = setupClipboardMock();
-      const { actions } = await renderComponent({
-        serviceControlSettings: {
-          Heartbeats: { Enabled: true, HeartbeatsQueue: "Particular.ServiceControl@XXX", Frequency: "00:00:10", TimeToLive: "00:00:40" },
-          CustomChecks: { Enabled: true, CustomChecksQueue: "Particular.ServiceControl@XXX" },
-          ErrorQueue: "error",
-          SagaAudit: { Enabled: true, SagaAuditQueue: "audit" },
-          MessageAudit: { Enabled: true, AuditQueue: "audit" },
-        },
-        monitoringSettings: { Enabled: true, MetricsQueue: "Particular.Monitoring@XXX", Interval: "00:00:01" },
-      });
+      const { actions } = await renderComponent(FULL_CONFIG);
 
       actions.selectJsonFileTab();
 
@@ -197,8 +136,8 @@ interface RenderOptions {
   connectionErrors?: string[];
 }
 
-async function renderComponent(options: RenderOptions = {}): Promise<RenderResult> {
-  const { serviceControlSettings = getDefaultServiceControlSettings(), monitoringSettings = getDefaultMonitoringSettings(), connectionErrors = [] } = options;
+async function renderComponent(config?: typeof FULL_CONFIG): Promise<RenderResult> {
+  const { serviceControlSettings = getDefaultServiceControlSettings(), monitoringSettings = getDefaultMonitoringSettings(), connectionErrors = [] } = config;
 
   const router = makeRouter();
 
@@ -289,13 +228,10 @@ function createAssertions(): ComponentAssertions {
       if (!tab) throw new Error("JSON File tab not found");
       expect(tab.classList.contains("active")).toBe(true);
     },
-    async endpointConfigurationCodeIsDisplayed(): Promise<void> {
-      await waitFor(() => {
-        const tabpanel = screen.getByRole("tabpanel", { name: /Endpoint configuration only/i });
-        expect(tabpanel).toBeInTheDocument();
-        const codeEditor = within(tabpanel).queryByRole("code");
-        expect(codeEditor).toBeInTheDocument();
-      });
+    codeOnlyCodeIsDisplayed(): void {
+      const tabpanel = screen.getByRole("tabpanel", { name: /Endpoint configuration only/i });
+      const codeEditor = within(tabpanel).queryByRole("code");
+      expect(codeEditor).toBeInTheDocument();
     },
     async jsonFileCodeIsDisplayed(): Promise<void> {
       await waitFor(() => {
@@ -375,24 +311,6 @@ function getJsonFileTab(): HTMLElement | null {
     return null;
   }
 }
-
-function getCopyButtons(): HTMLButtonElement[] {
-  // Find buttons with aria-label containing "copy"
-  const buttonsByAriaLabel = Array.from(document.querySelectorAll('button[aria-label*="copy"], button[aria-label*="Copy"]')) as HTMLButtonElement[];
-
-  if (buttonsByAriaLabel.length > 0) {
-    return buttonsByAriaLabel.filter((btn) => {
-      const style = window.getComputedStyle(btn);
-      return !(style.display === "none" || style.visibility === "hidden");
-    });
-  }
-
-  // Fallback: find buttons with text "Copy to clipboard"
-  const buttonsByText = Array.from(document.querySelectorAll("button")).filter((btn) => btn.textContent?.includes("Copy to clipboard") && window.getComputedStyle(btn).display !== "none") as HTMLButtonElement[];
-
-  return buttonsByText;
-}
-
 function getCodeEditorContent(index: number): string {
   const codeEditors = screen.queryAllByRole("code");
   if (index >= codeEditors.length) {
@@ -423,6 +341,23 @@ function getCodeEditorContent(index: number): string {
 
   // Fallback: return empty string
   return "";
+}
+
+function getCopyButtons(): HTMLButtonElement[] {
+  // Find buttons with aria-label containing "copy"
+  const buttonsByAriaLabel = Array.from(document.querySelectorAll('button[aria-label*="copy"], button[aria-label*="Copy"]')) as HTMLButtonElement[];
+
+  if (buttonsByAriaLabel.length > 0) {
+    return buttonsByAriaLabel.filter((btn) => {
+      const style = window.getComputedStyle(btn);
+      return !(style.display === "none" || style.visibility === "hidden");
+    });
+  }
+
+  // Fallback: find buttons with text "Copy to clipboard"
+  const buttonsByText = Array.from(document.querySelectorAll("button")).filter((btn) => btn.textContent?.includes("Copy to clipboard") && window.getComputedStyle(btn).display !== "none") as HTMLButtonElement[];
+
+  return buttonsByText;
 }
 
 // ==================== Mock Helpers ====================
@@ -501,3 +436,33 @@ function getDefaultMonitoringSettings(): Record<string, unknown> {
     Interval: "00:00:01",
   };
 }
+
+// Reusable test configuration - single source of truth
+const FULL_CONFIG = {
+  serviceControlSettings: {
+    Heartbeats: {
+      Enabled: true,
+      HeartbeatsQueue: "Particular.ServiceControl@XXX",
+      Frequency: "00:00:10",
+      TimeToLive: "00:00:40",
+    },
+    CustomChecks: {
+      Enabled: true,
+      CustomChecksQueue: "Particular.ServiceControl@XXX",
+    },
+    ErrorQueue: "error",
+    SagaAudit: {
+      Enabled: true,
+      SagaAuditQueue: "audit",
+    },
+    MessageAudit: {
+      Enabled: true,
+      AuditQueue: "audit",
+    },
+  },
+  monitoringSettings: {
+    Enabled: true,
+    MetricsQueue: "Particular.Monitoring@XXX",
+    Interval: "00:00:01",
+  },
+};
