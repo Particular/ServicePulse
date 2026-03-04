@@ -146,7 +146,7 @@ describe("FEATURE: Pending Retries", () => {
   });
 
   describe("RULE: Pending Retries tab visibility is conditional on config value", () => {
-    test("EXAMPLE: When showPendingRetry is false, the Pending Retries tab is not shown", async () => {
+    test("EXAMPLE: showPendingRetry is explicitly set to false", async () => {
       const { verify } = await renderComponent({
         showPendingRetry: false,
       });
@@ -154,7 +154,7 @@ describe("FEATURE: Pending Retries", () => {
       verify.pendingRetriesTabIsNotVisible();
     });
 
-    test("EXAMPLE: When showPendingRetry is true, the Pending Retries tab is shown", async () => {
+    test("EXAMPLE:showPendingRetry is explicitly set to true", async () => {
       const { verify } = await renderComponent({
         showPendingRetry: true,
       });
@@ -162,7 +162,7 @@ describe("FEATURE: Pending Retries", () => {
       verify.pendingRetriesTabIsVisible();
     });
 
-    test("EXAMPLE: When showPendingRetry is not set, the Pending Retries tab is not shown", async () => {
+    test("EXAMPLE: showPendingRetry is not configured (undefined)", async () => {
       const { verify } = await renderComponent({
         showPendingRetry: undefined,
       });
