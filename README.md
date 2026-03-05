@@ -138,3 +138,12 @@ ServicePulse is supported on the following desktop browser versions:
 ## Container image development
 
 A Dockerfile for ServicePulse resides within the [`src/ServicePulse`](https://github.com/Particular/ServicePulse/tree/master/src/ServicePulse) folder. The container images are all built as part of the [release workflow](https://github.com/Particular/ServicePulse/blob/master/.github/workflows/release.yml) and staged in the [Github Container Registry](https://github.com/Particular/ServicePulse/pkgs/container/servicepulse). For branches with PRs, the image will be tagged with the PR number, e.g. `pr-1234`.
+
+## Integrated ServicePulse
+
+Since version 2.6, ServicePulse is shipped as a package (Particular.ServicePulse.Core) for inclusion in ServiceControl to support the [integrated ServicePulse](https://docs.particular.net/servicecontrol/servicecontrol-instances/integrated-servicepulse) feature.
+
+To test this feature, either:
+
+a. Create a local nuget repository called "[local packages](https://github.com/Particular/ServiceControl/blob/master/nuget.config#L14-L16)" and push builds of ServicePulse into it. ServiceControl should be able to find these packages.
+b. Manually run the [release action](https://github.com/Particular/ServicePulse/blob/master/.github/workflows/release.yml). This [pushes a pre-release copy of the package to the particular testing feed](https://github.com/Particular/ServicePulse/blob/master/.github/workflows/release.yml#L98-L100).
