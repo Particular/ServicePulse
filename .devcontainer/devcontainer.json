@@ -1,0 +1,62 @@
+{
+  "name": "ServicePulse",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "10.0"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "24"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "Vue.volar",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "vitest.explorer",
+        "ms-azuretools.vscode-containers",
+        "github.vscode-github-actions",
+        "GitHub.vscode-pull-request-github",
+        "bierner.github-markdown-preview",
+        "GitHub.copilot-chat"
+      ],
+      "settings": {
+        "dotnet.defaultSolution": "src/ServicePulse.sln",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "eslint.workingDirectories": [
+          {
+            "directory": "src/Frontend",
+            "changeProcessCWD": true
+          }
+        ],
+        "typescript.tsdk": "src/Frontend/node_modules/typescript/lib"
+      }
+    }
+  },
+
+  "forwardPorts": [5173, 9090],
+  "portsAttributes": {
+    "5173": {
+      "label": "Vite dev server",
+      "onAutoForward": "notify"
+    },
+    "9090": {
+      "label": "ServicePulse web app",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "postCreateCommand": { 
+    "dotnet": "dotnet restore",
+    "npm": "cd src/ServicePulse.Host/vue && npm install"
+  }
+}
