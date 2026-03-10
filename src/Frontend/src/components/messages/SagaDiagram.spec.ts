@@ -9,10 +9,10 @@ import { MessageStatus } from "@/resources/Message";
 //Defines a domain-specific language (DSL) for interacting with the system under test (sut)
 interface componentDSL {
   action1(value: string): void;
-  assert: componentDSLAssertions;
+  verify: componentDSLAssertions;
 }
 
-//Defines a domain-specific language (DSL) for checking assertions against the system under test (sut)
+//Defines a domain-specific language (DSL) for checking verifications against the system under test (sut)
 interface componentDSLAssertions {
   thereAreTheFollowingSagaChangesInThisOrder(expectedDatesInOrder: Date[]): void;
   displayedSagaGuidIs(sagaId: string): void;
@@ -43,7 +43,7 @@ describe("Feature: Message not involved in Saga", () => {
         },
       });
 
-      componentDriver.assert.NoSagaDataAvailableMessageIsShownWithMessage(/This message is not part of any saga/i);
+      componentDriver.verify.NoSagaDataAvailableMessageIsShownWithMessage(/This message is not part of any saga/i);
     });
   });
 });
@@ -68,7 +68,7 @@ describe("Feature: Detecting no Audited Saga Data Available", () => {
         },
       });
 
-      componentDriver.assert.SagaPlugInNeededIsShownWithTheMessages({
+      componentDriver.verify.SagaPlugInNeededIsShownWithTheMessages({
         messages: [/Saga audit plugin needed to visualize saga/i, /To visualize your saga, please install the appropriate nuget package in your endpoint/i, /install-package NServiceBus\.SagaAudit/i],
         withPluginDownloadUrl: "https://www.nuget.org/packages/NServiceBus.SagaAudit",
       });
@@ -96,8 +96,8 @@ describe("Feature: Navigation and Contextual Information", () => {
         },
       });
 
-      componentDriver.assert.displayedSagaNameIs("AuditingSaga");
-      componentDriver.assert.displayedSagaGuidIs("123");
+      componentDriver.verify.displayedSagaNameIs("AuditingSaga");
+      componentDriver.verify.displayedSagaGuidIs("123");
     });
   });
 });
@@ -175,7 +175,7 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
       });
 
       //assert
-      componentDriver.assert.thereAreTheFollowingSagaChangesInThisOrder([startTimeD, startTimeC, startTimeB, startTimeA]);
+      componentDriver.verify.thereAreTheFollowingSagaChangesInThisOrder([startTimeD, startTimeC, startTimeB, startTimeA]);
     });
   });
 });
@@ -208,7 +208,7 @@ function rendercomponent({ initialState = {} }: { initialState?: { MessageStore?
     action1: () => {
       // Add actions here;
     },
-    assert: {
+    verify: {
       NoSagaDataAvailableMessageIsShownWithMessage(message: RegExp) {
         //ensure that the only one status message is shown
         expect(screen.queryAllByRole("status")).toHaveLength(1);
