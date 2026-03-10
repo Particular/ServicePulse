@@ -6,11 +6,9 @@ import { EndpointSettings } from "@/resources/EndpointSettings";
 import useIsEndpointSettingsSupported from "@/components/heartbeats/isEndpointSettingsSupported";
 
 export const useEndpointSettingsStore = defineStore("EndpointSettingsStore", () => {
-  // ==================== Endpoint Settings State ====================
   const defaultEndpointSettingsValue = <EndpointSettings>{ name: "", track_instances: true };
   const isEndpointSettingsSupported = useIsEndpointSettingsSupported();
 
-  // ==================== Connection State ====================
   const loading = ref(true);
   const queryErrors = ref<string[]>([]);
   const jsonSnippet = ref("");
@@ -19,7 +17,6 @@ export const useEndpointSettingsStore = defineStore("EndpointSettingsStore", () 
 
   const hasErrors = computed(() => queryErrors.value.length > 0);
 
-  // ==================== Endpoint Settings Actions ====================
   async function getEndpointSettings(): Promise<EndpointSettings[]> {
     if (!isEndpointSettingsSupported.value) return [defaultEndpointSettingsValue];
 
@@ -27,7 +24,6 @@ export const useEndpointSettingsStore = defineStore("EndpointSettingsStore", () 
     return data;
   }
 
-  // ==================== Connection Actions ====================
   async function getCode() {
     try {
       loading.value = true;
@@ -90,21 +86,18 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);`;
     };
 
     const jsonText = JSON.stringify(config, null, 4);
-    const inlineSnippet = inlineSnippetTemplate.replace("{json}", jsonText);
+    const inlineSnippetValue = inlineSnippetTemplate.replace("{json}", jsonText);
 
     return {
       jsonSnippet: jsonSnippetTemplate,
-      inlineSnippet: inlineSnippet,
+      inlineSnippet: inlineSnippetValue,
       jsonConfig: jsonText,
     };
   }
 
   return {
-    // Endpoint Settings exports
     defaultEndpointSettingsValue,
     getEndpointSettings,
-
-    // Connection exports
     loading,
     queryErrors,
     jsonSnippet,
