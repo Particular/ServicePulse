@@ -16,7 +16,7 @@ interface ComponentDSL {
     requestTestNotification(): Promise<void>;
     provideValidEmailConfiguration(): Promise<void>;
   };
-  assert: {
+  verify: {
     emailNotificationsAreEnabled(): void;
     emailNotificationsAreDisabled(): void;
     emailConfigurationIsAccessible(): void;
@@ -67,9 +67,9 @@ describe("FEATURE: Health check notifications", () => {
         },
       });
 
-      componentDriver.assert.emailNotificationsAreDisabled();
+      componentDriver.verify.emailNotificationsAreDisabled();
       await componentDriver.actions.toggleEmailNotifications();
-      componentDriver.assert.emailNotificationsWereToggled();
+      componentDriver.verify.emailNotificationsWereToggled();
     });
 
     test("EXAMPLE: Email notifications are currently enabled", async () => {
@@ -86,9 +86,9 @@ describe("FEATURE: Health check notifications", () => {
         },
       });
 
-      componentDriver.assert.emailNotificationsAreEnabled();
+      componentDriver.verify.emailNotificationsAreEnabled();
       await componentDriver.actions.toggleEmailNotifications();
-      componentDriver.assert.emailNotificationsWereToggled();
+      componentDriver.verify.emailNotificationsWereToggled();
     });
   });
 
@@ -101,9 +101,9 @@ describe("FEATURE: Health check notifications", () => {
        */
       const componentDriver = renderComponent();
 
-      componentDriver.assert.emailConfigurationIsNotAccessible();
+      componentDriver.verify.emailConfigurationIsNotAccessible();
       await componentDriver.actions.openEmailConfiguration();
-      componentDriver.assert.emailConfigurationIsAccessible();
+      componentDriver.verify.emailConfigurationIsAccessible();
     });
 
     test("EXAMPLE: Edits have been made in the configuration dialog", async () => {
@@ -117,11 +117,11 @@ describe("FEATURE: Health check notifications", () => {
       const componentDriver = renderComponent();
 
       await componentDriver.actions.openEmailConfiguration();
-      componentDriver.assert.emailConfigurationIsAccessible();
+      componentDriver.verify.emailConfigurationIsAccessible();
       await componentDriver.actions.provideValidEmailConfiguration();
       await componentDriver.actions.discardEmailConfigurationChanges();
-      componentDriver.assert.emailConfigurationIsNotAccessible();
-      componentDriver.assert.emailConfigurationWasNotSaved();
+      componentDriver.verify.emailConfigurationIsNotAccessible();
+      componentDriver.verify.emailConfigurationWasNotSaved();
     });
   });
 
@@ -142,7 +142,7 @@ describe("FEATURE: Health check notifications", () => {
       });
 
       await componentDriver.actions.openEmailConfiguration();
-      componentDriver.assert.userCannotSaveConfiguration();
+      componentDriver.verify.userCannotSaveConfiguration();
     });
 
     test("EXAMPLE: All required fields are present and valid", async () => {
@@ -160,9 +160,9 @@ describe("FEATURE: Health check notifications", () => {
       });
 
       await componentDriver.actions.openEmailConfiguration();
-      componentDriver.assert.userCannotSaveConfiguration();
+      componentDriver.verify.userCannotSaveConfiguration();
       await componentDriver.actions.provideValidEmailConfiguration();
-      componentDriver.assert.userCanSaveConfiguration();
+      componentDriver.verify.userCanSaveConfiguration();
     });
   });
 
@@ -185,10 +185,10 @@ describe("FEATURE: Health check notifications", () => {
 
       await componentDriver.actions.openEmailConfiguration();
       await componentDriver.actions.provideValidEmailConfiguration();
-      componentDriver.assert.userCanSaveConfiguration();
+      componentDriver.verify.userCanSaveConfiguration();
       await componentDriver.actions.confirmEmailConfigurationChanges();
-      componentDriver.assert.emailConfigurationWasSaved();
-      componentDriver.assert.emailConfigurationIsNotAccessible();
+      componentDriver.verify.emailConfigurationWasSaved();
+      componentDriver.verify.emailConfigurationIsNotAccessible();
     });
   });
 
@@ -222,7 +222,7 @@ describe("FEATURE: Health check notifications", () => {
       });
 
       await componentDriver.actions.openEmailConfiguration();
-      componentDriver.assert.emailConfigurationMatches(savedConfig);
+      componentDriver.verify.emailConfigurationMatches(savedConfig);
     });
 
     test("EXAMPLE: Email notifications were enabled before refresh", () => {
@@ -239,7 +239,7 @@ describe("FEATURE: Health check notifications", () => {
         },
       });
 
-      componentDriver.assert.emailNotificationsAreEnabled();
+      componentDriver.verify.emailNotificationsAreEnabled();
     });
 
     test("EXAMPLE: Email notifications were disabled before refresh", () => {
@@ -256,7 +256,7 @@ describe("FEATURE: Health check notifications", () => {
         },
       });
 
-      componentDriver.assert.emailNotificationsAreDisabled();
+      componentDriver.verify.emailNotificationsAreDisabled();
     });
   });
 
@@ -274,8 +274,8 @@ describe("FEATURE: Health check notifications", () => {
       vi.mocked(store.testEmailNotifications).mockResolvedValue(false);
 
       await componentDriver.actions.requestTestNotification();
-      componentDriver.assert.testNotificationWasRequested();
-      await componentDriver.assert.testNotificationFailed();
+      componentDriver.verify.testNotificationWasRequested();
+      await componentDriver.verify.testNotificationFailed();
     });
 
     test("EXAMPLE: The email configuration is valid", async () => {
@@ -291,8 +291,8 @@ describe("FEATURE: Health check notifications", () => {
       vi.mocked(store.testEmailNotifications).mockResolvedValue(true);
 
       await componentDriver.actions.requestTestNotification();
-      componentDriver.assert.testNotificationWasRequested();
-      await componentDriver.assert.testNotificationWasSuccessful();
+      componentDriver.verify.testNotificationWasRequested();
+      await componentDriver.verify.testNotificationWasSuccessful();
     });
   });
 });
@@ -353,7 +353,7 @@ function renderComponent({ initialState = {} }: { initialState?: Record<string, 
         await user.type(screen.getByLabelText(/to address/i), "to@example.com");
       },
     },
-    assert: {
+    verify: {
       emailNotificationsAreEnabled() {
         expect(screen.getByRole("switch", { name: /emailNotifications/i })).toHaveAttribute("aria-checked", "true");
       },
