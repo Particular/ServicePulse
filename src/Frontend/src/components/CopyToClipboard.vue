@@ -27,7 +27,7 @@ watch(timeoutId, (_, previousTimeoutId) => clearTimeout(previousTimeoutId));
 
 <template>
   <Tippy content="Copied" ref="tippyRef" trigger="manual">
-    <ActionButton v-if="!props.isIconOnly" variant="secondary" size="sm" :icon="faCopy" @click="copyToClipboard">Copy to clipboard</ActionButton>
+    <ActionButton v-if="!props.isIconOnly" variant="secondary" size="sm" :icon="faCopy" aria-label="Copy to clipboard" @click="copyToClipboard">Copy to clipboard</ActionButton>
     <ActionButton v-else variant="secondary" size="sm" :icon="faCopy" tooltip="Copy to clipboard" @click="copyToClipboard" />
   </Tippy>
 </template>
