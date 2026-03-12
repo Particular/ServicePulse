@@ -63,8 +63,11 @@ onBeforeMount(() => {
 
   //without setTimeout, this happens before the store is properly initialised, and therefore the query route values aren't applied to the refresh
   setTimeout(async () => {
-    await Promise.all([refreshNow(), store.loadEndpoints()]);
-    firstLoad.value = false;
+    try {
+      await Promise.all([refreshNow(), store.loadEndpoints()]);
+    } finally {
+      firstLoad.value = false;
+    }
   }, 0);
 });
 
