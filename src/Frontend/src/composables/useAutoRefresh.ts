@@ -21,14 +21,15 @@ function useAutoRefresh(name: string, refresh: () => Promise<void>, intervalMs: 
  * @param name - Name for logging purposes
  * @param useStore - Function that returns the Pinia store (called within component lifecycle)
  * @param intervalMs - Refresh interval in milliseconds
+ * @param customRefresh - Optional custom refresh function. When provided, this is called instead of store.refresh() during auto-refresh, avoiding the need to mutate the store.
  * @returns A composable function that sets up auto-refresh and returns the store. Also provides a method to update the refresh interval and a ref indicating when a refresh is happening
  */
-export function useStoreAutoRefresh<TStore extends { refresh: () => Promise<void> }>(name: string, useStore: () => TStore, intervalMs: number) {
+export function useStoreAutoRefresh<TStore extends { refresh: () => Promise<void> }>(name: string, useStore: () => TStore, intervalMs: number, customRefresh?: (store: TStore) => Promise<void>) {
   const refresh = () => {
     if (!store) {
       return Promise.resolve();
     }
-    return store.refresh();
+    return customRefresh ? customRefresh(store) : store.refresh();
   };
   let store: TStore | null = null;
   const { refresh: autoRefresh, isRefreshing, updateInterval } = useAutoRefresh(name, refresh, intervalMs);

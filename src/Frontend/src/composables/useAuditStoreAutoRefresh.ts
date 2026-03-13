@@ -1,10 +1,6 @@
 import { useAuditStore } from "@/stores/AuditStore";
 import { useStoreAutoRefresh } from "./useAutoRefresh";
 
-// Override the refresh method to use checkForSuccessfulMessages, which is more lightweight
-const useAuditStoreWithRefresh = () => {
-  const store = useAuditStore();
-  return Object.assign(store, { refresh: store.checkForSuccessfulMessages });
-};
-
-export default useStoreAutoRefresh("auditStoreSuccessfulMessages", useAuditStoreWithRefresh, 5000).autoRefresh;
+// Use checkForSuccessfulMessages for auto-refresh (lightweight) via customRefresh
+// instead of mutating the store's refresh method, which would break AuditList's full fetch
+export default useStoreAutoRefresh("auditStoreSuccessfulMessages", useAuditStore, 5000, (store) => store.checkForSuccessfulMessages()).autoRefresh;
