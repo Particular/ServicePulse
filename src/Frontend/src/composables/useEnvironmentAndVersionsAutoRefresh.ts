@@ -1,4 +1,4 @@
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 import { useStoreAutoRefresh } from "./useAutoRefresh";
 
-export default useStoreAutoRefresh("environmentAndVersions", useEnvironmentAndVersionsStore, 5000).autoRefresh;
+export default useStoreAutoRefresh("environmentAndVersions", useEnvironmentAndVersionsStore, 3600000).autoRefresh;
