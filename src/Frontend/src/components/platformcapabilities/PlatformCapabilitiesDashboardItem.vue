@@ -30,7 +30,15 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
   <div v-if="visibility.showSection" class="platform-capabilities">
     <div class="capabilities-header">
       <div class="capabilities-title-row">
-        <div id="collapse-capabilities-btn" class="capabilities-toggle hide-section-btn" role="button" tabindex="0" @click="platformCapabilitiesStore.toggleSection()" @keydown.enter.prevent="platformCapabilitiesStore.toggleSection()" @keydown.space.prevent="platformCapabilitiesStore.toggleSection()">
+        <div
+          id="collapse-capabilities-btn"
+          class="capabilities-toggle hide-section-btn"
+          role="button"
+          tabindex="0"
+          @click="platformCapabilitiesStore.toggleSection()"
+          @keydown.enter.prevent="platformCapabilitiesStore.toggleSection()"
+          @keydown.space.prevent="platformCapabilitiesStore.toggleSection()"
+        >
           <FAIcon :icon="faChevronRight" class="section-chevron expanded" />
           <div>
             <h6>Platform Capabilities</h6>
@@ -87,7 +95,15 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
     </div>
   </div>
   <div v-else class="platform-capabilities-collapsed">
-    <div id="expand-capabilities-btn" class="capabilities-toggle" role="button" tabindex="0" @click="platformCapabilitiesStore.toggleSection()" @keydown.enter.prevent="platformCapabilitiesStore.toggleSection()" @keydown.space.prevent="platformCapabilitiesStore.toggleSection()">
+    <div
+      id="expand-capabilities-btn"
+      class="capabilities-toggle"
+      role="button"
+      tabindex="0"
+      @click="platformCapabilitiesStore.toggleSection()"
+      @keydown.enter.prevent="platformCapabilitiesStore.toggleSection()"
+      @keydown.space.prevent="platformCapabilitiesStore.toggleSection()"
+    >
       <FAIcon :icon="faChevronRight" class="section-chevron" />
       <h6>Show Platform Capabilities</h6>
     </div>
