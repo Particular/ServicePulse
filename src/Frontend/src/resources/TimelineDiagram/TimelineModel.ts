@@ -228,13 +228,9 @@ function formatTickLabel(timeMs: number, minTime: number, range: number): string
 
 const INDENT_PX = 16;
 
-let measureCtx: CanvasRenderingContext2D | null = null;
-
 export function measureLabelWidth(rows: TimelineRow[]): number {
   if (!rows.length) return MIN_LABEL_WIDTH;
-  if (!measureCtx) {
-    measureCtx = document.createElement("canvas").getContext("2d");
-  }
+  const measureCtx = document.createElement("canvas").getContext("2d");
   if (!measureCtx) return MIN_LABEL_WIDTH;
 
   let maxWidth = 0;
