@@ -5,7 +5,7 @@ import useIsAllMessagesSupported, { minimumSCVersionForAllMessages } from "@/com
 import { storeToRefs } from "pinia";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
 import useRemoteInstancesAutoRefresh from "@/composables/useRemoteInstancesAutoRefresh";
-import useAuditStoreAutoRefresh from "@/composables/useAuditStoreAutoRefresh";
+import usePlatformCapabilitiesRefresh from "@/composables/usePlatformCapabilitiesRefresh";
 import { RemoteInstanceStatus, RemoteInstanceType, type RemoteInstance } from "@/resources/RemoteInstance";
 import routeLinks from "@/router/routeLinks";
 
@@ -110,8 +110,8 @@ export function useAuditingCapability(): CapabilityComposable {
 
   // This gives us the hasSuccessfulMessages flag which indicates if any successful messages exist.
   // Uses auto-refresh (minimal) to periodically check for at least 1 successful message (every 5 seconds)
-  const { store: auditStore } = useAuditStoreAutoRefresh();
-  const { hasSuccessfulMessages } = storeToRefs(auditStore);
+  const { store: platformCapabilitiesStore } = usePlatformCapabilitiesRefresh();
+  const { hasSuccessfulMessages } = storeToRefs(platformCapabilitiesStore);
 
   // This tells us if the "All Messages" feature is supported by checking the SC version
   const isAllMessagesSupported = useIsAllMessagesSupported();
