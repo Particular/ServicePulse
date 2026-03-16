@@ -7,6 +7,7 @@ import { storeToRefs } from "pinia";
 import NoData from "@/components/NoData.vue";
 import SmallGraph from "./SmallGraph.vue";
 import PaginationStrip from "@/components/PaginationStrip.vue";
+import MessageTypeActivityFilter from "./MessageTypeActivityFilter.vue";
 import { useMonitoringEndpointDetailsStore } from "@/stores/MonitoringEndpointDetailsStore";
 import ColumnHeader from "@/components/ColumnHeader.vue";
 import { CriticalTime, MessageType, ProcessingTime, ScheduledRetries, Throughput } from "@/resources/MonitoringResources";
@@ -19,9 +20,14 @@ const { endpointDetails: endpoint, messageTypes, messageTypesAvailable } = store
 const route = useRoute();
 const router = useRouter();
 const messageTypesPage = ref(Number(route?.query?.pageNo ?? "1"));
+const activityFilter = ref(0);
 
 watch(messageTypesPage, () => {
   router.replace({ query: { ...route.query, pageNo: messageTypesPage.value } });
+});
+
+watch(activityFilter, () => {
+  messageTypesPage.value = 1;
 });
 
 const props = defineProps({
@@ -31,10 +37,16 @@ const props = defineProps({
   },
 });
 
+const filteredMessageTypes = computed(() => {
+  if (!messageTypes.value) return [];
+  if (activityFilter.value === 0) return messageTypes.value.data;
+  return messageTypes.value.data.filter((mt) => mt.metrics.throughput.average > 0 || mt.metrics.throughput.points.some((p) => p > 0));
+});
+
 const paginatedMessageTypes = computed(() => {
   const pageStart = (messageTypesPage.value - 1) * props.perPage;
   const pageEnd = messageTypesPage.value * props.perPage;
-  return messageTypes.value ? messageTypes.value.data.slice(pageStart, pageEnd) : [];
+  return filteredMessageTypes.value.slice(pageStart, pageEnd);
 });
 </script>
 
@@ -45,6 +57,8 @@ const paginatedMessageTypes = computed(() => {
         <FAIcon :icon="faWarning" /> <strong>Warning:</strong> The number of available message types has changed.
         <a @click="monitoringStore.updateMessageTypes()" class="alink">Click here to reload the view</a>
       </div>
+
+      <MessageTypeActivityFilter v-model="activityFilter" />
 
       <!-- Breakdown by message type-->
       <!--headers-->
@@ -65,6 +79,7 @@ const paginatedMessageTypes = computed(() => {
       </div>
 
       <no-data v-if="!endpoint?.messageTypes?.length" message="No messages processed in this period of time."></no-data>
+      <no-data v-else-if="filteredMessageTypes.length === 0" message="No active message types found for the selected filter."></no-data>
 
       <div role="rowgroup" aria-label="message-type-rows" class="row">
         <div class="col-xs-12 no-side-padding">
@@ -157,7 +172,7 @@ const paginatedMessageTypes = computed(() => {
           </div>
         </div>
       </div>
-      <PaginationStrip v-model="messageTypesPage" :itemsPerPage="perPage" :totalCount="messageTypes?.data?.length ?? 0" />
+      <PaginationStrip v-model="messageTypesPage" :itemsPerPage="perPage" :totalCount="filteredMessageTypes.length" />
     </div>
   </div>
 </template>
