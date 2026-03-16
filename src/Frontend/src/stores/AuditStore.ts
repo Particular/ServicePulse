@@ -1,10 +1,11 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref } from "vue";
 import type { SortInfo } from "@/components/SortInfo";
-import Message, { MessageStatus } from "@/resources/Message";
+import Message from "@/resources/Message";
 import { EndpointsView } from "@/resources/EndpointView";
 import type { DateRange } from "@/types/date";
 import serviceControlClient from "@/components/serviceControlClient";
+import auditClient from "@/components/audit/auditClient";
 
 export enum FieldNames {
   TimeSent = "time_sent",
@@ -27,19 +28,6 @@ export const useAuditStore = defineStore("AuditStore", () => {
   const selectedEndpointName = ref<string>("");
   const endpoints = ref<EndpointsView[]>([]);
 
-  const hasSuccessfulMessages = ref(false);
-
-  async function checkForSuccessfulMessages() {
-    try {
-      // Fetch the latest 10 messages and check if any are successful
-      // ideally we would want to filter successful messages server-side, but the API doesn't currently support that
-      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<Message[]>(`messages2/?page_size=10&sort=time_sent&direction=desc`);
-      hasSuccessfulMessages.value = data?.some((msg) => msg.status === MessageStatus.Successful) ?? false;
-    } catch {
-      hasSuccessfulMessages.value = false;
-    }
-  }
-
   async function loadEndpoints() {
     try {
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EndpointsView[]>(`endpoints`);
@@ -52,12 +40,13 @@ export const useAuditStore = defineStore("AuditStore", () => {
 
   async function refresh() {
     try {
-      const [fromDate, toDate] = dateRange.value;
-      const from = fromDate?.toISOString() ?? "";
-      const to = toDate?.toISOString() ?? "";
-      const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<Message[]>(
-        `messages2/?endpoint_name=${selectedEndpointName.value}&from=${from}&to=${to}&q=${messageFilterString.value}&page_size=${itemsPerPage.value}&sort=${sortByInstances.value.property}&direction=${sortByInstances.value.isAscending ? "asc" : "desc"}`
-      );
+      const [response, data] = await auditClient.getMessages({
+        endpointName: selectedEndpointName.value,
+        dateRange: dateRange.value,
+        messageFilterString: messageFilterString.value,
+        itemsPerPage: itemsPerPage.value,
+        sort: sortByInstances.value,
+      });
       totalCount.value = parseInt(response.headers.get("total-count") ?? "0");
       messages.value = data;
     } catch (e) {
@@ -69,10 +58,8 @@ export const useAuditStore = defineStore("AuditStore", () => {
   return {
     refresh,
     loadEndpoints,
-    checkForSuccessfulMessages,
     sortBy: sortByInstances,
     messages,
-    hasSuccessfulMessages,
     messageFilterString,
     selectedEndpointName,
     itemsPerPage,

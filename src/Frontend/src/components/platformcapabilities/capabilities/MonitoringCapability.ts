@@ -3,10 +3,10 @@ import { StatusIndicator } from "@/components/platformcapabilities/types";
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import { storeToRefs } from "pinia";
 import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
-import useMonitoringStoreAutoRefresh from "@/composables/useMonitoringStoreAutoRefresh";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+import usePlatformCapabilitiesRefresh from "@/composables/usePlatformCapabilitiesRefresh";
 import routeLinks from "@/router/routeLinks";
 
 const MonitoringDescriptions: CapabilityStatusToStringMap = {
@@ -46,8 +46,8 @@ export function useMonitoringCapability(): CapabilityComposable {
 
   // this tells us if there are any endpoints sending data
   // Uses auto-refresh to periodically check for monitored endpoints (every 5 seconds)
-  const { store: monitoringStore } = useMonitoringStoreAutoRefresh();
-  const { hasMonitoredEndpoints } = storeToRefs(monitoringStore);
+  const { store: platformCapabilitiesStore } = usePlatformCapabilitiesRefresh();
+  const { hasMonitoredEndpoints } = storeToRefs(platformCapabilitiesStore);
 
   // this tells us the connection state to the monitoring instance
   // this is auto refreshed in the ConnectionsAndStatsStore (every 5 seconds)

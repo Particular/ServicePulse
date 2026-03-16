@@ -1,6 +1,9 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref, watch } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
+import auditClient from "@/components/audit/auditClient";
+import monitoringClient from "@/components/monitoring/monitoringClient";
+import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 
 const STORAGE_KEY_PREFIX = "servicepulse-capabilities-vis";
 
@@ -16,7 +19,7 @@ function getStorageKey(): string {
   return STORAGE_KEY_PREFIX;
 }
 
-interface PlatformCapabilitiesVisibility {
+export interface PlatformCapabilitiesVisibility {
   showSection: boolean;
   showAuditingCard: boolean;
   showMonitoringCard: boolean;
@@ -52,7 +55,36 @@ function saveVisibility(visibility: PlatformCapabilitiesVisibility): void {
 }
 
 export const usePlatformCapabilitiesStore = defineStore("PlatformCapabilitiesStore", () => {
+  const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
   const visibility = ref<PlatformCapabilitiesVisibility>(loadVisibility());
+  const hasSuccessfulMessages = ref(false);
+  const hasMonitoredEndpoints = ref(false);
+
+  async function checkForSuccessfulMessages() {
+    try {
+      hasSuccessfulMessages.value = await auditClient.hasSuccessfulMessages();
+    } catch {
+      hasSuccessfulMessages.value = false;
+    }
+  }
+
+  async function checkForMonitoredEndpoints() {
+    try {
+      if (!monitoringClient.isMonitoringEnabled || connectionStore.monitoringConnectionState.unableToConnect) {
+        hasMonitoredEndpoints.value = false;
+        return;
+      }
+      // Minimal query: just need to check if any endpoints exist
+      const data = await monitoringClient.getMonitoredEndpoints(1);
+      hasMonitoredEndpoints.value = (data?.length ?? 0) > 0;
+    } catch {
+      hasMonitoredEndpoints.value = false;
+    }
+  }
+
+  async function refresh() {
+    await Promise.all([checkForSuccessfulMessages(), checkForMonitoredEndpoints()]);
+  }
 
   // Watch for changes and persist to localStorage
   watch(
@@ -93,6 +125,9 @@ export const usePlatformCapabilitiesStore = defineStore("PlatformCapabilitiesSto
     toggleMonitoringCard,
     toggleErrorCard,
     showAll,
+    hasSuccessfulMessages,
+    hasMonitoredEndpoints,
+    refresh,
   };
 });
 
