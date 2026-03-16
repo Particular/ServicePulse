@@ -13,9 +13,11 @@ import ColumnHeader from "@/components/ColumnHeader.vue";
 import { CriticalTime, MessageType, ProcessingTime, ScheduledRetries, Throughput } from "@/resources/MonitoringResources";
 import FAIcon from "@/components/FAIcon.vue";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
+import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
 
 const monitoringStore = useMonitoringEndpointDetailsStore();
 const { endpointDetails: endpoint, messageTypes, messageTypesAvailable } = storeToRefs(monitoringStore);
+const { historyPeriod } = storeToRefs(useMonitoringHistoryPeriodStore());
 
 const route = useRoute();
 const router = useRouter();
@@ -40,7 +42,16 @@ const props = defineProps({
 const filteredMessageTypes = computed(() => {
   if (!messageTypes.value) return [];
   if (activityFilter.value === 0) return messageTypes.value.data;
-  return messageTypes.value.data.filter((mt) => mt.metrics.throughput.average > 0 || mt.metrics.throughput.points.some((p) => p > 0));
+
+  return messageTypes.value.data.filter((mt) => {
+    const points = mt.metrics.throughput.points;
+    if (points.length === 0) return false;
+
+    const pVal = historyPeriod.value.pVal;
+    const pointsToCheck = Math.min(points.length, Math.ceil((activityFilter.value / pVal) * points.length));
+    const recentPoints = points.slice(-pointsToCheck);
+    return recentPoints.some((p) => p > 0);
+  });
 });
 
 const paginatedMessageTypes = computed(() => {
@@ -58,7 +69,7 @@ const paginatedMessageTypes = computed(() => {
         <a @click="monitoringStore.updateMessageTypes()" class="alink">Click here to reload the view</a>
       </div>
 
-      <MessageTypeActivityFilter v-model="activityFilter" />
+      <MessageTypeActivityFilter v-model="activityFilter" :historyPeriod="historyPeriod.pVal" />
 
       <!-- Breakdown by message type-->
       <!--headers-->

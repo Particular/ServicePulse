@@ -1,17 +1,28 @@
 <script setup lang="ts">
+import { computed, watch } from "vue";
+
 export interface ActivityFilterOption {
   value: number;
   text: string;
 }
 
-const filterOptions: ActivityFilterOption[] = [
+const allFilterOptions: ActivityFilterOption[] = [
   { value: 0, text: "All" },
   { value: 1, text: "1 min" },
   { value: 5, text: "5 min" },
   { value: 15, text: "15 min" },
 ];
 
+const props = defineProps<{ historyPeriod: number }>();
 const selected = defineModel<number>({ default: 0 });
+
+const filterOptions = computed(() => allFilterOptions.filter((o) => o.value === 0 || o.value <= props.historyPeriod));
+
+watch(filterOptions, () => {
+  if (!filterOptions.value.some((o) => o.value === selected.value)) {
+    selected.value = 0;
+  }
+});
 </script>
 
 <template>
