@@ -11,8 +11,11 @@ export default function useFetchWithAutoRefresh(name: string, fetchFn: () => Pro
       return;
     }
     isRefreshing.value = true;
-    await fetchFn();
-    isRefreshing.value = false;
+    try {
+      await fetchFn();
+    } finally {
+      isRefreshing.value = false;
+    }
   };
   const { isActive, pause, resume } = useTimeoutPoll(
     fetchWrapper,
