@@ -10,7 +10,7 @@ import { getAuditingWizardPages } from "@/components/platformcapabilities/wizard
 import { getMonitoringWizardPages } from "@/components/platformcapabilities/wizards/MonitoringWizardPages";
 import { usePlatformCapabilitiesStore } from "@/stores/PlatformCapabilitiesStore";
 import FAIcon from "@/components/FAIcon.vue";
-import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 const platformCapabilitiesStore = usePlatformCapabilitiesStore();
 const { visibility } = storeToRefs(platformCapabilitiesStore);
@@ -30,15 +30,23 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
   <div v-if="visibility.showSection" class="platform-capabilities">
     <div class="capabilities-header">
       <div class="capabilities-title-row">
-        <div>
-          <h6>Platform Capabilities</h6>
-          <p class="capabilities-description">Discover and configure the capabilities of the Particular Service Platform</p>
+        <div
+          id="collapse-capabilities-btn"
+          class="capabilities-toggle hide-section-btn"
+          role="button"
+          tabindex="0"
+          @click="platformCapabilitiesStore.toggleSection()"
+          @keydown.enter.prevent="platformCapabilitiesStore.toggleSection()"
+          @keydown.space.prevent="platformCapabilitiesStore.toggleSection()"
+        >
+          <FAIcon :icon="faChevronRight" class="section-chevron expanded" />
+          <div>
+            <h6>Platform Capabilities</h6>
+            <p class="capabilities-description">Discover and configure the capabilities of the Particular Service Platform</p>
+          </div>
         </div>
         <div class="capabilities-actions">
           <button v-if="hasHiddenCards" class="btn-link restore-btn" @click="platformCapabilitiesStore.showAll()" v-tippy="'Show all hidden cards'">Show All</button>
-          <button class="btn-icon hide-section-btn" @click="platformCapabilitiesStore.toggleSection()" v-tippy="'Hide this section'">
-            <FAIcon :icon="faChevronUp" />
-          </button>
         </div>
       </div>
     </div>
@@ -87,10 +95,18 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
     </div>
   </div>
   <div v-else class="platform-capabilities-collapsed">
-    <button class="btn-link expand-btn" @click="platformCapabilitiesStore.toggleSection()">
-      <FAIcon :icon="faChevronDown" />
-      <span>Show Platform Capabilities</span>
-    </button>
+    <div
+      id="expand-capabilities-btn"
+      class="capabilities-toggle"
+      role="button"
+      tabindex="0"
+      @click="platformCapabilitiesStore.toggleSection()"
+      @keydown.enter.prevent="platformCapabilitiesStore.toggleSection()"
+      @keydown.space.prevent="platformCapabilitiesStore.toggleSection()"
+    >
+      <FAIcon :icon="faChevronRight" class="section-chevron" />
+      <h6>Show Platform Capabilities</h6>
+    </div>
   </div>
 </template>
 
@@ -103,6 +119,42 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+}
+
+.capabilities-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+  user-select: none;
+}
+
+.capabilities-toggle:hover {
+  background-color: var(--hover-bg, rgba(0, 0, 0, 0.05));
+}
+
+.capabilities-toggle:focus-visible {
+  outline: 2px solid var(--primary-color, #007bff);
+  outline-offset: 2px;
+}
+
+.capabilities-toggle h6 {
+  margin: 0;
+}
+
+.section-chevron {
+  font-size: 12px;
+  color: var(--text-secondary, #888);
+  margin-top: 3px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.section-chevron.expanded {
+  transform: rotate(90deg);
 }
 
 .capabilities-description {
@@ -130,21 +182,6 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
   text-decoration: underline;
 }
 
-.btn-icon {
-  background: none;
-  border: none;
-  color: var(--text-secondary, #666);
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.btn-icon:hover {
-  background-color: var(--hover-bg, #f0f0f0);
-  color: var(--text-primary, #333);
-}
-
 .capabilities-list {
   display: flex;
   gap: 16px;
@@ -155,25 +192,6 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
 }
 
 .platform-capabilities-collapsed {
-  padding: 8px 0;
-}
-
-.expand-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: none;
-  border: none;
-  color: var(--text-secondary, #666);
-  cursor: pointer;
-  font-size: 14px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.expand-btn:hover {
-  background-color: var(--hover-bg, #f0f0f0);
-  color: var(--text-primary, #333);
+  padding: 4px 0;
 }
 </style>
