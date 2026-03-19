@@ -223,25 +223,6 @@ div.failed-message-data {
   border: 2px solid var(--sp-blue);
 }
 
-label:after .checkbox {
-  opacity: 0;
-  content: "";
-  position: absolute;
-  width: 11px;
-  height: 7px;
-  background: transparent;
-  top: 2px;
-  left: 2px;
-  border: 3px solid #333;
-  border-top: none;
-  border-right: none;
-  transform: rotate(-45deg);
-}
-
-.checkbox input[type="checkbox"]:checked + label:after {
-  opacity: 1;
-}
-
 p.metadata {
   margin-bottom: 6px;
   position: relative;
