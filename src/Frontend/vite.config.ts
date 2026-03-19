@@ -1,16 +1,16 @@
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import { DevTools } from "@vitejs/devtools";
 import path from "path";
 import checker from "vite-plugin-checker";
-import vueDevTools from "vite-plugin-vue-devtools";
 
-function createCSPOverrides(hostPort: number, configuredDestinations: string[]) {
+function createCSPOverrides(configuredDestinations: string[]) {
   const destinations = configuredDestinations.join(" ");
 
   return (
     "default-src 'self';" +
-    `connect-src ws://localhost:${hostPort} https://platformupdate.particular.net ${destinations} 'self';` +
+    `connect-src ws://localhost:* https://platformupdate.particular.net ${destinations} 'self';` +
     "font-src 'self' https://fonts.gstatic.com/ data:;" +
     `img-src data: 'self';` +
     `script-src eval: inline: https://platformupdate.particular.net ${destinations} 'self' 'unsafe-eval' 'unsafe-inline';` +
@@ -34,7 +34,7 @@ export default defineConfig({
     devSourcemap: true,
   },
   plugins: [
-    vueDevTools(),
+    DevTools(),
     vue(),
     checker({ overlay: { initialIsOpen: "error" }, vueTsc: { tsconfigPath: "tsconfig.app.json" } }),
     {
@@ -61,13 +61,14 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     sourcemap: true,
-    rollupOptions: {
+    rolldownOptions: {
       external: ["./js/app.constants.js"],
+      devtools: {}, // enable devtools mode
     },
   },
   server: {
     headers: {
-      "Content-Security-Policy": createCSPOverrides(port, defaultUrls),
+      "Content-Security-Policy": createCSPOverrides(defaultUrls),
     },
     host: true,
     port: port,

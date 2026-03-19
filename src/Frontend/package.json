@@ -62,8 +62,9 @@
     "@types/bootstrap": "5.2.10",
     "@types/jsdom": "28.0.0",
     "@types/node": "25.3.0",
+    "@vitejs/devtools": "0.1.3",
     "@vitejs/plugin-vue": "6.0.4",
-    "@vitest/coverage-v8": "4.0.18",
+    "@vitest/coverage-v8": "4.1.0",
     "@vue/tsconfig": "0.8.1",
     "cross-env": "10.1.0",
     "eslint": "10.0.3",
@@ -76,15 +77,19 @@
     "prettier": "3.8.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.56.1",
-    "vite": "7.3.1",
+    "vite": "8.0.0",
     "vite-plugin-checker": "0.12.0",
-    "vite-plugin-vue-devtools": "8.0.6",
-    "vitest": "4.0.18",
+    "vitest": "4.1.0",
     "vue-tsc": "3.2.5"
   },
   "msw": {
     "workerDirectory": [
       "public"
     ]
+  },
+  "overrides": {
+    "vite": {
+      "@vitejs/devtools": "0.1.3"
+    }
   }
 }
