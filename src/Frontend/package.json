@@ -38,7 +38,6 @@
     "codemirror": "6.0.2",
     "dayjs": "1.11.19",
     "diff": "8.0.3",
-    "glob": "13.0.6",
     "hex-to-css-filter": "6.0.0",
     "lossless-json": "4.3.0",
     "oidc-client-ts": "3.4.1",
@@ -91,6 +90,9 @@
   "overrides": {
     "vite": {
       "@vitejs/devtools": "0.1.3"
+    },
+    "js-beautify": {
+      "glob": "13.0.6"
     }
   }
 }
