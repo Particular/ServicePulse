@@ -5,12 +5,12 @@ import { DevTools } from "@vitejs/devtools";
 import path from "path";
 import checker from "vite-plugin-checker";
 
-function createCSPOverrides(hostPort: number, configuredDestinations: string[]) {
+function createCSPOverrides(configuredDestinations: string[]) {
   const destinations = configuredDestinations.join(" ");
 
   return (
     "default-src 'self';" +
-    `connect-src ws://localhost:${hostPort} https://platformupdate.particular.net ${destinations} 'self';` +
+    `connect-src ws://localhost:* https://platformupdate.particular.net ${destinations} 'self';` +
     "font-src 'self' https://fonts.gstatic.com/ data:;" +
     `img-src data: 'self';` +
     `script-src eval: inline: https://platformupdate.particular.net ${destinations} 'self' 'unsafe-eval' 'unsafe-inline';` +
@@ -68,7 +68,7 @@ export default defineConfig({
   },
   server: {
     headers: {
-      "Content-Security-Policy": createCSPOverrides(port, defaultUrls),
+      "Content-Security-Policy": createCSPOverrides(defaultUrls),
     },
     host: true,
     port: port,
