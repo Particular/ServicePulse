@@ -2,12 +2,77 @@
   packageRules: [
     {
       matchDatasources: ["npm"],
-      matchPackageNames: [
-        "vitest",
-        "@vitest/coverage-v8"
-      ],
+      matchUpdateTypes: ["patch"],
+      groupName: "npm patch updates",
+      groupSlug: "npm-patch-updates"
+    },
+    {
+      matchDatasources: ["npm"],
+      matchPackageNames: ["vitest", "@vitest/coverage-v8"],
       groupName: "vitest",
       groupSlug: "vitest-group"
+    },
+    {
+      matchDatasources: ["npm"],
+      matchPackageNames: [
+        "vite",
+        "@vitejs/plugin-vue",
+        "vite-plugin-checker",
+        "vite-plugin-vue-devtools"
+      ],
+      groupName: "vite",
+      groupSlug: "vite-group"
+    },
+    {
+      matchDatasources: ["npm"],
+      matchPackageNames: [
+        "vue",
+        "vue-router",
+        "pinia",
+        "@pinia/testing",
+        "vue-tsc",
+        "@vue/tsconfig"
+      ],
+      groupName: "vue",
+      groupSlug: "vue-group"
+    },
+    {
+      matchDatasources: ["npm"],
+      matchPackageNames: ["codemirror", "vue-codemirror6"],
+      matchPackagePatterns: ["^@codemirror/"],
+      groupName: "codemirror",
+      groupSlug: "codemirror-group"
+    },
+    {
+      matchDatasources: ["npm"],
+      matchPackagePatterns: ["^@fortawesome/"],
+      groupName: "fontawesome",
+      groupSlug: "fontawesome-group"
+    },
+    {
+      matchDatasources: ["npm"],
+      matchPackagePatterns: ["^@testing-library/"],
+      groupName: "testing-library",
+      groupSlug: "testing-library-group"
+    },
+    {
+      matchDatasources: ["npm"],
+      matchPackageNames: [
+        "eslint",
+        "@eslint/js",
+        "eslint-plugin-vue",
+        "typescript-eslint",
+        "eslint-config-prettier",
+        "eslint-plugin-prettier"
+      ],
+      groupName: "eslint",
+      groupSlug: "eslint-group"
+    },
+    {
+      matchDatasources: ["npm"],
+      matchPackagePatterns: ["^@vue-flow/"],
+      groupName: "vue-flow",
+      groupSlug: "vue-flow-group"
     }
   ]
 }
