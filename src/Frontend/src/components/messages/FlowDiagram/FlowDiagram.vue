@@ -205,7 +205,7 @@ onMounted(async () => {
 });
 
 async function layoutGraph() {
-  nodes.value = layout(nodes.value, edges.value);
+  nodes.value = layout(nodes.value as Node[], edges.value as DefaultEdge[]);
 
   await nextTick(() => {
     if (store.state.data.id) {
