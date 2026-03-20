@@ -23,6 +23,11 @@ watch(
 const contentType = computed(() => parseContentType(bodyState.value.data.content_type));
 const body = computed(() => bodyState.value.data.value);
 const rawBytes = computed(() => bodyState.value.data.rawBytes);
+const parseFailed = computed(() => bodyState.value.data.parse_failed);
+
+watch(parseFailed, (failed) => {
+  if (failed) viewMode.value = "hex";
+}, { immediate: true });
 </script>
 
 <template>
@@ -35,6 +40,7 @@ const rawBytes = computed(() => bodyState.value.data.rawBytes);
       ServiceControl configuration.
     </div>
     <template v-else-if="rawBytes">
+      <div v-if="parseFailed" class="alert alert-warning">Message body could not be parsed as {{ bodyState.data.content_type }}. Showing hex view.</div>
       <div class="view-mode-toggle">
         <button :class="['toggle-btn', { active: viewMode === 'formatted' }]" @click="viewMode = 'formatted'">Formatted</button>
         <button :class="['toggle-btn', { active: viewMode === 'hex' }]" @click="viewMode = 'hex'">Hex</button>

@@ -64,7 +64,7 @@ interface Model {
 
 export const useMessageStore = defineStore("MessageStore", () => {
   const headers = ref<DataContainer<Header[]>>({ data: [] });
-  const body = ref<DataContainer<{ value?: string; content_type?: string; no_content?: boolean; rawBytes?: Uint8Array }>>({ data: {} });
+  const body = ref<DataContainer<{ value?: string; content_type?: string; no_content?: boolean; rawBytes?: Uint8Array; parse_failed?: boolean }>>({ data: {} });
   const state = reactive<DataContainer<Model>>({ data: { failure_metadata: {}, failure_status: {}, dialog_status: {}, invoked_saga: {} } });
   const edit_and_retry_config = ref<EditAndRetryConfig>({ enabled: false, locked_headers: [], sensitive_headers: [] });
   const conversationData = ref<DataContainer<Message[]>>({ data: [] });
@@ -233,11 +233,15 @@ export const useMessageStore = defineStore("MessageStore", () => {
       const charset = contentType?.match(/charset=([^\s;]+)/i)?.[1] ?? "utf-8";
       body.value.data.value = new TextDecoder(charset).decode(arrayBuffer);
 
-      if (contentType === "application/json") {
-        body.value.data.value = stringify(parse(body.value.data.value), null, 2) ?? body.value.data.value;
-      }
-      if (contentType === "text/xml") {
-        body.value.data.value = xmlFormat(body.value.data.value, { indentation: "  ", collapseContent: true });
+      try {
+        if (contentType === "application/json") {
+          body.value.data.value = stringify(parse(body.value.data.value), null, 2) ?? body.value.data.value;
+        }
+        if (contentType === "text/xml") {
+          body.value.data.value = xmlFormat(body.value.data.value, { indentation: "  ", collapseContent: true });
+        }
+      } catch {
+        body.value.data.parse_failed = true;
       }
     } catch {
       body.value.failed_to_load = true;
