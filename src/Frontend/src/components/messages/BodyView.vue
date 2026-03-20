@@ -25,9 +25,13 @@ const body = computed(() => bodyState.value.data.value);
 const rawBytes = computed(() => bodyState.value.data.rawBytes);
 const parseFailed = computed(() => bodyState.value.data.parse_failed);
 
-watch(parseFailed, (failed) => {
-  if (failed) viewMode.value = "hex";
-}, { immediate: true });
+watch(
+  parseFailed,
+  (failed) => {
+    if (failed) viewMode.value = "hex";
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -70,7 +74,9 @@ watch(parseFailed, (failed) => {
   color: #333;
   font-size: 13px;
   cursor: pointer;
-  transition: background-color 0.15s, border-color 0.15s;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
 }
 
 .toggle-btn:first-child {
