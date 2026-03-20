@@ -12,7 +12,7 @@ const { pageNumber, failingCount, failedChecks } = storeToRefs(store);
 
 <template>
   <div class="container">
-    <div class row="row">
+    <div class="row">
       <div class="col-sm-12 padded">
         <h1>Custom checks</h1>
       </div>
