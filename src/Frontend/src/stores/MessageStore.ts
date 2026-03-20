@@ -64,7 +64,7 @@ interface Model {
 
 export const useMessageStore = defineStore("MessageStore", () => {
   const headers = ref<DataContainer<Header[]>>({ data: [] });
-  const body = ref<DataContainer<{ value?: string; content_type?: string; no_content?: boolean }>>({ data: {} });
+  const body = ref<DataContainer<{ value?: string; content_type?: string; no_content?: boolean; rawBytes?: Uint8Array }>>({ data: {} });
   const state = reactive<DataContainer<Model>>({ data: { failure_metadata: {}, failure_status: {}, dialog_status: {}, invoked_saga: {} } });
   const edit_and_retry_config = ref<EditAndRetryConfig>({ enabled: false, locked_headers: [], sensitive_headers: [] });
   const conversationData = ref<DataContainer<Message[]>>({ data: [] });
@@ -227,7 +227,11 @@ export const useMessageStore = defineStore("MessageStore", () => {
 
       const contentType = response.headers.get("content-type");
       body.value.data.content_type = contentType ?? "text/plain";
-      body.value.data.value = await response.text();
+
+      const arrayBuffer = await response.arrayBuffer();
+      body.value.data.rawBytes = new Uint8Array(arrayBuffer);
+      const charset = contentType?.match(/charset=([^\s;]+)/i)?.[1] ?? "utf-8";
+      body.value.data.value = new TextDecoder(charset).decode(arrayBuffer);
 
       if (contentType === "application/json") {
         body.value.data.value = stringify(parse(body.value.data.value), null, 2) ?? body.value.data.value;
