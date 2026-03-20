@@ -313,8 +313,6 @@ const copyText = computed(() => {
 .hex-scroll-container {
   overflow-y: auto;
   overflow-x: auto;
-  flex: 1 1 0;
-  min-height: 200px;
   max-height: 70vh;
 }
 
