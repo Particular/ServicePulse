@@ -29,8 +29,8 @@ const bytesPerRow = computed(() => {
   // Try multiples of LANE_SIZE from large to small
   for (const bpr of [48, 40, 32, 24, 16]) {
     const lanes = bpr / LANE_SIZE;
-    // offset: 10ch, hex: bpr*3ch + (lanes-1)*1.5ch, sep: 3ch, ascii: bpr*1ch + (lanes-1)*0.5ch, margin: 2ch
-    const needed = (10 + bpr * 3 + (lanes - 1) * 1.5 + 3 + bpr + (lanes - 1) * 0.5 + 2) * ch;
+    // offset: 10ch, hex: bpr*3ch + (lanes-1)*1.5ch, sep: 3ch, ascii: bpr*1ch, margin: 2ch
+    const needed = (10 + bpr * 3 + (lanes - 1) * 1.5 + 3 + bpr + 2) * ch;
     if (availablePx >= needed) return bpr;
   }
   return 8;
@@ -258,16 +258,15 @@ const copyText = computed(() => {
               </template>
             </span>
             <span class="hex-ascii">
-              <template v-for="(char, i) in row.chars" :key="char.index">
-                <span
-                  class="ascii-char"
-                  :class="{ 'non-printable': !char.printable, selected: isSelected(char.index) }"
-                  @mousedown.prevent="startSelection(char.index)"
-                  @mouseover="extendSelection(char.index)"
-                  >{{ char.display }}</span
-                >
-                <span v-if="isLaneEnd(i) && i < row.chars.length - 1" class="ascii-lane-sep"></span>
-              </template>
+              <span
+                v-for="(char, i) in row.chars"
+                :key="char.index"
+                class="ascii-char"
+                :class="{ 'non-printable': !char.printable, selected: isSelected(char.index), 'lane-start': i > 0 && i % LANE_SIZE === 0 }"
+                @mousedown.prevent="startSelection(char.index)"
+                @mouseover="extendSelection(char.index)"
+                >{{ char.display }}</span
+              >
             </span>
           </div>
         </div>
@@ -391,10 +390,9 @@ const copyText = computed(() => {
   background-color: #e8f0fe;
 }
 
-/* Lane separator in ASCII area */
-.ascii-lane-sep {
-  display: inline-block;
-  width: 0.5ch;
+/* Lane boundary marker in ASCII area — thin border, no added width */
+.ascii-char.lane-start {
+  border-left: 1px dotted #d0d0d0;
 }
 
 /* Null bytes (0x00): dim gray */
