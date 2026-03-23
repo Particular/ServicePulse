@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
-import { useResizeObserver } from "@vueuse/core";
+import { ref, computed, onMounted, watch } from "vue";
+import { useMousePressed, useResizeObserver } from "@vueuse/core";
 import CopyToClipboard from "@/components/CopyToClipboard.vue";
 
 const props = defineProps<{
@@ -147,19 +147,15 @@ function extendSelection(byteIndex: number) {
   selectionEnd.value = byteIndex;
 }
 
-function endSelection() {
-  isSelecting.value = false;
-}
+const { pressed: mousePressed } = useMousePressed();
 
-function onDocumentMouseUp() {
-  endSelection();
-}
+watch(mousePressed, (pressed) => {
+  if (!pressed) isSelecting.value = false;
+});
 
 useResizeObserver(scrollContainer, measureContainer);
 
 onMounted(() => {
-  document.addEventListener("mouseup", onDocumentMouseUp);
-
   // Measure monospace char width
   const measurer = document.createElement("span");
   measurer.style.fontFamily = '"Cascadia Code", "Fira Code", "JetBrains Mono", "Consolas", "Courier New", monospace';
@@ -172,10 +168,6 @@ onMounted(() => {
   document.body.removeChild(measurer);
 
   measureContainer();
-});
-
-onBeforeUnmount(() => {
-  document.removeEventListener("mouseup", onDocumentMouseUp);
 });
 
 watch(
