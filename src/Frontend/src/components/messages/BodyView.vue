@@ -45,9 +45,9 @@ watch(
     </div>
     <template v-else-if="rawBytes">
       <div v-if="parseFailed" class="alert alert-warning">Message body could not be parsed as {{ bodyState.data.content_type }}. Showing hex view.</div>
-      <div class="view-mode-toggle">
-        <button :class="['toggle-btn', { active: viewMode === 'formatted' }]" @click="viewMode = 'formatted'">Formatted</button>
-        <button :class="['toggle-btn', { active: viewMode === 'hex' }]" @click="viewMode = 'hex'">Hex</button>
+      <div class="btn-group btn-group-sm" role="group" aria-label="View mode">
+        <button type="button" :class="['btn', viewMode === 'formatted' ? 'btn-primary' : 'btn-outline-secondary']" @click="viewMode = 'formatted'">Formatted</button>
+        <button type="button" :class="['btn', viewMode === 'hex' ? 'btn-primary' : 'btn-outline-secondary']" @click="viewMode = 'hex'">Hex</button>
       </div>
       <CodeEditor v-if="viewMode === 'formatted' && body !== undefined && contentType.isSupported" :model-value="body" :language="contentType.language" :read-only="true" :show-gutter="true" />
       <div v-else-if="viewMode === 'formatted' && !contentType.isSupported" class="alert alert-warning">Message body cannot be displayed because content type "{{ bodyState.data.content_type }}" is not supported.</div>
@@ -61,40 +61,7 @@ watch(
   margin-top: 5px;
 }
 
-.view-mode-toggle {
-  display: flex;
-  gap: 0;
+.btn-group {
   margin-bottom: 5px;
-}
-
-.toggle-btn {
-  padding: 4px 14px;
-  border: 1px solid #ccc;
-  background: #f3f3f3;
-  color: #333;
-  font-size: 13px;
-  cursor: pointer;
-  transition:
-    background-color 0.15s,
-    border-color 0.15s;
-}
-
-.toggle-btn:first-child {
-  border-radius: 4px 0 0 4px;
-}
-
-.toggle-btn:last-child {
-  border-radius: 0 4px 4px 0;
-  border-left: none;
-}
-
-.toggle-btn:hover {
-  background: #e6e6e6;
-}
-
-.toggle-btn.active {
-  background: var(--sp-blue, #00a3c4);
-  color: white;
-  border-color: var(--sp-blue, #00a3c4);
 }
 </style>
