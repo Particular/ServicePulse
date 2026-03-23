@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
+import { useResizeObserver } from "@vueuse/core";
 import CopyToClipboard from "@/components/CopyToClipboard.vue";
 
 const props = defineProps<{
@@ -154,7 +155,7 @@ function onDocumentMouseUp() {
   endSelection();
 }
 
-let resizeObserver: ResizeObserver | null = null;
+useResizeObserver(scrollContainer, measureContainer);
 
 onMounted(() => {
   document.addEventListener("mouseup", onDocumentMouseUp);
@@ -171,15 +172,10 @@ onMounted(() => {
   document.body.removeChild(measurer);
 
   measureContainer();
-  if (scrollContainer.value) {
-    resizeObserver = new ResizeObserver(measureContainer);
-    resizeObserver.observe(scrollContainer.value);
-  }
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener("mouseup", onDocumentMouseUp);
-  resizeObserver?.disconnect();
 });
 
 watch(
