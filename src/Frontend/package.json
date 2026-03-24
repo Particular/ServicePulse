@@ -62,7 +62,7 @@
     "@types/bootstrap": "5.2.10",
     "@types/jsdom": "28.0.1",
     "@types/node": "25.5.0",
-    "@vitejs/devtools": "0.1.8",
+    "@vitejs/devtools": "0.1.11",
     "@vitejs/plugin-vue": "6.0.5",
     "@vitest/coverage-v8": "4.1.1",
     "@vue/tsconfig": "0.9.1",
