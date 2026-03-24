@@ -63,19 +63,15 @@ const test = testVitest.extend<{ driver: Driver }>({
   // eslint-disable-next-line no-empty-pattern, @typescript-eslint/no-explicit-any
   driver: async ({}, use: any) => {
     const driver = makeDriver();
-    console.log("Starting test");
-
     //run the test
     await use(driver);
 
-    console.log("Test ended");
     //unmount the app after the test runs
     driver.disposeApp();
 
     // We need to wait for any pending promises to resolve before resetting handlers and clearing storage
     await flushPromises();
 
-    console.log("Cleanup after test");
     mockServer.resetHandlers();
     //Make JSDOM create a fresh document per each test run
     jsdom.reconfigure({ url: "http://localhost:3000/" });
