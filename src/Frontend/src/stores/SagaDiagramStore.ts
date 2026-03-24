@@ -1,4 +1,5 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
+import logger from "@/logger";
 import { ref, watch } from "vue";
 import { SagaHistory, SagaMessage } from "@/resources/SagaHistory";
 import Message from "@/resources/Message";
@@ -148,7 +149,7 @@ export const useSagaDiagramStore = defineStore("SagaDiagramStore", () => {
       }
       return await response.json();
     } catch (error) {
-      console.error("Error fetching audit messages:", error);
+      logger.error("Error fetching audit messages:", error);
       return { result: [] };
     }
   }

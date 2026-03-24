@@ -2,6 +2,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
 import Configuration from "@/resources/Configuration";
 import serviceControlClient from "@/components/serviceControlClient";
+import logger from "@/logger";
 
 export const useConfigurationStore = defineStore("ConfigurationStore", () => {
   const configuration = ref<Configuration | null>(null);
@@ -15,7 +16,7 @@ export const useConfigurationStore = defineStore("ConfigurationStore", () => {
       return configuration.value;
     })
     .catch((error) => {
-      console.error("Failed to fetch configuration:", error);
+      logger.error("Failed to fetch configuration:", error);
     });
 
   return {

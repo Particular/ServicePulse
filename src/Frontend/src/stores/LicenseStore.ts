@@ -1,4 +1,5 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
+import logger from "@/logger";
 import { computed, reactive, ref } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
 import LicenseInfo, { LicenseStatus } from "@/resources/LicenseInfo";
@@ -99,7 +100,7 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<LicenseInfo>("license?refresh=true&clientName=servicepulse");
       return data;
     } catch (err) {
-      console.error("Error fetching license information", err);
+      logger.error("Error fetching license information", err);
       return null;
     }
   }

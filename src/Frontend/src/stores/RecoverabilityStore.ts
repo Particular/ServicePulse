@@ -1,4 +1,5 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
+import logger from "@/logger";
 import { computed, ref, watch, shallowReadonly } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
 import { useCookies } from "vue3-cookies";
@@ -127,7 +128,7 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
       loaded = true;
     } catch (err) {
       if (err instanceof Error && err.name === "AbortError") return;
-      console.error(err);
+      logger.error(err);
     }
   }
 

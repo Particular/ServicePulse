@@ -1,4 +1,5 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
+import logger from "@/logger";
 import { ref } from "vue";
 import type { AuthConfig } from "@/types/auth";
 import { WebStorageStateStore } from "oidc-client-ts";
@@ -40,7 +41,7 @@ export const useAuthStore = defineStore("auth", () => {
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<AuthConfigResponse>("authentication/configuration");
       return data;
     } catch (err) {
-      console.error("Error fetching auth configuration", err);
+      logger.error("Error fetching auth configuration", err);
       return null;
     }
   }

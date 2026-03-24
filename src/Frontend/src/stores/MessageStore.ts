@@ -1,4 +1,5 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
+import logger from "@/logger";
 import { computed, reactive, Ref, ref } from "vue";
 import Header from "@/resources/Header";
 import type EndpointDetails from "@/resources/EndpointDetails";
@@ -85,7 +86,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EditAndRetryConfig>("edit/config");
       edit_and_retry_config.value = data;
     } catch {
-      console.warn("Failed to load Edit and Retry configuration");
+      logger.warn("Failed to load Edit and Retry configuration");
     }
   }
   loadEditAndRetryConfiguration();
