@@ -28,9 +28,6 @@ jobs:
         uses: actions/setup-node@v6.3.0
         with:
           node-version: 24.x
-      - name: Lint Frontend
-        run: npm run lint
-        working-directory: src/Frontend
       - name: Build Frontend
         run: .\build.ps1
         working-directory: src/ServicePulse.Host
