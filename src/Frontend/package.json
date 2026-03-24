@@ -65,7 +65,7 @@
     "@vitejs/devtools": "0.1.8",
     "@vitejs/plugin-vue": "6.0.5",
     "@vitest/coverage-v8": "4.1.1",
-    "@vue/tsconfig": "0.9.0",
+    "@vue/tsconfig": "0.9.1",
     "cross-env": "10.1.0",
     "eslint": "10.1.0",
     "eslint-config-prettier": "10.1.8",
