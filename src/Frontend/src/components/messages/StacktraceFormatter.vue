@@ -89,7 +89,7 @@ const detectLanguagesInOrder = (text: string): Language[] => {
 const formatStackTrace = (stackTrace: string, selectedLang: Language): Element[] => {
   const lines = stackTrace.split("\n");
   const fileAndLineNumberRegEx = new RegExp(`${selectedLang.in} (.+):${selectedLang.line} (\\d+)`);
-  const atRegex = new RegExp(`(\\s*)(${selectedLang.at}) (.+?)\\((.*?)\\)`);
+  const atRegex = new RegExp(`^(\\s+)(${selectedLang.at}) (.+?)\\((.*?)\\)`);
 
   return lines.map((line) => {
     const match = line.match(atRegex);
