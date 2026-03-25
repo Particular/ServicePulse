@@ -94,6 +94,7 @@ describe("formatStackTrace", () => {
       const f = frame(result[0]);
       expect(f.type).toBe("System.String");
       expect(f.method).toBe("Format");
+      expect(f.params).toEqual([]);
       expect(f.file).toBeUndefined();
       expect(f.lineNumber).toBeUndefined();
       expect(f.spaces).toBe("   ");
