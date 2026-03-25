@@ -1,4 +1,5 @@
 import { isSupported, isUpgradeAvailable } from "@/composables/serviceSemVer";
+import logger from "@/logger";
 import Release from "@/resources/Release";
 import RootUrls from "@/resources/RootUrls";
 import { useMemoize } from "@vueuse/core";
@@ -111,7 +112,7 @@ async function getData(url: string, authenticated = false) {
     const response = await (authenticated ? authFetch(url) : fetch(url)); // this needs to be an unauthenticated call
     return (await response.json()) as unknown as Release[];
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return [
       {
         tag: "Unknown",

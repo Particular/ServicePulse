@@ -9,6 +9,7 @@ import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { ref, watch, computed } from "vue";
 import { EditorView } from "@codemirror/view";
 import { parse, stringify } from "lossless-json";
+import logger from "@/logger";
 
 // Import the images directly
 import CommandIcon from "@/assets/command.svg";
@@ -82,7 +83,7 @@ const processState = (state: string | undefined): object => {
 
     stateObj = parsedState as Record<string, unknown>;
   } catch (e) {
-    console.error("Error parsing state:", e);
+    logger.error("Error parsing state:", e);
     hasParsingError.value = true;
     return {};
   }

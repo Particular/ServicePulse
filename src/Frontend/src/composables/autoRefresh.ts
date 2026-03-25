@@ -1,7 +1,7 @@
 import { watch, ref, shallowReadonly, type WatchStopHandle } from "vue";
 import { useCounter, useDocumentVisibility, useTimeoutPoll } from "@vueuse/core";
 
-export default function useFetchWithAutoRefresh(name: string, fetchFn: () => Promise<void>, intervalMs: number) {
+export default function useFetchWithAutoRefresh(_name: string, fetchFn: () => Promise<void>, intervalMs: number) {
   let watchStop: WatchStopHandle | null = null;
   const { count, inc, dec, reset } = useCounter(0);
   const interval = ref(intervalMs);
@@ -28,21 +28,17 @@ export default function useFetchWithAutoRefresh(name: string, fetchFn: () => Pro
   const start = async () => {
     inc();
     if (count.value === 1) {
-      console.debug(`[AutoRefresh] Starting auto-refresh for ${name} every ${interval.value}ms`);
       resume();
       watchStop = watch(visibility, (current, previous) => {
         if (current === "visible" && previous === "hidden") {
-          console.debug(`[AutoRefresh] Resuming auto-refresh for ${name} as document became visible`);
           resume();
         }
 
         if (current === "hidden" && previous === "visible") {
-          console.debug(`[AutoRefresh] Pausing auto-refresh for ${name} as document became hidden`);
           pause();
         }
       });
     } else {
-      console.debug(`[AutoRefresh] Incremented refCount for ${name} to ${count.value}`);
       // Because another component has started using the auto-refresh, do an immediate refresh to ensure it has up-to-date data
       await fetchWrapper();
     }
@@ -51,13 +47,10 @@ export default function useFetchWithAutoRefresh(name: string, fetchFn: () => Pro
   const stop = () => {
     dec();
     if (count.value <= 0) {
-      console.debug(`[AutoRefresh] Stopping auto-refresh for ${name}`);
       pause();
       watchStop?.();
       watchStop = null;
       reset();
-    } else {
-      console.debug(`[AutoRefresh] Decremented refCount for ${name} to ${count.value}`);
     }
   };
 
@@ -65,7 +58,6 @@ export default function useFetchWithAutoRefresh(name: string, fetchFn: () => Pro
     if (interval.value === newIntervalMs) return;
 
     interval.value = newIntervalMs;
-    console.debug(`[AutoRefresh] updated polling ${name} to ${newIntervalMs}ms`);
 
     if (isActive.value) {
       // We need to do this hack, because useTimeoutPoll doesn't react to interval changes while active

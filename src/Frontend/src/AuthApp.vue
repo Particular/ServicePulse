@@ -6,6 +6,7 @@ import { useAuthStore } from "@/stores/AuthStore";
 import routeLinks from "@/router/routeLinks";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import App from "./App.vue";
+import logger from "@/logger";
 
 const { authenticate } = useAuth();
 const authStore = useAuthStore();
@@ -18,21 +19,18 @@ onMounted(async () => {
 
     // If authentication is not enabled, skip authentication
     if (!authStore.authEnabled) {
-      console.debug("Authentication is disabled");
       authStore.setAuthenticating(false);
       return;
     }
 
     // Check if auth config is available
     if (!authStore.authConfig) {
-      console.debug("Authentication is enabled but configuration not available");
       authStore.setAuthenticating(false);
       return;
     }
 
     // If the user is on an anonymous route (like logged-out), don't trigger authentication
     if (window.location.hash === `#${routeLinks.loggedOut}`) {
-      console.debug("User is on logged-out page, skipping authentication");
       authStore.setAuthenticating(false);
       return;
     }
@@ -41,15 +39,9 @@ onMounted(async () => {
     // 1. Check if we're returning from the identity provider (handle callback)
     // 2. Check for an existing valid session
     // 3. If no valid session, redirect to the identity provider
-    const authenticated = await authenticate(authStore.authConfig);
-
-    if (authenticated) {
-      console.debug("User authenticated successfully");
-    } else {
-      console.debug("Redirecting to identity provider for authentication...");
-    }
+    await authenticate(authStore.authConfig);
   } catch (error) {
-    console.error("Failed to authenticate on app load:", error);
+    logger.error("Failed to authenticate on app load:", error);
     authStore.setAuthenticating(false);
   }
 });

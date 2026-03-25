@@ -1,5 +1,6 @@
 import { createApp } from "vue";
 import type { Router } from "vue-router";
+import logger from "@/logger";
 import AuthApp from "./AuthApp.vue";
 import Toast, { type PluginOptions, POSITION } from "vue-toastification";
 import VueTippy from "vue-tippy";
@@ -26,7 +27,7 @@ export function mount({ router }: { router: Router }) {
   app.mount(`#app`);
 
   app.config.errorHandler = (err, instance) => {
-    console.error(instance, err);
+    logger.error(instance, err);
   };
 
   return app;

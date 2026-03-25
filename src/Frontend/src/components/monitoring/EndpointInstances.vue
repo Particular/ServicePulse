@@ -13,6 +13,7 @@ import { CriticalTime, InstanceName, ProcessingTime, ScheduledRetries, Throughpu
 import FAIcon from "@/components/FAIcon.vue";
 import { faEnvelope, faTrash } from "@fortawesome/free-solid-svg-icons";
 import monitoringClient from "./monitoringClient";
+import logger from "@/logger";
 
 const isRemovingEndpointEnabled = ref<boolean>(false);
 const router = useRouter();
@@ -27,7 +28,7 @@ async function removeEndpoint(endpointName: string, instance: ExtendedEndpointIn
       router.push(routeLinks.monitoring.root);
     }
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     return false;
   }
 }

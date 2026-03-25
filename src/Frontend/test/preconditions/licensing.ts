@@ -63,7 +63,6 @@ const getLicenseMockedResponse =
       license_status: status,
       license_extension_url: licenseExtensionUrl,
     };
-    console.log(response);
     driver.mockEndpoint(`${serviceControlInstanceUrl}license`, {
       body: response,
     });

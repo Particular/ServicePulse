@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/stores/AuthStore";
 import type { AuthConfig } from "@/types/auth";
 import { UserManager, type User } from "oidc-client-ts";
+import logger from "@/logger";
 
 let userManager: UserManager | null = null;
 
@@ -17,31 +18,27 @@ export function useAuth() {
 
       // Set up event handlers
       userManager.events.addUserLoaded((user: User) => {
-        console.debug("User loaded:", user.profile);
         authStore.setToken(user.access_token);
       });
 
       userManager.events.addUserUnloaded(() => {
-        console.debug("User unloaded");
         authStore.clearToken();
       });
 
       userManager.events.addAccessTokenExpiring(async () => {
-        console.debug("Access token expiring, attempting silent renewal...");
         try {
           await userManager?.signinSilent();
         } catch (error) {
-          console.error("Silent token renewal failed:", error);
+          logger.error("Silent token renewal failed:", error);
         }
       });
 
       userManager.events.addAccessTokenExpired(() => {
-        console.debug("Access token expired");
         authStore.clearToken();
       });
 
       userManager.events.addSilentRenewError((error) => {
-        console.error("Silent renew error:", error);
+        logger.error("Silent renew error:", error);
       });
     }
 
@@ -75,11 +72,9 @@ export function useAuth() {
 
       if (hasCode && hasState) {
         // This is an OAuth callback with authorization code
-        console.debug("Processing OAuth callback...");
         authStore.setAuthenticating(true);
         try {
           const user = await manager.signinCallback();
-          console.debug("Signin callback successful");
           if (user) {
             authStore.setToken(user.access_token);
             // Clean up URL by removing OAuth parameters
@@ -87,7 +82,7 @@ export function useAuth() {
             return true;
           }
         } catch (error) {
-          console.error("Signin callback error details:", {
+          logger.error("Signin callback error details:", {
             error,
             errorMessage: error instanceof Error ? error.message : "Unknown error",
             errorStack: error instanceof Error ? error.stack : undefined,
@@ -101,7 +96,7 @@ export function useAuth() {
       } else if (hasError) {
         // OAuth error in callback
         const errorDescription = params.get("error_description") || params.get("error");
-        console.error("OAuth error:", errorDescription);
+        logger.error("OAuth error:", errorDescription);
         authStore.setAuthError(errorDescription || "Authentication failed");
         return false;
       }
@@ -109,7 +104,6 @@ export function useAuth() {
       // Check for existing valid user session
       const user = await manager.getUser();
       if (user && !user.expired) {
-        console.debug("Existing user session found", user.profile);
         authStore.setToken(user.access_token);
         return true;
       }
@@ -122,7 +116,7 @@ export function useAuth() {
       authStore.setAuthenticating(false);
       const errorMessage = error instanceof Error ? error.message : "Unknown authentication error";
       authStore.setAuthError(errorMessage);
-      console.error("Authentication error:", error);
+      logger.error("Authentication error:", error);
       throw error;
     }
   }
@@ -146,7 +140,7 @@ export function useAuth() {
         authStore.clearToken();
       }
     } catch (error) {
-      console.error("Logout error:", error);
+      logger.error("Logout error:", error);
       authStore.clearToken();
     }
   }

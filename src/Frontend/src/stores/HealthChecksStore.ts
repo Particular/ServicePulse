@@ -5,6 +5,7 @@ import serviceControlClient from "@/components/serviceControlClient";
 import EmailNotifications from "@/resources/EmailNotifications";
 import UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
 import { useEnvironmentAndVersionsStore } from "./EnvironmentAndVersionsStore";
+import logger from "@/logger";
 
 export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
   const emailNotifications = ref<EmailSettings>({
@@ -27,7 +28,7 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EmailNotifications>("notifications/email");
       result = data;
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       result = {
         enabled: false,
         enable_tls: false,
@@ -54,7 +55,7 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
     );
     if (result.message === "success") return true;
     else {
-      console.error(result.message);
+      logger.error(result.message);
       //set it back to what it was
       emailNotifications.value.enabled = !emailNotifications.value.enabled;
       return false;
@@ -68,7 +69,7 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
     );
     if (result.message === "success") return true;
     else {
-      console.error(result.message);
+      logger.error(result.message);
       return false;
     }
   }
@@ -88,7 +89,7 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
       };
       return true;
     } else {
-      console.error(result.message);
+      logger.error(result.message);
       return false;
     }
   }

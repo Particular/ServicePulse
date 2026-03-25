@@ -11,6 +11,10 @@ const localPlugin = {
   },
 };
 
+// Configure console rule: error in CI to catch leftover debug calls before merge,
+// off locally so developers get no IDE warnings and can use console freely during development.
+const consoleRuleSeverity = process.env.CI === "true" ? "error" : "off";
+
 export default tseslint.config(
   {
     ignores: ["node_modules/**", "dist/**", "public/js/app.constants.js", "public/mockServiceWorker.js"],
@@ -33,6 +37,7 @@ export default tseslint.config(
       eqeqeq: ["error", "smart"],
       "no-throw-literal": "warn",
       "local/no-raw-fetch": "error",
+      "no-console": consoleRuleSeverity,
     },
   }
 );

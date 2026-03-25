@@ -1,5 +1,6 @@
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import { defineStore, acceptHMRUpdate } from "pinia";
+import logger from "@/logger";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useMonitoringHistoryPeriodStore } from "./MonitoringHistoryPeriodStore";
@@ -91,7 +92,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
             });
         }
       } catch (error) {
-        console.error(error);
+        logger.error(error);
       }
     }
     return endpoints;

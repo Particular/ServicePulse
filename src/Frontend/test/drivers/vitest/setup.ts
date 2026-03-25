@@ -25,8 +25,6 @@ beforeEach(() => {
 });
 
 beforeAll(() => {
-  console.log("Starting mock server");
-
   mockServer.listen({
     onUnhandledRequest: (_, print) => {
       print.warning();
@@ -35,6 +33,5 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  console.log("Shutting down mock server");
   mockServer.close();
 });

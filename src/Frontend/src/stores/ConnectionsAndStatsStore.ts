@@ -1,4 +1,5 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
+import logger from "@/logger";
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { FailedMessageStatus } from "@/resources/FailedMessage";
 import { ConnectionState } from "@/resources/ConnectionState";
@@ -96,7 +97,7 @@ async function fetchAndSetConnectionState(fetchFunction: () => Promise<number | 
       connectionState.unableToConnect = true;
       connectionState.connectedRecently = false;
       connectionState.connecting = false;
-      console.log(err);
+      logger.error(err);
     }
   } catch {
     connectionState.connecting = false;
