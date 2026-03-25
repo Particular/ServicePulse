@@ -5,8 +5,8 @@
 
 /* eslint-disable no-console */
 const logger = {
-  error: (...args: unknown[]) => console.error(...args),
-  warn: (...args: unknown[]) => console.warn(...args),
+  error: ((...args) => console.error(...args)) as typeof console.error,
+  warn: ((...args) => console.warn(...args)) as typeof console.warn,
 };
 /* eslint-enable no-console */
 
