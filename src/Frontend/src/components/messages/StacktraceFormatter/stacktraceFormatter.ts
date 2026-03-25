@@ -80,7 +80,7 @@ export const formatStackTrace = (stackTrace: string, selectedLang: Language): St
         [, file, lineNumber] = matchFile;
       }
 
-      return <StackTraceFrame>{ method, type, params, file, lineNumber, spaces };
+      return { method, type, params, file, lineNumber, spaces } satisfies StackTraceFrame;
     } else {
       return line;
     }
