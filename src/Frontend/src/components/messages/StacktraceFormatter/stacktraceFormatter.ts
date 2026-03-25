@@ -67,10 +67,12 @@ export const formatStackTrace = (stackTrace: string, selectedLang: Language): St
         return [type, method];
       })();
 
-      const params = paramsWithFile.split(", ").map((param) => {
-        const [paramType, paramName] = param.split(" ");
-        return { name: paramName, type: paramType };
-      });
+      const params = paramsWithFile
+        ? paramsWithFile.split(", ").map((param) => {
+            const [paramType, paramName] = param.split(" ");
+            return { name: paramName, type: paramType };
+          })
+        : [];
 
       const matchFile = line.match(fileAndLineNumberRegEx);
       let file, lineNumber;
