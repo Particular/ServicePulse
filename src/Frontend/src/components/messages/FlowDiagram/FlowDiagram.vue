@@ -144,7 +144,6 @@ function constructEdges(nodes: Node<NodeData>[]): DefaultEdge[] {
         if (m === undefined) return false;
         return m.receiving_endpoint !== undefined && m.sending_endpoint !== undefined && m.message_id === relatedTo && m.message_intent !== MessageIntent.Publish;
       });
-
     }
 
     switch (parentMessages.length) {
