@@ -10,7 +10,7 @@ export type StackTraceText = string;
 export interface StackTraceFrame {
   params: Array<{ name: string; type: string }>;
   type: string;
-  lineNumber?: number;
+  lineNumber?: string;
   file?: string;
   method: string;
   spaces: string;
