@@ -45,13 +45,13 @@ export async function loadScenario(): Promise<ScenarioModule> {
   const loader = scenarios[scenarioName];
 
   if (!loader) {
-    // eslint-disable-next-line no-console
     console.warn(`Unknown mock scenario: "${scenarioName}", falling back to default. Available: ${Object.keys(scenarios).join(", ")}`);
     const module = await scenarios.default();
     if (module.setupComplete) await module.setupComplete;
     return module;
   }
 
+  console.log(`Loading mock scenario: ${scenarioName}`);
   const module = await loader();
 
   // Wait for setup to complete before returning
