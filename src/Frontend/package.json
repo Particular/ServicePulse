@@ -42,7 +42,7 @@
     "lossless-json": "4.3.0",
     "oidc-client-ts": "3.5.0",
     "pinia": "3.0.4",
-    "vue": "3.5.30",
+    "vue": "3.5.31",
     "vue-codemirror6": "1.4.3",
     "vue-router": "5.0.4",
     "vue-tippy": "6.7.1",
