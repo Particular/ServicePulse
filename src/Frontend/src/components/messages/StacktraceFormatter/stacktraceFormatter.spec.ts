@@ -63,8 +63,9 @@ describe("detectLanguagesInOrder", () => {
 
 describe("formatStackTrace", () => {
   describe("exception message lines are not mangled (bug fix)", () => {
-    // Regression test: the regex previously matched 'at' inside words like 'that',
-    // causing exception message text to be parsed as stack frames and dropped from output.
+    // Regression test: the atRegex was previously not anchored to the start of the line,
+    // so exception message lines containing ' at ' followed by parenthesized text were
+    // incorrectly matched as stack frames.
     test("preserves SQL exception message containing 'at' followed by parenthesized text", () => {
       const trace = [
         "System.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server)",
@@ -285,7 +286,7 @@ describe("formatStackTrace", () => {
     });
 
     test("frame line without leading whitespace is not parsed as a frame", () => {
-      // The fix: requires at least one whitespace before 'at'
+      // The atRegex requires at least one leading whitespace character, so a bare 'at' at the start of a line is not matched
       const trace = "at System.String.Format(String format)";
       const result = formatStackTrace(trace, english);
       expect(typeof result[0]).toBe("string");
