@@ -31,21 +31,12 @@ You can change your KeyMap under `File | Settings | Keymap`. A good option is th
 
 ### Extensions
 
-#### Option 1
+#### Option 1 (Recommended)
 
-This option will run a formatter on every save, which is very quick
-
-- Install the [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extension
-  - In VSCode `File | Preferences | Settings`, set default formatter to Prettier and check 'Format on Save'
-    ![Prettier](vscode-prettier.png)
-- Ensure you run `npm run lint` before committing code, to identify any style or code issues
-
-#### Option 2
-
-This option runs the formatter _and_ linter on every save. It will be slower than option 1, but the solution is rather small so the impact shouldn't be large.
+This option runs the formatter _and_ linter on every save, catching errors immediately in your IDE. The solution is small enough that the performance impact is negligible.
 
 - Install the [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) extension
-- enable the following user setting (there is no UI for this, but you can find the codeActionsOnSave setting in `File | Preferences | Settings` which will open the settings file at the correct location for you):
+- Enable the following user setting (there is no UI for this, but you can find the codeActionsOnSave setting in `File | Preferences | Settings` which will open the settings file at the correct location for you):
 
 ```json
 {
@@ -54,3 +45,12 @@ This option runs the formatter _and_ linter on every save. It will be slower tha
   }
 }
 ```
+
+#### Option 2
+
+This option will run a formatter on every save, which is very quick. Use this if you prefer a lighter-weight setup.
+
+- Install the [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extension
+  - In VSCode `File | Preferences | Settings`, set default formatter to Prettier and check 'Format on Save'
+    ![Prettier](vscode-prettier.png)
+- **Important:** Run `npm run lint` before committing code to catch any style or code issues that Prettier doesn't cover

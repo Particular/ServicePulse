@@ -88,7 +88,7 @@ This command generates a report indicating the percentage of statements, branche
 
 - `dev` - runs `vite` that starts the development server doing hot reload over source files
 - `build` - runs build script that outputs files to `..\app` folder
-- `lint` - checks with eslint all vue, ts, and js files
+- `lint` - checks with eslint all vue, ts, and js files. See [IDE setup](/docs/frontend/frontend-ide.md) to catch errors on save, or run manually before committing.
 - `type-check` - runs TypeScript in no emit mode
 
 #### Vitest
