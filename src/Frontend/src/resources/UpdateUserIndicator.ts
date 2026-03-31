@@ -3,4 +3,4 @@ interface UpdateUserIndicator {
   user_indicator: string;
 }
 
-export default UpdateUserIndicator;
+export type { UpdateUserIndicator as default };

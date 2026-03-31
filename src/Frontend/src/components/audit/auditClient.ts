@@ -1,4 +1,4 @@
-import Message, { MessageStatus } from "@/resources/Message";
+import { type default as Message, MessageStatus } from "@/resources/Message";
 import type { SortInfo } from "@/components/SortInfo";
 import type { DateRange } from "@/types/date";
 import serviceControlClient from "@/components/serviceControlClient";

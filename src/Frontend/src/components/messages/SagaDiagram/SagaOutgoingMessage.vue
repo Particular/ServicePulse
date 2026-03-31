@@ -2,7 +2,7 @@
 import MessageDataBox from "./MessageDataBox.vue";
 import CommandIcon from "@/assets/command.svg";
 import EventIcon from "@/assets/event.svg";
-import { SagaMessageViewModel } from "./SagaDiagramParser";
+import type { SagaMessageViewModel } from "./SagaDiagramParser";
 import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { computed } from "vue";
 

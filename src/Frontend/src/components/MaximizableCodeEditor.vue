@@ -3,8 +3,8 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import CodeEditor from "@/components/CodeEditor.vue";
 import DiffMaximizeIcon from "@/assets/diff-maximize.svg";
 import DiffCloseIcon from "@/assets/diff-close.svg";
-import { Extension } from "@codemirror/state";
-import { CodeLanguage } from "@/components/codeEditorTypes";
+import type { Extension } from "@codemirror/state";
+import type { CodeLanguage } from "@/components/codeEditorTypes";
 
 const modelValue = defineModel<string>({ required: true });
 

@@ -2,7 +2,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import logger from "@/logger";
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { FailedMessageStatus } from "@/resources/FailedMessage";
-import { ConnectionState } from "@/resources/ConnectionState";
+import type { ConnectionState } from "@/resources/ConnectionState";
 import { useCounter } from "@vueuse/core";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import serviceControlClient from "@/components/serviceControlClient";

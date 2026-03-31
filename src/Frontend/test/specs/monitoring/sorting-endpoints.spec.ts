@@ -9,7 +9,7 @@ import { findSortImageInColumn } from "./questions/sortDirection";
 import { smallGraphAverageValuesByColumn, columnName } from "./questions/smallGraphAverageValuesByColumn";
 import * as precondition from "../../preconditions";
 import { monitoredEndpointTemplate } from "../../mocks/monitored-endpoint-template";
-import { Endpoint } from "@/resources/MonitoringEndpoint";
+import type { Endpoint } from "@/resources/MonitoringEndpoint";
 import { endpointsNames } from "./questions/endpointsNames";
 
 describe("FEATURE: Endpoint sorting", () => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Tippy, TippyComponent } from "vue-tippy";
+import { Tippy, type TippyComponent } from "vue-tippy";
 import { ref, useTemplateRef, watch } from "vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";

@@ -2,7 +2,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import logger from "@/logger";
 import { computed, reactive, ref } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
-import LicenseInfo, { LicenseStatus } from "@/resources/LicenseInfo";
+import { type default as LicenseInfo, LicenseStatus } from "@/resources/LicenseInfo";
 import { LicenseWarningLevel } from "@/composables/LicenseStatus";
 import { useGetDayDiffFromToday } from "@/composables/formatter";
 

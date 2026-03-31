@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ConnectionSettingsTestResult } from "@/resources/ConnectionTestResults";
+import type { ConnectionSettingsTestResult } from "@/resources/ConnectionTestResults";
 import FAIcon from "@/components/FAIcon.vue";
 import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 

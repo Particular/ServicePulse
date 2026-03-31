@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FAIcon from "@/components/FAIcon.vue";
-import { IconDefinition, faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { type IconDefinition, faRefresh } from "@fortawesome/free-solid-svg-icons";
 
 export type ButtonVariant = "primary" | "secondary" | "danger" | "link" | "default";
 export type ButtonSize = "sm" | "lg" | "default";

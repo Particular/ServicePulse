@@ -1,5 +1,5 @@
 import * as historyPeriodTemplate from "../mocks/history-period-template";
-import { SetupFactoryOptions } from "../driver";
+import type { SetupFactoryOptions } from "../driver";
 
 export const hasEndpointWithMetricsPoints =
   (queueLength: number | number[], throughput: number | number[], retries: number | number[], processingTime: number | number[], criticalTime: number | number[]) =>

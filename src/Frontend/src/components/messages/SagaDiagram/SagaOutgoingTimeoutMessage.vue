@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SagaTimeoutMessageViewModel } from "./SagaDiagramParser";
+import type { SagaTimeoutMessageViewModel } from "./SagaDiagramParser";
 import MessageDataBox from "./MessageDataBox.vue";
 import TimeoutIcon from "@/assets/TimeoutIcon.svg";
 import SagaTimeoutIcon from "@/assets/SagaTimeoutIcon.svg";

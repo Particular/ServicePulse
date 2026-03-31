@@ -1,10 +1,10 @@
-import Redirect from "@/resources/Redirect";
-import QueueAddress from "@/resources/QueueAddress";
+import type Redirect from "@/resources/Redirect";
+import type QueueAddress from "@/resources/QueueAddress";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { reactive } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
-import { RetryRedirect } from "@/components/configuration/RetryRedirectEdit.vue";
+import type { RetryRedirect } from "@/components/configuration/RetryRedirectEdit.vue";
 
 export interface Redirects {
   data: Redirect[];

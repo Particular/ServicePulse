@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
-import { RouteLocationAsPathGeneric, RouterLink, useRoute } from "vue-router";
+import { type RouteLocationAsPathGeneric, RouterLink, useRoute } from "vue-router";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FlowDiagram from "./FlowDiagram/FlowDiagram.vue";

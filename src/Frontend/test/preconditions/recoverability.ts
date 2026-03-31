@@ -1,8 +1,9 @@
-import Configuration, { EditAndRetryConfig } from "@/resources/Configuration";
-import { SetupFactoryOptions } from "../driver";
-import RecoverabilityHistoryResponse from "@/resources/RecoverabilityHistoryResponse";
-import { FailedMessage } from "@/resources/FailedMessage";
-import Message from "@/resources/Message";
+import type Configuration from "@/resources/Configuration";
+import type { EditAndRetryConfig } from "@/resources/Configuration";
+import type { SetupFactoryOptions } from "../driver";
+import type RecoverabilityHistoryResponse from "@/resources/RecoverabilityHistoryResponse";
+import type { FailedMessage } from "@/resources/FailedMessage";
+import type Message from "@/resources/Message";
 
 export const serviceControlConfigurationDefaultHandler = ({ driver }: SetupFactoryOptions) => {
   const serviceControlUrl = window.defaultConfig.service_control_url;

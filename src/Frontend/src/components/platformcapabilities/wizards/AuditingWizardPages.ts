@@ -1,5 +1,5 @@
 import { CapabilityStatus } from "../constants";
-import { WizardPage } from "../types";
+import type { WizardPage } from "../types";
 import WhatIsAuditing from "./auditing/WhatIsAuditing.vue";
 import DisplayAndDiscoverMessages from "./auditing/DisplayAndDiscoverMessages.vue";
 import TrackMessageFlow from "./auditing/TrackMessageFlow.vue";

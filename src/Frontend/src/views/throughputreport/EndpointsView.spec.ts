@@ -3,7 +3,7 @@ import * as precondition from "../../../test/preconditions";
 import { createTestingPinia } from "@pinia/testing";
 import { Transport } from "@/views/throughputreport/transport";
 import { makeDriverForTests, render, screen, userEvent } from "@component-test-utils";
-import { Driver } from "../../../test/driver";
+import type { Driver } from "../../../test/driver";
 import { disableMonitoring } from "../../../test/drivers/vitest/setup";
 import makeRouter from "@/router";
 import { flushPromises, RouterLinkStub } from "@vue/test-utils";

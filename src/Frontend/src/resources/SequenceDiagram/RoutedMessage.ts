@@ -1,7 +1,7 @@
-import EndpointDetails from "../EndpointDetails";
+import type EndpointDetails from "../EndpointDetails";
 import { NServiceBusHeaders } from "../Header";
-import Message, { MessageIntent, MessageStatus } from "../Message";
-import { Handler } from "./Handler";
+import { type default as Message, MessageIntent, MessageStatus } from "../Message";
+import type { Handler } from "./Handler";
 import { friendlyTypeName } from "./SequenceModel";
 
 export interface RoutedMessage {

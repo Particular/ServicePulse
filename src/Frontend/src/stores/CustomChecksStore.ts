@@ -1,4 +1,4 @@
-import CustomCheck from "@/resources/CustomCheck";
+import type CustomCheck from "@/resources/CustomCheck";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import { useCounter } from "@vueuse/core";

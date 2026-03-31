@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ThroughputConnectionSetting } from "@/resources/ThroughputConnectionSettings";
+import type { ThroughputConnectionSetting } from "@/resources/ThroughputConnectionSettings";
 import { computed, ref } from "vue";
-import DropDown, { Item } from "@/components/DropDown.vue";
+import DropDown, { type Item } from "@/components/DropDown.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
-import { CodeLanguage } from "@/components/codeEditorTypes";
+import type { CodeLanguage } from "@/components/codeEditorTypes";
 
 const props = withDefaults(
   defineProps<{

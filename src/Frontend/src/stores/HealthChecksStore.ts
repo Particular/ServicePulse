@@ -1,9 +1,9 @@
-import EmailSettings from "@/components/configuration/EmailSettings";
+import type EmailSettings from "@/components/configuration/EmailSettings";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
-import EmailNotifications from "@/resources/EmailNotifications";
-import UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
+import type EmailNotifications from "@/resources/EmailNotifications";
+import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
 import { useEnvironmentAndVersionsStore } from "./EnvironmentAndVersionsStore";
 import logger from "@/logger";
 

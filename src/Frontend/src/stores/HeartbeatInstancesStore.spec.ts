@@ -1,12 +1,12 @@
 import { describe, expect, test } from "vitest";
-import { Driver } from "../../test/driver";
+import type { Driver } from "../../test/driver";
 import { makeDriverForTests } from "@component-test-utils";
 import { setActivePinia, storeToRefs } from "pinia";
 import { createTestingPinia } from "@pinia/testing";
 import { ColumnNames, useHeartbeatInstancesStore } from "@/stores/HeartbeatInstancesStore";
-import { EndpointsView } from "@/resources/EndpointView";
+import type { EndpointsView } from "@/resources/EndpointView";
 import * as precondition from "../../test/preconditions";
-import { EndpointSettings } from "@/resources/EndpointSettings";
+import type { EndpointSettings } from "@/resources/EndpointSettings";
 import { serviceControlWithHeartbeats } from "@/components/heartbeats/serviceControlWithHeartbeats";
 import { EndpointStatus } from "@/resources/Heartbeat";
 import { useEnvironmentAndVersionsStore } from "./EnvironmentAndVersionsStore";

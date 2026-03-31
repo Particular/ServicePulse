@@ -2,7 +2,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
 import monitoringClient from "@/components/monitoring/monitoringClient";
-import { EndpointSettings } from "@/resources/EndpointSettings";
+import type { EndpointSettings } from "@/resources/EndpointSettings";
 import useIsEndpointSettingsSupported from "@/components/heartbeats/isEndpointSettingsSupported";
 
 export const useEndpointSettingsStore = defineStore("EndpointSettingsStore", () => {

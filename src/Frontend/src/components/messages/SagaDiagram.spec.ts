@@ -1,9 +1,9 @@
 import { render, describe, test, screen, expect, within } from "@component-test-utils";
 import sut from "@/components/messages/SagaDiagram.vue";
-import { SagaHistory } from "@/resources/SagaHistory";
+import type { SagaHistory } from "@/resources/SagaHistory";
 import makeRouter from "@/router";
 import { createTestingPinia } from "@pinia/testing";
-import { MessageStore } from "@/stores/MessageStore";
+import type { MessageStore } from "@/stores/MessageStore";
 import { MessageStatus } from "@/resources/Message";
 
 //Defines a domain-specific language (DSL) for interacting with the system under test (sut)

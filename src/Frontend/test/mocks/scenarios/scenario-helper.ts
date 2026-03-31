@@ -4,8 +4,8 @@
  * This module provides a factory function that creates all the boilerplate
  * needed for a mock scenario: the MSW worker, mock endpoint functions, and driver.
  */
-import { setupWorker, SetupWorker } from "msw/browser";
-import { Driver, SetupFactoryOptions } from "../../driver";
+import { setupWorker, type SetupWorker } from "msw/browser";
+import type { Driver, SetupFactoryOptions } from "../../driver";
 import { makeMockEndpoint, makeMockEndpointDynamic } from "../../mock-endpoint";
 
 type SetupFactory = ({ driver }: SetupFactoryOptions) => Promise<unknown>;

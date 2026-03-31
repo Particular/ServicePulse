@@ -1,8 +1,8 @@
-import QueueAddress from "@/resources/QueueAddress";
-import Redirect from "@/resources/Redirect";
-import { RemoteInstance } from "@/resources/RemoteInstance";
-import Message from "@/resources/Message";
-import { SetupFactoryOptions } from "test/driver";
+import type QueueAddress from "@/resources/QueueAddress";
+import type Redirect from "@/resources/Redirect";
+import type { RemoteInstance } from "@/resources/RemoteInstance";
+import type Message from "@/resources/Message";
+import type { SetupFactoryOptions } from "../driver";
 
 export const knownQueuesDefaultHandler = ({ driver }: SetupFactoryOptions) => {
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}errors/queues/addresses`, {

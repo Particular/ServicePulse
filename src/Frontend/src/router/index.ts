@@ -1,5 +1,5 @@
-import { createRouter, createWebHashHistory, type RouteRecordRaw, RouteRecordSingleViewWithChildren } from "vue-router";
-import config, { RouteItem } from "./config";
+import { createRouter, createWebHashHistory, type RouteRecordRaw, type RouteRecordSingleViewWithChildren } from "vue-router";
+import config, { type RouteItem } from "./config";
 
 function meta(item: RouteItem) {
   return {

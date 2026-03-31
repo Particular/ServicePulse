@@ -4,7 +4,7 @@ import { useShowToast } from "../../composables/toast";
 import { onBeforeRouteLeave } from "vue-router";
 import LicenseNotExpired from "../../components/LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
-import MessageList, { IMessageList } from "./MessageList.vue";
+import MessageList, { type IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
 import { FailedMessageStatus } from "@/resources/FailedMessage";
@@ -13,7 +13,7 @@ import FAIcon from "@/components/FAIcon.vue";
 import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { storeToRefs } from "pinia";
 import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
-import { DeletedPeriodOption, useRecoverabilityStore } from "@/stores/RecoverabilityStore";
+import { type DeletedPeriodOption, useRecoverabilityStore } from "@/stores/RecoverabilityStore";
 import LoadingSpinner from "../LoadingSpinner.vue";
 
 const POLLING_INTERVAL_NORMAL = 5000;

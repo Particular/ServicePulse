@@ -17,7 +17,7 @@
  *   3. Check Network tab for /api/authentication/configuration response
  */
 import { setupWorker } from "msw/browser";
-import { Driver } from "../../../driver";
+import type { Driver } from "../../../driver";
 import { makeMockEndpoint, makeMockEndpointDynamic } from "../../../mock-endpoint";
 import * as precondition from "../../../preconditions";
 

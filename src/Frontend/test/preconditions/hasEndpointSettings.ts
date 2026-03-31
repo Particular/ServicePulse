@@ -1,5 +1,5 @@
-import { SetupFactoryOptions } from "../driver";
-import { EndpointSettings } from "@/resources/EndpointSettings";
+import type { SetupFactoryOptions } from "../driver";
+import type { EndpointSettings } from "@/resources/EndpointSettings";
 
 export const hasEndpointSettings = function (settings: EndpointSettings[]) {
   if (settings.length === 0) {

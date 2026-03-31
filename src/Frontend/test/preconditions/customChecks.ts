@@ -1,5 +1,5 @@
-import CustomCheck, { Status } from "@/resources/CustomCheck";
-import { SetupFactoryOptions } from "../driver";
+import { type default as CustomCheck, Status } from "@/resources/CustomCheck";
+import type { SetupFactoryOptions } from "../driver";
 import { createDateWithDayOffset } from "@/composables/formatter";
 const emptyContent = JSON.stringify([]);
 

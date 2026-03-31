@@ -4,12 +4,12 @@ import { computed, ref, watch, shallowReadonly } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
 import { useCookies } from "vue3-cookies";
 import { useRoute } from "vue-router";
-import { ExtendedFailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
+import { type ExtendedFailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
 import { SortDirection } from "@/resources/SortOptions";
 import dayjs from "@/utils/dayjs";
 import { useConfigurationStore } from "./ConfigurationStore";
-import FailureGroup from "@/resources/FailureGroup";
-import QueueAddress from "@/resources/QueueAddress";
+import type FailureGroup from "@/resources/FailureGroup";
+import type QueueAddress from "@/resources/QueueAddress";
 import { timeSpanToDuration } from "@/composables/formatter";
 
 const deletedPeriodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"] as const;

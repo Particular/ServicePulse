@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SagaUpdateViewModel } from "./SagaDiagramParser";
+import type { SagaUpdateViewModel } from "./SagaDiagramParser";
 import MessageDataBox from "./MessageDataBox.vue";
 import SagaOutgoingTimeoutMessage from "./SagaOutgoingTimeoutMessage.vue";
 import SagaOutgoingMessage from "./SagaOutgoingMessage.vue";

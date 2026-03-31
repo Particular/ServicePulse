@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useFormatTime } from "@/composables/formatter";
-import { Handler } from "@/resources/SequenceDiagram/Handler";
+import type { Handler } from "@/resources/SequenceDiagram/Handler";
 
 defineProps<{ handler: Handler }>();
 

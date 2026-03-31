@@ -1,4 +1,4 @@
-import EventLogItem, { Severity } from "@/resources/EventLogItem";
+import { type default as EventLogItem, Severity } from "@/resources/EventLogItem";
 
 export const eventLogInfoItem = <EventLogItem>{
   id: "EventLogItem/EndpointControl/EndpointStarted/71648490-d233-4649-a4be-a32ad74f2c3d",

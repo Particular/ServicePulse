@@ -1,4 +1,4 @@
-import { EndpointsView } from "@/resources/EndpointView";
+import type { EndpointsView } from "@/resources/EndpointView";
 import { EndpointStatus } from "@/resources/Heartbeat";
 
 export const healthyEndpointTemplate = <EndpointsView>{

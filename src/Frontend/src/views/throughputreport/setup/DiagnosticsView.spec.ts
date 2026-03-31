@@ -5,7 +5,7 @@ import DiagnosticsView from "./DiagnosticsView.vue";
 import { createTestingPinia } from "@pinia/testing";
 import { Transport } from "@/views/throughputreport/transport";
 import { makeDriverForTests, userEvent, render, screen } from "@component-test-utils";
-import { Driver } from "../../../../test/driver";
+import type { Driver } from "../../../../test/driver";
 import { disableMonitoring } from "../../../../test/drivers/vitest/setup";
 import { setActivePinia } from "pinia";
 

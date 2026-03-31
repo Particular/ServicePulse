@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { readonly, ref } from "vue";
 import { useCookies } from "vue3-cookies";
-import FailureGroupView from "@/resources/FailureGroupView";
+import type FailureGroupView from "@/resources/FailureGroupView";
 import { MessageGroupClient } from "@/components/failedmessages/messageGroupClient";
 import serviceControlClient from "@/components/serviceControlClient";
 

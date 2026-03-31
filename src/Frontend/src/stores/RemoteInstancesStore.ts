@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref } from "vue";
-import { RemoteInstance, RemoteInstanceType, RemoteInstanceStatus } from "@/resources/RemoteInstance";
+import { type RemoteInstance, RemoteInstanceType, RemoteInstanceStatus } from "@/resources/RemoteInstance";
 import serviceControlClient from "@/components/serviceControlClient";
 
 const INSTANCE_TYPE_CACHE_KEY = "servicepulse-remote-instance-types";

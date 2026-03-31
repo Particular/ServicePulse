@@ -3,7 +3,7 @@ import { useRouter } from "vue-router";
 import TimeSince from "../TimeSince.vue";
 import NoData from "../NoData.vue";
 import routeLinks from "@/router/routeLinks";
-import { FailedMessageStatus, ExtendedFailedMessage } from "@/resources/FailedMessage";
+import { FailedMessageStatus, type ExtendedFailedMessage } from "@/resources/FailedMessage";
 import { hexToCSSFilter } from "hex-to-css-filter";
 import FAIcon from "@/components/FAIcon.vue";
 import { faRecycle, faRotateRight, faTrash, faLaptop } from "@fortawesome/free-solid-svg-icons";

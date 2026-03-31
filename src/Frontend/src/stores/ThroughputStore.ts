@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
-import ConnectionTestResults from "@/resources/ConnectionTestResults";
+import type ConnectionTestResults from "@/resources/ConnectionTestResults";
 import createThroughputClient from "@/views/throughputreport/throughputClient";
 import { Transport } from "@/views/throughputreport/transport";
 import useIsThroughputSupported from "@/views/throughputreport/isThroughputSupported";

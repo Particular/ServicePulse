@@ -1,5 +1,5 @@
-import ReportGenerationState from "@/resources/ReportGenerationState";
-import { SetupFactoryOptions } from "../driver";
+import type ReportGenerationState from "@/resources/ReportGenerationState";
+import type { SetupFactoryOptions } from "../driver";
 
 export const hasLicensingReportAvailable =
   (body: Partial<ReportGenerationState> = {}) =>

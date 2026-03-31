@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FAIcon from "@/components/FAIcon.vue";
-import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
   icon?: IconDefinition;

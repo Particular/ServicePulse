@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { dotNetTimespanToMilliseconds } from "@/composables/formatUtils";
-import Message, { MessageStatus } from "@/resources/Message";
+import { type default as Message, MessageStatus } from "@/resources/Message";
 import { computed } from "vue";
 
 const props = defineProps<{

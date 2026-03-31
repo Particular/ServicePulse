@@ -1,5 +1,5 @@
 import type EndpointDetails from "@/resources/EndpointDetails";
-import Header from "./Header";
+import type Header from "./Header";
 
 export default interface Message {
   id: string;

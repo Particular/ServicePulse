@@ -6,8 +6,8 @@ import { StreamLanguage } from "@codemirror/language";
 import { powerShell } from "@codemirror/legacy-modes/mode/powershell";
 import { shell } from "@codemirror/legacy-modes/mode/shell";
 import { csharp } from "@codemirror/legacy-modes/mode/clike";
-import { Extension } from "@codemirror/state";
-import { CodeLanguage } from "@/components/codeEditorTypes";
+import type { Extension } from "@codemirror/state";
+import type { CodeLanguage } from "@/components/codeEditorTypes";
 import CopyToClipboard from "@/components/CopyToClipboard.vue";
 import { computed } from "vue";
 

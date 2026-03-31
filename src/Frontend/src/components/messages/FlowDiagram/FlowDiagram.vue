@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { onMounted, ref, nextTick } from "vue";
-import { type DefaultEdge, MarkerType, type Node, useVueFlow, VueFlow, XYPosition } from "@vue-flow/core";
+import { type DefaultEdge, MarkerType, type Node, useVueFlow, VueFlow, type XYPosition } from "@vue-flow/core";
 import TimeSince from "../../TimeSince.vue";
 import routeLinks from "@/router/routeLinks";
-import Message, { MessageIntent, MessageStatus, SagaInfo } from "@/resources/Message";
+import { type default as Message, MessageIntent, MessageStatus, type SagaInfo } from "@/resources/Message";
 import { NServiceBusHeaders } from "@/resources/Header";
 import { Controls } from "@vue-flow/controls";
 import { useMessageStore } from "@/stores/MessageStore";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import EndpointDetails from "@/resources/EndpointDetails";
+import type EndpointDetails from "@/resources/EndpointDetails";
 import { hexToCSSFilter } from "hex-to-css-filter";
 import SagaName from "@/components/SagaName.vue";
 import { useLayout } from "@/components/messages/FlowDiagram/useLayout";

@@ -2,7 +2,7 @@ import { makeMockEndpoint, makeMockEndpointDynamic } from "./mock-endpoint";
 import userEvent from "@testing-library/user-event";
 
 import { mockServer } from "./mock-server";
-import { Driver } from "./driver";
+import type { Driver } from "./driver";
 
 export { render, screen, within } from "@testing-library/vue";
 export { expect, test, describe } from "vitest";

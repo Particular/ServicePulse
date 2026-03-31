@@ -1,7 +1,7 @@
-import { DefaultBodyType, http, HttpResponse, StrictRequest, type PathParams } from "msw";
+import { type DefaultBodyType, http, HttpResponse, type StrictRequest, type PathParams } from "msw";
 import type { SetupWorker } from "msw/browser";
-import { SetupServer } from "msw/node";
-import { MockEndpointDynamicOptions, MockEndpointOptions, Method } from "./driver";
+import type { SetupServer } from "msw/node";
+import type { MockEndpointDynamicOptions, MockEndpointOptions, Method } from "./driver";
 
 export const makeMockEndpoint =
   ({ mockServer }: { mockServer: SetupServer | SetupWorker }) =>

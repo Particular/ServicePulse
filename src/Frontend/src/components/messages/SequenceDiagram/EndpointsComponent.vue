@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Endpoint } from "@/resources/SequenceDiagram/Endpoint";
-import { Endpoint_Width, EndpointCentrePoint, useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
+import type { Endpoint } from "@/resources/SequenceDiagram/Endpoint";
+import { Endpoint_Width, type EndpointCentrePoint, useSequenceDiagramStore } from "@/stores/SequenceDiagramStore";
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 

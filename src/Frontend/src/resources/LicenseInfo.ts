@@ -1,4 +1,4 @@
-import Configuration from "./Configuration";
+import type Configuration from "./Configuration";
 
 export default interface LicenseInfo {
   registered_to: string;
