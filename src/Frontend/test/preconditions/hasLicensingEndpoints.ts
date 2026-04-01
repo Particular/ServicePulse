@@ -1,5 +1,5 @@
-import { SetupFactoryOptions } from "../driver";
-import EndpointThroughputSummary from "@/resources/EndpointThroughputSummary";
+import type { SetupFactoryOptions } from "../driver";
+import type EndpointThroughputSummary from "@/resources/EndpointThroughputSummary";
 
 export const hasLicensingEndpoints =
   (

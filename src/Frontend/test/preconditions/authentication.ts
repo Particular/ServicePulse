@@ -1,4 +1,4 @@
-import { SetupFactoryOptions } from "../driver";
+import type { SetupFactoryOptions } from "../driver";
 import * as precondition from ".";
 
 /**

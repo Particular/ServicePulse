@@ -1,12 +1,12 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
-import { EndpointStatus, LogicalEndpoint } from "@/resources/Heartbeat";
+import { EndpointStatus, type LogicalEndpoint } from "@/resources/Heartbeat";
 import dayjs from "@/utils/dayjs";
 import { SortDirection, type GroupPropertyType } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
-import { EndpointsView } from "@/resources/EndpointView";
+import type { EndpointsView } from "@/resources/EndpointView";
 import type { SortInfo } from "@/components/SortInfo";
-import { EndpointSettings } from "@/resources/EndpointSettings";
+import type { EndpointSettings } from "@/resources/EndpointSettings";
 import serviceControlClient from "@/components/serviceControlClient";
 import { useEndpointSettingsStore } from "./EndpointSettingsStore";
 

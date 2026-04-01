@@ -1,8 +1,8 @@
 import { NServiceBusHeaders } from "../Header";
-import Message from "../Message";
-import { createRoutedMessage, createRoute, MessageProcessingRoute } from "./RoutedMessage";
-import { createProcessingEndpoint, createSendingEndpoint, Endpoint, EndpointRegistry } from "./Endpoint";
-import { ConversationStartHandlerName, createProcessingHandler, createSendingHandler, Handler, HandlerRegistry, updateProcessingHandler } from "./Handler";
+import type Message from "../Message";
+import { createRoutedMessage, createRoute, type MessageProcessingRoute } from "./RoutedMessage";
+import { createProcessingEndpoint, createSendingEndpoint, type Endpoint, EndpointRegistry } from "./Endpoint";
+import { ConversationStartHandlerName, createProcessingHandler, createSendingHandler, type Handler, HandlerRegistry, updateProcessingHandler } from "./Handler";
 
 export interface ConversationModel {
   endpoints: Endpoint[];

@@ -1,5 +1,5 @@
 import * as precondition from ".";
-import { SetupFactoryOptions } from "../driver";
+import type { SetupFactoryOptions } from "../driver";
 
 export const serviceControlWithMonitoring = async ({ driver }: SetupFactoryOptions) => {
   //Service control requests minimum setup. Todo: encapsulate for reuse.

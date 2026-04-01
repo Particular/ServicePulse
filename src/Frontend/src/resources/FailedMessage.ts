@@ -1,6 +1,6 @@
 import type EndpointDetails from "@/resources/EndpointDetails";
 import type Header from "@/resources/Header";
-import { ConversationModel } from "./SequenceDiagram/SequenceModel";
+import type { ConversationModel } from "./SequenceDiagram/SequenceModel";
 
 export interface FailedMessage {
   id: string;

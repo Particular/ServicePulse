@@ -1,8 +1,8 @@
-import { RemoteInstance, RemoteInstanceStatus, RemoteInstanceType } from "@/resources/RemoteInstance";
-import Message, { MessageStatus } from "@/resources/Message";
-import { Endpoint } from "@/resources/MonitoringEndpoint";
+import { type RemoteInstance, RemoteInstanceStatus, RemoteInstanceType } from "@/resources/RemoteInstance";
+import { type default as Message, MessageStatus } from "@/resources/Message";
+import type { Endpoint } from "@/resources/MonitoringEndpoint";
 import { monitoredEndpointTemplate } from "../mocks/monitored-endpoint-template";
-import { SetupFactoryOptions } from "../driver";
+import type { SetupFactoryOptions } from "../driver";
 import * as precondition from ".";
 
 // =============================================================================

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CustomCheck from "@/resources/CustomCheck";
+import type CustomCheck from "@/resources/CustomCheck";
 import TimeSince from "@/components/TimeSince.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import { faCheck, faList, faServer } from "@fortawesome/free-solid-svg-icons";

@@ -1,19 +1,19 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import logger from "@/logger";
-import { computed, reactive, Ref, ref } from "vue";
-import Header from "@/resources/Header";
+import { computed, reactive, type Ref, ref } from "vue";
+import type Header from "@/resources/Header";
 import type EndpointDetails from "@/resources/EndpointDetails";
-import { FailedMessage, ExceptionDetails, FailedMessageStatus } from "@/resources/FailedMessage";
+import { type FailedMessage, type ExceptionDetails, FailedMessageStatus } from "@/resources/FailedMessage";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
-import Message, { MessageStatus } from "@/resources/Message";
+import { type default as Message, MessageStatus } from "@/resources/Message";
 import dayjs from "@/utils/dayjs";
 import { parse, stringify } from "lossless-json";
 import xmlFormat from "xml-formatter";
-import { DataContainer } from "./DataContainer";
+import type { DataContainer } from "./DataContainer";
 import serviceControlClient from "@/components/serviceControlClient";
-import { EditAndRetryConfig } from "@/resources/Configuration";
-import EditRetryResponse from "@/resources/EditRetryResponse";
-import { EditedMessage } from "@/resources/EditMessage";
+import type { EditAndRetryConfig } from "@/resources/Configuration";
+import type EditRetryResponse from "@/resources/EditRetryResponse";
+import type { EditedMessage } from "@/resources/EditMessage";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 import { timeSpanToDuration } from "@/composables/formatter";
 

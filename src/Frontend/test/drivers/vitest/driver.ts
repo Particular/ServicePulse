@@ -1,10 +1,10 @@
 import { flushPromises } from "@vue/test-utils";
 import { test as testVitest, describe } from "vitest";
-import { Driver } from "../../driver";
+import type { Driver } from "../../driver";
 import { mount } from "@/mount";
 import makeRouter from "../../../src/router";
 import { mockEndpoint, mockEndpointDynamic } from "../../utils";
-import { App } from "vue";
+import type { App } from "vue";
 import { mockServer } from "../../mock-server";
 
 function makeDriver() {

@@ -1,8 +1,8 @@
-import { MockEndpointDynamicOptions, SetupFactoryOptions } from "../driver";
-import { EndpointsView } from "@/resources/EndpointView";
+import type { MockEndpointDynamicOptions, SetupFactoryOptions } from "../driver";
+import type { EndpointsView } from "@/resources/EndpointView";
 import { healthyEndpointTemplate, unHealthyEndpointTemplate } from "../mocks/heartbeat-endpoint-template";
-import { DefaultBodyType, PathParams, StrictRequest } from "msw";
-import { EndpointSettings } from "@/resources/EndpointSettings";
+import type { DefaultBodyType, PathParams, StrictRequest } from "msw";
+import type { EndpointSettings } from "@/resources/EndpointSettings";
 
 interface ChangeTracking {
   track_instances: boolean;

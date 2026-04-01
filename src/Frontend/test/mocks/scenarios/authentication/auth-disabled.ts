@@ -14,7 +14,7 @@
  *   3. User profile menu should NOT appear in header
  */
 import { setupWorker } from "msw/browser";
-import { Driver } from "../../../driver";
+import type { Driver } from "../../../driver";
 import { makeMockEndpoint, makeMockEndpointDynamic } from "../../../mock-endpoint";
 import * as precondition from "../../../preconditions";
 

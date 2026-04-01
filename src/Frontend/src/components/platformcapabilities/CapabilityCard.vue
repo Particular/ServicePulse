@@ -2,8 +2,8 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import FAIcon from "@/components/FAIcon.vue";
-import { IconDefinition, faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { StatusIndicator, WizardPage } from "@/components/platformcapabilities/types";
+import { type IconDefinition, faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
+import type { StatusIndicator, WizardPage } from "@/components/platformcapabilities/types";
 import { Capability, CapabilityStatus } from "@/components/platformcapabilities/constants";
 import WizardDialog from "./WizardDialog.vue";
 

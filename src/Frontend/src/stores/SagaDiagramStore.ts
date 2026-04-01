@@ -1,11 +1,11 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import logger from "@/logger";
 import { ref, watch } from "vue";
-import { SagaHistory, SagaMessage } from "@/resources/SagaHistory";
-import Message from "@/resources/Message";
+import type { SagaHistory, SagaMessage } from "@/resources/SagaHistory";
+import type Message from "@/resources/Message";
 import { parse, stringify } from "lossless-json";
 import xmlFormat from "xml-formatter";
-import { DataContainer } from "./DataContainer";
+import type { DataContainer } from "./DataContainer";
 import { useMessageStore } from "./MessageStore";
 import serviceControlClient from "@/components/serviceControlClient";
 

@@ -1,4 +1,4 @@
-import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import type { Dayjs } from "dayjs";
 
 export type GroupPropertyType = string | number | Date | Dayjs | boolean;

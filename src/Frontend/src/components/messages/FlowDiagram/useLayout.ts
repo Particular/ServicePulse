@@ -1,5 +1,5 @@
 import dagre from "@dagrejs/dagre";
-import { DefaultEdge, Node, Position, useVueFlow } from "@vue-flow/core";
+import { type DefaultEdge, type Node, Position, useVueFlow } from "@vue-flow/core";
 import { ref } from "vue";
 
 export function useLayout() {

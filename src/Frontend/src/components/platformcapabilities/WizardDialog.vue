@@ -3,7 +3,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import { Modal } from "bootstrap";
 import FAIcon from "@/components/FAIcon.vue";
 import { faChevronLeft, faChevronRight, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
-import { WizardImage, WizardPage } from "./types";
+import type { WizardImage, WizardPage } from "./types";
 
 const props = defineProps<{
   title: string;

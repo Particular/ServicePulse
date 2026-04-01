@@ -1,6 +1,6 @@
-import RootUrls from "@/resources/RootUrls";
+import type RootUrls from "@/resources/RootUrls";
 import { LicenseStatus } from "@/resources/LicenseInfo";
-import { ServiceControlMonitoringInstance } from "@/resources/ServiceControlMonitoringInstance";
+import type { ServiceControlMonitoringInstance } from "@/resources/ServiceControlMonitoringInstance";
 
 export const serviceControlMainInstance = <RootUrls>{
   description: "The management backend for the Particular Service Platform",

@@ -1,4 +1,4 @@
-import { SetupFactoryOptions } from "../../../test/driver";
+import type { SetupFactoryOptions } from "../../../test/driver";
 import * as precondition from "../../../test/preconditions";
 import { minimumSCVersionForThroughput } from "@/views/throughputreport/isThroughputSupported";
 

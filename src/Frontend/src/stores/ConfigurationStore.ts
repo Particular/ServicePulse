@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
-import Configuration from "@/resources/Configuration";
+import type Configuration from "@/resources/Configuration";
 import serviceControlClient from "@/components/serviceControlClient";
 import logger from "@/logger";
 

@@ -3,7 +3,7 @@ import { computed, onUnmounted, watch } from "vue";
 import { useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { useMessageStore } from "@/stores/MessageStore";
 import { storeToRefs } from "pinia";
-import { SagaViewModel, parseSagaUpdates } from "./SagaDiagram/SagaDiagramParser";
+import { type SagaViewModel, parseSagaUpdates } from "./SagaDiagram/SagaDiagramParser";
 import { typeToName } from "@/composables/typeHumanizer";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import FAIcon from "@/components/FAIcon.vue";

@@ -1,5 +1,5 @@
 import { computed } from "vue";
-import { StatusIndicator } from "@/components/platformcapabilities/types";
+import type { StatusIndicator } from "@/components/platformcapabilities/types";
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import useIsAllMessagesSupported, { minimumSCVersionForAllMessages } from "@/components/audit/isAllMessagesSupported";
 import { storeToRefs } from "pinia";

@@ -1,7 +1,7 @@
 import { isSupported, isUpgradeAvailable } from "@/composables/serviceSemVer";
 import logger from "@/logger";
-import Release from "@/resources/Release";
-import RootUrls from "@/resources/RootUrls";
+import type Release from "@/resources/Release";
+import type RootUrls from "@/resources/RootUrls";
 import { useMemoize } from "@vueuse/core";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, reactive } from "vue";

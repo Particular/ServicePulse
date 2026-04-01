@@ -13,7 +13,7 @@ import MetadataItem from "@/components/MetadataItem.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faArrowRotateRight, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import { useDeletedMessageGroupsStore, statusesForRestoreOperation, ExtendedFailureGroupView, Status } from "@/stores/DeletedMessageGroupsStore";
+import { useDeletedMessageGroupsStore, statusesForRestoreOperation, type ExtendedFailureGroupView, type Status } from "@/stores/DeletedMessageGroupsStore";
 import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
 import { storeToRefs } from "pinia";
 import LoadingSpinner from "../LoadingSpinner.vue";

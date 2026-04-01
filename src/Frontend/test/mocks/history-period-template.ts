@@ -1,4 +1,4 @@
-import { Endpoint } from "@/resources/MonitoringEndpoint";
+import type { Endpoint } from "@/resources/MonitoringEndpoint";
 
 export const oneEndpointWithMetricsPoints = (queueLength: number | number[], throughput: number | number[], retries: number | number[], processingTime: number | number[], criticalTime: number | number[]): Endpoint[] => {
   return [

@@ -1,5 +1,5 @@
 import { authFetch } from "@/composables/useAuthenticatedFetch";
-import { Endpoint, EndpointDetails } from "@/resources/MonitoringEndpoint";
+import type { Endpoint, EndpointDetails } from "@/resources/MonitoringEndpoint";
 
 export interface MetricsConnectionDetails {
   Enabled: boolean;

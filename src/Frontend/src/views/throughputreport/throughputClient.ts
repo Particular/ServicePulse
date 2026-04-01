@@ -1,9 +1,9 @@
-import EndpointThroughputSummary from "@/resources/EndpointThroughputSummary";
-import UpdateUserIndicator from "@/resources/UpdateUserIndicator";
-import ConnectionTestResults from "@/resources/ConnectionTestResults";
-import ThroughputConnectionSettings from "@/resources/ThroughputConnectionSettings";
+import type EndpointThroughputSummary from "@/resources/EndpointThroughputSummary";
+import type UpdateUserIndicator from "@/resources/UpdateUserIndicator";
+import type ConnectionTestResults from "@/resources/ConnectionTestResults";
+import type ThroughputConnectionSettings from "@/resources/ThroughputConnectionSettings";
 import { downloadFileFromResponse } from "@/composables/fileDownloadCreator";
-import ReportGenerationState from "@/resources/ReportGenerationState";
+import type ReportGenerationState from "@/resources/ReportGenerationState";
 import { parse } from "@tinyhttp/content-disposition";
 import serviceControlClient from "@/components/serviceControlClient";
 

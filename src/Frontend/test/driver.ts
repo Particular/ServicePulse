@@ -1,4 +1,4 @@
-import { DefaultBodyType, StrictRequest, type PathParams } from "msw";
+import type { DefaultBodyType, StrictRequest, PathParams } from "msw";
 
 type GoTo = (path: string) => Promise<void>;
 type DisposeApp = () => void;

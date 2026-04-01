@@ -1,8 +1,8 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref } from "vue";
 import type { SortInfo } from "@/components/SortInfo";
-import Message from "@/resources/Message";
-import { EndpointsView } from "@/resources/EndpointView";
+import type Message from "@/resources/Message";
+import type { EndpointsView } from "@/resources/EndpointView";
 import type { DateRange } from "@/types/date";
 import serviceControlClient from "@/components/serviceControlClient";
 import auditClient from "@/components/audit/auditClient";

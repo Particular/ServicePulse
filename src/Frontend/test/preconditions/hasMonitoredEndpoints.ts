@@ -1,7 +1,7 @@
 import { monitoredEndpointTemplate, noMonitoredEndpoints } from "../mocks/monitored-endpoint-template";
 
-import { SetupFactoryOptions } from "../driver";
-import { Endpoint } from "@/resources/MonitoringEndpoint";
+import type { SetupFactoryOptions } from "../driver";
+import type { Endpoint } from "@/resources/MonitoringEndpoint";
 
 export const hasNoMonitoredEndpoints = ({ driver }: SetupFactoryOptions) => {
   const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];

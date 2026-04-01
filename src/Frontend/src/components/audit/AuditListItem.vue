@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import routeLinks from "@/router/routeLinks";
-import Message, { MessageStatus } from "@/resources/Message";
+import { type default as Message, MessageStatus } from "@/resources/Message";
 import { computed } from "vue";
 import { formatDotNetTimespan } from "@/composables/formatUtils";
 import { useRouter, RouterLink } from "vue-router";

@@ -4,10 +4,10 @@ import { minimumSCVersionForThroughput } from "@/views/throughputreport/isThroug
 import { createTestingPinia } from "@pinia/testing";
 import { Transport } from "@/views/throughputreport/transport";
 import { makeDriverForTests, render, screen } from "@component-test-utils";
-import { Driver } from "../../../test/driver";
+import type { Driver } from "../../../test/driver";
 import { disableMonitoring } from "../../../test/drivers/vitest/setup";
 import SetupView from "./SetupView.vue";
-import { ConnectionSettingsTestResult } from "@/resources/ConnectionTestResults";
+import type { ConnectionSettingsTestResult } from "@/resources/ConnectionTestResults";
 import makeRouter from "@/router";
 import { flushPromises, RouterLinkStub } from "@vue/test-utils";
 import { serviceControlWithThroughput } from "@/views/throughputreport/serviceControlWithThroughput";

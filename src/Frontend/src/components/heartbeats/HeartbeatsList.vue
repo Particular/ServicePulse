@@ -6,7 +6,7 @@ import OnOffSwitch from "../OnOffSwitch.vue";
 import routeLinks from "@/router/routeLinks";
 import { useRoute } from "vue-router";
 import { Tippy } from "vue-tippy";
-import { LogicalEndpoint } from "@/resources/Heartbeat";
+import type { LogicalEndpoint } from "@/resources/Heartbeat";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import LastHeartbeat from "@/components/heartbeats/LastHeartbeat.vue";

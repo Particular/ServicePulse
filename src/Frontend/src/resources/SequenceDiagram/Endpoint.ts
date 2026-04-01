@@ -1,6 +1,6 @@
 import { NServiceBusHeaders } from "../Header";
-import Message from "../Message";
-import { Handler } from "./Handler";
+import type Message from "../Message";
+import type { Handler } from "./Handler";
 
 export interface Endpoint {
   readonly name: string;

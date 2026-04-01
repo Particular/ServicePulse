@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import ThroughputConnectionSettings from "@/resources/ThroughputConnectionSettings";
+import type ThroughputConnectionSettings from "@/resources/ThroughputConnectionSettings";
 import createThroughputClient from "@/views/throughputreport/throughputClient";
 import ConfigurationCode from "@/views/throughputreport/setup/ConfigurationCode.vue";
 import { storeToRefs } from "pinia";

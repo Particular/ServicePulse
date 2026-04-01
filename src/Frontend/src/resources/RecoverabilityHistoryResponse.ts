@@ -1,5 +1,5 @@
-import HistoricRetryOperation from "./HistoricRetryOperation";
-import UnacknowledgedRetryOperation from "./UnacknowledgedRetryOperation";
+import type HistoricRetryOperation from "./HistoricRetryOperation";
+import type UnacknowledgedRetryOperation from "./UnacknowledgedRetryOperation";
 
 export default interface RecoverabilityHistoryResponse {
   id: string;

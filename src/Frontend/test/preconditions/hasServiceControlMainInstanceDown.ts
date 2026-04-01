@@ -1,5 +1,5 @@
 import { serviceControlMainInstance } from "../mocks/service-control-instance-template";
-import { SetupFactoryOptions } from "../driver";
+import type { SetupFactoryOptions } from "../driver";
 
 export const hasServiceControlMainInstanceDown = ({ driver }: SetupFactoryOptions) => {
   const serviceControlInstanceUrl = window.defaultConfig.service_control_url;

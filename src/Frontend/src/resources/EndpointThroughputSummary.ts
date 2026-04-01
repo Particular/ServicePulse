@@ -6,4 +6,4 @@ interface EndpointThroughputSummary {
   max_monthly_throughput?: number;
 }
 
-export default EndpointThroughputSummary;
+export type { EndpointThroughputSummary as default };

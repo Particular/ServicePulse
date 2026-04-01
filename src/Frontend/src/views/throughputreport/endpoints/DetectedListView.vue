@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import EndpointThroughputSummary from "@/resources/EndpointThroughputSummary";
+import type EndpointThroughputSummary from "@/resources/EndpointThroughputSummary";
 import { UserIndicator } from "@/views/throughputreport/endpoints/userIndicator";
 import DropDown, { type Item } from "@/components/DropDown.vue";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import createThroughputClient from "@/views/throughputreport/throughputClient";
-import UpdateUserIndicator from "@/resources/UpdateUserIndicator";
+import type UpdateUserIndicator from "@/resources/UpdateUserIndicator";
 import { TYPE } from "vue-toastification";
 import { DataSource } from "@/views/throughputreport/endpoints/dataSource";
 import { userIndicatorMapper } from "./userIndicatorMapper";

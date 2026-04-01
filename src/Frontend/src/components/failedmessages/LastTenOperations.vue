@@ -3,7 +3,7 @@ import { onMounted, ref } from "vue";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import type HistoricRetryOperation from "@/resources/HistoricRetryOperation";
-import RecoverabilityHistoryResponse from "@/resources/RecoverabilityHistoryResponse";
+import type RecoverabilityHistoryResponse from "@/resources/RecoverabilityHistoryResponse";
 import FAIcon from "@/components/FAIcon.vue";
 import { faAngleDown, faAngleRight, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";

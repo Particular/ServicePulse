@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FAIcon from "@/components/FAIcon.vue";
-import { IconDefinition, faCheck, faTimes, faExclamationTriangle, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { type IconDefinition, faCheck, faTimes, faExclamationTriangle, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 export type StatusType = "success" | "error" | "warning" | "info";
 

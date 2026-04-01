@@ -1,6 +1,6 @@
-import { SagaHistory } from "@/resources/SagaHistory";
+import type { SagaHistory } from "@/resources/SagaHistory";
 import { typeToName } from "@/composables/typeHumanizer";
-import { SagaMessageData } from "@/stores/SagaDiagramStore";
+import type { SagaMessageData } from "@/stores/SagaDiagramStore";
 import { getTimeoutFriendly } from "@/composables/deliveryDelayParser";
 
 export interface SagaMessageViewModel {

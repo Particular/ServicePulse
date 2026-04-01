@@ -6,7 +6,7 @@ import { serviceControlWithThroughput } from "@/views/throughputreport/serviceCo
 import { useThroughputStore } from "@/stores/ThroughputStore";
 import { createTestingPinia } from "@pinia/testing";
 import { setActivePinia, storeToRefs } from "pinia";
-import { Driver } from "../../test/driver";
+import type { Driver } from "../../test/driver";
 import { disableMonitoring } from "../../test/drivers/vitest/setup";
 import { useEnvironmentAndVersionsStore } from "./EnvironmentAndVersionsStore";
 

@@ -5,7 +5,7 @@ import type { SortInfo } from "@/components/SortInfo";
 import { type GroupPropertyType, SortDirection } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
 import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
-import { EndpointsView } from "@/resources/EndpointView";
+import type { EndpointsView } from "@/resources/EndpointView";
 import serviceControlClient from "@/components/serviceControlClient";
 
 export enum ColumnNames {

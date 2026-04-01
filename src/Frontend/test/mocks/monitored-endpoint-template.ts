@@ -1,4 +1,4 @@
-import { Endpoint, ExtendedEndpointInstance, EndpointMetrics, ExtendedEndpointDetails, MessageType } from "@/resources/MonitoringEndpoint";
+import type { Endpoint, ExtendedEndpointInstance, EndpointMetrics, ExtendedEndpointDetails, MessageType } from "@/resources/MonitoringEndpoint";
 
 export const monitoredEndpointTemplate = <Endpoint>{
   name: "A happy endpoint",

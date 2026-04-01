@@ -1,9 +1,9 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 import { ModelCreator } from "@/resources/SequenceDiagram/SequenceModel";
-import { Endpoint } from "@/resources/SequenceDiagram/Endpoint";
-import { Handler } from "@/resources/SequenceDiagram/Handler";
-import { MessageProcessingRoute } from "@/resources/SequenceDiagram/RoutedMessage";
+import type { Endpoint } from "@/resources/SequenceDiagram/Endpoint";
+import type { Handler } from "@/resources/SequenceDiagram/Handler";
+import type { MessageProcessingRoute } from "@/resources/SequenceDiagram/RoutedMessage";
 import { useMessageStore } from "./MessageStore";
 import { useRouter } from "vue-router";
 import routeLinks from "@/router/routeLinks";

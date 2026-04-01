@@ -1,5 +1,5 @@
-import { SetupFactoryOptions } from "../driver";
-import LicenseInfo, { LicenseStatus, LicenseType } from "@/resources/LicenseInfo";
+import type { SetupFactoryOptions } from "../driver";
+import { type default as LicenseInfo, LicenseStatus, LicenseType } from "@/resources/LicenseInfo";
 import { createDateWithDayOffset } from "@/composables/formatter";
 
 const licenseResponseTemplate = <LicenseInfo>{

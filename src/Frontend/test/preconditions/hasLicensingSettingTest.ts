@@ -1,5 +1,6 @@
-import ConnectionTestResults, { ConnectionSettingsTestResult } from "@/resources/ConnectionTestResults";
-import { SetupFactoryOptions } from "../driver";
+import type ConnectionTestResults from "@/resources/ConnectionTestResults";
+import type { ConnectionSettingsTestResult } from "@/resources/ConnectionTestResults";
+import type { SetupFactoryOptions } from "../driver";
 
 export const hasLicensingSettingTest =
   (body: Partial<ConnectionTestResults> = {}) =>

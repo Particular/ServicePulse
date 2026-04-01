@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SagaMessageData, useSagaDiagramStore } from "@/stores/SagaDiagramStore";
+import { type SagaMessageData, useSagaDiagramStore } from "@/stores/SagaDiagramStore";
 import { storeToRefs } from "pinia";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import MaximizableCodeEditor from "@/components/MaximizableCodeEditor.vue";

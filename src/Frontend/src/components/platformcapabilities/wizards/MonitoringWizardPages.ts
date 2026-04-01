@@ -1,4 +1,4 @@
-import { WizardPage } from "../types";
+import type { WizardPage } from "../types";
 import { CapabilityStatus } from "../constants";
 import WhatIsMonitoring from "./monitoring/WhatIsMonitoring.vue";
 import OverallPerformanceMetrics from "./monitoring/OverallPerformanceMetrics.vue";

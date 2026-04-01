@@ -7,7 +7,7 @@ import { useMonitoringHistoryPeriodStore } from "./MonitoringHistoryPeriodStore"
 import type { EndpointGroup, Endpoint, GroupedEndpoint } from "@/resources/MonitoringEndpoint";
 import type { SortInfo } from "@/components/SortInfo";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
-import GroupOperation from "@/resources/GroupOperation";
+import type GroupOperation from "@/resources/GroupOperation";
 import serviceControlClient from "@/components/serviceControlClient";
 
 export const useMonitoringStore = defineStore("MonitoringStore", () => {

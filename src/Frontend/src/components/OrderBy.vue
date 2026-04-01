@@ -1,7 +1,7 @@
 <script setup generic="T" lang="ts">
 import { onMounted, ref } from "vue";
 import { useCookies } from "vue3-cookies";
-import SortOptions, { SortDirection } from "@/resources/SortOptions";
+import { type default as SortOptions, SortDirection } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
 import FAIcon from "@/components/FAIcon.vue";
 

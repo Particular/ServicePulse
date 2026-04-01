@@ -3,14 +3,14 @@ import { computed, onMounted, ref, watch } from "vue";
 import MessageHeader from "./EditMessageHeader.vue";
 import type Header from "@/resources/Header";
 import parseContentType from "@/composables/contentTypeParser";
-import { CodeLanguage } from "@/components/codeEditorTypes";
+import type { CodeLanguage } from "@/components/codeEditorTypes";
 import CodeEditor from "@/components/CodeEditor.vue";
 import { useMessageStore } from "@/stores/MessageStore";
 import { storeToRefs } from "pinia";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import { faExclamationCircle, faExclamationTriangle, faUndo } from "@fortawesome/free-solid-svg-icons";
-import { HeaderWithEditing } from "@/resources/EditMessage";
+import type { HeaderWithEditing } from "@/resources/EditMessage";
 import { useDebounceFn } from "@vueuse/core";
 
 const emit = defineEmits<{

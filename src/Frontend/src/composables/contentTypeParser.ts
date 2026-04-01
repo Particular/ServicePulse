@@ -1,4 +1,4 @@
-import { CodeLanguage } from "@/components/codeEditorTypes";
+import type { CodeLanguage } from "@/components/codeEditorTypes";
 
 function parseContentType(contentType: string | undefined): { isSupported: boolean; language?: CodeLanguage } {
   if (contentType === undefined) {
