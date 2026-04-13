@@ -76,7 +76,7 @@
     "msw": "2.12.14",
     "prettier": "3.8.1",
     "typescript": "6.0.2",
-    "typescript-eslint": "8.58.0",
+    "typescript-eslint": "8.58.2",
     "vite": "8.0.7",
     "vite-plugin-checker": "0.12.0",
     "vitest": "4.1.3",
