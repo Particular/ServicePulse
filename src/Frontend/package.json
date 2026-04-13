@@ -61,7 +61,7 @@
     "@tsconfig/node18": "18.2.6",
     "@types/bootstrap": "5.2.10",
     "@types/jsdom": "28.0.1",
-    "@types/node": "25.5.2",
+    "@types/node": "25.6.0",
     "@vitejs/devtools": "0.1.13",
     "@vitejs/plugin-vue": "6.0.5",
     "@vitest/coverage-v8": "4.1.4",
