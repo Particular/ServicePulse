@@ -46,10 +46,11 @@ jobs:
           Invoke-Expression $cmd
       - name: Update Docker Hub Description
         if: ${{ steps.validate.outputs.latest == 'true' }}
-        uses: peter-evans/dockerhub-description@v5.0.0
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: particular/servicepulse
-          readme-filepath: ./Container-README.md
-          short-description: Keep track of the health and performance of your system's endpoints.
+        run: |
+          $loginPayload = @{ username = "${{ secrets.DOCKERHUB_USERNAME }}"; password = "${{ secrets.DOCKERHUB_TOKEN }}" } | ConvertTo-Json
+          $loginResponse = Invoke-RestMethod -Method Post -Uri "https://hub.docker.com/v2/users/login/" -ContentType "application/json" -Body $loginPayload -ErrorAction Stop
+          $token = $loginResponse.token
+          Write-Output "::add-mask::$token"
+          $readme = Get-Content -Path "./Container-README.md" -Raw
+          $updatePayload = @{ full_description = $readme; description = "Keep track of the health and performance of your system's endpoints." } | ConvertTo-Json
+          Invoke-RestMethod -Method Patch -Uri "https://hub.docker.com/v2/repositories/particular/servicepulse/" -Headers @{ Authorization = "JWT $token" } -ContentType "application/json" -Body $updatePayload -ErrorAction Stop
