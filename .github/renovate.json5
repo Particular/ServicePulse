@@ -106,5 +106,18 @@
         '/^@vue-flow//',
       ],
     },
+    {
+      matchDatasources: [
+        'npm',
+      ],
+      matchPackageNames: [
+        'msw',
+      ],
+      groupName: 'msw',
+      groupSlug: 'msw-group',
+      prBodyNotes: [
+        '> [!WARNING]\n> **Do not auto-merge or merge via this PR directly.** `msw` runs a post-install script that regenerates `mockServiceWorker.js` with the new version number. After merging, you must manually run `npx msw init <PUBLIC_DIR>` to update this generated file, then commit the result.',
+      ],
+    },
   ],
 }
