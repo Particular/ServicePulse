@@ -73,7 +73,7 @@
     "eslint-plugin-vue": "10.9.0",
     "globals": "17.5.0",
     "jsdom": "29.1.1",
-    "msw": "2.12.14",
+    "msw": "2.14.6",
     "prettier": "3.8.3",
     "typescript": "6.0.3",
     "typescript-eslint": "8.59.2",
