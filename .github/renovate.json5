@@ -4,6 +4,12 @@
       matchDatasources: [
         'npm',
       ],
+      minimumReleaseAge: '4 days',
+    },
+    {
+      matchDatasources: [
+        'npm',
+      ],
       matchUpdateTypes: [
         'patch',
       ],
