@@ -64,7 +64,7 @@ describe("FEATURE: EXPIRED license detection", () => {
       const notification = (await getAlertNotifications()).find((n) => n.textMatches(/your license has expired\. please contact particular software support at:/i));
 
       expect(notification).not.toBeUndefined();
-      expect(notification?.hasLink({ caption: "http://particular.net/support", address: "http://particular.net/support" })).toBeTruthy();
+      expect(notification?.hasLink({ caption: "https://particular.net/support", address: "https://particular.net/support" })).toBeTruthy();
     });
 
     test("EXAMPLE: Expired platform subscription", async ({ driver }) => {
@@ -83,7 +83,7 @@ describe("FEATURE: EXPIRED license detection", () => {
       const notification = (await getAlertNotifications()).find((n) => n.textMatches(/your license has expired\. please contact particular software support at:/i));
 
       expect(notification).not.toBeUndefined();
-      expect(notification?.hasLink({ caption: "http://particular.net/support", address: "http://particular.net/support" })).toBeTruthy();
+      expect(notification?.hasLink({ caption: "https://particular.net/support", address: "https://particular.net/support" })).toBeTruthy();
     });
 
     test("EXAMPLE: Expired upgrade protection", async ({ driver }) => {
@@ -101,7 +101,7 @@ describe("FEATURE: EXPIRED license detection", () => {
       const notification = (await getAlertNotifications()).find((n) => n.textMatches(/your license has expired\. please contact particular software support at:/i));
 
       expect(notification).not.toBeUndefined();
-      expect(notification?.hasLink({ caption: "http://particular.net/support", address: "http://particular.net/support" })).toBeTruthy();
+      expect(notification?.hasLink({ caption: "https://particular.net/support", address: "https://particular.net/support" })).toBeTruthy();
     });
   });
 });
