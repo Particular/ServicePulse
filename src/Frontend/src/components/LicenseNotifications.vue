@@ -44,7 +44,7 @@ function displayWarningMessage(licenseStatus: LicenseStatus) {
     case LicenseStatus.InvalidDueToExpiredTrial:
     case LicenseStatus.InvalidDueToExpiredSubscription:
     case LicenseStatus.InvalidDueToExpiredUpgradeProtection:
-      useShowToast(TYPE.ERROR, "Error", 'Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>', true);
+      useShowToast(TYPE.ERROR, "Error", 'Your license has expired. Please contact Particular Software support at: <a href="https://particular.net/support">https://particular.net/support</a>', true);
       break;
   }
 }

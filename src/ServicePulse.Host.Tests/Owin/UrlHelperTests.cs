@@ -23,8 +23,8 @@
         [Test]
         public void Should_not_replace_other_names()
         {
-            var url = UrlHelper.RewriteLocalhostUrl("http://particular.net:8081/");
-            Assert.That(url, Is.EqualTo("http://particular.net:8081/"));
+            var url = UrlHelper.RewriteLocalhostUrl("http://customdomain.net:8081/");
+            Assert.That(url, Is.EqualTo("http://customdomain.net:8081/"));
         }
     }
 

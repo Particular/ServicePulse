@@ -14,13 +14,13 @@
     <ROW Property="AI_UNINSTALLER" Value="msiexec.exe"/>
     <ROW Property="ALLUSERS" Value="1"/>
     <ROW Property="ARPCOMMENTS" Value="Particular Software ServicePulse version [|ProductVersion] for NServiceBus" ValueLocId="*"/>
-    <ROW Property="ARPHELPLINK" Value="http://particular.net/support"/>
+    <ROW Property="ARPHELPLINK" Value="https://particular.net/support"/>
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPNOREPAIR" Value="1" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPPRODUCTICON" Value="Operations_1.exe" Type="8"/>
     <ROW Property="ARPSYSTEMCOMPONENT" Value="1"/>
-    <ROW Property="ARPURLINFOABOUT" Value="http://particular.net/ServicePulse"/>
-    <ROW Property="ARPURLUPDATEINFO" Value="http://particular.net/downloads"/>
+    <ROW Property="ARPURLINFOABOUT" Value="https://particular.net/ServicePulse"/>
+    <ROW Property="ARPURLUPDATEINFO" Value="https://particular.net/downloads"/>
     <ROW Property="BannerBitmap" Value="banner" MultiBuildValue="DefaultBuild:banner.jpg" Type="1" MsiKey="BannerBitmap"/>
     <ROW Property="DEFAULT_SC_MONITORING_URI" Value="http://localhost:33633"/>
     <ROW Property="DEFAULT_SC_URI" Value="http://localhost:33333/api"/>
