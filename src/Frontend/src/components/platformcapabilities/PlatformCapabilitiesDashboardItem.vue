@@ -22,7 +22,6 @@ const error = useErrorCapability();
 const auditingWizardPages = computed(() => getAuditingWizardPages(auditing.status.value));
 const monitoringWizardPages = computed(() => getMonitoringWizardPages(monitoring.status.value));
 
-// Check if any cards are hidden (to show restore option)
 const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !visibility.value.showMonitoringCard || !visibility.value.showErrorCard);
 </script>
 
@@ -46,7 +45,7 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
           </div>
         </div>
         <div class="capabilities-actions">
-          <button v-if="hasHiddenCards" class="btn-link restore-btn" @click="platformCapabilitiesStore.showAll()" v-tippy="'Show all hidden cards'">Show All</button>
+          <button v-if="hasHiddenCards" class="btn-link" @click="platformCapabilitiesStore.showAll()" v-tippy="'Show all hidden cards'">Show All</button>
         </div>
       </div>
     </div>
@@ -54,9 +53,8 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
       <CapabilityCard
         v-if="visibility.showAuditingCard"
         :title="Capability.Auditing"
-        subtitle="Track and search all successful messages flowing through your system"
+        subtitle="Search and track messages flowing through your system"
         :status="auditing.status.value"
-        :icon="auditing.icon.value"
         :description="auditing.description.value"
         :indicators="auditing.indicators.value"
         :isLoading="auditing.isLoading.value"
@@ -70,7 +68,6 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
         :title="Capability.Monitoring"
         subtitle="Monitor endpoint performance and throughput"
         :status="monitoring.status.value"
-        :icon="monitoring.icon.value"
         :description="monitoring.description.value"
         :indicators="monitoring.indicators.value"
         :isLoading="monitoring.isLoading.value"
@@ -84,7 +81,6 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
         :title="Capability.Error"
         subtitle="Manage and retry failed messages"
         :status="error.status.value"
-        :icon="error.icon.value"
         :description="error.description.value"
         :indicators="error.indicators.value"
         :isLoading="error.isLoading.value"
@@ -133,11 +129,11 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
 }
 
 .capabilities-toggle:hover {
-  background-color: var(--hover-bg, rgba(0, 0, 0, 0.05));
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .capabilities-toggle:focus-visible {
-  outline: 2px solid var(--primary-color, #007bff);
+  outline: 2px solid var(--sp-blue);
   outline-offset: 2px;
 }
 
@@ -147,7 +143,7 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
 
 .section-chevron {
   font-size: 12px;
-  color: var(--text-secondary, #888);
+  color: #888;
   margin-top: 3px;
   flex-shrink: 0;
   transition: transform 0.2s ease;
@@ -159,7 +155,7 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
 
 .capabilities-description {
   font-size: 14px;
-  color: var(--text-secondary, #666);
+  color: #666;
   margin: 0;
 }
 
@@ -172,7 +168,7 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
 .btn-link {
   background: none;
   border: none;
-  color: var(--primary-color, #007bff);
+  color: var(--sp-blue);
   cursor: pointer;
   font-size: 14px;
   padding: 4px 8px;
@@ -189,6 +185,13 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
 
 .capabilities-list > * {
   flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 1500px) {
+  .capabilities-list {
+    flex-direction: column;
+  }
 }
 
 .platform-capabilities-collapsed {
