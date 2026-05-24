@@ -31,6 +31,8 @@ const shouldShowWizard = computed(() => {
   return props.wizardPages && props.wizardPages.length > 0 && (props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured);
 });
 
+const dataStatus = computed(() => (props.isLoading ? "loading" : props.status.toLowerCase().replace(/ /g, "-")));
+
 function isExternalUrl(url: string): boolean {
   return url.startsWith("http://") || url.startsWith("https://");
 }
@@ -47,7 +49,7 @@ function handleButtonClick() {
 </script>
 
 <template>
-  <div class="capability-card" data-testid="capability-card">
+  <div class="capability-card" data-testid="capability-card" :data-status="dataStatus">
     <div v-if="props.isLoading" class="loading-overlay">
       <div class="loading-spinner"></div>
       <div class="loading-text">Loading {{ props.title }} capability status...</div>
