@@ -179,19 +179,9 @@ const hasHiddenCards = computed(() => !visibility.value.showAuditingCard || !vis
 }
 
 .capabilities-list {
-  display: flex;
+  display: grid;
   gap: 16px;
-}
-
-.capabilities-list > * {
-  flex: 1;
-  min-width: 0;
-}
-
-@media (max-width: 1500px) {
-  .capabilities-list {
-    flex-direction: column;
-  }
+  grid-template-columns: repeat(auto-fit, minmax(min(56ch, 100%), 1fr));
 }
 
 .platform-capabilities-collapsed {
