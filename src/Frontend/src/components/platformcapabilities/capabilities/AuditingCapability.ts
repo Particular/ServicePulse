@@ -98,7 +98,7 @@ export function hasPartiallyUnavailableAuditInstances(instances: RemoteInstance[
 }
 
 export function useAuditingCapability(): CapabilityComposable {
-  const { getIconForStatus, getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
+  const { getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
 
   // This gives us the list of remote instances configured in ServiceControl.
   // Uses auto-refresh to periodically check status (every 5 seconds)
@@ -141,9 +141,6 @@ export function useAuditingCapability(): CapabilityComposable {
     // 5. Audit instance is available and there are successful audit messages
     return CapabilityStatus.Available;
   });
-
-  // Determine icon based on status
-  const auditIcon = computed(() => getIconForStatus(auditStatus.value));
 
   // Determine description based on status
   const auditDescription = computed(() => getDescriptionForStatus(auditStatus.value, AuditingDescriptions));
@@ -193,7 +190,6 @@ export function useAuditingCapability(): CapabilityComposable {
 
   return {
     status: auditStatus,
-    icon: auditIcon,
     description: auditDescription,
     indicators: auditIndicators,
     isLoading,

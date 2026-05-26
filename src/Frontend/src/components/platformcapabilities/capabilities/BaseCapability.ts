@@ -1,12 +1,10 @@
 import { type ComputedRef } from "vue";
-import { faCheck, faInfoCircle, faTimes, faExclamationTriangle, type IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import type { StatusIndicator } from "@/components/platformcapabilities/types";
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import routeLinks from "@/router/routeLinks";
 
 export interface CapabilityComposable {
   status: ComputedRef<CapabilityStatus>;
-  icon: ComputedRef<IconDefinition>;
   description: ComputedRef<string>;
   indicators: ComputedRef<StatusIndicator[]>;
   isLoading: ComputedRef<boolean>;
@@ -17,20 +15,6 @@ export interface CapabilityComposable {
 export type CapabilityStatusToStringMap = Partial<Record<CapabilityStatus, string>>;
 
 export function useCapabilityBase() {
-  const getIconForStatus = (status: CapabilityStatus): IconDefinition => {
-    switch (status) {
-      case CapabilityStatus.Available:
-        return faCheck;
-      case CapabilityStatus.EndpointsNotConfigured:
-      case CapabilityStatus.InstanceNotConfigured:
-        return faInfoCircle;
-      case CapabilityStatus.Unavailable:
-        return faTimes;
-      case CapabilityStatus.PartiallyUnavailable:
-        return faExclamationTriangle; // Warning icon for partially unavailable
-    }
-  };
-
   const getDescriptionForStatus = (status: CapabilityStatus, descriptions: CapabilityStatusToStringMap): string => {
     return descriptions[status] ?? "";
   };
@@ -59,7 +43,6 @@ export function useCapabilityBase() {
   };
 
   return {
-    getIconForStatus,
     getDescriptionForStatus,
     getHelpButtonTextForStatus,
     getHelpButtonUrlForStatus,

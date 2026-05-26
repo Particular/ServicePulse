@@ -39,7 +39,7 @@ enum MonitoringIndicatorTooltip {
 }
 
 export function useMonitoringCapability(): CapabilityComposable {
-  const { getIconForStatus, getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
+  const { getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
 
   // this tells us if monitoring is configured in ServicePulse
   const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
@@ -81,9 +81,6 @@ export function useMonitoringCapability(): CapabilityComposable {
     // 4. If all checks pass, monitoring is available
     return CapabilityStatus.Available;
   });
-
-  // Icon based on status
-  const monitoringIcon = computed(() => getIconForStatus(monitoringStatus.value));
 
   // Determine description based on status
   const monitoringDescription = computed(() => getDescriptionForStatus(monitoringStatus.value, MonitoringDescriptions));
@@ -127,7 +124,6 @@ export function useMonitoringCapability(): CapabilityComposable {
 
   return {
     status: monitoringStatus,
-    icon: monitoringIcon,
     description: monitoringDescription,
     indicators: monitoringIndicators,
     isLoading,

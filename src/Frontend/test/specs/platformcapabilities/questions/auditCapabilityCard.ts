@@ -17,7 +17,6 @@ export const auditingDescription = helpers.description;
 export const auditingActionButton = helpers.actionButton;
 export const auditingStatusIndicators = helpers.statusIndicators;
 export const isAuditingCardLoading = helpers.isLoading;
-export const auditingLoadingText = helpers.loadingText;
 export const isAuditingCardAvailable = helpers.isAvailable;
 export const isAuditingCardUnavailable = helpers.isUnavailable;
 export const isAuditingCardPartiallyUnavailable = helpers.isPartiallyUnavailable;

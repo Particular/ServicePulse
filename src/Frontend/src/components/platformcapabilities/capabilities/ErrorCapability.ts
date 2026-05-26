@@ -28,7 +28,7 @@ enum ErrorIndicatorTooltip {
 }
 
 export function useErrorCapability(): CapabilityComposable {
-  const { getIconForStatus, getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
+  const { getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
 
   // This tells us the connection state to the ServiceControl instance.
   // Auto refreshed every 5 seconds.
@@ -49,9 +49,6 @@ export function useErrorCapability(): CapabilityComposable {
     }
     return CapabilityStatus.Available;
   });
-
-  // Icon based on status
-  const errorIcon = computed(() => getIconForStatus(errorStatus.value));
 
   // Determine description based on status
   const errorDescription = computed(() => getDescriptionForStatus(errorStatus.value, ErrorDescriptions));
@@ -77,7 +74,6 @@ export function useErrorCapability(): CapabilityComposable {
 
   return {
     status: errorStatus,
-    icon: errorIcon,
     description: errorDescription,
     indicators: errorIndicators,
     isLoading,

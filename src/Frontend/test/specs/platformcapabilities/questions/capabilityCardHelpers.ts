@@ -38,8 +38,6 @@ export interface CapabilityCardHelpers {
   hideButton: () => Promise<HTMLElement | null>;
   /** Checks if the card is in loading state */
   isLoading: () => Promise<boolean>;
-  /** Gets the loading text element */
-  loadingText: () => HTMLElement | null;
   /** Checks if the card has the "available" styling (green border) */
   isAvailable: () => Promise<boolean>;
   /** Checks if the card has the "unavailable" styling (red border) */
@@ -126,35 +124,32 @@ export function createCapabilityCardHelpers(options: CapabilityCardOptions): Cap
   async function isLoading(): Promise<boolean> {
     const c = await card();
     if (!c) return false;
-    return c.classList.contains("capability-loading");
-  }
-
-  function loadingText(): HTMLElement | null {
-    return screen.queryByText(new RegExp(`Loading ${title} capability status`, "i"));
+    return c.getAttribute("data-status") === "loading";
   }
 
   async function isAvailable(): Promise<boolean> {
     const c = await card();
     if (!c) return false;
-    return c.classList.contains("capability-available");
+    return c.getAttribute("data-status") === "available";
   }
 
   async function isUnavailable(): Promise<boolean> {
     const c = await card();
     if (!c) return false;
-    return c.classList.contains("capability-unavailable");
+    return c.getAttribute("data-status") === "unavailable";
   }
 
   async function isPartiallyUnavailable(): Promise<boolean> {
     const c = await card();
     if (!c) return false;
-    return c.classList.contains("capability-partially-unavailable");
+    return c.getAttribute("data-status") === "degraded";
   }
 
   async function isNotConfigured(): Promise<boolean> {
     const c = await card();
     if (!c) return false;
-    return c.classList.contains("capability-notconfigured");
+    const status = c.getAttribute("data-status");
+    return status === "endpoints-not-configured" || status === "instance-not-configured";
   }
 
   async function indicatorByLabel(label: string): Promise<HTMLElement | null> {
@@ -177,7 +172,6 @@ export function createCapabilityCardHelpers(options: CapabilityCardOptions): Cap
     description,
     hideButton,
     isLoading,
-    loadingText,
     isAvailable,
     isUnavailable,
     isPartiallyUnavailable,
