@@ -36,7 +36,7 @@
     "@vueuse/core": "14.3.0",
     "bootstrap": "5.3.8",
     "codemirror": "6.0.2",
-    "dayjs": "1.11.20",
+    "dayjs": "1.11.21",
     "diff": "9.0.0",
     "hex-to-css-filter": "6.0.0",
     "lossless-json": "4.3.0",
