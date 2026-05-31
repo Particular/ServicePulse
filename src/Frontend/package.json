@@ -42,7 +42,7 @@
     "lossless-json": "4.3.0",
     "oidc-client-ts": "3.5.0",
     "pinia": "3.0.4",
-    "vue": "3.5.34",
+    "vue": "3.5.35",
     "vue-codemirror6": "1.5.2",
     "vue-router": "5.0.7",
     "vue-tippy": "6.7.1",
@@ -80,7 +80,7 @@
     "vite": "8.0.14",
     "vite-plugin-checker": "0.14.1",
     "vitest": "4.1.7",
-    "vue-tsc": "3.3.1"
+    "vue-tsc": "3.3.2"
   },
   "msw": {
     "workerDirectory": [
