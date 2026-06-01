@@ -105,7 +105,7 @@ onUnmounted(() => {
 <style scoped>
 .minimap {
   position: relative;
-  height: v-bind(MINIMAP_HEIGHT + 'px');
+  height: 50px; /* keep in sync with MINIMAP_HEIGHT */
   background: #f5f5f5;
   border: 1px solid #ddd;
   border-radius: 3px;

@@ -10,6 +10,22 @@ const STORAGE_KEY_UTC = "servicepulse-timeline-useUtc";
 const STORAGE_KEY_DELIVERY_TIME = "servicepulse-timeline-showDeliveryTime";
 const STORAGE_KEY_CONNECTIONS = "servicepulse-timeline-showConnections";
 
+function safeGetItem(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function safeSetItem(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Ignore storage errors (privacy mode, quota exceeded, etc.)
+  }
+}
+
 export const useTimelineDiagramStore = defineStore("TimelineDiagramStore", () => {
   const messageStore = useMessageStore();
   const { state, conversationData } = storeToRefs(messageStore);
@@ -20,9 +36,9 @@ export const useTimelineDiagramStore = defineStore("TimelineDiagramStore", () =>
   const minTime = ref(0);
   const maxTime = ref(0);
   const highlightId = ref<string>();
-  const useUtc = ref(localStorage.getItem(STORAGE_KEY_UTC) === "true");
-  const showDeliveryTime = ref(localStorage.getItem(STORAGE_KEY_DELIVERY_TIME) !== "false");
-  const showConnections = ref(localStorage.getItem(STORAGE_KEY_CONNECTIONS) === "true");
+  const useUtc = ref(safeGetItem(STORAGE_KEY_UTC) === "true");
+  const showDeliveryTime = ref(safeGetItem(STORAGE_KEY_DELIVERY_TIME) !== "false");
+  const showConnections = ref(safeGetItem(STORAGE_KEY_CONNECTIONS) === "true");
 
   // Zoom state: visible window expressed as fractions [0..1] of the full time range
   const zoomStart = ref(0);
@@ -52,9 +68,9 @@ export const useTimelineDiagramStore = defineStore("TimelineDiagramStore", () =>
   // barId → rowIndex lookup for O(1) access from child components
   const rowIndexByBarId = computed(() => new Map(rows.value.map((r) => [r.barId, r.rowIndex])));
 
-  watch(useUtc, (v) => localStorage.setItem(STORAGE_KEY_UTC, String(v)));
-  watch(showDeliveryTime, (v) => localStorage.setItem(STORAGE_KEY_DELIVERY_TIME, String(v)));
-  watch(showConnections, (v) => localStorage.setItem(STORAGE_KEY_CONNECTIONS, String(v)));
+  watch(useUtc, (v) => safeSetItem(STORAGE_KEY_UTC, String(v)));
+  watch(showDeliveryTime, (v) => safeSetItem(STORAGE_KEY_DELIVERY_TIME, String(v)));
+  watch(showConnections, (v) => safeSetItem(STORAGE_KEY_CONNECTIONS, String(v)));
 
   watch(
     () => conversationData.value.data,
@@ -65,6 +81,15 @@ export const useTimelineDiagramStore = defineStore("TimelineDiagramStore", () =>
         rows.value = model.rows;
         minTime.value = model.minTime;
         maxTime.value = model.maxTime;
+      } else {
+        bars.value = [];
+        rows.value = [];
+        minTime.value = 0;
+        maxTime.value = 0;
+        zoomStart.value = 0;
+        zoomEnd.value = 1;
+        tooltipBar.value = null;
+        highlightId.value = undefined;
       }
     },
     { immediate: true }
@@ -139,7 +164,7 @@ export const useTimelineDiagramStore = defineStore("TimelineDiagramStore", () =>
     const path = isFailed ? routeLinks.messages.failedMessage.link(bar.id) : routeLinks.messages.successMessage.link(bar.messageId, bar.id);
 
     if (newTab) {
-      window.open(`#${path}`, "_blank");
+      window.open(`#${path}`, "_blank", "noopener,noreferrer");
     } else {
       router.push({ path });
     }

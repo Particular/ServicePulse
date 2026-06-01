@@ -124,7 +124,10 @@ export function createTimelineModel(messages: Message[]): TimelineModel {
   function traverse(bar: TimelineBar, depth: number, continuations: boolean[], isLast: boolean) {
     rows.push({ barId: bar.id, typeName: bar.typeName, endpointName: bar.endpointName, rowIndex: rows.length, depth, isLastChild: isLast, continuations: [...continuations] });
     const children = childrenOf.get(bar.messageId) ?? [];
-    const nextContinuations = [...continuations, !isLast];
+    // Only propagate the parent's continuation flag for non-root nodes — roots are rendered
+    // independently (no branch lines connecting siblings), so a root's isLast must not show up
+    // as a vline on its descendants' branch column.
+    const nextContinuations = depth > 0 ? [...continuations, !isLast] : continuations;
     for (let i = 0; i < children.length; i++) {
       traverse(children[i], depth + 1, nextContinuations, i === children.length - 1);
     }
@@ -150,20 +153,23 @@ export function rowToY(rowIndex: number): number {
   return AXIS_HEIGHT + rowIndex * ROW_HEIGHT + ROW_PADDING;
 }
 
+const TICK_INTERVALS = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 30000, 60000, 120000, 300000, 600000, 1800000, 3600000];
+const HOUR_MS = 3600000;
+
+function pickTickInterval(range: number, maxTicks: number): number {
+  for (const candidate of TICK_INTERVALS) {
+    if (range / candidate <= maxTicks) return candidate;
+  }
+  // Beyond the predefined intervals (range > maxTicks hours), round up to a whole-hour
+  // multiple so the tick count stays bounded.
+  return Math.ceil(range / maxTicks / HOUR_MS) * HOUR_MS;
+}
+
 export function generateTimeTicks(minTime: number, maxTime: number, maxTicks = 8): TimeTick[] {
   const range = maxTime - minTime;
   if (range <= 0) return [];
 
-  const intervals = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 30000, 60000, 120000, 300000, 600000, 1800000, 3600000];
-
-  let interval = intervals[intervals.length - 1];
-  for (const candidate of intervals) {
-    if (range / candidate <= maxTicks) {
-      interval = candidate;
-      break;
-    }
-  }
-
+  const interval = pickTickInterval(range, maxTicks);
   const ticks: TimeTick[] = [];
   const firstTick = Math.ceil(minTime / interval) * interval;
 
@@ -181,16 +187,7 @@ export function generateWallClockTicks(minTime: number, maxTime: number, useUtc:
   const range = maxTime - minTime;
   if (range <= 0) return [];
 
-  const intervals = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 30000, 60000, 120000, 300000, 600000, 1800000, 3600000];
-
-  let interval = intervals[intervals.length - 1];
-  for (const candidate of intervals) {
-    if (range / candidate <= maxTicks) {
-      interval = candidate;
-      break;
-    }
-  }
-
+  const interval = pickTickInterval(range, maxTicks);
   const ticks: TimeTick[] = [];
   const firstTick = Math.ceil(minTime / interval) * interval;
 
