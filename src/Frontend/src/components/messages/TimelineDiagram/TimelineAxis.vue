@@ -18,11 +18,7 @@ const { visibleMinTime, visibleMaxTime, rows, useUtc, labelWidth } = storeToRefs
 
 const isBottom = computed(() => props.position === "bottom");
 
-const ticks = computed(() =>
-  isBottom.value
-    ? generateWallClockTicks(visibleMinTime.value, visibleMaxTime.value, useUtc.value)
-    : generateTimeTicks(visibleMinTime.value, visibleMaxTime.value)
-);
+const ticks = computed(() => (isBottom.value ? generateWallClockTicks(visibleMinTime.value, visibleMaxTime.value, useUtc.value) : generateTimeTicks(visibleMinTime.value, visibleMaxTime.value)));
 
 const axisY = computed(() => (isBottom.value ? props.bottomY! : AXIS_HEIGHT));
 const totalHeight = computed(() => AXIS_HEIGHT + rows.value.length * ROW_HEIGHT);

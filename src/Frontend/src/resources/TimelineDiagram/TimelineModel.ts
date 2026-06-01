@@ -1,4 +1,4 @@
-import Message, { MessageStatus, MessageIntent } from "@/resources/Message";
+import { type default as Message, MessageStatus, MessageIntent } from "@/resources/Message";
 import { NServiceBusHeaders } from "@/resources/Header";
 import { formatTypeName, dotNetTimespanToMilliseconds } from "@/composables/formatUtils";
 import dayjs from "@/utils/dayjs";
