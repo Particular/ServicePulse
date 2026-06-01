@@ -60,7 +60,7 @@ export const useTimelineDiagramStore = defineStore("TimelineDiagramStore", () =>
     () => conversationData.value.data,
     (data) => {
       if (data.length) {
-        const model = createTimelineModel(data, state.value.data.id);
+        const model = createTimelineModel(data);
         bars.value = model.bars;
         rows.value = model.rows;
         minTime.value = model.minTime;

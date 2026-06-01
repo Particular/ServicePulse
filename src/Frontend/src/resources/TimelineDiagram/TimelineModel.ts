@@ -22,7 +22,6 @@ export interface TimelineBar {
   /** Critical time: full lifecycle (sentMs → processedAtMs) */
   criticalMs: number;
   isFailed: boolean;
-  isSelected: boolean;
   intent: MessageIntent;
   /** message_id of the message whose handler sent this one */
   relatedToMessageId?: string;
@@ -64,7 +63,7 @@ export const MIN_BAR_WIDTH = 4;
 export const CHART_PADDING = 20;
 export const DELIVERY_LINE_HEIGHT = 2;
 
-export function createTimelineModel(messages: Message[], selectedId?: string): TimelineModel {
+export function createTimelineModel(messages: Message[]): TimelineModel {
   const bars: TimelineBar[] = [];
 
   for (const message of messages) {
@@ -94,7 +93,6 @@ export function createTimelineModel(messages: Message[], selectedId?: string): T
       processingMs,
       criticalMs,
       isFailed,
-      isSelected: message.id === selectedId,
       intent: message.message_intent,
       relatedToMessageId,
     });

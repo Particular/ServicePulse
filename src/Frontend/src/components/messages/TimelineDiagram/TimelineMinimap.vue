@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onUnmounted, ref } from "vue";
 import { useTimelineDiagramStore } from "@/stores/TimelineDiagramStore";
 import { storeToRefs } from "pinia";
 import type { TimelineBar } from "@/resources/TimelineDiagram/TimelineModel";
@@ -8,7 +8,7 @@ const MINIMAP_HEIGHT = 50;
 const BAR_H = 3;
 
 const store = useTimelineDiagramStore();
-const { bars, rows, rowIndexByBarId, minTime, maxTime, zoomStart, zoomEnd } = storeToRefs(store);
+const { bars, rows, rowIndexByBarId, minTime, maxTime, selectedId, zoomStart, zoomEnd } = storeToRefs(store);
 
 const minimapRef = ref<HTMLDivElement>();
 const range = computed(() => maxTime.value - minTime.value);
@@ -25,7 +25,7 @@ function barStyle(bar: TimelineBar): Record<string, string> {
     width: `${width}%`,
     top: `${top}px`,
     height: `${BAR_H}px`,
-    backgroundColor: bar.isFailed ? "#e74c3c" : bar.isSelected ? "#0b6eef" : "#999",
+    backgroundColor: bar.isFailed ? "#e74c3c" : selectedId.value === bar.id ? "#0b6eef" : "#999",
   };
 }
 
@@ -85,6 +85,12 @@ function onMouseUp() {
   document.removeEventListener("mousemove", onMouseMove);
   document.removeEventListener("mouseup", onMouseUp);
 }
+
+onUnmounted(() => {
+  document.removeEventListener("mousemove", onMouseMove);
+  document.removeEventListener("mouseup", onMouseUp);
+  dragging = false;
+});
 </script>
 
 <template>

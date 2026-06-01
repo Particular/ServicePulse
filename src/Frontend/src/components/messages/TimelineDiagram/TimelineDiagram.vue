@@ -92,12 +92,12 @@ function onWheel(event: WheelEvent) {
     <!-- Toolbar -->
     <div class="toolbar">
       <div class="toolbar-controls">
-        <button class="toolbar-btn" :class="{ active: useUtc }" :title="useUtc ? 'Showing UTC time' : 'Showing local time'" @click="store.toggleUtc()">
+        <button type="button" class="btn btn-secondary btn-sm" :class="{ active: useUtc }" :title="useUtc ? 'Showing UTC time' : 'Showing local time'" @click="store.toggleUtc()">
           {{ useUtc ? "UTC" : "Local" }}
         </button>
-        <button class="toolbar-btn" :class="{ active: showDeliveryTime }" title="Show delivery time (queue wait + network transit)" @click="store.toggleDeliveryTime()">Delivery time</button>
-        <button class="toolbar-btn" :class="{ active: showConnections }" title="Show connections between related messages" @click="store.toggleConnections()">Connections</button>
-        <button v-if="isZoomed" class="toolbar-btn" @click="store.resetZoom()">Reset zoom</button>
+        <button type="button" class="btn btn-secondary btn-sm" :class="{ active: showDeliveryTime }" title="Show delivery time (queue wait + network transit)" @click="store.toggleDeliveryTime()">Delivery time</button>
+        <button type="button" class="btn btn-secondary btn-sm" :class="{ active: showConnections }" title="Show connections between related messages" @click="store.toggleConnections()">Connections</button>
+        <button v-if="isZoomed" type="button" class="btn btn-secondary btn-sm" @click="store.resetZoom()">Reset zoom</button>
       </div>
       <span class="zoom-hint">Scroll to zoom</span>
     </div>
@@ -211,23 +211,6 @@ function onWheel(event: WheelEvent) {
   display: flex;
   gap: 6px;
   align-items: center;
-}
-.toolbar-btn {
-  padding: 3px 10px;
-  border: 1px solid #aaa;
-  border-radius: 3px;
-  background: white;
-  font-size: 12px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.toolbar-btn:hover {
-  background: #e8e8e8;
-}
-.toolbar-btn.active {
-  background: #0b6eef;
-  color: white;
-  border-color: #0b6eef;
 }
 .zoom-hint {
   font-size: 11px;

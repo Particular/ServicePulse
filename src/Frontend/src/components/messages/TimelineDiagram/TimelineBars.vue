@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 
 const store = useTimelineDiagramStore();
-const { bars, rowIndexByBarId, visibleMinTime, visibleMaxTime, highlightId, showDeliveryTime, labelWidth } = storeToRefs(store);
+const { bars, rowIndexByBarId, visibleMinTime, visibleMaxTime, highlightId, selectedId, showDeliveryTime, labelWidth } = storeToRefs(store);
 
 const barPositions = computed(() =>
   bars.value.map((bar) => {
@@ -31,19 +31,19 @@ const barPositions = computed(() =>
 
 function barFill(bar: TimelineBar) {
   if (bar.isFailed) return "var(--error)";
-  if (bar.isSelected) return "var(--highlight)";
+  if (selectedId.value === bar.id) return "var(--highlight)";
   if (highlightId.value === bar.id) return "var(--highlight-background)";
   return "var(--gray80)";
 }
 
 function barTextFill(bar: TimelineBar) {
-  if (bar.isFailed || bar.isSelected) return "white";
+  if (bar.isFailed || selectedId.value === bar.id) return "white";
   return "var(--gray20)";
 }
 
 function deliveryLineFill(bar: TimelineBar) {
   if (bar.isFailed) return "var(--error)";
-  if (bar.isSelected) return "var(--highlight)";
+  if (selectedId.value === bar.id) return "var(--highlight)";
   if (highlightId.value === bar.id) return "var(--highlight-background)";
   return "var(--gray95)";
 }
