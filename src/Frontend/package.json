@@ -62,7 +62,6 @@
     "@types/bootstrap": "5.2.10",
     "@types/jsdom": "28.0.3",
     "@types/node": "25.9.1",
-    "@vitejs/devtools": "0.1.24",
     "@vitejs/plugin-vue": "6.0.7",
     "@vitest/coverage-v8": "4.1.7",
     "@vue/tsconfig": "0.9.1",
@@ -79,6 +78,7 @@
     "typescript-eslint": "8.60.0",
     "vite": "8.0.14",
     "vite-plugin-checker": "0.14.1",
+    "vite-plugin-vue-devtools": "8.1.2",
     "vitest": "4.1.7",
     "vue-tsc": "3.3.2"
   },

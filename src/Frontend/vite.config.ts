@@ -1,9 +1,9 @@
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import { DevTools } from "@vitejs/devtools";
 import path from "path";
 import checker from "vite-plugin-checker";
+import vueDevTools from "vite-plugin-vue-devtools";
 
 function createCSPOverrides(configuredDestinations: string[]) {
   const destinations = configuredDestinations.join(" ");
@@ -34,7 +34,7 @@ export default defineConfig({
     devSourcemap: true,
   },
   plugins: [
-    DevTools(),
+    vueDevTools(),
     vue(),
     checker({ overlay: { initialIsOpen: "error" }, vueTsc: { tsconfigPath: "tsconfig.app.json" } }),
     {
