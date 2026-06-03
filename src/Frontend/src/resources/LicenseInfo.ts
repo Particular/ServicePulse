@@ -1,5 +1,10 @@
 import type Configuration from "./Configuration";
 
+export interface LicensedProduct {
+  size: string;
+  quantity: number;
+}
+
 export default interface LicenseInfo {
   registered_to: string;
   edition: string;
@@ -11,6 +16,7 @@ export default interface LicenseInfo {
   license_status: LicenseStatus;
   license_extension_url?: string;
   status: string;
+  products: LicensedProduct[];
 }
 
 export function typeText(license: LicenseInfo, configuration: Configuration | null) {
