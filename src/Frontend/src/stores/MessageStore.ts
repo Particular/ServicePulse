@@ -152,7 +152,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     state.not_found = headers.value.not_found = false;
 
     try {
-      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<Message[]>(`messages/search/${messageId}`);
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<Message[]>(`messages/search/${encodeURIComponent(messageId)}`);
 
       const message = data.find((value) => value.id === id);
 
