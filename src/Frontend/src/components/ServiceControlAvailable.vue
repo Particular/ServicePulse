@@ -10,6 +10,16 @@ const connectionState = connectionStore.connectionState;
 
 <template>
   <div class="sp-loader" v-if="connectionState.connecting && !connectionState.unableToConnect" />
+  <div v-else-if="connectionState.forbidden" class="text-center unsupported">
+    <h1>Access Denied</h1>
+    <p>
+      You do not have permission to access the ServiceControl instance at
+      <span id="serviceControlUrl">{{ serviceControlClient.url }}</span>. Please ensure your account has the required permissions.
+    </p>
+    <div class="action-toolbar">
+      <RouterLink :to="routeLinks.configuration.connections.link"><span class="btn btn-default btn-primary whiteText">View Connection Details</span></RouterLink>
+    </div>
+  </div>
   <ConditionalRender v-else :supported="!connectionState.unableToConnect">
     <template #unsupported>
       <div class="text-center unsupported">

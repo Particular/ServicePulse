@@ -1,5 +1,6 @@
 import { authFetch } from "@/composables/useAuthenticatedFetch";
 import type { Endpoint, EndpointDetails } from "@/resources/MonitoringEndpoint";
+import { HttpError } from "@/utils/HttpError";
 
 export interface MetricsConnectionDetails {
   Enabled: boolean;
@@ -96,6 +97,10 @@ class MonitoringClient {
     }
 
     const response = await authFetch(`${this.url}${suffix}`);
+    if (!response.ok) {
+      throw new HttpError(response.status, response.statusText);
+    }
+
     const data = await response.json();
 
     return [response, data];
