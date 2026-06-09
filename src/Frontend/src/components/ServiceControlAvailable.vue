@@ -12,6 +12,7 @@ const connectionState = connectionStore.connectionState;
   <div class="sp-loader" v-if="connectionState.connecting && !connectionState.unableToConnect" />
   <div v-else-if="connectionState.forbidden" class="text-center unsupported">
     <h1>Access Denied</h1>
+    <!-- prettier-ignore -->
     <p>
       You do not have permission to access the ServiceControl instance at
       <span id="serviceControlUrl">{{ serviceControlClient.url }}</span>. Please ensure your account has the required permissions.
@@ -24,10 +25,10 @@ const connectionState = connectionStore.connectionState;
     <template #unsupported>
       <div class="text-center unsupported">
         <h1>Cannot connect to ServiceControl</h1>
+        <!-- prettier-ignore -->
         <p>
           ServicePulse is unable to connect to the ServiceControl instance at
-          <span id="serviceControlUrl">{{ serviceControlClient.url }}</span
-          >. Please ensure that ServiceControl is running and accessible from your machine.
+          <span id="serviceControlUrl">{{ serviceControlClient.url }}</span>. Please ensure that ServiceControl is running and accessible from your machine.
         </p>
         <div class="action-toolbar">
           <RouterLink :to="routeLinks.configuration.connections.link"><span class="btn btn-default btn-primary whiteText">View Connection Details</span></RouterLink>
