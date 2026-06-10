@@ -34,6 +34,7 @@ const messagesLinks = (root: string) => {
   return {
     root,
     failedMessage: { link: (id: string) => `${root}/${id}`, template: "/messages/:id" },
+    // Native message IDs are transport-defined. For example, MSMQ IDs can contain '/'. So, the messageId needs to be URL-encoded to ensure the URL is valid.
     successMessage: { link: (messageId: string, id: string) => `${root}/${encodeURIComponent(messageId)}/${id}`, template: "/messages/:messageId/:id" },
   };
 };
