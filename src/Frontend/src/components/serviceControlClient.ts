@@ -1,4 +1,5 @@
 import { authFetch } from "@/composables/useAuthenticatedFetch";
+import { HttpError } from "@/utils/HttpError";
 
 export interface ServiceControlInstanceConnection {
   settings: { [key: string]: object };
@@ -30,7 +31,7 @@ class ServiceControlClient {
 
   public async fetchTypedFromServiceControl<T>(suffix: string, signal?: AbortSignal): Promise<[Response, T]> {
     const response = await authFetch(`${this.url}${suffix}`, { signal });
-    if (!response.ok) throw new Error(response.statusText ?? "No response");
+    if (!response.ok) throw new HttpError(response.status, response.statusText ?? "No response");
     const data = await response.json();
 
     return [response, data];
