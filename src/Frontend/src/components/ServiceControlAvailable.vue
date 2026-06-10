@@ -12,6 +12,7 @@ const connectionState = connectionStore.connectionState;
   <div class="sp-loader" v-if="connectionState.connecting && !connectionState.unableToConnect" />
   <div v-else-if="connectionState.forbidden" class="text-center unsupported">
     <h1>Access Denied</h1>
+    <!-- This is here so that the new line does not need to begin with `>.` because that's ugly and we should feel ashamed of committing that -->
     <!-- prettier-ignore -->
     <p>
       You do not have permission to access the ServiceControl instance at
@@ -25,6 +26,7 @@ const connectionState = connectionStore.connectionState;
     <template #unsupported>
       <div class="text-center unsupported">
         <h1>Cannot connect to ServiceControl</h1>
+        <!-- This is here so that the new line does not need to begin with `>.` because that's ugly and we should feel ashamed of committing that -->
         <!-- prettier-ignore -->
         <p>
           ServicePulse is unable to connect to the ServiceControl instance at

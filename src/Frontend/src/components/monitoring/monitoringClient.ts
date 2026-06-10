@@ -37,9 +37,13 @@ class MonitoringClient {
   }
 
   public async getMonitoringVersion() {
-    const [response] = await this.fetchTypedFromMonitoring("");
-    if (response?.ok) {
-      return response.headers.get("X-Particular-Version") ?? "";
+    try {
+      const [response] = await this.fetchTypedFromMonitoring("");
+      if (response?.ok) {
+        return response.headers.get("X-Particular-Version") ?? "";
+      }
+    } catch {
+      // swallow the exception, the default return captures the intent
     }
     return "";
   }
@@ -50,8 +54,12 @@ class MonitoringClient {
   }
 
   public async getMonitoredEndpoints(historyPeriod: number) {
-    const [, data] = await this.fetchTypedFromMonitoring<Endpoint[]>(`monitored-endpoints?history=${historyPeriod}`);
-    return data ?? [];
+    try {
+      const [, data] = await this.fetchTypedFromMonitoring<Endpoint[]>(`monitored-endpoints?history=${historyPeriod}`);
+      return data ?? [];
+    } catch {
+      return [];
+    }
   }
 
   public async deletedMonitoredEndpoint(endpointName: string, instanceId: string) {
