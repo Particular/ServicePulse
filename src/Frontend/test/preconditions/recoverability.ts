@@ -173,11 +173,11 @@ export const hasFailedMessage =
       });
     });
 
-    driver.mockEndpoint(`${serviceControlUrl}messages/${encodeURIComponent(withMessageId)}/body`, {
+    driver.mockEndpoint(`${serviceControlUrl}messages/${withMessageId}/body`, {
       body: withBody,
     });
 
-    driver.mockEndpoint(`${serviceControlUrl}messages/search/${encodeURIComponent(withMessageId)}`, {
+    driver.mockEndpoint(`${serviceControlUrl}messages/search/${withMessageId}`, {
       body: [
         <Message>{
           id: withGroupId,
