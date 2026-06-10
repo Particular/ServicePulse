@@ -3,4 +3,5 @@ export interface ConnectionState {
   connecting: boolean;
   connectedRecently: boolean;
   unableToConnect: boolean | null;
+  forbidden: boolean;
 }
