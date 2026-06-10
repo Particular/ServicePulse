@@ -152,6 +152,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     state.not_found = headers.value.not_found = false;
 
     try {
+      // Native message IDs are transport-defined. For example, MSMQ IDs can contain '/'. So, the messageId needs to be URL-encoded to ensure the URL is valid.
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<Message[]>(`messages/search/${encodeURIComponent(messageId)}`);
 
       const message = data.find((value) => value.id === id);
