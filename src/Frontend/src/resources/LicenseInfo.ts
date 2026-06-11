@@ -1,7 +1,7 @@
 import type Configuration from "./Configuration";
 
 export interface LicensedProduct {
-  size: string;
+  name: string;
   quantity: number;
 }
 

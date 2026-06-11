@@ -122,9 +122,9 @@ const { licenseStatus, license } = licenseStore;
             <DataView :data="license.products">
               <template #data="{ pageData }">
                 <div role="rowgroup" aria-label="endpoints">
-                  <div role="row" class="row grid-row" v-for="endpoint in pageData" :key="endpoint.size">
+                  <div role="row" class="row grid-row" v-for="endpoint in pageData" :key="endpoint.name">
                     <span class="col-6">
-                      {{ endpoint.size }}
+                      {{ endpoint.name }}
                     </span>
                     <span class="col-6">
                       {{ endpoint.quantity }}
