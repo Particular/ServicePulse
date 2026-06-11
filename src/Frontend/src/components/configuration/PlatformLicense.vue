@@ -9,6 +9,8 @@ import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
 import { useLicenseStore } from "@/stores/LicenseStore";
 import LoadingSpinner from "../LoadingSpinner.vue";
+import ColumnHeader from "../ColumnHeader.vue";
+import DataView from "../DataView.vue";
 
 const configurationStore = useConfigurationStore();
 const { configuration } = storeToRefs(configurationStore);
@@ -23,6 +25,7 @@ const { licenseStatus, license } = licenseStore;
       <section>
         <LoadingSpinner v-if="loading" />
         <template v-else>
+          <h3 class="mt-2">License Details</h3>
           <div class="box">
             <div class="row">
               <div class="license-info">
@@ -100,13 +103,36 @@ const { licenseStatus, license } = licenseStore;
                     <a href="https://docs.particular.net/servicecontrol/license" target="_blank">Install or update a ServiceControl license</a>
                   </li>
                 </ul>
-
                 <div class="need-help">
                   Need help?
                   <a href="https://particular.net/contactus">Contact us <FAIcon :icon="faExternalLink" /></a>
                 </div>
               </div>
             </div>
+          </div>
+        </template>
+
+        <template v-if="license.products?.length">
+          <h3 class="mt-4">Licensed Endpoints</h3>
+          <div class="licensed-endpoints col-4">
+            <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
+              <ColumnHeader name="Size" label="Size (Average Messages/Month)" class="col-6" />
+              <ColumnHeader name="Quantity" label="Quantity" class="col-6" />
+            </div>
+            <DataView :data="license.products">
+              <template #data="{ pageData }">
+                <div role="rowgroup" aria-label="endpoints">
+                  <div role="row" class="row grid-row" v-for="endpoint in pageData" :key="endpoint.name">
+                    <span class="col-6">
+                      {{ endpoint.name }}
+                    </span>
+                    <span class="col-6">
+                      {{ endpoint.quantity }}
+                    </span>
+                  </div>
+                </div>
+              </template>
+            </DataView>
           </div>
         </template>
       </section>
@@ -117,7 +143,6 @@ const { licenseStatus, license } = licenseStore;
 <style scoped>
 .license-info {
   font-size: 16px;
-  padding: 2em;
   line-height: 3em;
 }
 
@@ -129,5 +154,21 @@ const { licenseStatus, license } = licenseStore;
   margin-top: 38px;
   padding-top: 20px;
   border-top: 2px solid #f2f2f2;
+}
+
+.licensed-endpoints {
+  padding: 20px;
+}
+
+.licensed-endpoints .grid-row {
+  border-top: 1px solid #eee;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #eee;
+  border-left: 1px solid #fff;
+  background-color: #fff;
+}
+
+.licensed-endpoints span {
+  padding: 10px;
 }
 </style>
