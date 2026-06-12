@@ -255,7 +255,7 @@ describe("DetectedListView tests", () => {
       //let orderedNames = unsortedNames.sort((a, b) => a.localeCompare(b));
       let idx = 0;
       for (const row of within(table).getAllByRole("row").slice(1)) {
-        expect(within(row).getByRole("cell", { name: "name" }).textContent).toBe(lexicallySortedNames[idx++]);
+        expect(within(row).getByRole("cell", { name: "name" }).textContent.trim()).toBe(lexicallySortedNames[idx++]);
       }
 
       await user.click(screen.getByRole("button", { name: /Sort by/i }));
@@ -264,7 +264,7 @@ describe("DetectedListView tests", () => {
       const reverseLexicallySortedNames = lexicallySortedNames.reverse();
       idx = 0;
       for (const row of within(table).getAllByRole("row").slice(1)) {
-        expect(within(row).getByRole("cell", { name: "name" }).textContent).toBe(reverseLexicallySortedNames[idx++]);
+        expect(within(row).getByRole("cell", { name: "name" }).textContent.trim()).toBe(reverseLexicallySortedNames[idx++]);
       }
     });
   });
