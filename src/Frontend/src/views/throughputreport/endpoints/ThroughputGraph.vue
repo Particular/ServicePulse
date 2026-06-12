@@ -6,7 +6,7 @@ const props = defineProps<{ data: MonthlyThroughput[] }>();
 
 const date = new Date();
 date.setMonth(date.getMonth() - 13);
-const reportPeriod = Array.from({ length: 13 }).map((_) => {
+const reportPeriod = Array.from({ length: 13 }).map(() => {
   date.setMonth(date.getMonth() + 1);
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}`;
 });
@@ -44,15 +44,15 @@ const dots = computed(() =>
   <div class="graph" :style="{ '--pips': reportPeriod.length * 2 }">
     <div class="graph-content">
       <svg class="graph-content" :viewBox="`-0.2 -0.03 ${reportPeriod.length * 2 + 0.1} 1.07`" preserveAspectRatio="none">
-        <line v-for="{ x1, y1, x2, y2, isPartMonth } in lines" :x1="x1 * 2" :y1="y1" :x2="x2 * 2" :y2="y2" stroke="var(--bs-primary)" stroke-width="1" :stroke-dasharray="isPartMonth ? 4 : 0" vector-effect="non-scaling-stroke" />
-        <line v-for="(_, pip) in reportPeriod" :x1="pip * 2" y1="1.07" :x2="pip * 2" y2="1" stroke="var(--bs-body-color)" stroke-width="1" vector-effect="non-scaling-stroke" />
-        <g v-for="{ pip, value } in dots">
+        <line v-for="({ x1, y1, x2, y2, isPartMonth }, i) in lines" :key="i" :x1="x1 * 2" :y1="y1" :x2="x2 * 2" :y2="y2" stroke="var(--bs-primary)" stroke-width="1" :stroke-dasharray="isPartMonth ? 4 : 0" vector-effect="non-scaling-stroke" />
+        <line v-for="(_, pip) in reportPeriod" :key="pip" :x1="pip * 2" y1="1.07" :x2="pip * 2" y2="1" stroke="var(--bs-body-color)" stroke-width="1" vector-effect="non-scaling-stroke" />
+        <g v-for="{ pip, value } in dots" :key="pip">
           <title>{{ value.toLocaleString() }}</title>
           <path r="1" :cx="pip * 2" :cy="1 - value / maxValue" :d="`M ${pip * 2} ${1 - value / maxValue} l 0.0001 0`" vector-effect="non-scaling-stroke" stroke-width="5" stroke-linecap="round" :stroke="value === 0 ? 'red' : 'var(--bs-primary)'" />
         </g>
       </svg>
       <div class="y-axis">
-        <span v-for="pip in reportPeriod">{{ pip }}</span>
+        <span v-for="pip in reportPeriod" :key="pip">{{ pip }}</span>
       </div>
     </div>
     <div class="scale">

@@ -5,7 +5,7 @@ import type { MonthlyThroughput } from "@/resources/EndpointThroughputSummary.ts
 import FAIcon from "@/components/FAIcon.vue";
 import { faLineChart } from "@fortawesome/free-solid-svg-icons";
 
-const props = defineProps<{ data: MonthlyThroughput[] }>();
+defineProps<{ data: MonthlyThroughput[] }>();
 
 const showContent = ref(false);
 </script>
