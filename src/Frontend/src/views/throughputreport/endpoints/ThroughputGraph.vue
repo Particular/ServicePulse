@@ -13,7 +13,7 @@ const reportPeriod = Array.from({ length: 13 }).map(() => {
 
 const maxValue = computed(() => Math.max(...[...props.data.map(({ throughput }) => throughput), 1]));
 const maxValueText = computed(() => {
-  if (maxValue.value >= 1_000_000) return `${(Math.round((maxValue.value * 10) / 1_000_000) / 10 + 0.1).toFixed(1)}m`;
+  if (maxValue.value >= 1_000_000) return `${(Math.round((maxValue.value * 10) / 1_000_000) / 10 + 0.1).toFixed(1)}M`;
   if (maxValue.value >= 10_000) return `${(Math.round((maxValue.value * 100) / 1_000) / 100 + 0.01).toFixed(2)}k`;
   return maxValue.value;
 });
