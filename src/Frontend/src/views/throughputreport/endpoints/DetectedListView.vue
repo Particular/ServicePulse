@@ -15,6 +15,7 @@ import { useHiddenFeature } from "./useHiddenFeature";
 import FAIcon from "@/components/FAIcon.vue";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { useLicenseStore } from "@/stores/LicenseStore";
+import InlineThroughputGraph from "./InlineThroughputGraph.vue";
 
 enum NameFilterType {
   beginsWith = "Begins with",
@@ -246,7 +247,10 @@ async function save() {
       </tr>
       <tr v-for="row in filteredData" :key="row.name">
         <td class="col" aria-label="name">
-          {{ row.name }}
+          <div class="endpoint-name">
+            <InlineThroughputGraph v-if="row.monthly_throughput" :data="row.monthly_throughput" />
+            {{ row.name }}
+          </div>
         </td>
         <td v-if="showMonthly" class="col text-end formatThroughputColumn" style="width: 250px" aria-label="maximum usage throughput">{{ row.max_monthly_throughput ? row.max_monthly_throughput.toLocaleString() : "0" }}</td>
         <td v-else class="col text-end formatThroughputColumn" style="width: 250px" aria-label="maximum usage throughput">{{ row.max_daily_throughput.toLocaleString() }}</td>
@@ -286,5 +290,10 @@ async function save() {
   border: #8c8c8c 1px solid;
   border-radius: 3px;
   padding: 5px;
+}
+.endpoint-name {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
 }
 </style>
