@@ -17,6 +17,7 @@ export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersion
     is_compatible_with_sc: true,
     sp_version: window.defaultConfig && window.defaultConfig.version ? window.defaultConfig.version : "1.2.0",
     supportsArchiveGroups: false,
+    supportsUserPermissions: false,
     endpoints_error_url: "",
     known_endpoints_url: "",
     endpoints_message_search_url: "",
@@ -56,6 +57,7 @@ export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersion
     const [products, scVer] = await Promise.all([productsResult, scResult, mResult]);
     if (scVer) {
       environment.supportsArchiveGroups = !!scVer.archived_groups_url;
+      environment.supportsUserPermissions = !!scVer.mypermissions_all && !!scVer.mypermissions_summary;
       environment.is_compatible_with_sc = isSupported(environment.sc_version, environment.minimum_supported_sc_version);
       environment.endpoints_error_url = scVer && scVer.endpoints_error_url;
       environment.known_endpoints_url = scVer && scVer.known_endpoints_url;

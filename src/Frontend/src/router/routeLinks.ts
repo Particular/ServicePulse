@@ -51,6 +51,7 @@ const configurationLinks = (root: string) => {
     retryRedirects: createLink("retry-redirects"),
     connections: createLink("connections"),
     endpointConnection: createLink("endpoint-connection"),
+    userPermissions: createLink("user-permissions"),
   };
 };
 

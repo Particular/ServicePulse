@@ -11,6 +11,8 @@ import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoR
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useRedirectsStore } from "@/stores/RedirectsStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
+import { useAuthStore } from "@/stores/AuthStore";
+import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 
 const { store: throughputStore } = useThroughputStoreAutoRefresh();
 const { hasErrors } = storeToRefs(throughputStore);
@@ -19,6 +21,9 @@ const connectionState = connectionStore.connectionState;
 const redirectsStore = useRedirectsStore();
 const licenseStore = useLicenseStore();
 const { licenseStatus } = licenseStore;
+const authStore = useAuthStore();
+const environmentStore = useEnvironmentAndVersionsStore();
+const { environment } = storeToRefs(environmentStore);
 
 onMounted(async () => {
   if (notConnected.value) {
@@ -96,6 +101,16 @@ function preventIfDisabled(e: Event) {
               </RouterLink>
             </h5>
           </template>
+          <h5
+            v-if="environment.supportsUserPermissions && authStore.authEnabled"
+            :class="{ active: isRouteSelected(routeLinks.configuration.userPermissions.link), disabled: notConnected }"
+            @click.capture="preventIfDisabled"
+            class="nav-item"
+            role="tab"
+            aria-label="user-permissions"
+          >
+            <RouterLink :to="routeLinks.configuration.userPermissions.link">User Permissions</RouterLink>
+          </h5>
         </div>
       </div>
     </div>
