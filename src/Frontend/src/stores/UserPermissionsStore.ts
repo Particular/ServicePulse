@@ -2,6 +2,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+import logger from "@/logger";
 
 interface PermissionsSummary {
   failed_messages_read: boolean;
@@ -44,7 +45,8 @@ export const useUserPermissionsStore = defineStore("UserPermissionsStore", () =>
       ]);
       summary.value = summaryResult[1];
       descriptor.value = descriptorResult[1];
-    } catch {
+    } catch (err) {
+      logger.error("Failed to load user permissions", err);
       error.value = "Failed to load user permissions";
     } finally {
       loading.value = false;
