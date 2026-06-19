@@ -23,7 +23,16 @@ export const useUserPermissionsStore = defineStore("UserPermissionsStore", () =>
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  async function refresh() {
+  // Multiple callers can request a refresh in the same tick (the App-level watch
+  // and the User Permissions view's onMounted). Share a single in-flight request
+  // so they don't trigger duplicate fetches.
+  let inFlight: Promise<void> | null = null;
+
+  function refresh() {
+    return (inFlight ??= load().finally(() => (inFlight = null)));
+  }
+
+  async function load() {
     loading.value = true;
     error.value = null;
     try {
