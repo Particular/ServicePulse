@@ -29,8 +29,13 @@ class ServiceControlClient {
     }
   }
 
-  public async fetchTypedFromServiceControl<T>(suffix: string, signal?: AbortSignal): Promise<[Response, T]> {
-    const response = await authFetch(`${this.url}${suffix}`, { signal });
+  public fetchTypedFromServiceControl<T>(suffix: string, signal?: AbortSignal): Promise<[Response, T]> {
+    return this.fetchTypedFromUrl<T>(`${this.url}${suffix}`, signal);
+  }
+
+  // Fetch from an absolute URL, e.g. one discovered from the ServiceControl root document.
+  public async fetchTypedFromUrl<T>(url: string, signal?: AbortSignal): Promise<[Response, T]> {
+    const response = await authFetch(url, { signal });
     if (!response.ok) throw new HttpError(response.status, response.statusText ?? "No response");
     const data = await response.json();
 

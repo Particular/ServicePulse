@@ -1,6 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
+import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 
 interface PermissionsSummary {
   failed_messages_read: boolean;
@@ -35,10 +36,11 @@ export const useUserPermissionsStore = defineStore("UserPermissionsStore", () =>
   async function load() {
     loading.value = true;
     error.value = null;
+    const { environment } = useEnvironmentAndVersionsStore();
     try {
       const [summaryResult, descriptorResult] = await Promise.all([
-        serviceControlClient.fetchTypedFromServiceControl<PermissionsSummary>("my/permissions"),
-        serviceControlClient.fetchTypedFromServiceControl<PermissionsDescriptor>("my/permissions/all"),
+        serviceControlClient.fetchTypedFromUrl<PermissionsSummary>(environment.mypermissions_summary_url),
+        serviceControlClient.fetchTypedFromUrl<PermissionsDescriptor>(environment.mypermissions_all_url),
       ]);
       summary.value = summaryResult[1];
       descriptor.value = descriptorResult[1];
