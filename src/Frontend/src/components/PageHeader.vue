@@ -15,9 +15,8 @@ import AuditMenuItem from "./audit/AuditMenuItem.vue";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import UserProfileMenuItem from "@/components/UserProfileMenuItem.vue";
 import { useAuthStore } from "@/stores/AuthStore";
-import { useUserPermissionsStore } from "@/stores/UserPermissionsStore";
+import { useUserPermissionsStore, type PermissionsSummary } from "@/stores/UserPermissionsStore";
 import { storeToRefs } from "pinia";
-import type { PermissionsSummary } from "@/stores/UserPermissionsStore";
 
 const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
 

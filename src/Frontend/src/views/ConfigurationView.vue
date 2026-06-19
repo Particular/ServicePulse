@@ -78,22 +78,68 @@ function preventIfDisabled(e: Event) {
             <exclamation-mark :type="WarningLevel.Danger" v-if="hasErrors" />
           </h5>
           <template v-if="!licenseStatus.isExpired">
-            <h5 v-if="hasAdminRead" :class="{ active: isRouteSelected(routeLinks.configuration.massTransitConnector.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="mass-transit-connector">
+            <h5
+              v-if="hasAdminRead"
+              :class="{
+                active: isRouteSelected(routeLinks.configuration.massTransitConnector.link),
+                disabled: notConnected,
+              }"
+              @click.capture="preventIfDisabled"
+              class="nav-item"
+              role="tab"
+              aria-label="mass-transit-connector"
+            >
               <RouterLink :to="routeLinks.configuration.massTransitConnector.link">MassTransit Connector</RouterLink>
             </h5>
-            <h5 v-if="hasAdminRead" :class="{ active: isRouteSelected(routeLinks.configuration.healthCheckNotifications.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="health-check-notifications">
+            <h5
+              v-if="hasAdminRead"
+              :class="{
+                active: isRouteSelected(routeLinks.configuration.healthCheckNotifications.link),
+                disabled: notConnected,
+              }"
+              @click.capture="preventIfDisabled"
+              class="nav-item"
+              role="tab"
+              aria-label="health-check-notifications"
+            >
               <RouterLink :to="routeLinks.configuration.healthCheckNotifications.link">Health Check Notifications</RouterLink>
             </h5>
-            <h5 v-if="hasAdminRead" :class="{ active: isRouteSelected(routeLinks.configuration.retryRedirects.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="retry-redirects">
+            <h5
+              v-if="hasAdminRead"
+              :class="{
+                active: isRouteSelected(routeLinks.configuration.retryRedirects.link),
+                disabled: notConnected,
+              }"
+              @click.capture="preventIfDisabled"
+              class="nav-item"
+              role="tab"
+              aria-label="retry-redirects"
+            >
               <RouterLink :to="routeLinks.configuration.retryRedirects.link">Retry Redirects ({{ redirectsStore.redirects.total }})</RouterLink>
             </h5>
-            <h5 :class="{ active: isRouteSelected(routeLinks.configuration.connections.link) }" class="nav-item" role="tab" aria-label="connections">
+            <h5
+              :class="{
+                active: isRouteSelected(routeLinks.configuration.connections.link),
+              }"
+              class="nav-item"
+              role="tab"
+              aria-label="connections"
+            >
               <RouterLink :to="routeLinks.configuration.connections.link">
                 Connections
                 <exclamation-mark v-if="connectionStore.displayConnectionsWarning" :type="WarningLevel.Danger" />
               </RouterLink>
             </h5>
-            <h5 :class="{ active: isRouteSelected(routeLinks.configuration.endpointConnection.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="endpoint-connection">
+            <h5
+              :class="{
+                active: isRouteSelected(routeLinks.configuration.endpointConnection.link),
+                disabled: notConnected,
+              }"
+              @click.capture="preventIfDisabled"
+              class="nav-item"
+              role="tab"
+              aria-label="endpoint-connection"
+            >
               <RouterLink :to="routeLinks.configuration.endpointConnection.link">Endpoint Connection</RouterLink>
             </h5>
           </template>
@@ -105,14 +151,7 @@ function preventIfDisabled(e: Event) {
               </RouterLink>
             </h5>
           </template>
-          <h5
-            v-if="authStore.authEnabled"
-            :class="{ active: isRouteSelected(routeLinks.configuration.userPermissions.link), disabled: notConnected }"
-            @click.capture="preventIfDisabled"
-            class="nav-item"
-            role="tab"
-            aria-label="user-permissions"
-          >
+          <h5 v-if="authStore.authEnabled" :class="{ active: isRouteSelected(routeLinks.configuration.userPermissions.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="user-permissions">
             <RouterLink :to="routeLinks.configuration.userPermissions.link">User Permissions</RouterLink>
           </h5>
         </div>
