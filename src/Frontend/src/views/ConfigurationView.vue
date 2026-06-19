@@ -13,6 +13,7 @@ import { useRedirectsStore } from "@/stores/RedirectsStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useUserPermissionsStore } from "@/stores/UserPermissionsStore";
+import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 
 const { store: throughputStore } = useThroughputStoreAutoRefresh();
 const { hasErrors } = storeToRefs(throughputStore);
@@ -22,6 +23,7 @@ const redirectsStore = useRedirectsStore();
 const licenseStore = useLicenseStore();
 const { licenseStatus } = licenseStore;
 const authStore = useAuthStore();
+const environmentStore = useEnvironmentAndVersionsStore();
 
 const permissionsStore = useUserPermissionsStore();
 const { summary: permSummary } = storeToRefs(permissionsStore);
@@ -151,7 +153,7 @@ function preventIfDisabled(e: Event) {
               </RouterLink>
             </h5>
           </template>
-          <h5 v-if="authStore.authEnabled" :class="{ active: isRouteSelected(routeLinks.configuration.userPermissions.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="user-permissions">
+          <h5 v-if="authStore.authEnabled && environmentStore.environment.supportsUserPermissions" :class="{ active: isRouteSelected(routeLinks.configuration.userPermissions.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="user-permissions">
             <RouterLink :to="routeLinks.configuration.userPermissions.link">User Permissions</RouterLink>
           </h5>
         </div>
