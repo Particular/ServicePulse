@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { RouterView, useRoute } from "vue-router";
 import PageFooter from "./components/PageFooter.vue";
 import PageHeader from "./components/PageHeader.vue";
@@ -8,10 +8,22 @@ import LicenseNotifications from "@/components/LicenseNotifications.vue";
 import BackendChecksNotifications from "@/components/BackendChecksNotifications.vue";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/AuthStore";
+import { useUserPermissionsStore } from "@/stores/UserPermissionsStore";
 
 const authStore = useAuthStore();
 const route = useRoute();
 const { isAuthenticated, authEnabled } = storeToRefs(authStore);
+
+const permissionsStore = useUserPermissionsStore();
+watch(
+  [authEnabled, isAuthenticated],
+  ([enabled, authenticated]) => {
+    if (enabled && authenticated) {
+      permissionsStore.refresh();
+    }
+  },
+  { immediate: true }
+);
 
 // Check if the current route allows anonymous access (e.g., logged-out page)
 const isAnonymousRoute = computed(() => route.meta?.allowAnonymous === true);

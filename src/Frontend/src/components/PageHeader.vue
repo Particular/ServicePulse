@@ -15,24 +15,35 @@ import AuditMenuItem from "./audit/AuditMenuItem.vue";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import UserProfileMenuItem from "@/components/UserProfileMenuItem.vue";
 import { useAuthStore } from "@/stores/AuthStore";
+import { useUserPermissionsStore } from "@/stores/UserPermissionsStore";
 import { storeToRefs } from "pinia";
+import type { PermissionsSummary } from "@/stores/UserPermissionsStore";
 
 const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
 
 const authStore = useAuthStore();
 const { authEnabled, isAuthenticated } = storeToRefs(authStore);
 
+const permissionsStore = useUserPermissionsStore();
+const { summary } = storeToRefs(permissionsStore);
+
+const shouldGate = computed(() => authEnabled.value && isAuthenticated.value && summary.value !== null);
+
+function has(flag: keyof PermissionsSummary): boolean {
+  return !shouldGate.value || summary.value?.[flag] === true;
+}
+
 // prettier-ignore
 const menuItems = computed(
   () => [
   DashboardMenuItem,
-  HeartbeatsMenuItem,
-  ...(isMonitoringEnabled ? [MonitoringMenuItem] : []),
-  AuditMenuItem,
-  FailedMessagesMenuItem,
-  CustomChecksMenuItem,
-  EventsMenuItem,
-  ThroughputMenuItem,
+  ...(has("failed_messages_read") ? [HeartbeatsMenuItem] : []),
+  ...(isMonitoringEnabled && has("monitoring_read") ? [MonitoringMenuItem] : []),
+  ...(has("auditing_read") ? [AuditMenuItem] : []),
+  ...(has("failed_messages_read") ? [FailedMessagesMenuItem] : []),
+  ...(has("failed_messages_read") ? [CustomChecksMenuItem] : []),
+  ...(has("failed_messages_read") ? [EventsMenuItem] : []),
+  ...(has("failed_messages_read") ? [ThroughputMenuItem] : []),
   ConfigurationMenuItem,
   FeedbackButton,
 ]);
