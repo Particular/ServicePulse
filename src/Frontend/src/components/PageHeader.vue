@@ -42,7 +42,7 @@ const menuItems = computed(
   ...(has("failed_messages_read") ? [FailedMessagesMenuItem] : []),
   ...(has("failed_messages_read") ? [CustomChecksMenuItem] : []),
   ...(has("failed_messages_read") ? [EventsMenuItem] : []),
-  ...(has("failed_messages_read") ? [ThroughputMenuItem] : []),
+  ...(has("admin_read") ? [ThroughputMenuItem] : []),
   ConfigurationMenuItem,
   FeedbackButton,
 ]);
