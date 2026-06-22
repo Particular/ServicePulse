@@ -9,16 +9,18 @@ import BackendChecksNotifications from "@/components/BackendChecksNotifications.
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useUserPermissionsStore } from "@/stores/UserPermissionsStore";
+import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 
 const authStore = useAuthStore();
 const route = useRoute();
 const { isAuthenticated, authEnabled } = storeToRefs(authStore);
 
 const permissionsStore = useUserPermissionsStore();
+const environmentStore = useEnvironmentAndVersionsStore();
 watch(
-  [authEnabled, isAuthenticated],
-  ([enabled, authenticated]) => {
-    if (enabled && authenticated) {
+  [authEnabled, isAuthenticated, () => environmentStore.environment.supportsUserPermissions],
+  ([enabled, authenticated, supported]) => {
+    if (enabled && authenticated && supported) {
       permissionsStore.refresh();
     }
   },

@@ -18,6 +18,8 @@ export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersion
     sp_version: window.defaultConfig && window.defaultConfig.version ? window.defaultConfig.version : "1.2.0",
     supportsArchiveGroups: false,
     supportsUserPermissions: false,
+    mypermissions_all_url: "",
+    mypermissions_summary_url: "",
     endpoints_error_url: "",
     known_endpoints_url: "",
     endpoints_message_search_url: "",
@@ -58,6 +60,8 @@ export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersion
     if (scVer) {
       environment.supportsArchiveGroups = !!scVer.archived_groups_url;
       environment.supportsUserPermissions = !!scVer.mypermissions_all && !!scVer.mypermissions_summary;
+      environment.mypermissions_all_url = scVer.mypermissions_all ?? "";
+      environment.mypermissions_summary_url = scVer.mypermissions_summary ?? "";
       environment.is_compatible_with_sc = isSupported(environment.sc_version, environment.minimum_supported_sc_version);
       environment.endpoints_error_url = scVer && scVer.endpoints_error_url;
       environment.known_endpoints_url = scVer && scVer.known_endpoints_url;

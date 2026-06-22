@@ -12,7 +12,8 @@ import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndSt
 import { useRedirectsStore } from "@/stores/RedirectsStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
 import { useAuthStore } from "@/stores/AuthStore";
-import { useUserPermissionsStore } from "@/stores/UserPermissionsStore";
+import usePermissionGate from "@/composables/usePermissionGate";
+import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 
 const { store: throughputStore } = useThroughputStoreAutoRefresh();
 const { hasErrors } = storeToRefs(throughputStore);
@@ -22,11 +23,10 @@ const redirectsStore = useRedirectsStore();
 const licenseStore = useLicenseStore();
 const { licenseStatus } = licenseStore;
 const authStore = useAuthStore();
+const environmentStore = useEnvironmentAndVersionsStore();
 
-const permissionsStore = useUserPermissionsStore();
-const { summary: permSummary } = storeToRefs(permissionsStore);
-const shouldGateConfig = computed(() => authStore.authEnabled && permSummary.value !== null);
-const hasAdminRead = computed(() => !shouldGateConfig.value || permSummary.value?.admin_read === true);
+const { has } = usePermissionGate();
+const hasAdminRead = computed(() => has("admin_read"));
 
 onMounted(async () => {
   if (notConnected.value) {
@@ -151,7 +151,14 @@ function preventIfDisabled(e: Event) {
               </RouterLink>
             </h5>
           </template>
-          <h5 v-if="authStore.authEnabled" :class="{ active: isRouteSelected(routeLinks.configuration.userPermissions.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="user-permissions">
+          <h5
+            v-if="authStore.authEnabled && environmentStore.environment.supportsUserPermissions"
+            :class="{ active: isRouteSelected(routeLinks.configuration.userPermissions.link), disabled: notConnected }"
+            @click.capture="preventIfDisabled"
+            class="nav-item"
+            role="tab"
+            aria-label="user-permissions"
+          >
             <RouterLink :to="routeLinks.configuration.userPermissions.link">User Permissions</RouterLink>
           </h5>
         </div>

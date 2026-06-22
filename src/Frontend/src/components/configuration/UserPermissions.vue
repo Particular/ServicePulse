@@ -33,35 +33,35 @@ onMounted(async () => {
                 <tr>
                   <td>Failed Messages</td>
                   <td class="text-center">
-                    <FAIcon :icon="store.summary.failed_messages_read ? faCheck : faTimes" :class="store.summary.failed_messages_read ? 'icon-granted' : 'icon-denied'" />
+                    <FAIcon :icon="store.summary.failed_messages_read ? faCheck : faTimes" :class="store.summary.failed_messages_read ? 'text-success' : 'text-danger'" />
                   </td>
                   <td class="text-center">
-                    <FAIcon :icon="store.summary.failed_messages_write ? faCheck : faTimes" :class="store.summary.failed_messages_write ? 'icon-granted' : 'icon-denied'" />
+                    <FAIcon :icon="store.summary.failed_messages_write ? faCheck : faTimes" :class="store.summary.failed_messages_write ? 'text-success' : 'text-danger'" />
                   </td>
                 </tr>
                 <tr>
                   <td>Auditing</td>
                   <td class="text-center">
-                    <FAIcon :icon="store.summary.auditing_read ? faCheck : faTimes" :class="store.summary.auditing_read ? 'icon-granted' : 'icon-denied'" />
+                    <FAIcon :icon="store.summary.auditing_read ? faCheck : faTimes" :class="store.summary.auditing_read ? 'text-success' : 'text-danger'" />
                   </td>
                   <td class="text-center">—</td>
                 </tr>
                 <tr>
                   <td>Monitoring</td>
                   <td class="text-center">
-                    <FAIcon :icon="store.summary.monitoring_read ? faCheck : faTimes" :class="store.summary.monitoring_read ? 'icon-granted' : 'icon-denied'" />
+                    <FAIcon :icon="store.summary.monitoring_read ? faCheck : faTimes" :class="store.summary.monitoring_read ? 'text-success' : 'text-danger'" />
                   </td>
                   <td class="text-center">
-                    <FAIcon :icon="store.summary.monitoring_write ? faCheck : faTimes" :class="store.summary.monitoring_write ? 'icon-granted' : 'icon-denied'" />
+                    <FAIcon :icon="store.summary.monitoring_write ? faCheck : faTimes" :class="store.summary.monitoring_write ? 'text-success' : 'text-danger'" />
                   </td>
                 </tr>
                 <tr>
                   <td>Admin</td>
                   <td class="text-center">
-                    <FAIcon :icon="store.summary.admin_read ? faCheck : faTimes" :class="store.summary.admin_read ? 'icon-granted' : 'icon-denied'" />
+                    <FAIcon :icon="store.summary.admin_read ? faCheck : faTimes" :class="store.summary.admin_read ? 'text-success' : 'text-danger'" />
                   </td>
                   <td class="text-center">
-                    <FAIcon :icon="store.summary.admin_write ? faCheck : faTimes" :class="store.summary.admin_write ? 'icon-granted' : 'icon-denied'" />
+                    <FAIcon :icon="store.summary.admin_write ? faCheck : faTimes" :class="store.summary.admin_write ? 'text-success' : 'text-danger'" />
                   </td>
                 </tr>
               </tbody>
@@ -90,14 +90,6 @@ onMounted(async () => {
 .permissions-table th,
 .permissions-table td {
   padding: 10px 16px;
-}
-
-.icon-granted {
-  color: #28a745;
-}
-
-.icon-denied {
-  color: #dc3545;
 }
 
 .user-label {
