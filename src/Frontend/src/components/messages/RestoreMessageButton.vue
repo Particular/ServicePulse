@@ -8,12 +8,14 @@ import { TYPE } from "vue-toastification";
 import { storeToRefs } from "pinia";
 import { FailedMessageStatus } from "@/resources/FailedMessage";
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
+import { usePermissions } from "@/composables/usePermissions";
 
 const store = useMessageStore();
 const { state } = storeToRefs(store);
+const { can } = usePermissions();
 const isConfirmDialogVisible = ref(false);
 
-const isVisible = computed(() => state.value.data.failure_status.archived);
+const isVisible = computed(() => can("error:messages:unarchive") && state.value.data.failure_status.archived);
 
 const handleConfirm = async () => {
   isConfirmDialogVisible.value = false;

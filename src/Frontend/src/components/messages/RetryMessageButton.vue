@@ -9,14 +9,16 @@ import { MessageStatus } from "@/resources/Message";
 import { storeToRefs } from "pinia";
 import { FailedMessageStatus } from "@/resources/FailedMessage";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { usePermissions } from "@/composables/usePermissions";
 
 const store = useMessageStore();
 const { state } = storeToRefs(store);
+const { can } = usePermissions();
 const isConfirmDialogVisible = ref(false);
 
 const failureStatus = computed(() => state.value.data.failure_status);
 const isDisabled = computed(() => failureStatus.value.retried || failureStatus.value.archived || failureStatus.value.resolved);
-const isVisible = computed(() => state.value.data.status !== MessageStatus.Successful && state.value.data.status !== MessageStatus.ResolvedSuccessfully);
+const isVisible = computed(() => can("error:messages:retry") && state.value.data.status !== MessageStatus.Successful && state.value.data.status !== MessageStatus.ResolvedSuccessfully);
 
 const handleConfirm = async () => {
   isConfirmDialogVisible.value = false;

@@ -10,15 +10,17 @@ import { MessageStatus } from "@/resources/Message";
 import { storeToRefs } from "pinia";
 import { FailedMessageStatus } from "@/resources/FailedMessage";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
+import { usePermissions } from "@/composables/usePermissions";
 
 const store = useMessageStore();
 const { state, edit_and_retry_config, editRetryResponse } = storeToRefs(store);
+const { can } = usePermissions();
 const isConfirmDialogVisible = ref(false);
 const isEditIgnoredDialogVisible = ref(false);
 
 const failureStatus = computed(() => state.value.data.failure_status);
 const isDisabled = computed(() => failureStatus.value.retried || failureStatus.value.archived || failureStatus.value.resolved);
-const isVisible = computed(() => edit_and_retry_config.value.enabled && state.value.data.status !== MessageStatus.Successful && state.value.data.status !== MessageStatus.ResolvedSuccessfully);
+const isVisible = computed(() => can("error:messages:edit") && edit_and_retry_config.value.enabled && state.value.data.status !== MessageStatus.Successful && state.value.data.status !== MessageStatus.ResolvedSuccessfully);
 
 const handleIgnoreClose = async () => {
   isEditIgnoredDialogVisible.value = false;
