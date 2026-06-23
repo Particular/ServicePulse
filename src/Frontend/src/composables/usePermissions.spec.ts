@@ -71,6 +71,38 @@ describe("usePermissions", () => {
     });
   });
 
+  describe("ready (gate-on-ready)", () => {
+    test("ready immediately when authorization is disabled (nothing to gate)", () => {
+      const { ready } = withState({ authEnabled: false, isAuthenticated: true, permissions: null });
+      expect(ready.value).toBe(true);
+    });
+
+    test("not ready while authenticated and the fetch has not settled", () => {
+      const { ready } = withState({ authEnabled: true, isAuthenticated: true, permissions: null });
+      expect(ready.value).toBe(false);
+    });
+
+    test("ready after a successful fetch settles", async () => {
+      const { ready, fetchDescriptor } = withState({ authEnabled: true, isAuthenticated: true, permissions: null });
+      fetchFromServiceControl.mockResolvedValue(response(200, { user: "alice", permissions: [] }));
+
+      await fetchDescriptor();
+
+      expect(ready.value).toBe(true);
+    });
+
+    test("ready after a failed fetch settles, and can() then fails open", async () => {
+      vi.spyOn(logger, "warn").mockImplementation(() => {});
+      const { ready, can, fetchDescriptor } = withState({ authEnabled: true, isAuthenticated: true, permissions: null });
+      fetchFromServiceControl.mockResolvedValue(response(500));
+
+      await fetchDescriptor();
+
+      expect(ready.value).toBe(true);
+      expect(can("error:messages:view")).toBe(true); // fail-open: loaded never became true
+    });
+  });
+
   describe("fetchDescriptor", () => {
     test("200 fetches my/permissions/all and populates the store", async () => {
       const { fetchDescriptor } = withState({ authEnabled: true, isAuthenticated: true, permissions: null });

@@ -10,6 +10,7 @@ import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useUserPermissionsStore } from "@/stores/UserPermissionsStore";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+import { usePermissions } from "@/composables/usePermissions";
 
 const authStore = useAuthStore();
 const route = useRoute();
@@ -22,6 +23,21 @@ watch(
   ([enabled, authenticated, supported]) => {
     if (enabled && authenticated && supported) {
       permissionsStore.refresh();
+    }
+  },
+  { immediate: true }
+);
+
+// Load the user's effective permissions (my/permissions/all) once authenticated, so the
+// nav and (later) other UI can gate on them. Fail-safe: a missing/old endpoint just leaves
+// permissions unloaded and the UI fails open. (The summary fetch above is still used by
+// ConfigurationView and is removed in F5 once everything reads usePermissions.)
+const { fetchDescriptor } = usePermissions();
+watch(
+  [authEnabled, isAuthenticated],
+  ([enabled, authenticated]) => {
+    if (enabled && authenticated) {
+      fetchDescriptor();
     }
   },
   { immediate: true }

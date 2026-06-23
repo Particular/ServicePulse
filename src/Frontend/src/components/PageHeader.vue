@@ -15,7 +15,7 @@ import AuditMenuItem from "./audit/AuditMenuItem.vue";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import UserProfileMenuItem from "@/components/UserProfileMenuItem.vue";
 import { useAuthStore } from "@/stores/AuthStore";
-import usePermissionGate from "@/composables/usePermissionGate";
+import { usePermissions } from "@/composables/usePermissions";
 import { storeToRefs } from "pinia";
 
 const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
@@ -23,22 +23,27 @@ const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
 const authStore = useAuthStore();
 const { authEnabled, isAuthenticated } = storeToRefs(authStore);
 
-const { has } = usePermissionGate();
+const { can, ready } = usePermissions();
 
+// Each item gates on the specific permission ServiceControl enforces for that area.
+// Gate-on-ready: render nothing until permissions are known, so items never appear and
+// then disappear. can() fails open, so auth-disabled / failed-load shows everything.
 // prettier-ignore
-const menuItems = computed(
-  () => [
-  DashboardMenuItem,
-  ...(has("failed_messages_read") ? [HeartbeatsMenuItem] : []),
-  ...(isMonitoringEnabled && has("monitoring_read") ? [MonitoringMenuItem] : []),
-  ...(has("auditing_read") ? [AuditMenuItem] : []),
-  ...(has("failed_messages_read") ? [FailedMessagesMenuItem] : []),
-  ...(has("failed_messages_read") ? [CustomChecksMenuItem] : []),
-  ...(has("failed_messages_read") ? [EventsMenuItem] : []),
-  ...(has("admin_read") ? [ThroughputMenuItem] : []),
-  ConfigurationMenuItem,
-  FeedbackButton,
-]);
+const menuItems = computed(() => {
+  if (!ready.value) return [];
+  return [
+    DashboardMenuItem,
+    ...(can("error:heartbeats:view") ? [HeartbeatsMenuItem] : []),
+    ...(isMonitoringEnabled && can("monitoring:endpoint:view") ? [MonitoringMenuItem] : []),
+    ...(can("audit:message:view") ? [AuditMenuItem] : []),
+    ...(can("error:messages:view") ? [FailedMessagesMenuItem] : []),
+    ...(can("error:customchecks:view") ? [CustomChecksMenuItem] : []),
+    ...(can("error:eventlog:view") ? [EventsMenuItem] : []),
+    ...(can("error:throughput:view") ? [ThroughputMenuItem] : []),
+    ConfigurationMenuItem,
+    FeedbackButton,
+  ];
+});
 </script>
 
 <template>
