@@ -1,97 +1,40 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
-import FAIcon from "@/components/FAIcon.vue";
-import LoadingSpinner from "@/components/LoadingSpinner.vue";
-import { useUserPermissionsStore } from "@/stores/UserPermissionsStore";
+import { computed, onMounted } from "vue";
+import { storeToRefs } from "pinia";
+import { usePermissionsStore } from "@/stores/PermissionsStore";
+import { usePermissions } from "@/composables/usePermissions";
 
-const store = useUserPermissionsStore();
+const store = usePermissionsStore();
+const { user, permissions, loadAttempted } = storeToRefs(store);
+const { fetchDescriptor } = usePermissions();
 
-onMounted(async () => {
-  await store.refresh();
+// Sorted for a stable, readable list.
+const sortedPermissions = computed(() => [...permissions.value].sort());
+
+onMounted(() => {
+  // Normally already loaded at app start; ensures the page works on direct navigation.
+  fetchDescriptor();
 });
 </script>
 
 <template>
   <section name="user-permissions">
     <div class="box">
-      <LoadingSpinner v-if="store.loading" />
-      <div v-else-if="store.error" class="alert alert-danger">{{ store.error }}</div>
-      <template v-else-if="store.summary && store.descriptor">
-        <div class="row">
-          <div class="col-12">
-            <h3>Permissions Summary</h3>
-            <table class="table permissions-table">
-              <thead>
-                <tr>
-                  <th>Area</th>
-                  <th class="text-center">Read</th>
-                  <th class="text-center">Write</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Failed Messages</td>
-                  <td class="text-center">
-                    <FAIcon :icon="store.summary.failed_messages_read ? faCheck : faTimes" :class="store.summary.failed_messages_read ? 'text-success' : 'text-danger'" />
-                  </td>
-                  <td class="text-center">
-                    <FAIcon :icon="store.summary.failed_messages_write ? faCheck : faTimes" :class="store.summary.failed_messages_write ? 'text-success' : 'text-danger'" />
-                  </td>
-                </tr>
-                <tr>
-                  <td>Auditing</td>
-                  <td class="text-center">
-                    <FAIcon :icon="store.summary.auditing_read ? faCheck : faTimes" :class="store.summary.auditing_read ? 'text-success' : 'text-danger'" />
-                  </td>
-                  <td class="text-center">—</td>
-                </tr>
-                <tr>
-                  <td>Monitoring</td>
-                  <td class="text-center">
-                    <FAIcon :icon="store.summary.monitoring_read ? faCheck : faTimes" :class="store.summary.monitoring_read ? 'text-success' : 'text-danger'" />
-                  </td>
-                  <td class="text-center">
-                    <FAIcon :icon="store.summary.monitoring_write ? faCheck : faTimes" :class="store.summary.monitoring_write ? 'text-success' : 'text-danger'" />
-                  </td>
-                </tr>
-                <tr>
-                  <td>Admin</td>
-                  <td class="text-center">
-                    <FAIcon :icon="store.summary.admin_read ? faCheck : faTimes" :class="store.summary.admin_read ? 'text-success' : 'text-danger'" />
-                  </td>
-                  <td class="text-center">
-                    <FAIcon :icon="store.summary.admin_write ? faCheck : faTimes" :class="store.summary.admin_write ? 'text-success' : 'text-danger'" />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      <div class="row">
+        <div class="col-12">
+          <h3>Your permissions</h3>
+          <p class="user-label">User: {{ user || "—" }}</p>
+          <ul v-if="sortedPermissions.length" class="permissions-list">
+            <li v-for="permission in sortedPermissions" :key="permission">{{ permission }}</li>
+          </ul>
+          <p v-else-if="loadAttempted" class="user-label">No permissions are granted to this user.</p>
         </div>
-        <div class="row">
-          <div class="col-12">
-            <h3>All Permissions</h3>
-            <p class="user-label">User: {{ store.descriptor.user }}</p>
-            <ul class="permissions-list">
-              <li v-for="permission in store.descriptor.permissions" :key="permission">{{ permission }}</li>
-            </ul>
-          </div>
-        </div>
-      </template>
+      </div>
     </div>
   </section>
 </template>
 
 <style scoped>
-.permissions-table {
-  max-width: 480px;
-}
-
-.permissions-table th,
-.permissions-table td {
-  padding: 10px 16px;
-}
-
 .user-label {
   color: #666;
   margin-bottom: 12px;

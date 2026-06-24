@@ -12,8 +12,7 @@ import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndSt
 import { useRedirectsStore } from "@/stores/RedirectsStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
 import { useAuthStore } from "@/stores/AuthStore";
-import usePermissionGate from "@/composables/usePermissionGate";
-import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+import { usePermissions } from "@/composables/usePermissions";
 
 const { store: throughputStore } = useThroughputStoreAutoRefresh();
 const { hasErrors } = storeToRefs(throughputStore);
@@ -23,10 +22,10 @@ const redirectsStore = useRedirectsStore();
 const licenseStore = useLicenseStore();
 const { licenseStatus } = licenseStore;
 const authStore = useAuthStore();
-const environmentStore = useEnvironmentAndVersionsStore();
 
-const { has } = usePermissionGate();
-const hasAdminRead = computed(() => has("admin_read"));
+// Each tab gates on the specific permission ServiceControl enforces for it. Gate-on-ready:
+// the tab row is held until permissions are known, so tabs don't appear and then disappear.
+const { can, ready } = usePermissions();
 
 onMounted(async () => {
   if (notConnected.value) {
@@ -61,13 +60,13 @@ function preventIfDisabled(e: Event) {
     </div>
     <div class="row">
       <div class="col-sm-12">
-        <div class="nav tabs">
-          <h5 v-if="hasAdminRead" :class="{ active: isRouteSelected(routeLinks.configuration.license.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="license">
+        <div class="nav tabs" v-if="ready">
+          <h5 v-if="can('error:licensing:view')" :class="{ active: isRouteSelected(routeLinks.configuration.license.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="license">
             <RouterLink :to="routeLinks.configuration.license.link">License</RouterLink>
             <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
           </h5>
           <h5
-            v-if="hasAdminRead"
+            v-if="can('error:throughput:manage')"
             :class="{ active: isRouteSelected(routeLinks.throughput.setup.root) || isRouteSelected(routeLinks.throughput.setup.mask.link) || isRouteSelected(routeLinks.throughput.setup.diagnostics.link), disabled: notConnected }"
             @click.capture="preventIfDisabled"
             class="nav-item"
@@ -79,7 +78,7 @@ function preventIfDisabled(e: Event) {
           </h5>
           <template v-if="!licenseStatus.isExpired">
             <h5
-              v-if="hasAdminRead"
+              v-if="can('error:connections:view')"
               :class="{
                 active: isRouteSelected(routeLinks.configuration.massTransitConnector.link),
                 disabled: notConnected,
@@ -92,7 +91,7 @@ function preventIfDisabled(e: Event) {
               <RouterLink :to="routeLinks.configuration.massTransitConnector.link">MassTransit Connector</RouterLink>
             </h5>
             <h5
-              v-if="hasAdminRead"
+              v-if="can('error:notifications:view')"
               :class="{
                 active: isRouteSelected(routeLinks.configuration.healthCheckNotifications.link),
                 disabled: notConnected,
@@ -105,7 +104,7 @@ function preventIfDisabled(e: Event) {
               <RouterLink :to="routeLinks.configuration.healthCheckNotifications.link">Health Check Notifications</RouterLink>
             </h5>
             <h5
-              v-if="hasAdminRead"
+              v-if="can('error:redirects:view')"
               :class="{
                 active: isRouteSelected(routeLinks.configuration.retryRedirects.link),
                 disabled: notConnected,
@@ -118,6 +117,7 @@ function preventIfDisabled(e: Event) {
               <RouterLink :to="routeLinks.configuration.retryRedirects.link">Retry Redirects ({{ redirectsStore.redirects.total }})</RouterLink>
             </h5>
             <h5
+              v-if="can('error:connections:view')"
               :class="{
                 active: isRouteSelected(routeLinks.configuration.connections.link),
               }"
@@ -131,6 +131,7 @@ function preventIfDisabled(e: Event) {
               </RouterLink>
             </h5>
             <h5
+              v-if="can('error:endpoints:view')"
               :class="{
                 active: isRouteSelected(routeLinks.configuration.endpointConnection.link),
                 disabled: notConnected,
@@ -144,21 +145,14 @@ function preventIfDisabled(e: Event) {
             </h5>
           </template>
           <template v-else>
-            <h5 :class="{ active: isRouteSelected(routeLinks.configuration.connections.link) }" class="nav-item" role="tab" aria-label="connections">
+            <h5 v-if="can('error:connections:view')" :class="{ active: isRouteSelected(routeLinks.configuration.connections.link) }" class="nav-item" role="tab" aria-label="connections">
               <RouterLink :to="routeLinks.configuration.connections.link">
                 Connections
                 <exclamation-mark v-if="connectionStore.displayConnectionsWarning" :type="WarningLevel.Danger" />
               </RouterLink>
             </h5>
           </template>
-          <h5
-            v-if="authStore.authEnabled && environmentStore.environment.supportsUserPermissions"
-            :class="{ active: isRouteSelected(routeLinks.configuration.userPermissions.link), disabled: notConnected }"
-            @click.capture="preventIfDisabled"
-            class="nav-item"
-            role="tab"
-            aria-label="user-permissions"
-          >
+          <h5 v-if="authStore.authEnabled" :class="{ active: isRouteSelected(routeLinks.configuration.userPermissions.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="user-permissions">
             <RouterLink :to="routeLinks.configuration.userPermissions.link">User Permissions</RouterLink>
           </h5>
         </div>
