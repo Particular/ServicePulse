@@ -19,9 +19,11 @@ interface ButtonCase {
   archived: boolean; // Restore is only relevant on an archived message; the others on a live one
 }
 
+// Retry / Delete / Restore are hidden when the permission is denied. Edit & retry is handled
+// separately below: it is enabled by a setting and, when on, disabled (not hidden) without
+// the permission.
 const cases: ButtonCase[] = [
   { name: "Retry", component: RetryMessageButton, permission: "error:messages:retry", text: /Retry message/i, archived: false },
-  { name: "Edit & retry", component: EditAndRetryButton, permission: "error:messages:edit", text: /Edit & retry/i, archived: false },
   { name: "Delete", component: DeleteMessageButton, permission: "error:messages:archive", text: /Delete message/i, archived: false },
   { name: "Restore", component: RestoreMessageButton, permission: "error:messages:unarchive", text: /Restore/i, archived: true },
 ];
@@ -61,5 +63,17 @@ describe("failed-message action button permissions", () => {
   test.each(cases)("$name is hidden when its permission is denied", ({ component, text, archived }) => {
     renderButton(component, [], archived);
     expect(screen.queryByText(text)).toBeNull();
+  });
+
+  test("Edit & retry is shown and enabled when error:messages:edit is granted", () => {
+    renderButton(EditAndRetryButton, ["error:messages:edit"], false);
+    const button = screen.getByRole("button", { name: /Edit & retry/i }) as HTMLButtonElement;
+    expect(button.disabled).toBe(false);
+  });
+
+  test("Edit & retry is shown but disabled when error:messages:edit is denied", () => {
+    renderButton(EditAndRetryButton, [], false);
+    const button = screen.getByRole("button", { name: /Edit & retry/i }) as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
   });
 });

@@ -1,16 +1,23 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import type CustomCheck from "@/resources/CustomCheck";
 import TimeSince from "@/components/TimeSince.vue";
 import FAIcon from "@/components/FAIcon.vue";
+import PermissionGate from "@/components/PermissionGate.vue";
 import { faCheck, faList, faServer } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { hexToCSSFilter } from "hex-to-css-filter";
 import useCustomChecksStoreAutoRefresh from "@/composables/useCustomChecksStoreAutoRefresh";
+import { usePermissions } from "@/composables/usePermissions";
 
 defineProps<{ customCheck: CustomCheck }>();
 
 const { store } = useCustomChecksStoreAutoRefresh();
 const endpointColor = hexToCSSFilter("#929E9E").filter;
+
+const { can } = usePermissions();
+const canDismiss = computed(() => can("error:customchecks:delete"));
+const dismissDeniedTooltip = "You don't have permission to dismiss custom checks.";
 </script>
 
 <template>
@@ -36,7 +43,11 @@ const endpointColor = hexToCSSFilter("#929E9E").filter;
           </div>
         </div>
         <div>
-          <button type="button" class="btn btn-default" title="Dismiss this custom check so it doesn't show up as an alert" role="button" aria-label="custom-check-dismiss" @click="store.dismissCustomCheck(customCheck.id)">Dismiss</button>
+          <PermissionGate :allowed="canDismiss" :reason="dismissDeniedTooltip">
+            <button type="button" class="btn btn-default" title="Dismiss this custom check so it doesn't show up as an alert" role="button" aria-label="custom-check-dismiss" :disabled="!canDismiss" @click="store.dismissCustomCheck(customCheck.id)">
+              Dismiss
+            </button>
+          </PermissionGate>
         </div>
       </div>
     </div>
