@@ -11,6 +11,8 @@ import routeLinks from "@/router/routeLinks";
 import { TYPE } from "vue-toastification";
 import MetadataItem from "@/components/MetadataItem.vue";
 import ActionButton from "@/components/ActionButton.vue";
+import PermissionGate from "@/components/PermissionGate.vue";
+import { usePermissions } from "@/composables/usePermissions";
 import { faArrowRotateRight, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { useDeletedMessageGroupsStore, statusesForRestoreOperation, type ExtendedFailureGroupView, type Status } from "@/stores/DeletedMessageGroupsStore";
@@ -25,6 +27,13 @@ const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("delet
 const { store } = autoRefresh();
 const { archiveGroups, classifiers, selectedClassifier } = storeToRefs(store);
 const router = useRouter();
+
+const { can } = usePermissions();
+// Restoring a deleted group is an unarchive; keep the button visible but disabled with a
+// tooltip when the user lacks the permission, instead of silently failing server-side.
+const canRestoreGroups = computed(() => can("error:recoverabilitygroups:unarchive"));
+const restoreDeniedTooltip = "You don't have permission to restore message groups.";
+
 const showRestoreGroupModal = ref(false);
 const selectedGroup = ref<ExtendedFailureGroupView>();
 
@@ -163,16 +172,11 @@ watch(isRestoreInProgress, (restoreInProgress) => {
 
                             <div class="row" v-if="!isBeingRestored(group.workflow_state.status)">
                               <div class="col-sm-12 no-side-padding">
-                                <ActionButton
-                                  variant="link"
-                                  size="sm"
-                                  :icon="faArrowRotateRight"
-                                  :disabled="group.count === 0 || isBeingRestored(group.workflow_state.status)"
-                                  v-if="archiveGroups.length > 0"
-                                  @click.stop="showRestoreGroupDialog(group)"
-                                >
-                                  Restore group
-                                </ActionButton>
+                                <PermissionGate :allowed="canRestoreGroups" :reason="restoreDeniedTooltip" v-if="archiveGroups.length > 0">
+                                  <ActionButton variant="link" size="sm" :icon="faArrowRotateRight" :disabled="group.count === 0 || isBeingRestored(group.workflow_state.status) || !canRestoreGroups" @click.stop="showRestoreGroupDialog(group)">
+                                    Restore group
+                                  </ActionButton>
+                                </PermissionGate>
                               </div>
                             </div>
 

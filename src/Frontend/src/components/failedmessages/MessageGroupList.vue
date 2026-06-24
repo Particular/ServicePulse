@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useShowToast } from "../../composables/toast";
 import createMessageGroupClient from "./messageGroupClient";
@@ -15,6 +15,16 @@ import { faArrowRotateRight, faEnvelope, faEraser, faExclamationTriangle, faPenc
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import ProgressMessage from "./ProgressMessage.vue";
 import ActionButton from "@/components/ActionButton.vue";
+import PermissionGate from "@/components/PermissionGate.vue";
+import { usePermissions } from "@/composables/usePermissions";
+
+const { can } = usePermissions();
+// Group-level actions are gated on the recoverabilitygroups permissions. When the user
+// lacks them the buttons stay visible but disabled, with a tooltip explaining why.
+const canRetryGroups = computed(() => can("error:recoverabilitygroups:retry"));
+const canDeleteGroups = computed(() => can("error:recoverabilitygroups:archive"));
+const retryDeniedTooltip = "You don't have permission to request a retry for message groups.";
+const deleteDeniedTooltip = "You don't have permission to delete message groups.";
 
 interface WorkflowState {
   status: string;
@@ -400,31 +410,33 @@ defineExpose<IMessageGroupList>({
                   </div>
                   <div class="row" v-if="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
                     <div class="col-sm-12 no-side-padding">
-                      <ActionButton
-                        variant="link"
-                        size="sm"
-                        :icon="faArrowRotateRight"
-                        :disabled="group.count == 0 || isBeingRetried(group)"
-                        @mouseenter="group.hover3 = true"
-                        @mouseleave="group.hover3 = false"
-                        v-if="exceptionGroups.length > 0"
-                        @click.stop="retryGroup(group)"
-                      >
-                        <span>Request retry</span>
-                      </ActionButton>
+                      <PermissionGate :allowed="canRetryGroups" :reason="retryDeniedTooltip" v-if="exceptionGroups.length > 0">
+                        <ActionButton
+                          variant="link"
+                          size="sm"
+                          :icon="faArrowRotateRight"
+                          :disabled="group.count == 0 || isBeingRetried(group) || !canRetryGroups"
+                          @mouseenter="group.hover3 = true"
+                          @mouseleave="group.hover3 = false"
+                          @click.stop="retryGroup(group)"
+                        >
+                          <span>Request retry</span>
+                        </ActionButton>
+                      </PermissionGate>
 
-                      <ActionButton
-                        variant="link"
-                        size="sm"
-                        :icon="faTrash"
-                        :disabled="group.count == 0 || isBeingRetried(group)"
-                        @mouseenter="group.hover3 = true"
-                        @mouseleave="group.hover3 = false"
-                        v-if="exceptionGroups.length > 0"
-                        @click.stop="deleteGroup(group)"
-                      >
-                        <span>Delete group</span>
-                      </ActionButton>
+                      <PermissionGate :allowed="canDeleteGroups" :reason="deleteDeniedTooltip" v-if="exceptionGroups.length > 0">
+                        <ActionButton
+                          variant="link"
+                          size="sm"
+                          :icon="faTrash"
+                          :disabled="group.count == 0 || isBeingRetried(group) || !canDeleteGroups"
+                          @mouseenter="group.hover3 = true"
+                          @mouseleave="group.hover3 = false"
+                          @click.stop="deleteGroup(group)"
+                        >
+                          <span>Delete group</span>
+                        </ActionButton>
+                      </PermissionGate>
                       <ActionButton variant="link" size="sm" :icon="faStickyNote" v-if="!group.comment" @click.stop="editNote(group)">Add note</ActionButton>
                       <ActionButton variant="link" size="sm" :icon="faPencil" v-if="group.comment" @click.stop="editNote(group)">Edit note</ActionButton>
                       <ActionButton variant="link" size="sm" :icon="faEraser" v-if="group.comment" @click.stop="deleteNote(group)">Remove note</ActionButton>

@@ -16,6 +16,8 @@ import { TYPE } from "vue-toastification";
 import type GroupOperation from "@/resources/GroupOperation";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faArrowRotateRight, faTrash, faDownload } from "@fortawesome/free-solid-svg-icons";
 import ActionButton from "@/components/ActionButton.vue";
+import PermissionGate from "@/components/PermissionGate.vue";
+import { usePermissions } from "@/composables/usePermissions";
 import { useMessageStore } from "@/stores/MessageStore";
 import { useRecoverabilityStore } from "@/stores/RecoverabilityStore";
 import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
@@ -31,6 +33,18 @@ const loading = ref(false);
 const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("recoverabilityStore", useRecoverabilityStore, POLLING_INTERVAL_NORMAL);
 const { store } = autoRefresh();
 const { messages, groupId, groupName, totalCount, pageNumber } = storeToRefs(store);
+
+const { can } = usePermissions();
+// Keep the toolbar actions visible but disabled (with a tooltip) when the user lacks the
+// permission, so the capability stays discoverable and clicks don't silently fail server-side.
+const canRetryMessages = computed(() => can("error:messages:retry"));
+const canDeleteMessages = computed(() => can("error:messages:archive"));
+const canRetryGroup = computed(() => can("error:recoverabilitygroups:retry"));
+const canDeleteGroup = computed(() => can("error:recoverabilitygroups:archive"));
+const retryDeniedTooltip = "You don't have permission to retry messages.";
+const deleteDeniedTooltip = "You don't have permission to delete messages.";
+const retryAllDeniedTooltip = "You don't have permission to retry message groups.";
+const deleteAllDeniedTooltip = "You don't have permission to delete message groups.";
 
 const showDelete = ref(false);
 const showConfirmRetryAll = ref(false);
@@ -217,11 +231,19 @@ watch(isRefreshing, () => {
             <div class="btn-toolbar">
               <ActionButton v-if="!isAnythingSelected()" @click="selectAll">Select all</ActionButton>
               <ActionButton v-if="isAnythingSelected()" @click="deselectAll">Clear selection</ActionButton>
-              <ActionButton :icon="faArrowRotateRight" @click="retrySelected()" :disabled="!isAnythingSelected()">Retry {{ numberSelected() }} selected</ActionButton>
-              <ActionButton :icon="faTrash" @click="showDelete = true" :disabled="!isAnythingSelected()">Delete {{ numberSelected() }} selected</ActionButton>
+              <PermissionGate :allowed="canRetryMessages" :reason="retryDeniedTooltip">
+                <ActionButton :icon="faArrowRotateRight" @click="retrySelected()" :disabled="!isAnythingSelected() || !canRetryMessages">Retry {{ numberSelected() }} selected</ActionButton>
+              </PermissionGate>
+              <PermissionGate :allowed="canDeleteMessages" :reason="deleteDeniedTooltip">
+                <ActionButton :icon="faTrash" @click="showDelete = true" :disabled="!isAnythingSelected() || !canDeleteMessages">Delete {{ numberSelected() }} selected</ActionButton>
+              </PermissionGate>
               <ActionButton :icon="faDownload" @click="exportSelected()" :disabled="!isAnythingSelected()">Export {{ numberSelected() }} selected</ActionButton>
-              <ActionButton v-if="groupId" :icon="faArrowRotateRight" @click="showConfirmRetryAll = true">Retry all</ActionButton>
-              <ActionButton v-if="groupId" :icon="faTrash" @click="showConfirmDeleteAll = true">Delete all</ActionButton>
+              <PermissionGate :allowed="canRetryGroup" :reason="retryAllDeniedTooltip" v-if="groupId">
+                <ActionButton :icon="faArrowRotateRight" @click="showConfirmRetryAll = true" :disabled="!canRetryGroup">Retry all</ActionButton>
+              </PermissionGate>
+              <PermissionGate :allowed="canDeleteGroup" :reason="deleteAllDeniedTooltip" v-if="groupId">
+                <ActionButton :icon="faTrash" @click="showConfirmDeleteAll = true" :disabled="!canDeleteGroup">Delete all</ActionButton>
+              </PermissionGate>
             </div>
           </div>
           <div class="col-3">
