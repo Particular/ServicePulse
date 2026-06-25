@@ -91,6 +91,13 @@ class MonitoringClient {
     return false;
   }
 
+  public async fetchAllowedRoutes() {
+    if (this.isMonitoringDisabled) {
+      return undefined;
+    }
+    return await authFetch(`${this.url}my/routes`);
+  }
+
   public get isMonitoringEnabled() {
     return this.url && this.url !== "!" ? true : false;
   }
