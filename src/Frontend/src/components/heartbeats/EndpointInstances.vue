@@ -22,7 +22,6 @@ import FAIcon from "@/components/FAIcon.vue";
 import PermissionGate from "@/components/PermissionGate.vue";
 import useHeartbeatInstancesStoreAutoRefresh from "@/composables/useHeartbeatInstancesStoreAutoRefresh";
 import { useEndpointSettingsStore } from "@/stores/EndpointSettingsStore";
-import { usePermissions } from "@/composables/usePermissions";
 
 enum Operation {
   Mute = "mute",
@@ -32,12 +31,10 @@ enum Operation {
 const route = useRoute();
 const router = useRouter();
 
-const { can } = usePermissions();
-const canDeleteEndpoints = computed(() => can("error:endpoints:delete"));
 const deleteDeniedTooltip = "You don't have permission to delete endpoints.";
 const endpointName = route.params.endpointName.toString();
 const { store } = useHeartbeatInstancesStoreAutoRefresh();
-const { filteredInstances, sortedInstances, instanceFilterString, sortByInstances } = storeToRefs(store);
+const { filteredInstances, sortedInstances, instanceFilterString, sortByInstances, canDeleteEndpointInstance } = storeToRefs(store);
 const endpointSettingsStore = useEndpointSettingsStore();
 const endpointSettings = ref<EndpointSettings[]>([endpointSettingsStore.defaultEndpointSettingsValue]);
 
@@ -176,8 +173,8 @@ async function toggleAlerts(instance: EndpointsView) {
       <no-data v-if="filteredValidInstances.length === 0" message="No endpoint instances found. For untracked endpoints, disconnected instances are automatically pruned.">
         <div class="delete-all">
           <span>You may</span>
-          <PermissionGate :allowed="canDeleteEndpoints" :reason="deleteDeniedTooltip">
-            <button type="button" @click="deleteAllInstances()" class="btn btn-danger btn-sm" :disabled="!canDeleteEndpoints"><FAIcon :icon="faTrash" class="icon text-white" /> Delete</button>
+          <PermissionGate :allowed="canDeleteEndpointInstance" :reason="deleteDeniedTooltip">
+            <button type="button" @click="deleteAllInstances()" class="btn btn-danger btn-sm" :disabled="!canDeleteEndpointInstance"><FAIcon :icon="faTrash" class="icon text-white" /> Delete</button>
           </PermissionGate>
           <span>this endpoint</span>
         </div>
@@ -203,8 +200,8 @@ async function toggleAlerts(instance: EndpointsView) {
                 </div>
               </div>
               <div role="cell" aria-label="actions" class="col-1 actions">
-                <PermissionGate v-if="instance.heartbeat_information?.reported_status !== EndpointStatus.Alive" :allowed="canDeleteEndpoints" :reason="deleteDeniedTooltip">
-                  <button type="button" @click="deleteInstance(instance)" class="btn btn-danger btn-sm" :disabled="!canDeleteEndpoints"><FAIcon :icon="faTrash" class="icon text-white" /> Delete</button>
+                <PermissionGate v-if="instance.heartbeat_information?.reported_status !== EndpointStatus.Alive" :allowed="canDeleteEndpointInstance" :reason="deleteDeniedTooltip">
+                  <button type="button" @click="deleteInstance(instance)" class="btn btn-danger btn-sm" :disabled="!canDeleteEndpointInstance"><FAIcon :icon="faTrash" class="icon text-white" /> Delete</button>
                 </PermissionGate>
               </div>
             </div>

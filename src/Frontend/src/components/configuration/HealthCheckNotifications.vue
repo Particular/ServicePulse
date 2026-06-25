@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import LicenseNotExpired from "../LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
@@ -13,14 +13,10 @@ import PermissionGate from "@/components/PermissionGate.vue";
 import { faCheck, faEdit, faEnvelope, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { useHealthChecksStore } from "@/stores/HealthChecksStore";
 import { storeToRefs } from "pinia";
-import { usePermissions } from "@/composables/usePermissions";
 
 const healthChecksStore = useHealthChecksStore();
-const { emailNotifications } = storeToRefs(healthChecksStore);
+const { emailNotifications, canManageNotifications, canTestNotifications } = storeToRefs(healthChecksStore);
 
-const { can } = usePermissions();
-const canManageNotifications = computed(() => can("error:notifications:manage"));
-const canTestNotifications = computed(() => can("error:notifications:test"));
 const manageDeniedTooltip = "You don't have permission to manage notifications.";
 const testDeniedTooltip = "You don't have permission to send test notifications.";
 

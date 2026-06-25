@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter, RouterLink } from "vue-router";
 import { formatGraphDecimal, formatGraphDuration, smallGraphsMinimumYAxis } from "./formatGraph";
 import { storeToRefs } from "pinia";
@@ -14,17 +14,11 @@ import FAIcon from "@/components/FAIcon.vue";
 import { faEnvelope, faTrash } from "@fortawesome/free-solid-svg-icons";
 import monitoringClient from "./monitoringClient";
 import logger from "@/logger";
-import { usePermissions } from "@/composables/usePermissions";
-
-const { can } = usePermissions();
-// The remove control is a hover-revealed link (not a button), so gate its visibility
-// rather than disabling it.
-const canDeleteMonitoredEndpoints = computed(() => can("monitoring:endpoint:delete"));
 
 const isRemovingEndpointEnabled = ref<boolean>(false);
 const router = useRouter();
 const monitoringEndpointDetailsStore = useMonitoringEndpointDetailsStore();
-const { endpointDetails: endpoint, endpointName } = storeToRefs(monitoringEndpointDetailsStore);
+const { endpointDetails: endpoint, endpointName, canDeleteMonitoredEndpoint } = storeToRefs(monitoringEndpointDetailsStore);
 
 async function removeEndpoint(endpointName: string, instance: ExtendedEndpointInstance) {
   try {
@@ -153,7 +147,7 @@ onMounted(async () => {
 
                 <!--remove endpoint-->
                 <div class="col-xs-2 col-xl-1 no-side-padding">
-                  <a v-if="isRemovingEndpointEnabled && instance.isStale && canDeleteMonitoredEndpoints" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
+                  <a v-if="isRemovingEndpointEnabled && instance.isStale && canDeleteMonitoredEndpoint" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
                     <FAIcon :icon="faTrash" v-tippy="`Remove endpoint`" />
                   </a>
                 </div>

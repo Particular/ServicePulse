@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import LicenseNotExpired from "../LicenseNotExpired.vue";
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import NoData from "../NoData.vue";
@@ -15,13 +15,11 @@ import PermissionGate from "@/components/PermissionGate.vue";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { useRedirectsStore } from "@/stores/RedirectsStore";
 import LoadingSpinner from "../LoadingSpinner.vue";
-import { usePermissions } from "@/composables/usePermissions";
+import { storeToRefs } from "pinia";
 
 const redirectsStore = useRedirectsStore();
-
-const { can } = usePermissions();
+const { canManageRedirects } = storeToRefs(redirectsStore);
 // Creating, modifying and ending redirects all manage redirects.
-const canManageRedirects = computed(() => can("error:redirects:manage"));
 const redirectsDeniedTooltip = "You don't have permission to manage redirects.";
 
 const loadingData = ref(true);
