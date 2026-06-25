@@ -22,6 +22,7 @@ describe("useAllowedRoutes", () => {
     const store = useAllowedRoutesStore();
     store.routes = new Map(keys.map((k) => [k, { method: "", urlTemplate: "" }]));
     store.loaded = keys.length > 0;
+    store.loadAttempted = true;
   }
 
   it("allows a granted route", () => {

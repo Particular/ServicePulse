@@ -24,7 +24,9 @@ export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
     try {
       const response = await get();
       if (!response || !response.ok) return null; // per-instance fail-open
-      return (await response.json()) as ManifestEntry[];
+      const json = await response.json();
+      if (!Array.isArray(json)) return null; // guard against non-array bodies (error envelopes, etc.)
+      return json as ManifestEntry[];
     } catch (error) {
       logger.warn("Failed to fetch allowed routes", error);
       return null;

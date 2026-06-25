@@ -33,4 +33,22 @@ describe("AllowedRoutesStore", () => {
     expect(store.routes.has("GET /api/errors")).toBe(true);
     expect(store.loadAttempted).toBe(true);
   });
+
+  it("treats a non-array 200 response body as a failed instance: loaded stays false when both return non-array", async () => {
+    scFetch.mockResolvedValue(ok({}));
+    monFetch.mockResolvedValue(ok(null));
+    const store = useAllowedRoutesStore();
+    await store.refresh();
+    expect(store.loaded).toBe(false);
+    expect(store.loadAttempted).toBe(true);
+  });
+
+  it("fails open globally: loaded is false when both instances fail with network errors", async () => {
+    scFetch.mockRejectedValue(new Error("network error"));
+    monFetch.mockRejectedValue(new Error("network error"));
+    const store = useAllowedRoutesStore();
+    await store.refresh();
+    expect(store.loaded).toBe(false);
+    expect(store.loadAttempted).toBe(true);
+  });
 });
