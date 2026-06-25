@@ -11,7 +11,8 @@ import { FailedMessageStatus } from "@/resources/FailedMessage";
 import { TYPE } from "vue-toastification";
 import FAIcon from "@/components/FAIcon.vue";
 import PermissionGate from "@/components/PermissionGate.vue";
-import { usePermissions } from "@/composables/usePermissions";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { storeToRefs } from "pinia";
 import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
@@ -29,10 +30,10 @@ const { messages, groupId, groupName, totalCount, pageNumber, selectedPeriod } =
 const showConfirmRestore = ref(false);
 const messageList = ref<IMessageList | undefined>();
 
-const { can } = usePermissions();
+const { canCall } = useAllowedRoutes();
 // Restoring messages is an unarchive; keep the button visible but disabled with a tooltip
 // when the user lacks the permission, instead of silently failing server-side.
-const canRestoreMessages = computed(() => can("error:messages:unarchive"));
+const canRestoreMessages = computed(() => canCall(ApiRoutes.restoreMessage));
 const restoreDeniedTooltip = "You don't have permission to restore messages.";
 
 function numberSelected() {

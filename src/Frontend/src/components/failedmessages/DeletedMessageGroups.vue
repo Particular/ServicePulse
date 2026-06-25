@@ -12,7 +12,8 @@ import { TYPE } from "vue-toastification";
 import MetadataItem from "@/components/MetadataItem.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import PermissionGate from "@/components/PermissionGate.vue";
-import { usePermissions } from "@/composables/usePermissions";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 import { faArrowRotateRight, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { useDeletedMessageGroupsStore, statusesForRestoreOperation, type ExtendedFailureGroupView, type Status } from "@/stores/DeletedMessageGroupsStore";
@@ -28,10 +29,10 @@ const { store } = autoRefresh();
 const { archiveGroups, classifiers, selectedClassifier } = storeToRefs(store);
 const router = useRouter();
 
-const { can } = usePermissions();
+const { canCall } = useAllowedRoutes();
 // Restoring a deleted group is an unarchive; keep the button visible but disabled with a
 // tooltip when the user lacks the permission, instead of silently failing server-side.
-const canRestoreGroups = computed(() => can("error:recoverabilitygroups:unarchive"));
+const canRestoreGroups = computed(() => canCall(ApiRoutes.restoreGroup));
 const restoreDeniedTooltip = "You don't have permission to restore message groups.";
 
 const showRestoreGroupModal = ref(false);

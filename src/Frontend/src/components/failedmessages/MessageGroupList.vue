@@ -16,13 +16,14 @@ import { faClock } from "@fortawesome/free-regular-svg-icons";
 import ProgressMessage from "./ProgressMessage.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import PermissionGate from "@/components/PermissionGate.vue";
-import { usePermissions } from "@/composables/usePermissions";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 
-const { can } = usePermissions();
+const { canCall } = useAllowedRoutes();
 // Group-level actions are gated on the recoverabilitygroups permissions. When the user
 // lacks them the buttons stay visible but disabled, with a tooltip explaining why.
-const canRetryGroups = computed(() => can("error:recoverabilitygroups:retry"));
-const canDeleteGroups = computed(() => can("error:recoverabilitygroups:archive"));
+const canRetryGroups = computed(() => canCall(ApiRoutes.retryGroup));
+const canDeleteGroups = computed(() => canCall(ApiRoutes.deleteGroup));
 const retryDeniedTooltip = "You don't have permission to request a retry for message groups.";
 const deleteDeniedTooltip = "You don't have permission to delete message groups.";
 
