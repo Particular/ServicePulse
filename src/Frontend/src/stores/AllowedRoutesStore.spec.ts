@@ -5,15 +5,24 @@ const scFetch = vi.fn();
 const monFetch = vi.fn();
 vi.mock("@/components/serviceControlClient", () => ({ default: { fetchFromServiceControl: (s: string) => scFetch(s) } }));
 vi.mock("@/components/monitoring/monitoringClient", () => ({
-  default: { get isMonitoringEnabled() { return true; }, fetchAllowedRoutes: () => monFetch() },
+  default: {
+    get isMonitoringEnabled() {
+      return true;
+    },
+    fetchAllowedRoutes: () => monFetch(),
+  },
 }));
 
 import { useAllowedRoutesStore } from "@/stores/AllowedRoutesStore";
 
-const ok = (body: unknown) => ({ ok: true, status: 200, json: async () => body });
+const ok = (body: unknown) => ({ ok: true, status: 200, json: () => Promise.resolve(body) });
 
 describe("AllowedRoutesStore", () => {
-  beforeEach(() => { setActivePinia(createPinia()); scFetch.mockReset(); monFetch.mockReset(); });
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    scFetch.mockReset();
+    monFetch.mockReset();
+  });
 
   it("merges Primary and Monitoring manifests into normalized keys", async () => {
     scFetch.mockResolvedValue(ok([{ method: "POST", urlTemplate: "/api/errors/{id}/retry" }]));
@@ -27,7 +36,7 @@ describe("AllowedRoutesStore", () => {
 
   it("fails open per instance: a 404 from one instance contributes nothing but does not throw", async () => {
     scFetch.mockResolvedValue(ok([{ method: "GET", urlTemplate: "/api/errors" }]));
-    monFetch.mockResolvedValue({ ok: false, status: 404, json: async () => ({}) });
+    monFetch.mockResolvedValue({ ok: false, status: 404, json: () => Promise.resolve({}) });
     const store = useAllowedRoutesStore();
     await store.refresh();
     expect(store.routes.has("GET /api/errors")).toBe(true);

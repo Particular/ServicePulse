@@ -5,7 +5,11 @@ import monitoringClient from "@/components/monitoring/monitoringClient";
 import { normalizeRouteKey } from "@/composables/routeMatching";
 import logger from "@/logger";
 
-export interface ManifestEntry { method: string; urlTemplate: string; [k: string]: unknown }
+export interface ManifestEntry {
+  method: string;
+  urlTemplate: string;
+  [k: string]: unknown;
+}
 
 // Holds the allowed-route manifest the current token may call, merged from the instances
 // ServicePulse calls directly (Primary + Monitoring). A Map (not a Set) preserves each entry so a
@@ -37,7 +41,7 @@ export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
     try {
       const [primary, monitoring] = await Promise.all([
         fetchInstance(() => serviceControlClient.fetchFromServiceControl("my/routes")),
-        fetchInstance(() => monitoringClient.isMonitoringEnabled ? monitoringClient.fetchAllowedRoutes() : Promise.resolve(undefined)),
+        fetchInstance(() => (monitoringClient.isMonitoringEnabled ? monitoringClient.fetchAllowedRoutes() : Promise.resolve(undefined))),
       ]);
       const merged = new Map<string, ManifestEntry>();
       for (const list of [primary, monitoring]) {

@@ -20,6 +20,7 @@ export function useAllowedRoutes() {
   }
 
   // resource: reserved for future resource-level scope (ignored today). See design Future-proofing.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function canCall(entry: RouteRef, _resource?: object): boolean {
     return !shouldGate.value || store.routes.has(normalizeRouteKey(entry.method, entry.path));
   }
