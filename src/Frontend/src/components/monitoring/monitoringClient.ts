@@ -91,6 +91,15 @@ class MonitoringClient {
     return false;
   }
 
+  public async fetchAllowedRoutes() {
+    if (this.isMonitoringDisabled) {
+      return undefined;
+    }
+    // Unlike the other Monitoring endpoints (served at root), MyRoutesController has a class-level
+    // "api" route prefix (it is the shared controller used by both Primary and Monitoring instances).
+    return await authFetch(`${this.url}api/my/routes`);
+  }
+
   public get isMonitoringEnabled() {
     return this.url && this.url !== "!" ? true : false;
   }

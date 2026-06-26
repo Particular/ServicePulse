@@ -66,6 +66,12 @@ export const hasAuthenticationEnabled =
     driver.mockEndpoint(`${serviceControlInstanceUrl}authentication/configuration`, {
       body: fullConfig,
     });
+    // Once authenticated the app fetches the my/routes manifest from each instance. These tests
+    // predate route gating and assert the full UI, so respond 404 on both: the store then fails
+    // open and gating stays inert. Gating itself is covered by dedicated store/composable tests.
+    const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+    driver.mockEndpoint(`${serviceControlInstanceUrl}my/routes`, { status: 404, body: [] });
+    driver.mockEndpoint(`${monitoringInstanceUrl}api/my/routes`, { status: 404, body: [] });
     return fullConfig;
   };
 
