@@ -34,7 +34,7 @@ vi.mock("@/components/failedmessages/messageGroupClient", () => ({
 }));
 
 function makeRoutes(keys: string[]): Map<string, ManifestEntry> {
-  return new Map(keys.map((k) => [k, { method: "", urlTemplate: "" }]));
+  return new Map(keys.map((k) => [k, { method: "", url_template: "" }]));
 }
 
 async function renderGroupList(allowedRouteKeys: string[]) {

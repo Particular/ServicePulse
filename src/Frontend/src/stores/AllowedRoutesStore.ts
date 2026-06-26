@@ -7,7 +7,8 @@ import logger from "@/logger";
 
 export interface ManifestEntry {
   method: string;
-  urlTemplate: string;
+  // ServiceControl serializes its HTTP API in snake_case, so the manifest field is `url_template`.
+  url_template: string;
   [k: string]: unknown;
 }
 
@@ -46,7 +47,7 @@ export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
       const merged = new Map<string, ManifestEntry>();
       for (const list of [primary, monitoring]) {
         for (const entry of list ?? []) {
-          merged.set(normalizeRouteKey(entry.method, entry.urlTemplate), entry);
+          merged.set(normalizeRouteKey(entry.method, entry.url_template), entry);
         }
       }
       routes.value = merged;

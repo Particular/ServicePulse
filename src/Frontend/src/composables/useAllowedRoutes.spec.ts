@@ -20,7 +20,7 @@ describe("useAllowedRoutes", () => {
     auth.authEnabled = enabled;
     auth.isAuthenticated = authed;
     const store = useAllowedRoutesStore();
-    store.routes = new Map(keys.map((k) => [k, { method: "", urlTemplate: "" }]));
+    store.routes = new Map(keys.map((k) => [k, { method: "", url_template: "" }]));
     store.loaded = keys.length > 0;
     store.loadAttempted = true;
   }

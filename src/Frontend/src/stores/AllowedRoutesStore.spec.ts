@@ -27,8 +27,8 @@ describe("AllowedRoutesStore", () => {
   });
 
   it("merges Primary and Monitoring manifests into normalized keys", async () => {
-    scFetch.mockResolvedValue(ok([{ method: "POST", urlTemplate: "/api/errors/{id}/retry" }]));
-    monFetch.mockResolvedValue(ok([{ method: "DELETE", urlTemplate: "/api/monitored-instance/{n}/{i}" }]));
+    scFetch.mockResolvedValue(ok([{ method: "POST", url_template: "/api/errors/{id}/retry" }]));
+    monFetch.mockResolvedValue(ok([{ method: "DELETE", url_template: "/api/monitored-instance/{n}/{i}" }]));
     const store = useAllowedRoutesStore();
     await store.refresh();
     expect(store.routes.has("POST /api/errors/{}/retry")).toBe(true);
@@ -37,7 +37,7 @@ describe("AllowedRoutesStore", () => {
   });
 
   it("fails open per instance: a 404 from one instance contributes nothing but does not throw", async () => {
-    scFetch.mockResolvedValue(ok([{ method: "GET", urlTemplate: "/api/errors" }]));
+    scFetch.mockResolvedValue(ok([{ method: "GET", url_template: "/api/errors" }]));
     monFetch.mockResolvedValue({ ok: false, status: 404, json: () => Promise.resolve({}) });
     const store = useAllowedRoutesStore();
     await store.refresh();
@@ -69,7 +69,7 @@ describe("AllowedRoutesStore", () => {
     // instance returns must round-trip through normalizeRouteKey to produce the same
     // key as the registry uses for viewMonitoredEndpoints.
     scFetch.mockResolvedValue(ok([]));
-    monFetch.mockResolvedValue(ok([{ method: "GET", urlTemplate: "/monitored-endpoints" }]));
+    monFetch.mockResolvedValue(ok([{ method: "GET", url_template: "/monitored-endpoints" }]));
     const store = useAllowedRoutesStore();
     await store.refresh();
     const expectedKey = normalizeRouteKey(ApiRoutes.viewMonitoredEndpoints.method, ApiRoutes.viewMonitoredEndpoints.path);

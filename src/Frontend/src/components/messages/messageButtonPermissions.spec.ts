@@ -30,7 +30,7 @@ const cases: ButtonCase[] = [
 ];
 
 function makeRoutes(keys: string[]): Map<string, ManifestEntry> {
-  return new Map(keys.map((k) => [k, { method: "", urlTemplate: "" }]));
+  return new Map(keys.map((k) => [k, { method: "", url_template: "" }]));
 }
 
 function renderButton(component: Component, allowedRouteKeys: string[], archived: boolean) {
