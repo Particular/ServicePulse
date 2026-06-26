@@ -5,6 +5,7 @@ import createThroughputClient from "@/views/throughputreport/throughputClient";
 import { Transport } from "@/views/throughputreport/transport";
 import useIsThroughputSupported from "@/views/throughputreport/isThroughputSupported";
 import monitoringClient from "@/components/monitoring/monitoringClient";
+import logger from "@/logger";
 
 export const useThroughputStore = defineStore("ThroughputStore", () => {
   const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
@@ -13,8 +14,15 @@ export const useThroughputStore = defineStore("ThroughputStore", () => {
   const throughputClient = createThroughputClient();
 
   const refresh = async () => {
-    if (isThroughputSupported.value) {
+    if (!isThroughputSupported.value) {
+      return;
+    }
+    try {
       testResults.value = await throughputClient.test();
+    } catch (error) {
+      // This runs on a watch/auto-refresh, so a rejection here would be unhandled. Swallow
+      // and log (e.g. ServiceControl unreachable, or the token cleared during logout).
+      logger.error("Failed to run throughput connection test", error);
     }
   };
 

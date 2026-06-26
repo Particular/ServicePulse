@@ -1,15 +1,19 @@
 <script setup lang="ts">
-defineProps<{
-  id: string;
-  value: boolean | null;
-}>();
+withDefaults(
+  defineProps<{
+    id: string;
+    value: boolean | null;
+    disabled?: boolean;
+  }>(),
+  { disabled: false }
+);
 
 const emit = defineEmits<{ toggle: [] }>();
 </script>
 
 <template>
-  <div class="onoffswitch">
-    <input type="checkbox" :id="`onoffswitch${id}`" :name="`onoffswitch${id}`" :aria-label="`onoffswitch${id}`" class="onoffswitch-checkbox" @click="emit('toggle')" :checked="value ?? false" />
+  <div class="onoffswitch" :class="{ disabled }">
+    <input type="checkbox" :id="`onoffswitch${id}`" :name="`onoffswitch${id}`" :aria-label="`onoffswitch${id}`" class="onoffswitch-checkbox" :disabled="disabled" @click="emit('toggle')" :checked="value ?? false" />
     <label class="onoffswitch-label" :for="`onoffswitch${id}`" role="switch" :aria-checked="value ?? false" :aria-label="id">
       <span class="onoffswitch-inner"></span>
       <span class="onoffswitch-switch"></span>
@@ -25,6 +29,13 @@ const emit = defineEmits<{ toggle: [] }>();
   user-select: none;
   position: relative;
   width: 76px;
+}
+
+/* Disabled: dim it and let pointer events pass through to a wrapping PermissionGate so its
+   tooltip shows. The native :disabled on the checkbox already prevents toggling. */
+.onoffswitch.disabled {
+  opacity: 0.65;
+  pointer-events: none;
 }
 
 .onoffswitch-checkbox {

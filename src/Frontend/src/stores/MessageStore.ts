@@ -7,6 +7,7 @@ import { type FailedMessage, type ExceptionDetails, FailedMessageStatus } from "
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { type default as Message, MessageStatus } from "@/resources/Message";
 import dayjs from "@/utils/dayjs";
+import { HttpError } from "@/utils/HttpError";
 import { parse, stringify } from "lossless-json";
 import xmlFormat from "xml-formatter";
 import type { DataContainer } from "./DataContainer";
@@ -16,6 +17,8 @@ import type EditRetryResponse from "@/resources/EditRetryResponse";
 import type { EditedMessage } from "@/resources/EditMessage";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 import { timeSpanToDuration } from "@/composables/formatter";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 
 interface Model {
   id?: string;
@@ -81,11 +84,23 @@ export const useMessageStore = defineStore("MessageStore", () => {
   const { configuration } = storeToRefs(configStore);
   const error_retention_period = computed(() => timeSpanToDuration(configuration.value?.data_retention?.error_retention_period).asHours());
 
+  const { canCall } = useAllowedRoutes();
+  const canRetry = computed(() => canCall(ApiRoutes.retryMessage, state.data));
+  const canEdit = computed(() => canCall(ApiRoutes.editMessage, state.data));
+  const canDelete = computed(() => canCall(ApiRoutes.deleteMessage, state.data));
+  const canRestore = computed(() => canCall(ApiRoutes.restoreMessage, state.data));
+
   async function loadEditAndRetryConfiguration() {
+    // edit/config is an edit-only endpoint (requires the edit permission). Skip it for users who
+    // cannot edit, leaving the default disabled config in place. A 403 (e.g. during the brief
+    // window before the route manifest loads) is the expected "not allowed" response, not an
+    // error, so it is swallowed silently rather than logged.
+    if (!canEdit.value) return;
     try {
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EditAndRetryConfig>("edit/config");
       edit_and_retry_config.value = data;
-    } catch {
+    } catch (error) {
+      if (error instanceof HttpError && error.status === 403) return;
       logger.warn("Failed to load Edit and Retry configuration");
     }
   }
@@ -367,6 +382,10 @@ export const useMessageStore = defineStore("MessageStore", () => {
     state,
     edit_and_retry_config,
     editRetryResponse,
+    canRetry,
+    canEdit,
+    canDelete,
+    canRestore,
     reset,
     loadMessage,
     loadFailedMessage,
