@@ -5,12 +5,15 @@ import { defineComponent, h, nextTick, ref } from "vue";
 import { createRouter, createMemoryHistory } from "vue-router";
 import type GroupOperation from "@/resources/GroupOperation";
 import MessageGroupList, { type IMessageGroupList } from "@/components/failedmessages/MessageGroupList.vue";
+import type { ManifestEntry } from "@/stores/AllowedRoutesStore";
+import { ApiRoutes } from "@/composables/apiRoutes";
+import { normalizeRouteKey } from "@/composables/routeMatching";
 
-// The group-level Retry/Delete actions are gated on the recoverabilitygroups permissions.
+// The group-level Retry/Delete actions are gated on the recoverabilitygroups allowed routes.
 // Unlike the per-message buttons (which hide), these stay VISIBLE but DISABLED when the
-// permission is missing, with a tooltip explaining why, so it's clear the action exists.
-const RETRY_PERMISSION = "error:recoverabilitygroups:retry";
-const DELETE_PERMISSION = "error:recoverabilitygroups:archive";
+// route is missing, with a tooltip explaining why, so it's clear the action exists.
+const RETRY_ROUTE_KEY = normalizeRouteKey(ApiRoutes.retryGroup.method, ApiRoutes.retryGroup.path);
+const DELETE_ROUTE_KEY = normalizeRouteKey(ApiRoutes.deleteGroup.method, ApiRoutes.deleteGroup.path);
 
 const group: GroupOperation = {
   id: "group-1",
@@ -30,7 +33,11 @@ vi.mock("@/components/failedmessages/messageGroupClient", () => ({
   }),
 }));
 
-async function renderGroupList(permissions: string[]) {
+function makeRoutes(keys: string[]): Map<string, ManifestEntry> {
+  return new Map(keys.map((k) => [k, { method: "", url_template: "" }]));
+}
+
+async function renderGroupList(allowedRouteKeys: string[]) {
   const listRef = ref<IMessageGroupList>();
 
   const Harness = defineComponent({
@@ -49,7 +56,7 @@ async function renderGroupList(permissions: string[]) {
           stubActions: true,
           initialState: {
             auth: { authEnabled: true, isAuthenticated: true },
-            PermissionsStore: { permissions: new Set(permissions), loaded: true, loadAttempted: true },
+            AllowedRoutesStore: { routes: makeRoutes(allowedRouteKeys), loaded: true, loadAttempted: true },
           },
         }),
       ],
@@ -72,25 +79,25 @@ describe("failed-message group action button permissions", () => {
     document.body.innerHTML = '<div id="modalDisplay"></div>';
   });
 
-  test("Request retry is enabled when its permission is granted", async () => {
-    await renderGroupList([RETRY_PERMISSION, DELETE_PERMISSION]);
+  test("Request retry is enabled when its route is allowed", async () => {
+    await renderGroupList([RETRY_ROUTE_KEY, DELETE_ROUTE_KEY]);
     expect(button(/Request retry/i)?.disabled).toBe(false);
   });
 
-  test("Request retry stays visible but disabled when its permission is denied", async () => {
-    await renderGroupList([DELETE_PERMISSION]);
+  test("Request retry stays visible but disabled when its route is not allowed", async () => {
+    await renderGroupList([DELETE_ROUTE_KEY]);
     const retry = button(/Request retry/i);
     expect(retry).not.toBeNull();
     expect(retry?.disabled).toBe(true);
   });
 
-  test("Delete group is enabled when its permission is granted", async () => {
-    await renderGroupList([RETRY_PERMISSION, DELETE_PERMISSION]);
+  test("Delete group is enabled when its route is allowed", async () => {
+    await renderGroupList([RETRY_ROUTE_KEY, DELETE_ROUTE_KEY]);
     expect(button(/Delete group/i)?.disabled).toBe(false);
   });
 
-  test("Delete group stays visible but disabled when its permission is denied", async () => {
-    await renderGroupList([RETRY_PERMISSION]);
+  test("Delete group stays visible but disabled when its route is not allowed", async () => {
+    await renderGroupList([RETRY_ROUTE_KEY]);
     const del = button(/Delete group/i);
     expect(del).not.toBeNull();
     expect(del?.disabled).toBe(true);

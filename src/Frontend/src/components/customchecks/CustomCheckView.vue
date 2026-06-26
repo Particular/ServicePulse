@@ -8,15 +8,16 @@ import { faCheck, faList, faServer } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { hexToCSSFilter } from "hex-to-css-filter";
 import useCustomChecksStoreAutoRefresh from "@/composables/useCustomChecksStoreAutoRefresh";
-import { usePermissions } from "@/composables/usePermissions";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 
-defineProps<{ customCheck: CustomCheck }>();
+const props = defineProps<{ customCheck: CustomCheck }>();
 
 const { store } = useCustomChecksStoreAutoRefresh();
 const endpointColor = hexToCSSFilter("#929E9E").filter;
 
-const { can } = usePermissions();
-const canDismiss = computed(() => can("error:customchecks:delete"));
+const { canCall } = useAllowedRoutes();
+const canDismiss = computed(() => canCall(ApiRoutes.dismissCustomCheck, props.customCheck));
 const dismissDeniedTooltip = "You don't have permission to dismiss custom checks.";
 </script>
 

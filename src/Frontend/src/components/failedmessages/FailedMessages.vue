@@ -17,7 +17,8 @@ import type GroupOperation from "@/resources/GroupOperation";
 import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faArrowRotateRight, faTrash, faDownload } from "@fortawesome/free-solid-svg-icons";
 import ActionButton from "@/components/ActionButton.vue";
 import PermissionGate from "@/components/PermissionGate.vue";
-import { usePermissions } from "@/composables/usePermissions";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 import { useMessageStore } from "@/stores/MessageStore";
 import { useRecoverabilityStore } from "@/stores/RecoverabilityStore";
 import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
@@ -34,13 +35,13 @@ const { autoRefresh, isRefreshing, updateInterval } = useStoreAutoRefresh("recov
 const { store } = autoRefresh();
 const { messages, groupId, groupName, totalCount, pageNumber } = storeToRefs(store);
 
-const { can } = usePermissions();
+const { canCall } = useAllowedRoutes();
 // Keep the toolbar actions visible but disabled (with a tooltip) when the user lacks the
 // permission, so the capability stays discoverable and clicks don't silently fail server-side.
-const canRetryMessages = computed(() => can("error:messages:retry"));
-const canDeleteMessages = computed(() => can("error:messages:archive"));
-const canRetryGroup = computed(() => can("error:recoverabilitygroups:retry"));
-const canDeleteGroup = computed(() => can("error:recoverabilitygroups:archive"));
+const canRetryMessages = computed(() => canCall(ApiRoutes.retryMessage));
+const canDeleteMessages = computed(() => canCall(ApiRoutes.deleteMessage));
+const canRetryGroup = computed(() => canCall(ApiRoutes.retryGroup));
+const canDeleteGroup = computed(() => canCall(ApiRoutes.deleteGroup));
 const retryDeniedTooltip = "You don't have permission to retry messages.";
 const deleteDeniedTooltip = "You don't have permission to delete messages.";
 const retryAllDeniedTooltip = "You don't have permission to retry message groups.";

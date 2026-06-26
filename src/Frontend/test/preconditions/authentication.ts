@@ -52,66 +52,6 @@ export const hasAuthenticationDisabled =
   };
 
 /**
- * The full ServiceControl permission catalogue (writer/admin). Mirrors
- * ServiceControl's Auth/Permissions.cs. Used as the default for hasUserPermissions so
- * authenticated tests see the full UI unless they opt into a restricted set.
- */
-export const allPermissions: string[] = [
-  "error:messages:view",
-  "error:messages:retry",
-  "error:messages:archive",
-  "error:messages:unarchive",
-  "error:messages:edit",
-  "error:recoverabilitygroups:view",
-  "error:recoverabilitygroups:retry",
-  "error:recoverabilitygroups:archive",
-  "error:recoverabilitygroups:unarchive",
-  "error:endpoints:view",
-  "error:endpoints:manage",
-  "error:endpoints:delete",
-  "error:heartbeats:view",
-  "error:customchecks:view",
-  "error:customchecks:delete",
-  "error:sagas:view",
-  "error:eventlog:view",
-  "error:licensing:view",
-  "error:licensing:manage",
-  "error:notifications:view",
-  "error:notifications:manage",
-  "error:notifications:test",
-  "error:redirects:view",
-  "error:redirects:manage",
-  "error:queues:view",
-  "error:queues:delete",
-  "error:throughput:view",
-  "error:throughput:manage",
-  "error:connections:view",
-  "error:connections:manage",
-  "audit:message:view",
-  "audit:connection:view",
-  "audit:endpoint:view",
-  "audit:saga:view",
-  "monitoring:endpoint:view",
-  "monitoring:endpoint:delete",
-  "monitoring:connection:view",
-  "monitoring:license:view",
-];
-
-/**
- * Mocks GET my/permissions/all (the user's effective permission list).
- * @param permissions - the permission strings to grant (defaults to the full catalogue)
- * @param user - the subject name returned in the descriptor
- */
-export const hasUserPermissions =
-  (permissions: string[] = allPermissions, user = "test-user") =>
-  ({ driver }: SetupFactoryOptions) => {
-    const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
-    driver.mockEndpoint(`${serviceControlInstanceUrl}my/permissions/all`, {
-      body: { user, permissions },
-    });
-  };
-
-/**
  * Authentication enabled with custom configuration
  * @param config - Custom auth configuration to return
  */
@@ -126,9 +66,6 @@ export const hasAuthenticationEnabled =
     driver.mockEndpoint(`${serviceControlInstanceUrl}authentication/configuration`, {
       body: fullConfig,
     });
-    // When auth is enabled the app fetches the user's permissions; provide them by default
-    // (full access) so gate-on-ready can render. Tests can re-mock with a restricted set.
-    hasUserPermissions()({ driver });
     return fullConfig;
   };
 

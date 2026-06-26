@@ -10,19 +10,16 @@ import { MessageStatus } from "@/resources/Message";
 import { storeToRefs } from "pinia";
 import { FailedMessageStatus } from "@/resources/FailedMessage";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
-import { usePermissions } from "@/composables/usePermissions";
 import PermissionGate from "@/components/PermissionGate.vue";
 
 const store = useMessageStore();
-const { state, edit_and_retry_config, editRetryResponse } = storeToRefs(store);
-const { can } = usePermissions();
+const { state, edit_and_retry_config, editRetryResponse, canEdit } = storeToRefs(store);
 const isConfirmDialogVisible = ref(false);
 const isEditIgnoredDialogVisible = ref(false);
 
 // Edit & retry is enabled by a ServiceControl setting (edit_and_retry_config). When it is on,
 // the button is shown to everyone but disabled (with a tooltip) for users without the edit
 // permission, rather than hidden.
-const canEdit = computed(() => can("error:messages:edit"));
 const editDeniedTooltip = "You don't have permission to edit and retry messages.";
 
 const failureStatus = computed(() => state.value.data.failure_status);
