@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/stores/AuthStore";
 import type { AuthConfig } from "@/types/auth";
 import { UserManager, type User } from "oidc-client-ts";
+import routeLinks from "@/router/routeLinks";
 import logger from "@/logger";
 
 let userManager: UserManager | null = null;
@@ -11,6 +12,24 @@ let userManager: UserManager | null = null;
  */
 export function useAuth() {
   const authStore = useAuthStore();
+
+  // The session was lost mid-run (access token expired or silent renewal failed). Re-authenticate
+  // instead of leaving the app blank. With a live identity-provider session this is a silent
+  // redirect round-trip; otherwise the user lands on the provider's login page. Skip it when an
+  // auth flow is already running, or when a logout left us on the anonymous logged-out route.
+  function reauthenticate() {
+    if (authStore.isAuthenticating) {
+      return;
+    }
+    if (window.location.hash === `#${routeLinks.loggedOut}`) {
+      return;
+    }
+    authStore.setAuthenticating(true);
+    userManager?.signinRedirect().catch((error) => {
+      authStore.setAuthenticating(false);
+      logger.error("Re-authentication after session loss failed:", error);
+    });
+  }
 
   function initializeUserManager(config: AuthConfig): UserManager {
     if (!userManager) {
@@ -33,12 +52,18 @@ export function useAuth() {
         }
       });
 
+      // Token fully expired, or silent renewal errored: clear the stale token and re-authenticate
+      // rather than rendering a blank app. Reacting to the OIDC events directly keeps recovery in
+      // the auth domain and distinguishes session loss from an intentional logout, which arrives
+      // as addUserUnloaded and must not re-trigger authentication.
       userManager.events.addAccessTokenExpired(() => {
         authStore.clearToken();
+        reauthenticate();
       });
 
       userManager.events.addSilentRenewError((error) => {
         logger.error("Silent renew error:", error);
+        reauthenticate();
       });
     }
 
