@@ -9,12 +9,16 @@ import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmai
 import OnOffSwitch from "../OnOffSwitch.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
+import PermissionGate from "@/components/PermissionGate.vue";
 import { faCheck, faEdit, faEnvelope, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { useHealthChecksStore } from "@/stores/HealthChecksStore";
 import { storeToRefs } from "pinia";
 
 const healthChecksStore = useHealthChecksStore();
-const { emailNotifications } = storeToRefs(healthChecksStore);
+const { emailNotifications, canManageNotifications, canTestNotifications } = storeToRefs(healthChecksStore);
+
+const manageDeniedTooltip = "You don't have permission to manage notifications.";
+const testDeniedTooltip = "You don't have permission to send test notifications.";
 
 const emailTestSuccessful = ref<boolean | null>(null);
 const emailTestInProgress = ref<boolean | null>(null);
@@ -77,7 +81,9 @@ onMounted(async () => {
                 <div class="col-12 no-side-padding">
                   <div class="row">
                     <div class="col-auto">
-                      <OnOffSwitch id="emailNotifications" @toggle="toggleEmailNotifications" :value="emailNotifications.enabled" />
+                      <PermissionGate :allowed="canManageNotifications" :reason="manageDeniedTooltip">
+                        <OnOffSwitch id="emailNotifications" @toggle="toggleEmailNotifications" :value="emailNotifications.enabled" :disabled="!canManageNotifications" />
+                      </PermissionGate>
                       <div>
                         <span class="connection-test connection-failed">
                           <template v-if="emailToggleSuccessful === false"> <FAIcon :icon="faExclamationTriangle" /> Update failed </template>
@@ -89,10 +95,14 @@ onMounted(async () => {
                         <div class="col-12">
                           <p class="lead">Email notifications</p>
                           <p class="endpoint-metadata">
-                            <ActionButton variant="link" size="sm" :icon="faEdit" @click="editEmailNotifications">Configure</ActionButton>
+                            <PermissionGate :allowed="canManageNotifications" :reason="manageDeniedTooltip">
+                              <ActionButton variant="link" size="sm" :icon="faEdit" :disabled="!canManageNotifications" @click="editEmailNotifications">Configure</ActionButton>
+                            </PermissionGate>
                           </p>
                           <p class="endpoint-metadata">
-                            <ActionButton variant="link" size="sm" :icon="faEnvelope" @click="testEmailNotifications" :disabled="!!emailTestInProgress">Send test notification</ActionButton>
+                            <PermissionGate :allowed="canTestNotifications" :reason="testDeniedTooltip">
+                              <ActionButton variant="link" size="sm" :icon="faEnvelope" :disabled="!!emailTestInProgress || !canTestNotifications" @click="testEmailNotifications">Send test notification</ActionButton>
+                            </PermissionGate>
                             <span class="connection-test connection-testing">
                               <template v-if="emailTestInProgress">
                                 <i class="glyphicon glyphicon-refresh rotate"></i>

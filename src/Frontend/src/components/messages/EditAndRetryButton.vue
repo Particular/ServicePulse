@@ -10,11 +10,17 @@ import { MessageStatus } from "@/resources/Message";
 import { storeToRefs } from "pinia";
 import { FailedMessageStatus } from "@/resources/FailedMessage";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
+import PermissionGate from "@/components/PermissionGate.vue";
 
 const store = useMessageStore();
-const { state, edit_and_retry_config, editRetryResponse } = storeToRefs(store);
+const { state, edit_and_retry_config, editRetryResponse, canEdit } = storeToRefs(store);
 const isConfirmDialogVisible = ref(false);
 const isEditIgnoredDialogVisible = ref(false);
+
+// Edit & retry is enabled by a ServiceControl setting (edit_and_retry_config). When it is on,
+// the button is shown to everyone but disabled (with a tooltip) for users without the edit
+// permission, rather than hidden.
+const editDeniedTooltip = "You don't have permission to edit and retry messages.";
 
 const failureStatus = computed(() => state.value.data.failure_status);
 const isDisabled = computed(() => failureStatus.value.retried || failureStatus.value.archived || failureStatus.value.resolved);
@@ -45,7 +51,9 @@ async function openDialog() {
 
 <template>
   <template v-if="isVisible">
-    <ActionButton :icon="faPencil" aria-label="Edit & retry" :disabled="isDisabled" @click="openDialog">Edit & retry</ActionButton>
+    <PermissionGate :allowed="canEdit" :reason="editDeniedTooltip">
+      <ActionButton :icon="faPencil" aria-label="Edit & retry" :disabled="isDisabled || !canEdit" @click="openDialog">Edit & retry</ActionButton>
+    </PermissionGate>
     <Teleport to="#modalDisplay">
       <EditRetryDialog v-if="isConfirmDialogVisible" @cancel="isConfirmDialogVisible = false" @confirm="handleConfirm"></EditRetryDialog>
       <EditIgnoredDialog v-if="isEditIgnoredDialogVisible" @close="handleIgnoreClose"></EditIgnoredDialog>

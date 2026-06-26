@@ -1,10 +1,12 @@
 import type Redirect from "@/resources/Redirect";
 import type QueueAddress from "@/resources/QueueAddress";
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { reactive } from "vue";
+import { computed, reactive } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 import type { RetryRedirect } from "@/components/configuration/RetryRedirectEdit.vue";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 
 export interface Redirects {
   data: Redirect[];
@@ -21,6 +23,9 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
 
   const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
   const hasResponseStatusInHeader = environmentStore.serviceControlIsGreaterThan("5.2.0");
+
+  const { canCall } = useAllowedRoutes();
+  const canManageRedirects = computed(() => canCall(ApiRoutes.manageRedirects));
 
   async function getKnownQueues() {
     const [, data] = await serviceControlClient.fetchTypedFromServiceControl<QueueAddress[]>("errors/queues/addresses");
@@ -79,7 +84,7 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
     };
   }
 
-  return { refresh, redirects, retryPendingMessagesForQueue, createRedirect, updateRedirect, deleteRedirect };
+  return { refresh, redirects, canManageRedirects, retryPendingMessagesForQueue, createRedirect, updateRedirect, deleteRedirect };
 });
 
 if (import.meta.hot) {
