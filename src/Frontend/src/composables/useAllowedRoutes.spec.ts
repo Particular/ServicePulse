@@ -45,4 +45,17 @@ describe("useAllowedRoutes", () => {
     arrange(true, true, ["GET /api/errors"]);
     expect(useAllowedRoutes().canAnyCall([ApiRoutes.retryMessage, ApiRoutes.viewFailedMessages])).toBe(true);
   });
+
+  it("ready is false when auth on + authenticated but loadAttempted is false, then true after loadAttempted", () => {
+    const auth = useAuthStore();
+    auth.authEnabled = true;
+    auth.isAuthenticated = true;
+    const store = useAllowedRoutesStore();
+    store.routes = new Map();
+    store.loaded = false;
+    store.loadAttempted = false;
+    expect(useAllowedRoutes().ready.value).toBe(false);
+    store.loadAttempted = true;
+    expect(useAllowedRoutes().ready.value).toBe(true);
+  });
 });

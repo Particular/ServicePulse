@@ -8,7 +8,7 @@ export type RouteRef = { method: string; path: string };
 export const ApiRoutes = {
   // ---- nav / verb-level (GET routes gated by the matching :view permission) ----
   viewHeartbeats: { method: "GET", path: "/api/heartbeats/stats" }, // error:heartbeats:view (EndpointsMonitoringController)
-  viewMonitoredEndpoints: { method: "GET", path: "/api/monitored-endpoints" }, // monitoring:endpoint:view (DiagramApiController, Monitoring instance)
+  viewMonitoredEndpoints: { method: "GET", path: "/monitored-endpoints" }, // Monitoring instance serves at root (no /api prefix) — monitoring:endpoint:view (DiagramApiController)
   viewAuditMessages: { method: "GET", path: "/api/messages2" }, // error:messages:view (GetMessages2Controller)
   viewFailedMessages: { method: "GET", path: "/api/errors" }, // error:messages:view (GetAllErrorsController)
   viewCustomChecks: { method: "GET", path: "/api/customchecks" }, // error:customchecks:view (CustomCheckController)
@@ -33,5 +33,5 @@ export const ApiRoutes = {
   deleteGroup: { method: "POST", path: "/api/recoverability/groups/{}/errors/archive" },
   restoreGroup: { method: "POST", path: "/api/recoverability/groups/{}/errors/unarchive" },
   deleteEndpointInstance: { method: "DELETE", path: "/api/endpoints/{}" },
-  deleteMonitoredEndpoint: { method: "DELETE", path: "/api/monitored-instance/{}/{}" },
+  deleteMonitoredEndpoint: { method: "DELETE", path: "/monitored-instance/{}/{}" }, // Monitoring instance serves at root (no /api prefix)
 } as const satisfies Record<string, RouteRef>;

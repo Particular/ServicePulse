@@ -1,15 +1,10 @@
-<script setup lang="ts">
-import { computed } from "vue";
-import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import FAIcon from "@/components/FAIcon.vue";
+<script lang="ts">
 import { ApiRoutes } from "@/composables/apiRoutes";
-import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
-
-const { canCall } = useAllowedRoutes();
 
 // Static capability groupings: each area lists the API routes the user may or may not be able to call.
 // Permissions are derived at render time from canCall — no permission strings are involved.
-const groups = [
+// Defined at module scope (outside setup) so it is shared across component instances.
+export const groups = [
   {
     area: "Failed messages",
     caps: [
@@ -89,6 +84,15 @@ const groups = [
     ],
   },
 ];
+</script>
+
+<script setup lang="ts">
+import { computed } from "vue";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import FAIcon from "@/components/FAIcon.vue";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+
+const { canCall } = useAllowedRoutes();
 
 const rows = computed(() =>
   groups.map((g) => ({

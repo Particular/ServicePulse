@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
+import { ApiRoutes } from "@/composables/apiRoutes";
+import { normalizeRouteKey } from "@/composables/routeMatching";
 
 const scFetch = vi.fn();
 const monFetch = vi.fn();
@@ -59,5 +61,19 @@ describe("AllowedRoutesStore", () => {
     await store.refresh();
     expect(store.loaded).toBe(false);
     expect(store.loadAttempted).toBe(true);
+  });
+
+  it("Monitoring manifest entry at root (no /api prefix) matches the ApiRoutes registry path", async () => {
+    // The Monitoring instance serves monitored-endpoints at root — no /api prefix.
+    // This test pins the cross-repo path contract: the manifest entry the Monitoring
+    // instance returns must round-trip through normalizeRouteKey to produce the same
+    // key as the registry uses for viewMonitoredEndpoints.
+    scFetch.mockResolvedValue(ok([]));
+    monFetch.mockResolvedValue(ok([{ method: "GET", urlTemplate: "/monitored-endpoints" }]));
+    const store = useAllowedRoutesStore();
+    await store.refresh();
+    const expectedKey = normalizeRouteKey(ApiRoutes.viewMonitoredEndpoints.method, ApiRoutes.viewMonitoredEndpoints.path);
+    expect(expectedKey).toBe("GET /monitored-endpoints");
+    expect(store.routes.has(expectedKey)).toBe(true);
   });
 });
