@@ -10,10 +10,10 @@ import { FailedMessageStatus } from "@/resources/FailedMessage";
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
 
 const store = useMessageStore();
-const { state } = storeToRefs(store);
+const { state, canRestore } = storeToRefs(store);
 const isConfirmDialogVisible = ref(false);
 
-const isVisible = computed(() => state.value.data.failure_status.archived);
+const isVisible = computed(() => canRestore.value && state.value.data.failure_status.archived);
 
 const handleConfirm = async () => {
   isConfirmDialogVisible.value = false;
