@@ -353,6 +353,7 @@ input.check-label {
 .btn-toolbar > .btn,
 .btn-toolbar > .btn-group,
 .btn-toolbar > .input-group,
+.btn-toolbar > .permission-gate,
 .action-btns .btn {
   margin-left: 0;
   margin-right: 5px;

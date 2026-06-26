@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import MessageTypes from "@/components/monitoring/messageTypes";
 import { formatGraphDuration } from "../components/monitoring/formatGraph";
 import { type ExtendedEndpointDetails, type ExtendedEndpointInstance, type MessageType, type EndpointDetails, type EndpointDetailsError, isError } from "@/resources/MonitoringEndpoint";
@@ -10,6 +10,8 @@ import { emptyEndpointDetails } from "@/components/monitoring/endpoints";
 import { useMemoize } from "@vueuse/core";
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import monitoringClient from "@/components/monitoring/monitoringClient";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 
 export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpointDetailsStore", () => {
   const historyPeriodStore = useMonitoringHistoryPeriodStore();
@@ -42,6 +44,9 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
   const messageTypesAvailable = ref<boolean>(false);
   const messageTypesUpdatedSet = ref<MessageType[]>([]);
   const negativeCriticalTimeIsPresent = ref<boolean>(false);
+
+  const { canCall } = useAllowedRoutes();
+  const canDeleteMonitoredEndpoint = computed(() => canCall(ApiRoutes.deleteMonitoredEndpoint));
 
   async function getEndpointDetails(name: string) {
     const { data, refresh } = getMemoisedEndpointDetails(name, historyPeriodStore.historyPeriod.pVal);
@@ -115,6 +120,7 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
     messageTypesAvailable,
     messageTypesUpdatedSet,
     negativeCriticalTimeIsPresent,
+    canDeleteMonitoredEndpoint,
     updateMessageTypes,
     getEndpointDetails,
   };
