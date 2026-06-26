@@ -5,6 +5,7 @@ import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FlowDiagram from "./FlowDiagram/FlowDiagram.vue";
 import SequenceDiagram from "./SequenceDiagram.vue";
+import TimelineDiagram from "./TimelineDiagram/TimelineDiagram.vue";
 import routeLinks from "@/router/routeLinks";
 import BodyView from "@/components/messages/BodyView.vue";
 import HeadersView from "@/components/messages/HeadersView.vue";
@@ -65,6 +66,10 @@ const tabs = computed(() => {
     currentTabs.push({
       text: "Sequence Diagram",
       component: SequenceDiagram,
+    });
+    currentTabs.push({
+      text: "Timeline",
+      component: TimelineDiagram,
     });
     // Add the "Saga Diagram" tab only if the saga has been participated in
     if (hasParticipatedInSaga?.value) {
