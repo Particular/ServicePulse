@@ -11,6 +11,9 @@ import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoR
 import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
 import { useRedirectsStore } from "@/stores/RedirectsStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
+import { useAuthStore } from "@/stores/AuthStore";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 
 const { store: throughputStore } = useThroughputStoreAutoRefresh();
 const { hasErrors } = storeToRefs(throughputStore);
@@ -19,6 +22,11 @@ const connectionState = connectionStore.connectionState;
 const redirectsStore = useRedirectsStore();
 const licenseStore = useLicenseStore();
 const { licenseStatus } = licenseStore;
+const authStore = useAuthStore();
+
+// Each tab gates on the specific route ServiceControl enforces for it. Gate-on-ready:
+// the tab row is held until permissions are known, so tabs don't appear and then disappear.
+const { canCall, ready } = useAllowedRoutes();
 
 onMounted(async () => {
   if (notConnected.value) {
@@ -53,12 +61,13 @@ function preventIfDisabled(e: Event) {
     </div>
     <div class="row">
       <div class="col-sm-12">
-        <div class="nav tabs">
-          <h5 :class="{ active: isRouteSelected(routeLinks.configuration.license.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="license">
+        <div class="nav tabs" v-if="ready">
+          <h5 v-if="canCall(ApiRoutes.viewLicense)" :class="{ active: isRouteSelected(routeLinks.configuration.license.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="license">
             <RouterLink :to="routeLinks.configuration.license.link">License</RouterLink>
             <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
           </h5>
           <h5
+            v-if="canCall(ApiRoutes.manageThroughput)"
             :class="{ active: isRouteSelected(routeLinks.throughput.setup.root) || isRouteSelected(routeLinks.throughput.setup.mask.link) || isRouteSelected(routeLinks.throughput.setup.diagnostics.link), disabled: notConnected }"
             @click.capture="preventIfDisabled"
             class="nav-item"
@@ -69,33 +78,84 @@ function preventIfDisabled(e: Event) {
             <exclamation-mark :type="WarningLevel.Danger" v-if="hasErrors" />
           </h5>
           <template v-if="!licenseStatus.isExpired">
-            <h5 :class="{ active: isRouteSelected(routeLinks.configuration.massTransitConnector.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="mass-transit-connector">
+            <h5
+              v-if="canCall(ApiRoutes.viewConnections)"
+              :class="{
+                active: isRouteSelected(routeLinks.configuration.massTransitConnector.link),
+                disabled: notConnected,
+              }"
+              @click.capture="preventIfDisabled"
+              class="nav-item"
+              role="tab"
+              aria-label="mass-transit-connector"
+            >
               <RouterLink :to="routeLinks.configuration.massTransitConnector.link">MassTransit Connector</RouterLink>
             </h5>
-            <h5 :class="{ active: isRouteSelected(routeLinks.configuration.healthCheckNotifications.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="health-check-notifications">
+            <h5
+              v-if="canCall(ApiRoutes.viewNotifications)"
+              :class="{
+                active: isRouteSelected(routeLinks.configuration.healthCheckNotifications.link),
+                disabled: notConnected,
+              }"
+              @click.capture="preventIfDisabled"
+              class="nav-item"
+              role="tab"
+              aria-label="health-check-notifications"
+            >
               <RouterLink :to="routeLinks.configuration.healthCheckNotifications.link">Health Check Notifications</RouterLink>
             </h5>
-            <h5 :class="{ active: isRouteSelected(routeLinks.configuration.retryRedirects.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="retry-redirects">
+            <h5
+              v-if="canCall(ApiRoutes.viewRedirects)"
+              :class="{
+                active: isRouteSelected(routeLinks.configuration.retryRedirects.link),
+                disabled: notConnected,
+              }"
+              @click.capture="preventIfDisabled"
+              class="nav-item"
+              role="tab"
+              aria-label="retry-redirects"
+            >
               <RouterLink :to="routeLinks.configuration.retryRedirects.link">Retry Redirects ({{ redirectsStore.redirects.total }})</RouterLink>
             </h5>
-            <h5 :class="{ active: isRouteSelected(routeLinks.configuration.connections.link) }" class="nav-item" role="tab" aria-label="connections">
+            <h5
+              v-if="canCall(ApiRoutes.viewConnections)"
+              :class="{
+                active: isRouteSelected(routeLinks.configuration.connections.link),
+              }"
+              class="nav-item"
+              role="tab"
+              aria-label="connections"
+            >
               <RouterLink :to="routeLinks.configuration.connections.link">
                 Connections
                 <exclamation-mark v-if="connectionStore.displayConnectionsWarning" :type="WarningLevel.Danger" />
               </RouterLink>
             </h5>
-            <h5 :class="{ active: isRouteSelected(routeLinks.configuration.endpointConnection.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="endpoint-connection">
+            <h5
+              v-if="canCall(ApiRoutes.viewEndpoints)"
+              :class="{
+                active: isRouteSelected(routeLinks.configuration.endpointConnection.link),
+                disabled: notConnected,
+              }"
+              @click.capture="preventIfDisabled"
+              class="nav-item"
+              role="tab"
+              aria-label="endpoint-connection"
+            >
               <RouterLink :to="routeLinks.configuration.endpointConnection.link">Endpoint Connection</RouterLink>
             </h5>
           </template>
           <template v-else>
-            <h5 :class="{ active: isRouteSelected(routeLinks.configuration.connections.link) }" class="nav-item" role="tab" aria-label="connections">
+            <h5 v-if="canCall(ApiRoutes.viewConnections)" :class="{ active: isRouteSelected(routeLinks.configuration.connections.link) }" class="nav-item" role="tab" aria-label="connections">
               <RouterLink :to="routeLinks.configuration.connections.link">
                 Connections
                 <exclamation-mark v-if="connectionStore.displayConnectionsWarning" :type="WarningLevel.Danger" />
               </RouterLink>
             </h5>
           </template>
+          <h5 v-if="authStore.authEnabled" :class="{ active: isRouteSelected(routeLinks.configuration.userPermissions.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="user-permissions">
+            <RouterLink :to="routeLinks.configuration.userPermissions.link">User Permissions</RouterLink>
+          </h5>
         </div>
       </div>
     </div>
