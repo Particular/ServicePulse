@@ -207,6 +207,11 @@ const config: RouteItem[] = [
         component: () => import("@/components/configuration/EndpointConnection.vue"),
       },
       {
+        title: "User Permissions",
+        path: routeLinks.configuration.userPermissions.template,
+        component: () => import("@/components/configuration/UserPermissions.vue"),
+      },
+      {
         title: "Usage Setup",
         path: routeLinks.throughput.setup.root,
         redirect: routeLinks.throughput.setup.connectionSetup.link,
