@@ -17,7 +17,7 @@ export function useAuth() {
   // instead of leaving the app blank. With a live identity-provider session this is a silent
   // redirect round-trip; otherwise the user lands on the provider's login page. Skip it when an
   // auth flow is already running, or when a logout left us on the anonymous logged-out route.
-  function reauthenticate() {
+  async function reauthenticate() {
     if (authStore.isAuthenticating) {
       return;
     }
@@ -25,10 +25,14 @@ export function useAuth() {
       return;
     }
     authStore.setAuthenticating(true);
-    userManager?.signinRedirect().catch((error) => {
-      authStore.setAuthenticating(false);
+    try {
+      await userManager?.signinRedirect();
+    } catch (error) {
       logger.error("Re-authentication after session loss failed:", error);
-    });
+      authStore.setAuthError(error instanceof Error ? error.message : "Re-authentication after session loss failed");
+    } finally {
+      authStore.setAuthenticating(false);
+    }
   }
 
   function initializeUserManager(config: AuthConfig): UserManager {
@@ -56,15 +60,15 @@ export function useAuth() {
       // rather than rendering a blank app. Reacting to the OIDC events directly keeps recovery in
       // the auth domain and distinguishes session loss from an intentional logout, which arrives
       // as addUserUnloaded and must not re-trigger authentication.
-      userManager.events.addAccessTokenExpired(() => {
-        authStore.clearToken();
-        reauthenticate();
+userManager.events.addAccessTokenExpired(async () => {
+	authStore.clearToken();
+    await reauthenticate();
       });
 
-      userManager.events.addSilentRenewError((error) => {
-        logger.error("Silent renew error:", error);
-        reauthenticate();
-      });
+userManager.events.addSilentRenewError(async (error) => {
+	logger.error("Silent renew error:", error);
+    await reauthenticate();
+});
     }
 
     return userManager;
