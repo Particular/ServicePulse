@@ -60,15 +60,15 @@ export function useAuth() {
       // rather than rendering a blank app. Reacting to the OIDC events directly keeps recovery in
       // the auth domain and distinguishes session loss from an intentional logout, which arrives
       // as addUserUnloaded and must not re-trigger authentication.
-userManager.events.addAccessTokenExpired(async () => {
-	authStore.clearToken();
-    await reauthenticate();
+      userManager.events.addAccessTokenExpired(async () => {
+        authStore.clearToken();
+        await reauthenticate();
       });
 
-userManager.events.addSilentRenewError(async (error) => {
-	logger.error("Silent renew error:", error);
-    await reauthenticate();
-});
+      userManager.events.addSilentRenewError(async (error) => {
+        logger.error("Silent renew error:", error);
+        await reauthenticate();
+      });
     }
 
     return userManager;
