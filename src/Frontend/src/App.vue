@@ -18,8 +18,6 @@ const isAnonymousRoute = computed(() => route.meta?.allowAnonymous === true);
 const shouldShowApp = computed(() => !authEnabled.value || isAuthenticated.value || isAnonymousRoute.value);
 // Show full app layout (header, footer, notifications) only when authenticated or auth is disabled
 const shouldShowFullLayout = computed(() => !authEnabled.value || isAuthenticated.value);
-// Recovery from a lost session (expired token / failed silent renewal) is handled in the auth
-// domain by useAuth's OIDC event handlers, not here.
 </script>
 
 <template>
