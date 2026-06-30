@@ -38,6 +38,8 @@ interface LoadingAssertions {
   overlayIsNotVisible(): void;
   messagesAreVisible(): void;
   messagesAreNotVisible(): void;
+  filtersAreDisabled(): void;
+  filtersAreEnabled(): void;
 }
 
 interface RenderResult {
@@ -61,6 +63,10 @@ function getLoadingOverlay(): Element | null {
 
 function getMessageItems(): HTMLElement[] {
   return screen.queryAllByTestId("message-item");
+}
+
+function getFiltersPanel(): HTMLElement {
+  return screen.getByTestId("filters-panel");
 }
 
 // ==================== Data Helpers ====================
@@ -122,7 +128,7 @@ async function renderAuditList(messages: Message[] = []): Promise<RenderResult> 
       stubs: {
         AuditListItem: { template: '<div data-testid="message-item" />' },
         RefreshConfig: true,
-        FiltersPanel: true,
+        FiltersPanel: { template: '<div data-testid="filters-panel" :data-disabled="String(disabled)" />', props: ["disabled"] },
         ResultsCount: true,
         WizardDialog: true,
         PageBanner: true,
@@ -148,6 +154,12 @@ async function renderAuditList(messages: Message[] = []): Promise<RenderResult> 
     },
     messagesAreNotVisible() {
       expect(getMessageItems()).toHaveLength(0);
+    },
+    filtersAreDisabled() {
+      expect(getFiltersPanel().dataset.disabled).toBe("true");
+    },
+    filtersAreEnabled() {
+      expect(getFiltersPanel().dataset.disabled).toBe("false");
     },
   };
 
@@ -209,6 +221,33 @@ describe("FEATURE: Audit Messages Loading Indicator", () => {
       isRefreshing.value = false;
       await nextTick();
       verify.spinnerIsNotVisible();
+    });
+  });
+
+  describe("RULE: Filter controls are disabled during a fetch", () => {
+    test("EXAMPLE: Filters are disabled when a re-fetch is in-flight", async () => {
+      const { verify, isRefreshing } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      isRefreshing.value = true;
+      await nextTick();
+
+      verify.filtersAreDisabled();
+    });
+
+    test("EXAMPLE: Filters are re-enabled after the fetch completes", async () => {
+      const { verify, isRefreshing } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      isRefreshing.value = true;
+      await nextTick();
+
+      isRefreshing.value = false;
+      await nextTick();
+
+      verify.filtersAreEnabled();
     });
   });
 
