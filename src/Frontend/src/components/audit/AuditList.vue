@@ -138,7 +138,7 @@ watch(autoRefreshValue, (newValue) => {
     <div class="header">
       <RefreshConfig v-model="autoRefreshValue" :isLoading="isRefreshing" @manual-refresh="refreshNow" />
       <div class="row">
-        <FiltersPanel />
+        <FiltersPanel :disabled="isRefreshing" />
       </div>
       <div class="row">
         <ResultsCount :displayed="messages.length" :total="totalCount" />

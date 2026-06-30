@@ -14,6 +14,7 @@ const props = withDefaults(
     canClear?: boolean;
     showClear: boolean;
     showFilter: boolean;
+    disabled?: boolean;
   }>(),
   { canClear: true }
 );
@@ -42,7 +43,7 @@ onMounted(() => {
 
 <template>
   <div ref="bootstrapDropDown" class="dropdown">
-    <button type="button" aria-label="open dropdown menu" class="btn btn-dropdown dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" aria-label="open dropdown menu" class="btn btn-dropdown dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :disabled="props.disabled">
       <span class="wrap-text">{{ selected || defaultEmptyText }}</span>
     </button>
     <div class="dropdown-menu wrapper">
