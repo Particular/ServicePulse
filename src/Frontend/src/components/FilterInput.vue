@@ -6,7 +6,7 @@ import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
 const model = defineModel<string>({ required: true });
 const emit = defineEmits<{ focus: []; blur: [] }>();
-const props = withDefaults(defineProps<{ placeholder?: string; ariaLabel?: string }>(), { placeholder: "Filter by name...", ariaLabel: "Filter by name" });
+const props = withDefaults(defineProps<{ placeholder?: string; ariaLabel?: string; disabled?: boolean }>(), { placeholder: "Filter by name...", ariaLabel: "Filter by name" });
 const localInput = computed({
   get() {
     return model.value;
@@ -30,7 +30,7 @@ function focus() {
 <template>
   <div role="search" aria-label="filter" class="filter-input">
     <FAIcon :icon="faFilter" class="icon" />
-    <input ref="textField" type="search" @focus="() => emit('focus')" @blur="() => emit('blur')" :placeholder="props.placeholder" :aria-label="props.ariaLabel" class="form-control filter-input" v-model="localInput" />
+    <input ref="textField" type="search" @focus="() => emit('focus')" @blur="() => emit('blur')" :placeholder="props.placeholder" :aria-label="props.ariaLabel" :disabled="props.disabled" class="form-control filter-input" v-model="localInput" />
   </div>
 </template>
 

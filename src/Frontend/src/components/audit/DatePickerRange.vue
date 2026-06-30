@@ -7,6 +7,7 @@ import { useDateFormatter } from "@/composables/dateFormatter";
 
 const { formatDateRange, isValidDateRange } = useDateFormatter();
 
+const props = defineProps<{ disabled?: boolean }>();
 const model = defineModel<DateRange>({ required: true });
 const internalModel = ref<DateRange>([]);
 const displayDataRange = ref<string>("No dates");
@@ -39,13 +40,14 @@ function clearCurrentDate() {
     ref="datePicker"
     class="dropdown"
     v-model="internalModel"
+    :disabled="props.disabled"
     :formats="{ input: (dates: Date[]) => formatDateRange(dates as DateRange) }"
     :range="{ partialRange: false }"
     :time-config="{ enableSeconds: true }"
     :action-row="{ showNow: false, showCancel: false, showSelect: true }"
   >
     <template #trigger>
-      <button type="button" class="btn btn-dropdown dropdown-toggle sp-btn-menu">
+      <button type="button" class="btn btn-dropdown dropdown-toggle sp-btn-menu" :disabled="props.disabled">
         {{ displayDataRange }}
       </button>
     </template>

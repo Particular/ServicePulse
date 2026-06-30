@@ -43,15 +43,21 @@ watch(selectedRefresh, (newValue) => {
     }
   }
 });
+const MIN_SPIN_MS = 1000;
 const showSpinning = ref(false);
+let spinStartTime = 0;
+
 watch(
   () => props.isLoading,
   (newValue) => {
     if (newValue) {
       showSpinning.value = true;
+      spinStartTime = Date.now();
+    } else {
+      const remaining = Math.max(0, MIN_SPIN_MS - (Date.now() - spinStartTime));
       setTimeout(() => {
         showSpinning.value = false;
-      }, 1000);
+      }, remaining);
     }
   }
 );

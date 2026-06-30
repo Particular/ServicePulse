@@ -6,6 +6,7 @@ import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
 import { computed } from "vue";
 import DatePickerRange from "@/components/audit/DatePickerRange.vue";
 
+const props = defineProps<{ disabled?: boolean }>();
 const store = useAuditStore();
 const { sortBy, messageFilterString, selectedEndpointName, endpoints, itemsPerPage, dateRange } = storeToRefs(store);
 const endpointNames = computed(() => {
@@ -59,32 +60,32 @@ function findKeyByValue(searchValue: string) {
     <div class="filter">
       <div class="filter-label"></div>
       <div class="filter-component text-search-container">
-        <FilterInput v-model="messageFilterString" placeholder="Search messages..." aria-label="Search messages" />
+        <FilterInput v-model="messageFilterString" placeholder="Search messages..." aria-label="Search messages" :disabled="props.disabled" />
         <div class="note">Check the <a href="https://docs.particular.net/servicepulse/all-messages#filtering-options">documentation</a> to see the available filtering options</div>
       </div>
     </div>
     <div class="filter">
       <div class="filter-label">Endpoint:</div>
       <div class="filter-component">
-        <ListFilterSelector :items="endpointNames" instructions="Select an endpoint" v-model="selectedEndpointName" item-name="endpoint" label="Endpoint" default-empty-text="Any" :show-clear="true" :show-filter="true" />
+        <ListFilterSelector :items="endpointNames" instructions="Select an endpoint" v-model="selectedEndpointName" item-name="endpoint" label="Endpoint" default-empty-text="Any" :show-clear="true" :show-filter="true" :disabled="props.disabled" />
       </div>
     </div>
     <div class="filter">
       <div class="filter-label">Dates:</div>
       <div class="filter-component">
-        <DatePickerRange v-model="dateRange" />
+        <DatePickerRange v-model="dateRange" :disabled="props.disabled" />
       </div>
     </div>
     <div class="filter">
       <div class="filter-label">Show:</div>
       <div class="filter-component">
-        <ListFilterSelector :items="numberOfItemsPerPage" instructions="Max results to display" v-model="selectedItemsPerPage" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" />
+        <ListFilterSelector :items="numberOfItemsPerPage" instructions="Max results to display" v-model="selectedItemsPerPage" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" :disabled="props.disabled" />
       </div>
     </div>
     <div class="filter">
       <div class="filter-label">Sort:</div>
       <div class="filter-component">
-        <ListFilterSelector :items="sortByItems" v-model="selectedSortByItem" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" />
+        <ListFilterSelector :items="sortByItems" v-model="selectedSortByItem" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" :disabled="props.disabled" />
       </div>
     </div>
   </div>
