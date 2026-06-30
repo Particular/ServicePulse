@@ -1,13 +1,13 @@
 <script lang="ts">
-import { ApiRoutes } from "@/composables/apiRoutes";
+import { ApiRoutes, type ApplicationCapabilityGroup } from "@/composables/apiRoutes";
 
 // Static capability groupings: each area lists the API routes the user may or may not be able to call.
 // Permissions are derived at render time from canCall — no permission strings are involved.
 // Defined at module scope (outside setup) so it is shared across component instances.
-export const groups = [
+export const groups: ApplicationCapabilityGroup[] = [
   {
     area: "Failed messages",
-    caps: [
+    capabilities: [
       { label: "View", ref: ApiRoutes.viewFailedMessages },
       { label: "Retry", ref: ApiRoutes.retryMessage },
       { label: "Edit", ref: ApiRoutes.editMessage },
@@ -17,7 +17,7 @@ export const groups = [
   },
   {
     area: "Recoverability groups",
-    caps: [
+    capabilities: [
       { label: "Retry group", ref: ApiRoutes.retryGroup },
       { label: "Delete group", ref: ApiRoutes.deleteGroup },
       { label: "Restore group", ref: ApiRoutes.restoreGroup },
@@ -25,37 +25,37 @@ export const groups = [
   },
   {
     area: "Audit",
-    caps: [{ label: "View", ref: ApiRoutes.viewAuditMessages }],
+    capabilities: [{ label: "View", ref: ApiRoutes.viewAuditMessages }],
   },
   {
     area: "Monitoring",
-    caps: [
+    capabilities: [
       { label: "View", ref: ApiRoutes.viewMonitoredEndpoints },
       { label: "Remove endpoint", ref: ApiRoutes.deleteMonitoredEndpoint },
     ],
   },
   {
     area: "Custom checks",
-    caps: [
+    capabilities: [
       { label: "View", ref: ApiRoutes.viewCustomChecks },
       { label: "Dismiss", ref: ApiRoutes.dismissCustomCheck },
     ],
   },
   {
     area: "Event log",
-    caps: [{ label: "View", ref: ApiRoutes.viewEventLog }],
+    capabilities: [{ label: "View", ref: ApiRoutes.viewEventLog }],
   },
   {
     area: "Configuration — License",
-    caps: [{ label: "View", ref: ApiRoutes.viewLicense }],
+    capabilities: [{ label: "View", ref: ApiRoutes.viewLicense }],
   },
   {
     area: "Configuration — Connections",
-    caps: [{ label: "View", ref: ApiRoutes.viewConnections }],
+    capabilities: [{ label: "View", ref: ApiRoutes.viewConnections }],
   },
   {
     area: "Configuration — Notifications",
-    caps: [
+    capabilities: [
       { label: "View", ref: ApiRoutes.viewNotifications },
       { label: "Manage", ref: ApiRoutes.manageNotifications },
       { label: "Test", ref: ApiRoutes.testNotifications },
@@ -63,14 +63,14 @@ export const groups = [
   },
   {
     area: "Configuration — Redirects",
-    caps: [
+    capabilities: [
       { label: "View", ref: ApiRoutes.viewRedirects },
       { label: "Manage", ref: ApiRoutes.manageRedirects },
     ],
   },
   {
     area: "Configuration — Endpoints",
-    caps: [
+    capabilities: [
       { label: "View", ref: ApiRoutes.viewEndpoints },
       { label: "View heartbeats", ref: ApiRoutes.viewHeartbeats },
       { label: "Remove instance", ref: ApiRoutes.deleteEndpointInstance },
@@ -78,7 +78,7 @@ export const groups = [
   },
   {
     area: "Configuration — Throughput",
-    caps: [
+    capabilities: [
       { label: "View", ref: ApiRoutes.viewThroughput },
       { label: "Manage", ref: ApiRoutes.manageThroughput },
     ],
@@ -97,7 +97,7 @@ const { canCall } = useAllowedRoutes();
 const rows = computed(() =>
   groups.map((g) => ({
     area: g.area,
-    caps: g.caps.map((c) => ({ label: c.label, granted: canCall(c.ref) })),
+    capabilities: g.capabilities.map((c) => ({ label: c.label, granted: canCall(c.ref) })),
   }))
 );
 </script>
@@ -117,8 +117,8 @@ const rows = computed(() =>
         </thead>
         <tbody>
           <template v-for="row in rows" :key="row.area">
-            <tr v-for="(cap, idx) in row.caps" :key="cap.label" class="cap-row">
-              <td v-if="idx === 0" :rowspan="row.caps.length" class="area-col area-cell">{{ row.area }}</td>
+            <tr v-for="(cap, idx) in row.capabilities" :key="cap.label" class="cap-row">
+              <td v-if="idx === 0" :rowspan="row.capabilities.length" class="area-col area-cell">{{ row.area }}</td>
               <td class="cap-col">{{ cap.label }}</td>
               <td class="status-col">
                 <FAIcon v-if="cap.granted" :icon="faCheck" class="check" aria-label="Allowed" />
