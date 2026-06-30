@@ -53,7 +53,7 @@ async function renderRefreshConfig(isLoading: boolean) {
 
 // ==================== Tests ====================
 
-describe("RefreshConfig spinner", () => {
+describe("FEATURE: Refresh Button Loading State", () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
@@ -62,40 +62,46 @@ describe("RefreshConfig spinner", () => {
     vi.useRealTimers();
   });
 
-  test("shows spinner immediately when loading starts", async () => {
-    const { setIsLoading, verify } = await renderRefreshConfig(false);
+  describe("RULE: Spinner shows immediately when a fetch starts", () => {
+    test("EXAMPLE: Spinner is visible when isLoading becomes true", async () => {
+      const { setIsLoading, verify } = await renderRefreshConfig(false);
 
-    await setIsLoading(true);
+      await setIsLoading(true);
 
-    verify.isSpinning();
+      verify.isSpinning();
+    });
   });
 
-  test("keeps spinner on while loading is still true past 1s", async () => {
-    const { setIsLoading, verify } = await renderRefreshConfig(false);
-    await setIsLoading(true);
+  describe("RULE: Spinner stays on for the full duration of the fetch", () => {
+    test("EXAMPLE: Spinner stays on while isLoading is still true past 1s", async () => {
+      const { setIsLoading, verify } = await renderRefreshConfig(false);
+      await setIsLoading(true);
 
-    vi.advanceTimersByTime(1500);
-    await nextTick();
+      vi.advanceTimersByTime(1500);
+      await nextTick();
 
-    verify.isSpinning();
+      verify.isSpinning();
+    });
   });
 
-  test("turns spinner off only after loading ends and minimum duration elapses", async () => {
-    const { setIsLoading, verify } = await renderRefreshConfig(false);
-    await setIsLoading(true);
+  describe("RULE: Spinner stays on for a minimum duration to prevent rapid re-clicks", () => {
+    test("EXAMPLE: Spinner turns off only after loading ends and minimum duration elapses", async () => {
+      const { setIsLoading, verify } = await renderRefreshConfig(false);
+      await setIsLoading(true);
 
-    // fetch completes after 400ms (under the 1000ms minimum)
-    vi.advanceTimersByTime(400);
-    await setIsLoading(false);
+      // fetch completes after 400ms (under the 1000ms minimum)
+      vi.advanceTimersByTime(400);
+      await setIsLoading(false);
 
-    // 600ms remaining — not yet
-    vi.advanceTimersByTime(599);
-    await nextTick();
-    verify.isSpinning();
+      // 600ms remaining — not yet
+      vi.advanceTimersByTime(599);
+      await nextTick();
+      verify.isSpinning();
 
-    // minimum elapsed — spinner clears
-    vi.advanceTimersByTime(1);
-    await nextTick();
-    verify.isNotSpinning();
+      // minimum elapsed — spinner clears
+      vi.advanceTimersByTime(1);
+      await nextTick();
+      verify.isNotSpinning();
+    });
   });
 });
