@@ -4,6 +4,8 @@
 // Paths use {} for each route parameter; matching is param-name-insensitive (see routeMatching.ts).
 // Each entry tracks a route in ServiceControl's APIApprovals.HttpApiRoutes (Primary or Monitoring instance).
 export type RouteRef = { method: string; path: string };
+export type ApplicationCapability = { label: string; ref: RouteRef };
+export type ApplicationCapabilityGroup = { area: string; capabilities: ApplicationCapability[] };
 
 export const ApiRoutes = {
   // ---- nav / verb-level (GET routes gated by the matching :view permission) ----
