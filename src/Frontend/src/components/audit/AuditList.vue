@@ -190,6 +190,11 @@ watch(autoRefreshValue, (newValue) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+}
+
+.loading-overlay .spinner-border {
+  position: sticky;
+  top: 4rem;
+  margin-top: 2rem;
 }
 </style>
