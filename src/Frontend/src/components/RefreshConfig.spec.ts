@@ -23,7 +23,7 @@ const ActionButtonStub = defineComponent({
 
 // ==================== DSL ====================
 
-async function renderRefreshConfig(isLoading: boolean) {
+function renderRefreshConfig(isLoading: boolean) {
   const { rerender } = render(RefreshConfig, {
     props: { isLoading, modelValue: null },
     global: {
@@ -64,7 +64,7 @@ describe("FEATURE: Refresh Button Loading State", () => {
 
   describe("RULE: Spinner shows immediately when a fetch starts", () => {
     test("EXAMPLE: Spinner is visible when isLoading becomes true", async () => {
-      const { setIsLoading, verify } = await renderRefreshConfig(false);
+      const { setIsLoading, verify } = renderRefreshConfig(false);
 
       await setIsLoading(true);
 
@@ -74,7 +74,7 @@ describe("FEATURE: Refresh Button Loading State", () => {
 
   describe("RULE: Spinner stays on for the full duration of the fetch", () => {
     test("EXAMPLE: Spinner stays on while isLoading is still true past 1s", async () => {
-      const { setIsLoading, verify } = await renderRefreshConfig(false);
+      const { setIsLoading, verify } = renderRefreshConfig(false);
       await setIsLoading(true);
 
       vi.advanceTimersByTime(1500);
@@ -86,7 +86,7 @@ describe("FEATURE: Refresh Button Loading State", () => {
 
   describe("RULE: Spinner stays on for a minimum duration to prevent rapid re-clicks", () => {
     test("EXAMPLE: Spinner turns off only after loading ends and minimum duration elapses", async () => {
-      const { setIsLoading, verify } = await renderRefreshConfig(false);
+      const { setIsLoading, verify } = renderRefreshConfig(false);
       await setIsLoading(true);
 
       // fetch completes after 400ms (under the 1000ms minimum)

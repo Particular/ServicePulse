@@ -2,12 +2,10 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/vue";
 import { createTestingPinia } from "@pinia/testing";
 import { createRouter, createMemoryHistory } from "vue-router";
-import { ref, shallowReadonly, nextTick } from "vue";
-import type { Ref } from "vue";
+import { ref, shallowReadonly, nextTick, type Ref } from "vue";
 import { flushPromises } from "@vue/test-utils";
 import AuditList from "@/components/audit/AuditList.vue";
-import type Message from "@/resources/Message";
-import { MessageStatus } from "@/resources/Message";
+import Message, { MessageStatus } from "@/resources/Message";
 
 /**
  * DSL for the Audit Messages Loading Indicator feature.
