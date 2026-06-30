@@ -5,7 +5,7 @@ import { createRouter, createMemoryHistory } from "vue-router";
 import { ref, shallowReadonly, nextTick, type Ref } from "vue";
 import { flushPromises } from "@vue/test-utils";
 import AuditList from "@/components/audit/AuditList.vue";
-import Message, { MessageStatus } from "@/resources/Message";
+import { type default as Message, MessageStatus } from "@/resources/Message";
 
 /**
  * DSL for the Audit Messages Loading Indicator feature.
