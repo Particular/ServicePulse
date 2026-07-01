@@ -82,7 +82,7 @@ class ServiceControlClient {
     return await authFetch(`${this.url}${suffix}`, requestOptions);
   }
 
-  public async fetchFromServiceControl(suffix: string, options?: { cache?: RequestCache }) {
+  public fetchFromServiceControl(suffix: string, options?: { cache?: RequestCache }) {
     return this.fetchFromUrl(`${this.url}${suffix}`, options);
   }
 
