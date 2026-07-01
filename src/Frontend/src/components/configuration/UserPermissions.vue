@@ -90,9 +90,10 @@ export const groups: ApplicationCapabilityGroup[] = [
 import { computed } from "vue";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "@/components/FAIcon.vue";
+import ConditionalRender from "@/components/ConditionalRender.vue";
 import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
 
-const { canCall } = useAllowedRoutes();
+const { canCall, supported } = useAllowedRoutes();
 
 const rows = computed(() =>
   groups.map((g) => ({
@@ -107,32 +108,51 @@ const rows = computed(() =>
     <div class="box">
       <h3>Your permissions</h3>
 
-      <table class="permissions-table">
-        <thead>
-          <tr>
-            <th scope="col" class="area-col">Area</th>
-            <th scope="col" class="cap-col">Capability</th>
-            <th scope="col" class="status-col">Allowed</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="row in rows" :key="row.area">
-            <tr v-for="(cap, idx) in row.capabilities" :key="cap.label" class="cap-row">
-              <td v-if="idx === 0" :rowspan="row.capabilities.length" class="area-col area-cell">{{ row.area }}</td>
-              <td class="cap-col">{{ cap.label }}</td>
-              <td class="status-col">
-                <FAIcon v-if="cap.granted" :icon="faCheck" class="check" aria-label="Allowed" />
-                <FAIcon v-else :icon="faXmark" class="deny" aria-label="Not allowed" />
-              </td>
+      <ConditionalRender :supported="supported">
+        <template #unsupported>
+          <div class="container not-supported">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="text-center message">
+                  <p>Viewing your permissions requires a newer version of ServiceControl.</p>
+                  <div>
+                    <a class="btn btn-default btn-primary" href="https://particular.net/downloads" target="_blank">Update ServiceControl to latest version</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <table class="permissions-table">
+          <thead>
+            <tr>
+              <th scope="col" class="area-col">Area</th>
+              <th scope="col" class="cap-col">Capability</th>
+              <th scope="col" class="status-col">Allowed</th>
             </tr>
-          </template>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <template v-for="row in rows" :key="row.area">
+              <tr v-for="(cap, idx) in row.capabilities" :key="cap.label" class="cap-row">
+                <td v-if="idx === 0" :rowspan="row.capabilities.length" class="area-col area-cell">{{ row.area }}</td>
+                <td class="cap-col">{{ cap.label }}</td>
+                <td class="status-col">
+                  <FAIcon v-if="cap.granted" :icon="faCheck" class="check" aria-label="Allowed" />
+                  <FAIcon v-else :icon="faXmark" class="deny" aria-label="Not allowed" />
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </ConditionalRender>
     </div>
   </section>
 </template>
 
 <style scoped>
+@import "@/components/notsupported.css";
+
 .permissions-table {
   border-collapse: collapse;
   table-layout: fixed;

@@ -3,9 +3,15 @@ import { setActivePinia, createPinia } from "pinia";
 import { ApiRoutes } from "@/composables/apiRoutes";
 import { normalizeRouteKey } from "@/composables/routeMatching";
 
+const rootFetch = vi.fn();
 const scFetch = vi.fn();
 const monFetch = vi.fn();
-vi.mock("@/components/serviceControlClient", () => ({ default: { fetchFromServiceControl: (s: string) => scFetch(s) } }));
+vi.mock("@/components/serviceControlClient", () => ({
+  default: {
+    fetchTypedFromServiceControl: (s: string) => rootFetch(s),
+    fetchFromUrl: (u: string) => scFetch(u),
+  },
+}));
 vi.mock("@/components/monitoring/monitoringClient", () => ({
   default: {
     get isMonitoringEnabled() {
@@ -18,12 +24,16 @@ vi.mock("@/components/monitoring/monitoringClient", () => ({
 import { useAllowedRoutesStore } from "@/stores/AllowedRoutesStore";
 
 const ok = (body: unknown) => ({ ok: true, status: 200, json: () => Promise.resolve(body) });
+const MY_ROUTES_URL = "http://sc/api/my/routes";
+const rootDoc = (myRoutesUrl?: string) => [{}, myRoutesUrl === undefined ? {} : { my_routes_url: myRoutesUrl }];
 
 describe("AllowedRoutesStore", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    rootFetch.mockReset();
     scFetch.mockReset();
     monFetch.mockReset();
+    rootFetch.mockResolvedValue(rootDoc(MY_ROUTES_URL));
   });
 
   it("merges Primary and Monitoring manifests into normalized keys", async () => {
@@ -31,6 +41,7 @@ describe("AllowedRoutesStore", () => {
     monFetch.mockResolvedValue(ok([{ method: "DELETE", url_template: "/api/monitored-instance/{n}/{i}" }]));
     const store = useAllowedRoutesStore();
     await store.refresh();
+    expect(scFetch).toHaveBeenCalledWith(MY_ROUTES_URL);
     expect(store.routes.has("POST /api/errors/{}/retry")).toBe(true);
     expect(store.routes.has("DELETE /api/monitored-instance/{}/{}")).toBe(true);
     expect(store.loaded).toBe(true);
@@ -87,5 +98,25 @@ describe("AllowedRoutesStore", () => {
     expect(store.loaded).toBe(true);
     expect(store.routes.has("GET /api/errors")).toBe(true);
     expect(store.routes.size).toBe(1);
+  });
+
+  it("skips the primary fetch entirely when the root document omits my_routes_url", async () => {
+    rootFetch.mockResolvedValue(rootDoc());
+    monFetch.mockResolvedValue(ok([{ method: "GET", url_template: "/monitored-endpoints" }]));
+    const store = useAllowedRoutesStore();
+    await store.refresh();
+    expect(scFetch).not.toHaveBeenCalled();
+    expect(store.routes.has("GET /monitored-endpoints")).toBe(true);
+    expect(store.loaded).toBe(true);
+  });
+
+  it("skips the primary fetch and fails open when the root document request itself rejects", async () => {
+    rootFetch.mockRejectedValue(new Error("network error"));
+    monFetch.mockResolvedValue(ok([{ method: "GET", url_template: "/monitored-endpoints" }]));
+    const store = useAllowedRoutesStore();
+    await store.refresh();
+    expect(scFetch).not.toHaveBeenCalled();
+    expect(store.routes.has("GET /monitored-endpoints")).toBe(true);
+    expect(store.loaded).toBe(true);
   });
 });
