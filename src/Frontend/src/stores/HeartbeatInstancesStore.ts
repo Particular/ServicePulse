@@ -7,6 +7,8 @@ import getSortFunction from "@/components/getSortFunction";
 import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import type { EndpointsView } from "@/resources/EndpointView";
 import serviceControlClient from "@/components/serviceControlClient";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 
 export enum ColumnNames {
   InstanceName = "name",
@@ -31,6 +33,9 @@ export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore",
 
   const sortedInstances = computed<EndpointsView[]>(() => endpointInstances.value.sort(getSortFunction(columnSortings.get(sortByInstances.value.property), sortByInstances.value.isAscending ? SortDirection.Ascending : SortDirection.Descending)));
   const filteredInstances = computed<EndpointsView[]>(() => sortedInstances.value.filter((instance) => !instanceFilterString.value || instance.host_display_name.toLowerCase().includes(instanceFilterString.value.toLowerCase())));
+
+  const { canCall } = useAllowedRoutes();
+  const canDeleteEndpointInstance = computed(() => canCall(ApiRoutes.deleteEndpointInstance));
 
   const refresh = () => store.refresh();
 
@@ -57,6 +62,7 @@ export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore",
     sortedInstances,
     filteredInstances,
     instanceFilterString,
+    canDeleteEndpointInstance,
     deleteEndpointInstance,
     toggleEndpointMonitor,
     sortByInstances,

@@ -1,4 +1,5 @@
 import { authFetch } from "@/composables/useAuthenticatedFetch";
+import { HttpError } from "@/utils/HttpError";
 
 export interface ServiceControlInstanceConnection {
   settings: { [key: string]: object };
@@ -28,9 +29,14 @@ class ServiceControlClient {
     }
   }
 
-  public async fetchTypedFromServiceControl<T>(suffix: string, signal?: AbortSignal): Promise<[Response, T]> {
-    const response = await authFetch(`${this.url}${suffix}`, { signal });
-    if (!response.ok) throw new Error(response.statusText ?? "No response");
+  public fetchTypedFromServiceControl<T>(suffix: string, signal?: AbortSignal): Promise<[Response, T]> {
+    return this.fetchTypedFromUrl<T>(`${this.url}${suffix}`, signal);
+  }
+
+  // Fetch from an absolute URL, e.g. one discovered from the ServiceControl root document.
+  public async fetchTypedFromUrl<T>(url: string, signal?: AbortSignal): Promise<[Response, T]> {
+    const response = await authFetch(url, { signal });
+    if (!response.ok) throw new HttpError(response.status, response.statusText ?? "No response");
     const data = await response.json();
 
     return [response, data];
@@ -76,7 +82,12 @@ class ServiceControlClient {
     return await authFetch(`${this.url}${suffix}`, requestOptions);
   }
 
-  public async fetchFromServiceControl(suffix: string, options?: { cache?: RequestCache }) {
+  public fetchFromServiceControl(suffix: string, options?: { cache?: RequestCache }) {
+    return this.fetchFromUrl(`${this.url}${suffix}`, options);
+  }
+
+  // Fetch from an absolute URL, e.g. one discovered from the ServiceControl root document.
+  public async fetchFromUrl(url: string, options?: { cache?: RequestCache }) {
     const requestOptions: RequestInit = {
       method: "GET",
       cache: options?.cache ?? "default", // Default  if not specified
@@ -84,7 +95,7 @@ class ServiceControlClient {
         Accept: "application/json",
       },
     };
-    return await authFetch(`${this.url}${suffix}`, requestOptions);
+    return await authFetch(url, requestOptions);
   }
 
   public async getErrorMessagesCount(status: string) {

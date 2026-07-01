@@ -15,6 +15,8 @@ import AuditMenuItem from "./audit/AuditMenuItem.vue";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import UserProfileMenuItem from "@/components/UserProfileMenuItem.vue";
 import { useAuthStore } from "@/stores/AuthStore";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 import { storeToRefs } from "pinia";
 
 const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
@@ -22,20 +24,27 @@ const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
 const authStore = useAuthStore();
 const { authEnabled, isAuthenticated } = storeToRefs(authStore);
 
+const { canCall, ready } = useAllowedRoutes();
+
+// Each item gates on the specific route ServiceControl enforces for that area.
+// Gate-on-ready: render nothing until permissions are known, so items never appear and
+// then disappear. canCall() fails open, so auth-disabled / failed-load shows everything.
 // prettier-ignore
-const menuItems = computed(
-  () => [
-  DashboardMenuItem,
-  HeartbeatsMenuItem,
-  ...(isMonitoringEnabled ? [MonitoringMenuItem] : []),
-  AuditMenuItem,
-  FailedMessagesMenuItem,
-  CustomChecksMenuItem,
-  EventsMenuItem,
-  ThroughputMenuItem,
-  ConfigurationMenuItem,
-  FeedbackButton,
-]);
+const menuItems = computed(() => {
+  if (!ready.value) return [];
+  return [
+    DashboardMenuItem,
+    ...(canCall(ApiRoutes.viewHeartbeats) ? [HeartbeatsMenuItem] : []),
+    ...(isMonitoringEnabled && canCall(ApiRoutes.viewMonitoredEndpoints) ? [MonitoringMenuItem] : []),
+    ...(canCall(ApiRoutes.viewAuditMessages) ? [AuditMenuItem] : []),
+    ...(canCall(ApiRoutes.viewFailedMessages) ? [FailedMessagesMenuItem] : []),
+    ...(canCall(ApiRoutes.viewCustomChecks) ? [CustomChecksMenuItem] : []),
+    ...(canCall(ApiRoutes.viewEventLog) ? [EventsMenuItem] : []),
+    ...(canCall(ApiRoutes.viewThroughput) ? [ThroughputMenuItem] : []),
+    ConfigurationMenuItem,
+    FeedbackButton,
+  ];
+});
 </script>
 
 <template>

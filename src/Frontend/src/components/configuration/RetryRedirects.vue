@@ -11,11 +11,16 @@ import type Redirect from "@/resources/Redirect";
 import RetryRedirectEdit, { type RetryRedirect } from "@/components/configuration/RetryRedirectEdit.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
+import PermissionGate from "@/components/PermissionGate.vue";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { useRedirectsStore } from "@/stores/RedirectsStore";
 import LoadingSpinner from "../LoadingSpinner.vue";
+import { storeToRefs } from "pinia";
 
 const redirectsStore = useRedirectsStore();
+const { canManageRedirects } = storeToRefs(redirectsStore);
+// Creating, modifying and ending redirects all manage redirects.
+const redirectsDeniedTooltip = "You don't have permission to manage redirects.";
 
 const loadingData = ref(true);
 const redirects = redirectsStore.redirects;
@@ -131,7 +136,9 @@ onMounted(async () => {
           <div class="row">
             <div class="col-sm-12">
               <div class="btn-toolbar">
-                <ActionButton @click="createRedirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Create Redirect</ActionButton>
+                <PermissionGate :allowed="canManageRedirects" :reason="redirectsDeniedTooltip">
+                  <ActionButton @click="createRedirect" :disabled="!canManageRedirects"><i class="fa pa-redirect-source pa-redirect-small"></i> Create Redirect</ActionButton>
+                </PermissionGate>
                 <span></span>
               </div>
             </div>
@@ -163,8 +170,12 @@ onMounted(async () => {
                     <div class="row">
                       <div class="col-sm-12">
                         <p class="small">
-                          <ActionButton variant="link" size="sm" @click="deleteRedirect(redirect)">End Redirect</ActionButton>
-                          <ActionButton variant="link" size="sm" @click="editRedirect(redirect)">Modify Redirect</ActionButton>
+                          <PermissionGate :allowed="canManageRedirects" :reason="redirectsDeniedTooltip">
+                            <ActionButton variant="link" size="sm" :disabled="!canManageRedirects" @click="deleteRedirect(redirect)">End Redirect</ActionButton>
+                          </PermissionGate>
+                          <PermissionGate :allowed="canManageRedirects" :reason="redirectsDeniedTooltip">
+                            <ActionButton variant="link" size="sm" :disabled="!canManageRedirects" @click="editRedirect(redirect)">Modify Redirect</ActionButton>
+                          </PermissionGate>
                         </p>
                       </div>
                     </div>

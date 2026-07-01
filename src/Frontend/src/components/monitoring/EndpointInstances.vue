@@ -18,7 +18,7 @@ import logger from "@/logger";
 const isRemovingEndpointEnabled = ref<boolean>(false);
 const router = useRouter();
 const monitoringEndpointDetailsStore = useMonitoringEndpointDetailsStore();
-const { endpointDetails: endpoint, endpointName } = storeToRefs(monitoringEndpointDetailsStore);
+const { endpointDetails: endpoint, endpointName, canDeleteMonitoredEndpoint } = storeToRefs(monitoringEndpointDetailsStore);
 
 async function removeEndpoint(endpointName: string, instance: ExtendedEndpointInstance) {
   try {
@@ -147,7 +147,7 @@ onMounted(async () => {
 
                 <!--remove endpoint-->
                 <div class="col-xs-2 col-xl-1 no-side-padding">
-                  <a v-if="isRemovingEndpointEnabled && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
+                  <a v-if="isRemovingEndpointEnabled && instance.isStale && canDeleteMonitoredEndpoint" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
                     <FAIcon :icon="faTrash" v-tippy="`Remove endpoint`" />
                   </a>
                 </div>
