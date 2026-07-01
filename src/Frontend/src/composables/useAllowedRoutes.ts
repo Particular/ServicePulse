@@ -14,6 +14,9 @@ export function useAllowedRoutes() {
 
   const shouldGate = computed(() => authEnabled.value && isAuthenticated.value && store.loaded);
   const ready = computed(() => !(authEnabled.value && isAuthenticated.value) || store.loadAttempted);
+  // Whether ServiceControl advertised my_routes_url, i.e. whether this version supports
+  // reporting the allowed-route manifest at all (independent of whether it loaded successfully).
+  const supported = computed(() => store.supported);
 
   function fetchManifest(): Promise<void> {
     return store.refresh();
@@ -29,5 +32,5 @@ export function useAllowedRoutes() {
     return entries.some((e) => canCall(e));
   }
 
-  return { fetchManifest, canCall, canAnyCall, shouldGate, ready };
+  return { fetchManifest, canCall, canAnyCall, shouldGate, ready, supported };
 }
