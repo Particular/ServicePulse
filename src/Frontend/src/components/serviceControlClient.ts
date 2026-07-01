@@ -83,6 +83,11 @@ class ServiceControlClient {
   }
 
   public async fetchFromServiceControl(suffix: string, options?: { cache?: RequestCache }) {
+    return this.fetchFromUrl(`${this.url}${suffix}`, options);
+  }
+
+  // Fetch from an absolute URL, e.g. one discovered from the ServiceControl root document.
+  public async fetchFromUrl(url: string, options?: { cache?: RequestCache }) {
     const requestOptions: RequestInit = {
       method: "GET",
       cache: options?.cache ?? "default", // Default  if not specified
@@ -90,7 +95,7 @@ class ServiceControlClient {
         Accept: "application/json",
       },
     };
-    return await authFetch(`${this.url}${suffix}`, requestOptions);
+    return await authFetch(url, requestOptions);
   }
 
   public async getErrorMessagesCount(status: string) {

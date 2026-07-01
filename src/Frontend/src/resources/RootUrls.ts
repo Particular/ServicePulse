@@ -19,4 +19,5 @@ export default interface RootUrls {
   get_archive_group: string;
   mypermissions_all?: string;
   mypermissions_summary?: string;
+  my_routes_url?: string;
 }

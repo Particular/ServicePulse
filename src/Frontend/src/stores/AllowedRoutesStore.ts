@@ -4,6 +4,7 @@ import serviceControlClient from "@/components/serviceControlClient";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import { normalizeRouteKey } from "@/composables/routeMatching";
 import logger from "@/logger";
+import type RootUrls from "@/resources/RootUrls";
 
 export interface ManifestEntry {
   method: string;
@@ -20,6 +21,9 @@ export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
   const routes = ref<Map<string, ManifestEntry>>(new Map());
   const loaded = ref(false);
   const loadAttempted = ref(false);
+  // Whether the primary ServiceControl instance's root document advertised my_routes_url,
+  // i.e. whether this version of ServiceControl supports reporting the allowed-route manifest.
+  const supported = ref(false);
 
   // Per-store in-flight guard so concurrent callers share one request. Kept on the store
   // (not module scope) so each Pinia instance — e.g. a re-mounted app — has its own, and a
@@ -39,10 +43,24 @@ export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
     }
   }
 
+  // The root document only advertises my_routes_url once ServiceControl supports the
+  // endpoint; older instances omit it, and the primary fetch below is skipped entirely
+  // rather than requesting a path we already know doesn't exist.
+  async function getMyRoutesUrl(): Promise<string | undefined> {
+    try {
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<RootUrls>("");
+      return data.my_routes_url;
+    } catch {
+      return undefined;
+    }
+  }
+
   async function load() {
     try {
+      const myRoutesUrl = await getMyRoutesUrl();
+      supported.value = !!myRoutesUrl;
       const [primary, monitoring] = await Promise.all([
-        fetchInstance(() => serviceControlClient.fetchFromServiceControl("my/routes")),
+        myRoutesUrl ? fetchInstance(() => serviceControlClient.fetchFromUrl(myRoutesUrl)) : Promise.resolve(null),
         fetchInstance(() => (monitoringClient.isMonitoringEnabled ? monitoringClient.fetchAllowedRoutes() : Promise.resolve(undefined))),
       ]);
       const merged = new Map<string, ManifestEntry>();
@@ -74,9 +92,10 @@ export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
     routes.value = new Map();
     loaded.value = false;
     loadAttempted.value = false;
+    supported.value = false;
   }
 
-  return { routes, loaded, loadAttempted, refresh, clear };
+  return { routes, loaded, loadAttempted, supported, refresh, clear };
 });
 
 if (import.meta.hot) {
