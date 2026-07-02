@@ -4,7 +4,7 @@ import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 
-const props = defineProps<{ isLoading: boolean }>();
+const props = defineProps<{ queryInProgress: boolean }>();
 const model = defineModel<number | null>({ required: true });
 const emit = defineEmits<{ (e: "manualRefresh"): Promise<void> }>();
 const autoRefreshOptionsText: [number, string][] = [
@@ -43,24 +43,6 @@ watch(selectedRefresh, (newValue) => {
     }
   }
 });
-const MIN_SPIN_MS = 1000;
-const showSpinning = ref(false);
-let spinStartTime = 0;
-
-watch(
-  () => props.isLoading,
-  (newValue) => {
-    if (newValue) {
-      showSpinning.value = true;
-      spinStartTime = Date.now();
-    } else {
-      const remaining = Math.max(0, MIN_SPIN_MS - (Date.now() - spinStartTime));
-      setTimeout(() => {
-        showSpinning.value = false;
-      }, remaining);
-    }
-  }
-);
 async function refresh() {
   await emit("manualRefresh");
 }
@@ -68,11 +50,11 @@ async function refresh() {
 
 <template>
   <div class="refresh-config">
-    <ActionButton size="sm" :icon="faRefresh" :loading="showSpinning" @click="refresh">Refresh List</ActionButton>
+    <ActionButton size="sm" :icon="faRefresh" :loading="props.queryInProgress" :disabled="props.queryInProgress" @click="refresh">Refresh List</ActionButton>
     <div class="filter">
       <div class="filter-label">Auto-Refresh:</div>
       <div class="filter-component">
-        <ListFilterSelector :items="autoRefreshOptionsText.map((i) => i[1])" v-model="selectedRefresh" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" />
+        <ListFilterSelector :items="autoRefreshOptionsText.map((i) => i[1])" v-model="selectedRefresh" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" :disabled="props.queryInProgress" />
       </div>
     </div>
   </div>

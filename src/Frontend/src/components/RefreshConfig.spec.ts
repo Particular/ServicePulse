@@ -1,14 +1,13 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, test, expect } from "vitest";
 import { render } from "@testing-library/vue";
-import { defineComponent, nextTick } from "vue";
+import { defineComponent } from "vue";
 import RefreshConfig from "@/components/RefreshConfig.vue";
 
 /**
- * DSL for the RefreshConfig spinner timing behavior.
+ * DSL for the RefreshConfig query-in-progress behavior.
  *
- * Tests verify that the refresh button's loading state stays in sync with the
- * isLoading prop for the full duration of the HTTP call, with a minimum display
- * time to prevent rapid re-clicks.
+ * Tests verify that the refresh controls stay in sync with the page-level query
+ * state owned by AuditList.
  *
  * If the loading UI changes (different button component, different attribute), only
  * the helpers below need updating — the tests remain unchanged.
@@ -17,19 +16,24 @@ import RefreshConfig from "@/components/RefreshConfig.vue";
 // ==================== Stubs ====================
 
 const ActionButtonStub = defineComponent({
-  props: { loading: Boolean },
-  template: '<button :data-loading="String(loading)"><slot /></button>',
+  props: { loading: Boolean, disabled: Boolean },
+  template: '<button :data-loading="String(loading)" :disabled="disabled"><slot /></button>',
+});
+
+const ListFilterSelectorStub = defineComponent({
+  props: { disabled: Boolean },
+  template: '<button :data-disabled="String(disabled)" />',
 });
 
 // ==================== DSL ====================
 
-function renderRefreshConfig(isLoading: boolean) {
+function renderRefreshConfig(queryInProgress: boolean) {
   const { rerender } = render(RefreshConfig, {
-    props: { isLoading, modelValue: null },
+    props: { queryInProgress, modelValue: null },
     global: {
       stubs: {
         ActionButton: ActionButtonStub,
-        ListFilterSelector: true,
+        ListFilterSelector: ListFilterSelectorStub,
       },
     },
   });
@@ -38,70 +42,49 @@ function renderRefreshConfig(isLoading: boolean) {
     return document.querySelector("button[data-loading]") as HTMLButtonElement;
   }
 
-  async function setIsLoading(value: boolean) {
-    await rerender({ isLoading: value, modelValue: null });
+  function getAutoRefreshSelector(): HTMLButtonElement {
+    return document.querySelector("button[data-disabled]") as HTMLButtonElement;
+  }
+
+  async function setQueryInProgress(value: boolean) {
+    await rerender({ queryInProgress: value, modelValue: null });
   }
 
   return {
-    setIsLoading,
+    setQueryInProgress,
     verify: {
-      isSpinning: () => expect(getButton().dataset.loading).toBe("true"),
-      isNotSpinning: () => expect(getButton().dataset.loading).toBe("false"),
+      refreshButtonIsLoading: () => expect(getButton().dataset.loading).toBe("true"),
+      refreshButtonIsNotLoading: () => expect(getButton().dataset.loading).toBe("false"),
+      refreshButtonIsDisabled: () => expect(getButton()).toBeDisabled(),
+      refreshButtonIsEnabled: () => expect(getButton()).toBeEnabled(),
+      autoRefreshSelectorIsDisabled: () => expect(getAutoRefreshSelector().dataset.disabled).toBe("true"),
+      autoRefreshSelectorIsEnabled: () => expect(getAutoRefreshSelector().dataset.disabled).toBe("false"),
     },
   };
 }
 
 // ==================== Tests ====================
 
-describe("FEATURE: Refresh Button Loading State", () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
+describe("FEATURE: Refresh Controls Query State", () => {
+  describe("RULE: Refresh controls are disabled while a query is in progress", () => {
+    test("EXAMPLE: Refresh controls reflect queryInProgress changes", async () => {
+      const { setQueryInProgress, verify } = renderRefreshConfig(false);
 
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+      verify.refreshButtonIsNotLoading();
+      verify.refreshButtonIsEnabled();
+      verify.autoRefreshSelectorIsEnabled();
 
-  describe("RULE: Spinner shows immediately when a fetch starts", () => {
-    test("EXAMPLE: Spinner is visible when isLoading becomes true", async () => {
-      const { setIsLoading, verify } = renderRefreshConfig(false);
+      await setQueryInProgress(true);
 
-      await setIsLoading(true);
+      verify.refreshButtonIsLoading();
+      verify.refreshButtonIsDisabled();
+      verify.autoRefreshSelectorIsDisabled();
 
-      verify.isSpinning();
-    });
-  });
+      await setQueryInProgress(false);
 
-  describe("RULE: Spinner stays on for the full duration of the fetch", () => {
-    test("EXAMPLE: Spinner stays on while isLoading is still true past 1s", async () => {
-      const { setIsLoading, verify } = renderRefreshConfig(false);
-      await setIsLoading(true);
-
-      vi.advanceTimersByTime(1500);
-      await nextTick();
-
-      verify.isSpinning();
-    });
-  });
-
-  describe("RULE: Spinner stays on for a minimum duration to prevent rapid re-clicks", () => {
-    test("EXAMPLE: Spinner turns off only after loading ends and minimum duration elapses", async () => {
-      const { setIsLoading, verify } = renderRefreshConfig(false);
-      await setIsLoading(true);
-
-      // fetch completes after 400ms (under the 1000ms minimum)
-      vi.advanceTimersByTime(400);
-      await setIsLoading(false);
-
-      // 600ms remaining — not yet
-      vi.advanceTimersByTime(599);
-      await nextTick();
-      verify.isSpinning();
-
-      // minimum elapsed — spinner clears
-      vi.advanceTimersByTime(1);
-      await nextTick();
-      verify.isNotSpinning();
+      verify.refreshButtonIsNotLoading();
+      verify.refreshButtonIsEnabled();
+      verify.autoRefreshSelectorIsEnabled();
     });
   });
 });

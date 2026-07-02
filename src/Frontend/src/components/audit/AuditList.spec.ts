@@ -8,7 +8,7 @@ import AuditList from "@/components/audit/AuditList.vue";
 import { type default as Message, MessageStatus } from "@/resources/Message";
 
 /**
- * DSL for the Audit Messages Loading Indicator feature.
+ * DSL for the Audit Messages Query State feature.
  *
  * This specification focuses on user-visible loading feedback, not
  * implementation details of how fetching is managed internally.
@@ -31,19 +31,21 @@ import useFetchWithAutoRefresh from "@/composables/autoRefresh";
 
 // ==================== DSL Interfaces ====================
 
-interface LoadingAssertions {
+interface QueryStateAssertions {
   spinnerIsVisible(): void;
   spinnerIsNotVisible(): void;
   overlayIsVisible(): void;
   overlayIsNotVisible(): void;
   messagesAreVisible(): void;
   messagesAreNotVisible(): void;
-  filtersAreDisabled(): void;
-  filtersAreEnabled(): void;
+  refreshControlsKnowQueryIsInProgress(): void;
+  refreshControlsKnowQueryIsIdle(): void;
+  filtersKnowQueryIsInProgress(): void;
+  filtersKnowQueryIsIdle(): void;
 }
 
 interface RenderResult {
-  verify: LoadingAssertions;
+  verify: QueryStateAssertions;
   isRefreshing: Ref<boolean>;
 }
 
@@ -67,6 +69,10 @@ function getMessageItems(): HTMLElement[] {
 
 function getFiltersPanel(): HTMLElement {
   return screen.getByTestId("filters-panel");
+}
+
+function getRefreshConfig(): HTMLElement {
+  return screen.getByTestId("refresh-config");
 }
 
 // ==================== Data Helpers ====================
@@ -127,8 +133,8 @@ async function renderAuditList(messages: Message[] = []): Promise<RenderResult> 
       plugins: [pinia, router],
       stubs: {
         AuditListItem: { template: '<div data-testid="message-item" />' },
-        RefreshConfig: true,
-        FiltersPanel: { template: '<div data-testid="filters-panel" :data-disabled="String(disabled)" />', props: ["disabled"] },
+        RefreshConfig: { template: '<div data-testid="refresh-config" :data-query-in-progress="String(queryInProgress)" />', props: ["queryInProgress"] },
+        FiltersPanel: { template: '<div data-testid="filters-panel" :data-query-in-progress="String(queryInProgress)" />', props: ["queryInProgress"] },
         ResultsCount: true,
         WizardDialog: true,
         PageBanner: true,
@@ -136,7 +142,7 @@ async function renderAuditList(messages: Message[] = []): Promise<RenderResult> 
     },
   });
 
-  const verify: LoadingAssertions = {
+  const verify: QueryStateAssertions = {
     spinnerIsVisible() {
       expect(getSpinner()).toBeInTheDocument();
     },
@@ -155,11 +161,17 @@ async function renderAuditList(messages: Message[] = []): Promise<RenderResult> 
     messagesAreNotVisible() {
       expect(getMessageItems()).toHaveLength(0);
     },
-    filtersAreDisabled() {
-      expect(getFiltersPanel().dataset.disabled).toBe("true");
+    refreshControlsKnowQueryIsInProgress() {
+      expect(getRefreshConfig().dataset.queryInProgress).toBe("true");
     },
-    filtersAreEnabled() {
-      expect(getFiltersPanel().dataset.disabled).toBe("false");
+    refreshControlsKnowQueryIsIdle() {
+      expect(getRefreshConfig().dataset.queryInProgress).toBe("false");
+    },
+    filtersKnowQueryIsInProgress() {
+      expect(getFiltersPanel().dataset.queryInProgress).toBe("true");
+    },
+    filtersKnowQueryIsIdle() {
+      expect(getFiltersPanel().dataset.queryInProgress).toBe("false");
     },
   };
 
@@ -173,7 +185,7 @@ async function waitForFirstLoadToComplete() {
 
 // ==================== Tests ====================
 
-describe("FEATURE: Audit Messages Loading Indicator", () => {
+describe("FEATURE: Audit Messages Query State", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -184,6 +196,8 @@ describe("FEATURE: Audit Messages Loading Indicator", () => {
 
       verify.spinnerIsVisible();
       verify.messagesAreNotVisible();
+      verify.refreshControlsKnowQueryIsInProgress();
+      verify.filtersKnowQueryIsInProgress();
     });
 
     test("EXAMPLE: Spinner is hidden after the first fetch completes", async () => {
@@ -193,6 +207,8 @@ describe("FEATURE: Audit Messages Loading Indicator", () => {
 
       await waitFor(() => verify.spinnerIsNotVisible());
       verify.overlayIsNotVisible();
+      verify.refreshControlsKnowQueryIsIdle();
+      verify.filtersKnowQueryIsIdle();
     });
   });
 
@@ -224,8 +240,8 @@ describe("FEATURE: Audit Messages Loading Indicator", () => {
     });
   });
 
-  describe("RULE: Filter controls are disabled during a fetch", () => {
-    test("EXAMPLE: Filters are disabled when a re-fetch is in-flight", async () => {
+  describe("RULE: Query controls are disabled during a fetch", () => {
+    test("EXAMPLE: Query controls are disabled when a re-fetch is in-flight", async () => {
       const { verify, isRefreshing } = await renderAuditList([]);
 
       await waitForFirstLoadToComplete();
@@ -233,10 +249,11 @@ describe("FEATURE: Audit Messages Loading Indicator", () => {
       isRefreshing.value = true;
       await nextTick();
 
-      verify.filtersAreDisabled();
+      verify.refreshControlsKnowQueryIsInProgress();
+      verify.filtersKnowQueryIsInProgress();
     });
 
-    test("EXAMPLE: Filters are re-enabled after the fetch completes", async () => {
+    test("EXAMPLE: Query controls are re-enabled after the fetch completes", async () => {
       const { verify, isRefreshing } = await renderAuditList([]);
 
       await waitForFirstLoadToComplete();
@@ -247,7 +264,8 @@ describe("FEATURE: Audit Messages Loading Indicator", () => {
       isRefreshing.value = false;
       await nextTick();
 
-      verify.filtersAreEnabled();
+      verify.refreshControlsKnowQueryIsIdle();
+      verify.filtersKnowQueryIsIdle();
     });
   });
 

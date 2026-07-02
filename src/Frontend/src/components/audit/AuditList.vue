@@ -23,6 +23,7 @@ const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
 const { refreshNow, isRefreshing, updateInterval, isActive, start, stop } = useFetchWithAutoRefresh("audit-list", store.refresh, 0);
 const firstLoad = ref(true);
+const queryInProgress = computed(() => firstLoad.value || isRefreshing.value);
 const showWizard = ref(false);
 const { status: auditStatus } = useAuditingCapability();
 const wizardPages = computed(() => getAuditingWizardPages(auditStatus.value));
@@ -136,9 +137,9 @@ watch(autoRefreshValue, (newValue) => {
 <template>
   <div>
     <div class="header">
-      <RefreshConfig v-model="autoRefreshValue" :isLoading="isRefreshing" @manual-refresh="refreshNow" />
+      <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" @manual-refresh="refreshNow" />
       <div class="row">
-        <FiltersPanel :disabled="isRefreshing" />
+        <FiltersPanel :query-in-progress="queryInProgress" />
       </div>
       <div class="row">
         <ResultsCount :displayed="messages.length" :total="totalCount" />
