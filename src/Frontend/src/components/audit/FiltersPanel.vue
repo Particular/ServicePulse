@@ -67,7 +67,16 @@ function findKeyByValue(searchValue: string) {
     <div class="filter">
       <div class="filter-label">Endpoint:</div>
       <div class="filter-component">
-        <ListFilterSelector :items="endpointNames" instructions="Select an endpoint" v-model="selectedEndpointName" item-name="endpoint" label="Endpoint" default-empty-text="Any" :show-clear="true" :show-filter="true" :disabled="props.queryInProgress" />
+        <ListFilterSelector 
+            :items="endpointNames"
+            instructions="Select an endpoint" 
+            v-model="selectedEndpointName" 
+            item-name="endpoint" 
+            label="Endpoint" 
+            default-empty-text="Any" 
+            :show-clear="true" 
+            :show-filter="true" 
+            :disabled="props.queryInProgress" />
       </div>
     </div>
     <div class="filter">
