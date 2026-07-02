@@ -68,7 +68,9 @@ export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
       const merged = new Map<string, ManifestEntry>();
       for (const list of [primary, monitoring]) {
         for (const entry of list ?? []) {
-          const urlTemplate = typeof entry.url_template === "string" ? entry.url_template : typeof entry.urlTemplate === "string" ? entry.urlTemplate : undefined;
+          // Need to support both camel as snake casing
+          const urlTemplate = typeof entry.url_template === "string" ? entry.url_template
+                            : typeof entry.urlTemplate === "string" ? entry.urlTemplate : undefined;
           // Skip any entry missing a method or template rather than throwing: a single malformed
           // entry must never abort the load, which would leave the store unloaded and silently
           // fail every permission gate OPEN (showing actions the user cannot perform).
