@@ -100,6 +100,19 @@ describe("AllowedRoutesStore", () => {
     expect(store.routes.size).toBe(1);
   });
 
+  it("merges a Monitoring entry serialized with camelCase urlTemplate (real Monitoring instance shape)", async () => {
+    // Regression: the Monitoring instance serializes this field as urlTemplate, not url_template
+    // like Primary. Every Monitoring entry was previously dropped as "malformed" because of this,
+    // silently denying every Monitoring-gated capability regardless of actual permissions.
+    scFetch.mockResolvedValue(ok([]));
+    monFetch.mockResolvedValue(ok([{ method: "DELETE", urlTemplate: "/monitored-instance/{endpointName}/{instanceId}" }]));
+    const store = useAllowedRoutesStore();
+    await store.refresh();
+    const expectedKey = normalizeRouteKey(ApiRoutes.deleteMonitoredEndpoint.method, ApiRoutes.deleteMonitoredEndpoint.path);
+    expect(expectedKey).toBe("DELETE /monitored-instance/{}/{}");
+    expect(store.routes.has(expectedKey)).toBe(true);
+  });
+
   it("skips the primary fetch entirely when the root document omits my_routes_url", async () => {
     rootFetch.mockResolvedValue(rootDoc());
     monFetch.mockResolvedValue(ok([{ method: "GET", url_template: "/monitored-endpoints" }]));

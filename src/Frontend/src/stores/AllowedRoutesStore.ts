@@ -8,9 +8,11 @@ import type RootUrls from "@/resources/RootUrls";
 
 export interface ManifestEntry {
   method: string;
-  // ServiceControl pins this field to snake_case on every instance (RouteManifestEntry uses
-  // [JsonPropertyName]). Optional at the type level because wire data is validated at runtime.
+  // Field name is inconsistent across instances: Primary serializes snake_case (url_template),
+  // Monitoring serializes camelCase (urlTemplate). Both must be accepted defensively — optional
+  // at the type level because wire data is validated at runtime either way.
   url_template?: string;
+  urlTemplate?: string;
   [k: string]: unknown;
 }
 
@@ -66,14 +68,15 @@ export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
       const merged = new Map<string, ManifestEntry>();
       for (const list of [primary, monitoring]) {
         for (const entry of list ?? []) {
+          const urlTemplate = typeof entry.url_template === "string" ? entry.url_template : typeof entry.urlTemplate === "string" ? entry.urlTemplate : undefined;
           // Skip any entry missing a method or template rather than throwing: a single malformed
           // entry must never abort the load, which would leave the store unloaded and silently
           // fail every permission gate OPEN (showing actions the user cannot perform).
-          if (!entry.method || typeof entry.url_template !== "string") {
+          if (!entry.method || urlTemplate === undefined) {
             logger.warn("Skipping malformed allowed-route entry", entry);
             continue;
           }
-          merged.set(normalizeRouteKey(entry.method, entry.url_template), entry);
+          merged.set(normalizeRouteKey(entry.method, urlTemplate), entry);
         }
       }
       routes.value = merged;
