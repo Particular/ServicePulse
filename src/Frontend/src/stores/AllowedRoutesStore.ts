@@ -14,11 +14,21 @@ export interface ManifestEntry {
   [k: string]: unknown;
 }
 
+// The my/routes payload: the caller's role claims alongside the routes they may invoke
+// (ServiceControl's MyRoutesResponse — roles reported once at the top level, not per entry).
+interface ManifestResponse {
+  roles: string[];
+  routes: ManifestEntry[];
+}
+
 // Holds the allowed-route manifest the current token may call, merged from the instances
 // ServicePulse calls directly (Primary + Monitoring). A Map (not a Set) preserves each entry so a
 // future per-route `scope` field survives (resource-level checks). Keys are normalizeRouteKey().
 export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
   const routes = ref<Map<string, ManifestEntry>>(new Map());
+  // Role claims reported by the instances, deduplicated (Primary and Monitoring authenticate the
+  // same token, so their role sets are expected to overlap or match).
+  const roles = ref<string[]>([]);
   const loaded = ref(false);
   const loadAttempted = ref(false);
   // Whether the primary ServiceControl instance's root document advertised my_routes_url,
@@ -30,13 +40,16 @@ export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
   // stale request can never resolve into a different store instance.
   let inFlight: Promise<void> | null = null;
 
-  async function fetchInstance(get: () => Promise<Response | undefined>): Promise<ManifestEntry[] | null> {
+  async function fetchInstance(get: () => Promise<Response | undefined>): Promise<ManifestResponse | null> {
     try {
       const response = await get();
       if (!response || !response.ok) return null; // per-instance fail-open
       const json = await response.json();
-      if (!Array.isArray(json)) return null; // guard against non-array bodies (error envelopes, etc.)
-      return json as ManifestEntry[];
+      // Guard against malformed bodies (error envelopes, etc.): routes must be an array; roles
+      // defaults to empty rather than failing the whole instance, since it is supplementary.
+      if (!json || !Array.isArray(json.routes)) return null;
+      const entryRoles = Array.isArray(json.roles) ? json.roles.filter((r: unknown): r is string => typeof r === "string") : [];
+      return { roles: entryRoles, routes: json.routes as ManifestEntry[] };
     } catch (error) {
       logger.warn("Failed to fetch allowed routes", error);
       return null;
@@ -64,8 +77,9 @@ export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
         fetchInstance(() => (monitoringClient.isMonitoringEnabled ? monitoringClient.fetchAllowedRoutes() : Promise.resolve(undefined))),
       ]);
       const merged = new Map<string, ManifestEntry>();
-      for (const list of [primary, monitoring]) {
-        for (const entry of list ?? []) {
+      const mergedRoles = new Set<string>();
+      for (const result of [primary, monitoring]) {
+        for (const entry of result?.routes ?? []) {
           // Skip any entry missing a method or template rather than throwing: a single malformed
           // entry must never abort the load, which would leave the store unloaded and silently
           // fail every permission gate OPEN (showing actions the user cannot perform).
@@ -75,8 +89,12 @@ export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
           }
           merged.set(normalizeRouteKey(entry.method, entry.url_template), entry);
         }
+        for (const role of result?.roles ?? []) {
+          mergedRoles.add(role);
+        }
       }
       routes.value = merged;
+      roles.value = [...mergedRoles];
       loaded.value = primary !== null || monitoring !== null;
     } finally {
       loadAttempted.value = true;
@@ -90,12 +108,13 @@ export const useAllowedRoutesStore = defineStore("AllowedRoutesStore", () => {
 
   function clear() {
     routes.value = new Map();
+    roles.value = [];
     loaded.value = false;
     loadAttempted.value = false;
     supported.value = false;
   }
 
-  return { routes, loaded, loadAttempted, supported, refresh, clear };
+  return { routes, roles, loaded, loadAttempted, supported, refresh, clear };
 });
 
 if (import.meta.hot) {

@@ -17,6 +17,8 @@ export function useAllowedRoutes() {
   // Whether ServiceControl advertised my_routes_url, i.e. whether this version supports
   // reporting the allowed-route manifest at all (independent of whether it loaded successfully).
   const supported = computed(() => store.supported);
+  // The current user's role claims, as reported by the my/routes manifest.
+  const roles = computed(() => store.roles);
 
   function fetchManifest(): Promise<void> {
     return store.refresh();
@@ -42,5 +44,5 @@ export function useAllowedRoutes() {
     return entries.some((e) => canCall(e));
   }
 
-  return { fetchManifest, ensureManifestLoaded, canCall, canAnyCall, shouldGate, ready, supported };
+  return { fetchManifest, ensureManifestLoaded, canCall, canAnyCall, shouldGate, ready, supported, roles };
 }

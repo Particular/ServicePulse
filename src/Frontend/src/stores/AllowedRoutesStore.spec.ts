@@ -37,8 +37,8 @@ describe("AllowedRoutesStore", () => {
   });
 
   it("merges Primary and Monitoring manifests into normalized keys", async () => {
-    scFetch.mockResolvedValue(ok([{ method: "POST", url_template: "/api/errors/{id}/retry" }]));
-    monFetch.mockResolvedValue(ok([{ method: "DELETE", url_template: "/api/monitored-instance/{n}/{i}" }]));
+    scFetch.mockResolvedValue(ok({ roles: [], routes: [{ method: "POST", url_template: "/api/errors/{id}/retry" }] }));
+    monFetch.mockResolvedValue(ok({ roles: [], routes: [{ method: "DELETE", url_template: "/api/monitored-instance/{n}/{i}" }] }));
     const store = useAllowedRoutesStore();
     await store.refresh();
     expect(scFetch).toHaveBeenCalledWith(MY_ROUTES_URL);
@@ -47,8 +47,16 @@ describe("AllowedRoutesStore", () => {
     expect(store.loaded).toBe(true);
   });
 
+  it("merges and deduplicates roles from Primary and Monitoring", async () => {
+    scFetch.mockResolvedValue(ok({ roles: ["admin", "support"], routes: [] }));
+    monFetch.mockResolvedValue(ok({ roles: ["support"], routes: [] }));
+    const store = useAllowedRoutesStore();
+    await store.refresh();
+    expect(store.roles.sort()).toEqual(["admin", "support"]);
+  });
+
   it("fails open per instance: a 404 from one instance contributes nothing but does not throw", async () => {
-    scFetch.mockResolvedValue(ok([{ method: "GET", url_template: "/api/errors" }]));
+    scFetch.mockResolvedValue(ok({ roles: [], routes: [{ method: "GET", url_template: "/api/errors" }] }));
     monFetch.mockResolvedValue({ ok: false, status: 404, json: () => Promise.resolve({}) });
     const store = useAllowedRoutesStore();
     await store.refresh();
@@ -56,7 +64,7 @@ describe("AllowedRoutesStore", () => {
     expect(store.loadAttempted).toBe(true);
   });
 
-  it("treats a non-array 200 response body as a failed instance: loaded stays false when both return non-array", async () => {
+  it("treats a body without a routes array as a failed instance: loaded stays false when both return malformed bodies", async () => {
     scFetch.mockResolvedValue(ok({}));
     monFetch.mockResolvedValue(ok(null));
     const store = useAllowedRoutesStore();
@@ -79,8 +87,8 @@ describe("AllowedRoutesStore", () => {
     // This test pins the cross-repo path contract: the manifest entry the Monitoring
     // instance returns must round-trip through normalizeRouteKey to produce the same
     // key as the registry uses for viewMonitoredEndpoints.
-    scFetch.mockResolvedValue(ok([]));
-    monFetch.mockResolvedValue(ok([{ method: "GET", url_template: "/monitored-endpoints" }]));
+    scFetch.mockResolvedValue(ok({ roles: [], routes: [] }));
+    monFetch.mockResolvedValue(ok({ roles: [], routes: [{ method: "GET", url_template: "/monitored-endpoints" }] }));
     const store = useAllowedRoutesStore();
     await store.refresh();
     const expectedKey = normalizeRouteKey(ApiRoutes.viewMonitoredEndpoints.method, ApiRoutes.viewMonitoredEndpoints.path);
@@ -91,8 +99,8 @@ describe("AllowedRoutesStore", () => {
   it("skips a malformed entry instead of aborting the load and failing gates open", async () => {
     // Regression: an entry without a template once threw inside the merge, leaving the store
     // unloaded so every gate failed OPEN. A bad entry must be skipped and the rest still load.
-    scFetch.mockResolvedValue(ok([{ method: "GET", url_template: "/api/errors" }, { method: "POST" }]));
-    monFetch.mockResolvedValue(ok([]));
+    scFetch.mockResolvedValue(ok({ roles: [], routes: [{ method: "GET", url_template: "/api/errors" }, { method: "POST" }] }));
+    monFetch.mockResolvedValue(ok({ roles: [], routes: [] }));
     const store = useAllowedRoutesStore();
     await store.refresh();
     expect(store.loaded).toBe(true);
@@ -102,7 +110,7 @@ describe("AllowedRoutesStore", () => {
 
   it("skips the primary fetch entirely when the root document omits my_routes_url", async () => {
     rootFetch.mockResolvedValue(rootDoc());
-    monFetch.mockResolvedValue(ok([{ method: "GET", url_template: "/monitored-endpoints" }]));
+    monFetch.mockResolvedValue(ok({ roles: [], routes: [{ method: "GET", url_template: "/monitored-endpoints" }] }));
     const store = useAllowedRoutesStore();
     await store.refresh();
     expect(scFetch).not.toHaveBeenCalled();
@@ -112,7 +120,7 @@ describe("AllowedRoutesStore", () => {
 
   it("skips the primary fetch and fails open when the root document request itself rejects", async () => {
     rootFetch.mockRejectedValue(new Error("network error"));
-    monFetch.mockResolvedValue(ok([{ method: "GET", url_template: "/monitored-endpoints" }]));
+    monFetch.mockResolvedValue(ok({ roles: [], routes: [{ method: "GET", url_template: "/monitored-endpoints" }] }));
     const store = useAllowedRoutesStore();
     await store.refresh();
     expect(scFetch).not.toHaveBeenCalled();

@@ -93,7 +93,7 @@ import FAIcon from "@/components/FAIcon.vue";
 import ConditionalRender from "@/components/ConditionalRender.vue";
 import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
 
-const { canCall, supported } = useAllowedRoutes();
+const { canCall, supported, roles } = useAllowedRoutes();
 
 const rows = computed(() =>
   groups.map((g) => ({
@@ -107,6 +107,11 @@ const rows = computed(() =>
   <section name="user-permissions">
     <div class="box">
       <h3>Your permissions</h3>
+
+      <div v-if="roles.length" class="user-roles">
+        <span class="roles-label">Roles:</span>
+        <span v-for="role in roles" :key="role" class="role-badge">{{ role }}</span>
+      </div>
 
       <ConditionalRender :supported="supported">
         <template #unsupported>
@@ -152,6 +157,28 @@ const rows = computed(() =>
 
 <style scoped>
 @import "@/components/notsupported.css";
+
+.user-roles {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.roles-label {
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.role-badge {
+  padding: 2px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2a2a2a;
+  background-color: #e9ecef;
+  border-radius: 12px;
+}
 
 .permissions-table {
   border-collapse: collapse;
