@@ -5,6 +5,8 @@ import serviceControlClient from "@/components/serviceControlClient";
 import { type default as LicenseInfo, LicenseStatus } from "@/resources/LicenseInfo";
 import { LicenseWarningLevel } from "@/composables/LicenseStatus";
 import { useGetDayDiffFromToday } from "@/composables/formatter";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 
 export const useLicenseStore = defineStore("LicenseStore", () => {
   const license = reactive<LicenseInfo>({
@@ -40,6 +42,7 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
   });
 
   const loading = ref(false);
+  const { canCall, ensureManifestLoaded } = useAllowedRoutes();
 
   // Computed properties for license formatting
   const licenseEdition = computed(() => {
@@ -59,6 +62,11 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
   });
 
   async function refresh() {
+    await ensureManifestLoaded();
+    if (!canCall(ApiRoutes.viewLicense)) {
+      return;
+    }
+
     loading.value = true;
     try {
       const lic = await getLicense();

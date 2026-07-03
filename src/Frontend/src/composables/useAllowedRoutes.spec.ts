@@ -4,9 +4,10 @@ import { useAllowedRoutesStore } from "@/stores/AllowedRoutesStore";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
 import { ApiRoutes } from "@/composables/apiRoutes";
+import serviceControlClient from "@/components/serviceControlClient";
 
 vi.mock("@/components/serviceControlClient", () => ({
-  default: { fetchFromServiceControl: vi.fn(), fetchTypedFromServiceControl: vi.fn() },
+  default: { fetchFromServiceControl: vi.fn(), fetchTypedFromServiceControl: vi.fn(), fetchFromUrl: vi.fn() },
 }));
 vi.mock("@/components/monitoring/monitoringClient", () => ({
   default: { isMonitoringEnabled: false, fetchAllowedRoutes: vi.fn() },
@@ -57,5 +58,30 @@ describe("useAllowedRoutes", () => {
     expect(useAllowedRoutes().ready.value).toBe(false);
     store.loadAttempted = true;
     expect(useAllowedRoutes().ready.value).toBe(true);
+  });
+
+  it("ensureManifestLoaded awaits the real load, closing the race where canCall fails open before the manifest arrives", async () => {
+    const auth = useAuthStore();
+    auth.authEnabled = true;
+    auth.isAuthenticated = true;
+
+    vi.mocked(serviceControlClient.fetchTypedFromServiceControl).mockResolvedValue([{} as Response, { my_routes_url: "http://sc/my-routes" }]);
+    vi.mocked(serviceControlClient.fetchFromUrl).mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve([{ method: "POST", url_template: "/api/errors/retry" }]),
+    } as Response);
+
+    const { ensureManifestLoaded, canCall, ready } = useAllowedRoutes();
+
+    // Before the manifest resolves, gating hasn't kicked in yet: this is the fail-open window a
+    // caller must not act on.
+    expect(ready.value).toBe(false);
+    expect(canCall(ApiRoutes.retryMessage)).toBe(true);
+
+    await ensureManifestLoaded();
+
+    expect(ready.value).toBe(true);
+    expect(canCall(ApiRoutes.retryMessage)).toBe(true);
+    expect(canCall(ApiRoutes.viewFailedMessages)).toBe(false);
   });
 });
