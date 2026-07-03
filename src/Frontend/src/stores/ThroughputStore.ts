@@ -6,15 +6,22 @@ import { Transport } from "@/views/throughputreport/transport";
 import useIsThroughputSupported from "@/views/throughputreport/isThroughputSupported";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import logger from "@/logger";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 
 export const useThroughputStore = defineStore("ThroughputStore", () => {
   const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
   const testResults = ref<ConnectionTestResults | null>(null);
   const isThroughputSupported = useIsThroughputSupported();
   const throughputClient = createThroughputClient();
+  const { canCall, ensureManifestLoaded } = useAllowedRoutes();
 
   const refresh = async () => {
     if (!isThroughputSupported.value) {
+      return;
+    }
+    await ensureManifestLoaded();
+    if (!canCall(ApiRoutes.viewLicense)) {
       return;
     }
     try {

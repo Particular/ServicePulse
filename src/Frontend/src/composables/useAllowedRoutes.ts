@@ -22,6 +22,16 @@ export function useAllowedRoutes() {
     return store.refresh();
   }
 
+  // Callers that gate a network call (rather than just a template) on canCall must await this
+  // first: otherwise a call made before the manifest finishes loading races fetchManifest() and
+  // fails open (shouldGate is false until store.loaded flips), letting the request through
+  // regardless of permission. No-ops once the manifest load has been attempted (or doesn't apply).
+  async function ensureManifestLoaded(): Promise<void> {
+    if (!ready.value) {
+      await fetchManifest();
+    }
+  }
+
   // resource: reserved for future resource-level scope (ignored today). See design Future-proofing.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function canCall(entry: RouteRef, _resource?: object): boolean {
@@ -32,5 +42,5 @@ export function useAllowedRoutes() {
     return entries.some((e) => canCall(e));
   }
 
-  return { fetchManifest, canCall, canAnyCall, shouldGate, ready, supported };
+  return { fetchManifest, ensureManifestLoaded, canCall, canAnyCall, shouldGate, ready, supported };
 }
