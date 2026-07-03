@@ -77,7 +77,7 @@ function findKeyByValue(searchValue: string) {
           :show-clear="true"
           :show-filter="true"
           :disabled="props.queryInProgress"
-       />
+        />
       </div>
     </div>
     <div class="filter">
