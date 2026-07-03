@@ -68,7 +68,7 @@ describe("useAllowedRoutes", () => {
     vi.mocked(serviceControlClient.fetchTypedFromServiceControl).mockResolvedValue([{} as Response, { my_routes_url: "http://sc/my-routes" }]);
     vi.mocked(serviceControlClient.fetchFromUrl).mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve([{ method: "POST", url_template: "/api/errors/retry" }]),
+      json: () => Promise.resolve({ roles: [], routes: [{ method: "POST", url_template: "/api/errors/retry" }] }),
     } as Response);
 
     const { ensureManifestLoaded, canCall, ready } = useAllowedRoutes();
