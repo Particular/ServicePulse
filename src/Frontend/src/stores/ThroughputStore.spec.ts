@@ -9,11 +9,16 @@ import { setActivePinia, storeToRefs } from "pinia";
 import type { Driver } from "../../test/driver";
 import { disableMonitoring } from "../../test/drivers/vitest/setup";
 import { useEnvironmentAndVersionsStore } from "./EnvironmentAndVersionsStore";
+import type { ManifestEntry } from "@/stores/AllowedRoutesStore";
+
+function makeRoutes(keys: string[]): Map<string, ManifestEntry> {
+  return new Map(keys.map((k) => [k, { method: "", url_template: "" }]));
+}
 
 describe("ThroughputStore tests", () => {
-  async function setup(preSetup: (driver: Driver) => Promise<void>) {
+  async function setup(preSetup: (driver: Driver) => Promise<void>, initialState?: Record<string, unknown>) {
     const driver = makeDriverForTests();
-    setActivePinia(createTestingPinia({ stubActions: false }));
+    setActivePinia(createTestingPinia({ stubActions: false, initialState }));
 
     await preSetup(driver);
     await driver.setUp(serviceControlWithThroughput);
@@ -35,6 +40,26 @@ describe("ThroughputStore tests", () => {
     });
 
     expect(hasErrors.value).toBe(false);
+  });
+
+  test("does not call the licensing connection test when lacking permission to view the license", async () => {
+    let called = false;
+    const { testResults } = await setup(
+      async (driver) => {
+        await driver.setUp(precondition.hasLicensingSettingTest({ transport: Transport.AmazonSQS }));
+        driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}licensing/settings/test`, "get", () => {
+          called = true;
+          return Promise.resolve({ body: {} });
+        });
+      },
+      {
+        auth: { authEnabled: true, isAuthenticated: true },
+        AllowedRoutesStore: { routes: makeRoutes([]), loaded: true, loadAttempted: true },
+      }
+    );
+
+    expect(called).toBe(false);
+    expect(testResults.value).toBe(null);
   });
 
   describe("when transport is a broker", () => {
