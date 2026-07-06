@@ -13,14 +13,17 @@ import ResultsCount from "../ResultsCount.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import { faCloud, faServer } from "@fortawesome/free-solid-svg-icons";
 import useHeartbeatsStoreAutoRefresh from "@/composables/useHeartbeatsStoreAutoRefresh";
+import PermissionGate from "@/components/PermissionGate.vue";
 
 enum Operation {
   Track = "track",
   DoNotTrack = "do not track",
 }
 
+const manageDeniedTooltip = "You don't have permission to manage heartbeat tracking.";
+
 const { store } = useHeartbeatsStoreAutoRefresh();
-const { sortedEndpoints, filteredEndpoints, defaultTrackingInstancesValue } = storeToRefs(store);
+const { sortedEndpoints, filteredEndpoints, defaultTrackingInstancesValue, canManageEndpointSettings } = storeToRefs(store);
 const showBulkWarningDialog = ref(false);
 const dialogWarningOperation = ref(Operation.Track);
 
@@ -70,14 +73,18 @@ async function toggleDefaultSetting() {
     <div class="row filters">
       <div class="col-sm-12">
         <span class="buttonsContainer">
-          <button type="button" class="btn btn-default btn-sm" :disabled="filteredEndpoints.length === 0" @click="showBulkOperationWarningDialog(Operation.Track)">
-            <FAIcon :icon="faServer" class="icon" :class="{ 'text-black': filteredEndpoints.length > 0 }" />
-            Track Instances on All Endpoints
-          </button>
-          <button type="button" class="btn btn-default btn-sm" :disabled="filteredEndpoints.length === 0" @click="showBulkOperationWarningDialog(Operation.DoNotTrack)">
-            <FAIcon :icon="faCloud" class="icon" :class="{ 'text-black': filteredEndpoints.length > 0 }" />
-            Do Not Track Instances on All Endpoints
-          </button>
+          <PermissionGate :allowed="canManageEndpointSettings" :reason="manageDeniedTooltip">
+            <button type="button" class="btn btn-default btn-sm" :disabled="filteredEndpoints.length === 0 || !canManageEndpointSettings" @click="showBulkOperationWarningDialog(Operation.Track)">
+              <FAIcon :icon="faServer" class="icon" :class="{ 'text-black': filteredEndpoints.length > 0 }" />
+              Track Instances on All Endpoints
+            </button>
+          </PermissionGate>
+          <PermissionGate :allowed="canManageEndpointSettings" :reason="manageDeniedTooltip">
+            <button type="button" class="btn btn-default btn-sm" :disabled="filteredEndpoints.length === 0 || !canManageEndpointSettings" @click="showBulkOperationWarningDialog(Operation.DoNotTrack)">
+              <FAIcon :icon="faCloud" class="icon" :class="{ 'text-black': filteredEndpoints.length > 0 }" />
+              Do Not Track Instances on All Endpoints
+            </button>
+          </PermissionGate>
         </span>
       </div>
     </div>
@@ -96,7 +103,9 @@ async function toggleDefaultSetting() {
           <div class="defaultSetting">
             <label>Track Instances by default on new endpoints</label>
             <div class="switch">
-              <OnOffSwitch id="defaultTIV" @toggle="toggleDefaultSetting" :value="defaultTrackingInstancesValue" />
+              <PermissionGate :allowed="canManageEndpointSettings" :reason="manageDeniedTooltip">
+                <OnOffSwitch id="defaultTIV" @toggle="toggleDefaultSetting" :value="defaultTrackingInstancesValue" :disabled="!canManageEndpointSettings" />
+              </PermissionGate>
             </div>
           </div>
           <p>

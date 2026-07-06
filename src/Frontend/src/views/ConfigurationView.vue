@@ -28,6 +28,14 @@ const authStore = useAuthStore();
 // the tab row is held until permissions are known, so tabs don't appear and then disappear.
 const { canCall, ready } = useAllowedRoutes();
 
+const licenseDeniedTooltip = "You don't have permission to view License.";
+const usageSetupDeniedTooltip = "You don't have permission to view Usage Setup.";
+const massTransitConnectorDeniedTooltip = "You don't have permission to view MassTransit Connector.";
+const healthCheckNotificationsDeniedTooltip = "You don't have permission to view Health Check Notifications.";
+const retryRedirectsDeniedTooltip = "You don't have permission to view Retry Redirects.";
+const connectionsDeniedTooltip = "You don't have permission to view Connections.";
+const endpointConnectionDeniedTooltip = "You don't have permission to view Endpoint Connection.";
+
 onMounted(async () => {
   if (notConnected.value) {
     const router = useRouter();
@@ -45,8 +53,8 @@ const notConnected = computed(() => !connectionState.connected && !connectionSta
 
 const defaultRouteNotConnected = useLink({ to: routeLinks.configuration.connections.link }).route.value;
 
-function preventIfDisabled(e: Event) {
-  if (notConnected.value) {
+function preventIfDisabled(e: Event, disabled: boolean) {
+  if (disabled) {
     e.preventDefault();
   }
 }
@@ -62,14 +70,24 @@ function preventIfDisabled(e: Event) {
     <div class="row">
       <div class="col-sm-12">
         <div class="nav tabs" v-if="ready">
-          <h5 v-if="canCall(ApiRoutes.viewLicense)" :class="{ active: isRouteSelected(routeLinks.configuration.license.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="license">
+          <h5
+            :class="{ active: isRouteSelected(routeLinks.configuration.license.link), disabled: notConnected || !canCall(ApiRoutes.viewLicense) }"
+            @click.capture="preventIfDisabled($event, notConnected || !canCall(ApiRoutes.viewLicense))"
+            v-tippy="!canCall(ApiRoutes.viewLicense) ? licenseDeniedTooltip : ''"
+            class="nav-item"
+            role="tab"
+            aria-label="license"
+          >
             <RouterLink :to="routeLinks.configuration.license.link">License</RouterLink>
             <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
           </h5>
           <h5
-            v-if="canCall(ApiRoutes.manageThroughput)"
-            :class="{ active: isRouteSelected(routeLinks.throughput.setup.root) || isRouteSelected(routeLinks.throughput.setup.mask.link) || isRouteSelected(routeLinks.throughput.setup.diagnostics.link), disabled: notConnected }"
-            @click.capture="preventIfDisabled"
+            :class="{
+              active: isRouteSelected(routeLinks.throughput.setup.root) || isRouteSelected(routeLinks.throughput.setup.mask.link) || isRouteSelected(routeLinks.throughput.setup.diagnostics.link),
+              disabled: notConnected || !canCall(ApiRoutes.manageThroughput),
+            }"
+            @click.capture="preventIfDisabled($event, notConnected || !canCall(ApiRoutes.manageThroughput))"
+            v-tippy="!canCall(ApiRoutes.manageThroughput) ? usageSetupDeniedTooltip : ''"
             class="nav-item"
             role="tab"
             aria-label="usage-setup"
@@ -79,12 +97,12 @@ function preventIfDisabled(e: Event) {
           </h5>
           <template v-if="!licenseStatus.isExpired">
             <h5
-              v-if="canCall(ApiRoutes.viewConnections)"
               :class="{
                 active: isRouteSelected(routeLinks.configuration.massTransitConnector.link),
-                disabled: notConnected,
+                disabled: notConnected || !canCall(ApiRoutes.viewConnections),
               }"
-              @click.capture="preventIfDisabled"
+              @click.capture="preventIfDisabled($event, notConnected || !canCall(ApiRoutes.viewConnections))"
+              v-tippy="!canCall(ApiRoutes.viewConnections) ? massTransitConnectorDeniedTooltip : ''"
               class="nav-item"
               role="tab"
               aria-label="mass-transit-connector"
@@ -92,12 +110,12 @@ function preventIfDisabled(e: Event) {
               <RouterLink :to="routeLinks.configuration.massTransitConnector.link">MassTransit Connector</RouterLink>
             </h5>
             <h5
-              v-if="canCall(ApiRoutes.viewNotifications)"
               :class="{
                 active: isRouteSelected(routeLinks.configuration.healthCheckNotifications.link),
-                disabled: notConnected,
+                disabled: notConnected || !canCall(ApiRoutes.viewNotifications),
               }"
-              @click.capture="preventIfDisabled"
+              @click.capture="preventIfDisabled($event, notConnected || !canCall(ApiRoutes.viewNotifications))"
+              v-tippy="!canCall(ApiRoutes.viewNotifications) ? healthCheckNotificationsDeniedTooltip : ''"
               class="nav-item"
               role="tab"
               aria-label="health-check-notifications"
@@ -105,12 +123,12 @@ function preventIfDisabled(e: Event) {
               <RouterLink :to="routeLinks.configuration.healthCheckNotifications.link">Health Check Notifications</RouterLink>
             </h5>
             <h5
-              v-if="canCall(ApiRoutes.viewRedirects)"
               :class="{
                 active: isRouteSelected(routeLinks.configuration.retryRedirects.link),
-                disabled: notConnected,
+                disabled: notConnected || !canCall(ApiRoutes.viewRedirects),
               }"
-              @click.capture="preventIfDisabled"
+              @click.capture="preventIfDisabled($event, notConnected || !canCall(ApiRoutes.viewRedirects))"
+              v-tippy="!canCall(ApiRoutes.viewRedirects) ? retryRedirectsDeniedTooltip : ''"
               class="nav-item"
               role="tab"
               aria-label="retry-redirects"
@@ -118,10 +136,12 @@ function preventIfDisabled(e: Event) {
               <RouterLink :to="routeLinks.configuration.retryRedirects.link">Retry Redirects ({{ redirectsStore.redirects.total }})</RouterLink>
             </h5>
             <h5
-              v-if="canCall(ApiRoutes.viewConnections)"
               :class="{
                 active: isRouteSelected(routeLinks.configuration.connections.link),
+                disabled: !canCall(ApiRoutes.viewConnections),
               }"
+              @click.capture="preventIfDisabled($event, !canCall(ApiRoutes.viewConnections))"
+              v-tippy="!canCall(ApiRoutes.viewConnections) ? connectionsDeniedTooltip : ''"
               class="nav-item"
               role="tab"
               aria-label="connections"
@@ -132,12 +152,12 @@ function preventIfDisabled(e: Event) {
               </RouterLink>
             </h5>
             <h5
-              v-if="canCall(ApiRoutes.viewEndpoints)"
               :class="{
                 active: isRouteSelected(routeLinks.configuration.endpointConnection.link),
-                disabled: notConnected,
+                disabled: notConnected || !canCall(ApiRoutes.viewEndpoints),
               }"
-              @click.capture="preventIfDisabled"
+              @click.capture="preventIfDisabled($event, notConnected || !canCall(ApiRoutes.viewEndpoints))"
+              v-tippy="!canCall(ApiRoutes.viewEndpoints) ? endpointConnectionDeniedTooltip : ''"
               class="nav-item"
               role="tab"
               aria-label="endpoint-connection"
@@ -146,14 +166,28 @@ function preventIfDisabled(e: Event) {
             </h5>
           </template>
           <template v-else>
-            <h5 v-if="canCall(ApiRoutes.viewConnections)" :class="{ active: isRouteSelected(routeLinks.configuration.connections.link) }" class="nav-item" role="tab" aria-label="connections">
+            <h5
+              :class="{ active: isRouteSelected(routeLinks.configuration.connections.link), disabled: !canCall(ApiRoutes.viewConnections) }"
+              @click.capture="preventIfDisabled($event, !canCall(ApiRoutes.viewConnections))"
+              v-tippy="!canCall(ApiRoutes.viewConnections) ? connectionsDeniedTooltip : ''"
+              class="nav-item"
+              role="tab"
+              aria-label="connections"
+            >
               <RouterLink :to="routeLinks.configuration.connections.link">
                 Connections
                 <exclamation-mark v-if="connectionStore.displayConnectionsWarning" :type="WarningLevel.Danger" />
               </RouterLink>
             </h5>
           </template>
-          <h5 v-if="authStore.authEnabled" :class="{ active: isRouteSelected(routeLinks.configuration.userPermissions.link), disabled: notConnected }" @click.capture="preventIfDisabled" class="nav-item" role="tab" aria-label="user-permissions">
+          <h5
+            v-if="authStore.authEnabled"
+            :class="{ active: isRouteSelected(routeLinks.configuration.userPermissions.link), disabled: notConnected }"
+            @click.capture="preventIfDisabled($event, notConnected)"
+            class="nav-item"
+            role="tab"
+            aria-label="user-permissions"
+          >
             <RouterLink :to="routeLinks.configuration.userPermissions.link">User Permissions</RouterLink>
           </h5>
         </div>

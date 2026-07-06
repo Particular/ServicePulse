@@ -14,14 +14,17 @@ import ColumnHeader from "../ColumnHeader.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import { faBellSlash, faCheck, faCloud, faServer } from "@fortawesome/free-solid-svg-icons";
 import useHeartbeatsStoreAutoRefresh from "@/composables/useHeartbeatsStoreAutoRefresh";
+import PermissionGate from "@/components/PermissionGate.vue";
 
 defineProps<{
   data: LogicalEndpoint[];
   columns: ColumnNames[];
 }>();
 
+const manageDeniedTooltip = "You don't have permission to manage heartbeat tracking.";
+
 const { store } = useHeartbeatsStoreAutoRefresh();
-const { sortByInstances, itemsPerPage } = storeToRefs(store);
+const { sortByInstances, itemsPerPage, canManageEndpointSettings } = storeToRefs(store);
 const route = useRoute();
 
 async function changeEndpointSettings(endpoint: LogicalEndpoint) {
@@ -97,7 +100,9 @@ function endpointHealth(endpoint: LogicalEndpoint) {
             </div>
             <div v-if="columns.includes(ColumnNames.TrackToggle)" role="cell" aria-label="tracked-instances" class="col-2 centre">
               <div class="switch">
-                <OnOffSwitch :id="endpoint.name" @toggle="changeEndpointSettings(endpoint)" :value="endpoint.track_instances" />
+                <PermissionGate :allowed="canManageEndpointSettings" :reason="manageDeniedTooltip">
+                  <OnOffSwitch :id="endpoint.name" @toggle="changeEndpointSettings(endpoint)" :value="endpoint.track_instances" :disabled="!canManageEndpointSettings" />
+                </PermissionGate>
               </div>
             </div>
             <div v-if="columns.includes(ColumnNames.Muted)" role="cell" aria-label="muted" class="col-1 centre">

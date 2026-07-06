@@ -23,6 +23,7 @@ export const ApiRoutes = {
   viewEndpoints: { method: "GET", path: "/api/endpoints" }, // error:endpoints:view (EndpointsMonitoringController)
   manageThroughput: { method: "POST", path: "/api/licensing/settings/masks/update" }, // error:throughput:manage (LicensingController)
   // ---- actions ----
+  manageEndpointSettings: { method: "PATCH", path: "/api/endpointssettings/{}" },
   manageNotifications: { method: "POST", path: "/api/notifications/email" },
   testNotifications: { method: "POST", path: "/api/notifications/email/test" },
   manageRedirects: { method: "POST", path: "/api/redirects" },
