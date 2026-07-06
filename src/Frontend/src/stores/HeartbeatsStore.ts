@@ -9,6 +9,8 @@ import type { SortInfo } from "@/components/SortInfo";
 import type { EndpointSettings } from "@/resources/EndpointSettings";
 import serviceControlClient from "@/components/serviceControlClient";
 import { useEndpointSettingsStore } from "./EndpointSettingsStore";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 
 export enum ColumnNames {
   Name = "name",
@@ -50,6 +52,8 @@ const columnSortings = new Map<string, (endpoint: LogicalEndpoint) => GroupPrope
 
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const endpointSettingsStore = useEndpointSettingsStore();
+  const { canCall } = useAllowedRoutes();
+  const canManageEndpointSettings = computed(() => canCall(ApiRoutes.manageEndpointSettings));
 
   const sortByInstances = ref<SortInfo>({
     property: ColumnNames.Name,
@@ -173,6 +177,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     refresh,
     defaultTrackingInstancesValue,
     updateEndpointSettings,
+    canManageEndpointSettings,
     sortedEndpoints,
     filteredEndpoints,
     endpointInstances,
