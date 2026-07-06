@@ -14,14 +14,13 @@ export const useThroughputStore = defineStore("ThroughputStore", () => {
   const testResults = ref<ConnectionTestResults | null>(null);
   const isThroughputSupported = useIsThroughputSupported();
   const throughputClient = createThroughputClient();
-  const { canCall, ensureManifestLoaded } = useAllowedRoutes();
+  const { canCallAsync } = useAllowedRoutes();
 
   const refresh = async () => {
     if (!isThroughputSupported.value) {
       return;
     }
-    await ensureManifestLoaded();
-    if (!canCall(ApiRoutes.viewLicense)) {
+    if (!(await canCallAsync(ApiRoutes.viewLicense))) {
       return;
     }
     try {

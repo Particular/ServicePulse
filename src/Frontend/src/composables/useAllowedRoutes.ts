@@ -24,25 +24,35 @@ export function useAllowedRoutes() {
     return store.refresh();
   }
 
-  // Callers that gate a network call (rather than just a template) on canCall must await this
-  // first: otherwise a call made before the manifest finishes loading races fetchManifest() and
-  // fails open (shouldGate is false until store.loaded flips), letting the request through
-  // regardless of permission. No-ops once the manifest load has been attempted (or doesn't apply).
+  // A call made before the manifest finishes loading races fetchManifest() and fails open
+  // (shouldGate is false until store.loaded flips), letting the request through regardless of
+  // permission. canCallAsync awaits this before checking; no-ops once the manifest load has been
+  // attempted (or doesn't apply).
   async function ensureManifestLoaded(): Promise<void> {
     if (!ready.value) {
       await fetchManifest();
     }
   }
 
+  // Reactive/template use (v-if, computed): synchronous, fails open until the manifest has loaded.
+  // Use this for display gating, where a fail-open flash while the manifest loads is acceptable.
   // resource: reserved for future resource-level scope (ignored today). See design Future-proofing.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function canCall(entry: RouteRef, _resource?: object): boolean {
     return !shouldGate.value || store.routes.has(normalizeRouteKey(entry.method, entry.path));
   }
 
+  // One-off gate before a network call: awaits the manifest load first, so the check reflects the
+  // real permission rather than the fail-open default. Callers should await this instead of
+  // separately awaiting ensureManifestLoaded() then calling canCall().
+  async function canCallAsync(entry: RouteRef, resource?: object): Promise<boolean> {
+    await ensureManifestLoaded();
+    return canCall(entry, resource);
+  }
+
   function canAnyCall(entries: RouteRef[]): boolean {
     return entries.some((e) => canCall(e));
   }
 
-  return { fetchManifest, ensureManifestLoaded, canCall, canAnyCall, shouldGate, ready, supported, roles };
+  return { fetchManifest, ensureManifestLoaded, canCall, canCallAsync, canAnyCall, shouldGate, ready, supported, roles };
 }

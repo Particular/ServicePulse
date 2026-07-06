@@ -60,6 +60,29 @@ describe("useAllowedRoutes", () => {
     expect(useAllowedRoutes().ready.value).toBe(true);
   });
 
+  it("canCallAsync awaits the real load itself, closing the race where canCall fails open before the manifest arrives", async () => {
+    const auth = useAuthStore();
+    auth.authEnabled = true;
+    auth.isAuthenticated = true;
+
+    vi.mocked(serviceControlClient.fetchTypedFromServiceControl).mockResolvedValue([{} as Response, { my_routes_url: "http://sc/my-routes" }]);
+    vi.mocked(serviceControlClient.fetchFromUrl).mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ roles: [], routes: [{ method: "POST", url_template: "/api/errors/retry" }] }),
+    } as Response);
+
+    const { canCall, canCallAsync, ready } = useAllowedRoutes();
+
+    // Before the manifest resolves, gating hasn't kicked in yet: this is the fail-open window
+    // canCall (sync) can't help but expose, and which canCallAsync closes on its own.
+    expect(ready.value).toBe(false);
+    expect(canCall(ApiRoutes.retryMessage)).toBe(true);
+
+    expect(await canCallAsync(ApiRoutes.retryMessage)).toBe(true);
+    expect(await canCallAsync(ApiRoutes.viewFailedMessages)).toBe(false);
+    expect(ready.value).toBe(true);
+  });
+
   it("ensureManifestLoaded awaits the real load, closing the race where canCall fails open before the manifest arrives", async () => {
     const auth = useAuthStore();
     auth.authEnabled = true;

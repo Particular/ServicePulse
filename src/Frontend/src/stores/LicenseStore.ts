@@ -42,7 +42,7 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
   });
 
   const loading = ref(false);
-  const { canCall, ensureManifestLoaded } = useAllowedRoutes();
+  const { canCallAsync } = useAllowedRoutes();
 
   // Computed properties for license formatting
   const licenseEdition = computed(() => {
@@ -62,8 +62,7 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
   });
 
   async function refresh() {
-    await ensureManifestLoaded();
-    if (!canCall(ApiRoutes.viewLicense)) {
+    if (!(await canCallAsync(ApiRoutes.viewLicense))) {
       return;
     }
 

@@ -24,7 +24,7 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
   const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
   const hasResponseStatusInHeader = environmentStore.serviceControlIsGreaterThan("5.2.0");
 
-  const { canCall, ensureManifestLoaded } = useAllowedRoutes();
+  const { canCall, canCallAsync } = useAllowedRoutes();
   const canManageRedirects = computed(() => canCall(ApiRoutes.manageRedirects));
 
   async function getKnownQueues() {
@@ -39,8 +39,7 @@ export const useRedirectsStore = defineStore("RedirectsStore", () => {
   }
 
   async function refresh() {
-    await ensureManifestLoaded();
-    if (!canCall(ApiRoutes.viewRedirects)) {
+    if (!(await canCallAsync(ApiRoutes.viewRedirects))) {
       return;
     }
 
