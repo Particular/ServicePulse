@@ -73,6 +73,7 @@ export const groups: ApplicationCapabilityGroup[] = [
     capabilities: [
       { label: "View", ref: ApiRoutes.viewEndpoints },
       { label: "View heartbeats", ref: ApiRoutes.viewHeartbeats },
+      { label: "Manage heartbeat tracking", ref: ApiRoutes.manageEndpointSettings },
       { label: "Remove instance", ref: ApiRoutes.deleteEndpointInstance },
     ],
   },
