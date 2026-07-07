@@ -183,10 +183,7 @@ watch(autoRefreshValue, (newValue) => {
 
 .loading-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(255, 255, 255, 0.9);
   display: flex;
   flex-direction: column;
