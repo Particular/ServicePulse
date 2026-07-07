@@ -148,15 +148,10 @@ watch(autoRefreshValue, (newValue) => {
     </div>
     <WizardDialog v-if="showWizard" title="Getting Started with Auditing" :pages="wizardPages" @close="showWizard = false" />
     <div class="row results-table">
-      <LoadingSpinner v-if="firstLoad || (messages.length === 0 && isRefreshing)" />
-      <template v-else v-for="message in messages" :key="message.id">
+      <LoadingSpinner v-if="firstLoad || isRefreshing" :overlay="isRefreshing && messages.length > 0" />
+      <template v-for="message in messages" :key="message.id">
         <AuditListItem :message="message" />
       </template>
-      <div v-if="isRefreshing && messages.length > 0" class="loading-overlay">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -179,20 +174,5 @@ watch(autoRefreshValue, (newValue) => {
   margin-bottom: 5rem;
   background-color: #ffffff;
   position: relative;
-}
-
-.loading-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.9);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.loading-overlay .spinner-border {
-  position: sticky;
-  top: 4rem;
-  margin-top: 2rem;
 }
 </style>
