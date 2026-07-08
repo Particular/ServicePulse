@@ -9,16 +9,31 @@ import { setActivePinia, storeToRefs } from "pinia";
 import type { Driver } from "../../test/driver";
 import { disableMonitoring } from "../../test/drivers/vitest/setup";
 import { useEnvironmentAndVersionsStore } from "./EnvironmentAndVersionsStore";
-import type { ManifestEntry } from "@/stores/AllowedRoutesStore";
+import { useAllowedRoutesStore, type ManifestEntry } from "@/stores/AllowedRoutesStore";
+import { useAuthStore } from "@/stores/AuthStore";
 
 function makeRoutes(keys: string[]): Map<string, ManifestEntry> {
   return new Map(keys.map((k) => [k, { method: "", url_template: "" }]));
 }
 
 describe("ThroughputStore tests", () => {
-  async function setup(preSetup: (driver: Driver) => Promise<void>, initialState?: Record<string, unknown>) {
+  // Configures route gating on the live store instances (createTestingPinia's initialState does not
+  // reliably hydrate a Map), matching the proven pattern in useAllowedRoutes.spec.ts. A token is
+  // required so authFetch proceeds to the mocked endpoint once the gate lets the request through.
+  function gateWithRoutes(routeKeys: string[]) {
+    const auth = useAuthStore();
+    auth.authEnabled = true;
+    auth.isAuthenticated = true;
+    auth.token = "test-token";
+    const routesStore = useAllowedRoutesStore();
+    routesStore.routes = makeRoutes(routeKeys);
+    routesStore.loaded = true;
+    routesStore.loadAttempted = true;
+  }
+
+  async function setup(preSetup: (driver: Driver) => Promise<void>, configureGating?: () => void) {
     const driver = makeDriverForTests();
-    setActivePinia(createTestingPinia({ stubActions: false, initialState }));
+    setActivePinia(createTestingPinia({ stubActions: false }));
 
     await preSetup(driver);
     await driver.setUp(serviceControlWithThroughput);
@@ -29,6 +44,7 @@ describe("ThroughputStore tests", () => {
 
     const store = useThroughputStore();
     const refs = storeToRefs(store);
+    configureGating?.();
     await store.refresh();
 
     return { driver, ...refs };
@@ -42,24 +58,30 @@ describe("ThroughputStore tests", () => {
     expect(hasErrors.value).toBe(false);
   });
 
-  test("does not call the licensing connection test when lacking permission to view the license", async () => {
+  // The connection test hits licensing/settings/test, which ServiceControl guards with the
+  // throughput-view route (/api/licensing/report/available) — NOT the license-view route
+  // (/api/license). The gate must key on the exact route the endpoint requires, independent of
+  // which other routes the manifest happens to grant (role-to-route bindings are not fixed).
+  // `called` records whether the request got past the gate to the endpoint.
+  async function setupGatedConnectionTest(routeKeys: string[]) {
     let called = false;
-    const { testResults } = await setup(
-      async (driver) => {
-        await driver.setUp(precondition.hasLicensingSettingTest({ transport: Transport.AmazonSQS }));
+    await setup(
+      (driver) => {
         driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}licensing/settings/test`, "get", () => {
           called = true;
           return Promise.resolve({ body: {} });
         });
+        return Promise.resolve();
       },
-      {
-        auth: { authEnabled: true, isAuthenticated: true },
-        AllowedRoutesStore: { routes: makeRoutes([]), loaded: true, loadAttempted: true },
-      }
+      () => gateWithRoutes(routeKeys)
     );
+    return { called: () => called };
+  }
 
-    expect(called).toBe(false);
-    expect(testResults.value).toBe(null);
+  test("does not call the connection test when the manifest grants the license route but not the throughput route", async () => {
+    const { called } = await setupGatedConnectionTest(["GET /api/license"]);
+
+    expect(called()).toBe(false);
   });
 
   describe("when transport is a broker", () => {

@@ -21,7 +21,7 @@ export const useThroughputStore = defineStore("ThroughputStore", () => {
       return;
     }
     await ensureManifestLoaded();
-    if (!canCall(ApiRoutes.viewLicense)) {
+    if (!canCall(ApiRoutes.viewThroughput)) {
       return;
     }
     try {
