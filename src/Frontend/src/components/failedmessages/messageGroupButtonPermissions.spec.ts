@@ -60,7 +60,6 @@ async function renderGroupList(allowedRouteKeys: string[]) {
           },
         }),
       ],
-      directives: { tippy: () => {} },
     },
   });
 
