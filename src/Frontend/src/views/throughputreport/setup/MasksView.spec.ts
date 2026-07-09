@@ -28,7 +28,7 @@ describe("MaskView tests", () => {
     driver.mockEndpoint(`${window.defaultConfig.service_control_url}licensing/settings/masks`, { body });
     setActivePinia(createTestingPinia({ stubActions: false }));
 
-    const { debug } = render(MasksView, { global: { plugins: [Toast], directives: { tippy: () => {} } } });
+    const { debug } = render(MasksView, { global: { plugins: [Toast] } });
     await flushPromises();
 
     return { debug, driver };

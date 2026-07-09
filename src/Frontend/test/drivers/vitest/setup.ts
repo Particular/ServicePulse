@@ -1,8 +1,16 @@
 import { afterAll, beforeAll, beforeEach, vi } from "vitest";
+import { config } from "@vue/test-utils";
 import { mockServer } from "../../mock-server";
 import "@testing-library/jest-dom/vitest";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import serviceControlClient from "@/components/serviceControlClient";
+import VueTippy from "vue-tippy";
+
+// Removes warnings about tippy:
+// [Vue warn]: Failed to resolve directive: tippy 
+if (!config.global.plugins.includes(VueTippy)) {
+  config.global.plugins.push(VueTippy);
+}
 
 const defaultConfig = {
   default_route: "/dashboard",
