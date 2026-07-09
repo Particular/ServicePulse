@@ -96,7 +96,7 @@ describe("EndpointsView tests", () => {
 
       await renderComponent(Transport.AmazonSQS, async (driver) => {
         await driver.setUp(precondition.hasLicensingReportAvailable());
-        await driver.setUp(precondition.hasLicensingEndpoints([{ name: "foo", is_known_endpoint: false, user_indicator: "something", max_daily_throughput: 0 }]));
+        await driver.setUp(precondition.hasLicensingEndpoints([{ name: "foo", name_hash: "", is_known_endpoint: false, user_indicator: "something", max_daily_throughput: 0 }]));
         driver.mockEndpoint(`${window.defaultConfig.service_control_url}licensing/report/file`, {
           body: {},
           headers: {
@@ -114,7 +114,7 @@ describe("EndpointsView tests", () => {
     test("and there are warnings, dialog is displayed", async () => {
       await renderComponent(Transport.AmazonSQS, async (driver) => {
         await driver.setUp(precondition.hasLicensingReportAvailable());
-        await driver.setUp(precondition.hasLicensingEndpoints([{ name: "foo", is_known_endpoint: false, user_indicator: "", max_daily_throughput: 0 }]));
+        await driver.setUp(precondition.hasLicensingEndpoints([{ name: "foo", name_hash: "", is_known_endpoint: false, user_indicator: "", max_daily_throughput: 0 }]));
       });
 
       const use = userEvent.setup();

@@ -148,23 +148,36 @@ const config: RouteItem[] = [
     path: routeLinks.throughput.root,
     component: ThroughputReportView,
     title: "Usage",
-    redirect: routeLinks.throughput.endpoints.root,
+    redirect: routeLinks.throughput.queues.root,
     children: [
       {
         title: "Endpoints",
-        path: routeLinks.throughput.endpoints.root,
-        redirect: routeLinks.throughput.endpoints.detectedEndpoints.link,
+        path: routeLinks.throughput.queues.root,
+        redirect: routeLinks.throughput.queues.detectedEndpoints.link,
         component: () => import("@/views/throughputreport/EndpointsView.vue"),
         children: [
           {
-            title: "Detected Endpoints",
-            path: routeLinks.throughput.endpoints.detectedEndpoints.template,
-            component: () => import("@/views/throughputreport/endpoints/DetectedEndpointsView.vue"),
+            title: "Detected Endpoint Queues",
+            path: routeLinks.throughput.queues.detectedEndpoints.template,
+            component: () => import("@/views/throughputreport/queues/DetectedEndpointsView.vue"),
           },
           {
             title: "Detected Broker Queues",
-            path: routeLinks.throughput.endpoints.detectedBrokerQueues.template,
-            component: () => import("@/views/throughputreport/endpoints/DetectedBrokerQueuesView.vue"),
+            path: routeLinks.throughput.queues.detectedBrokerQueues.template,
+            component: () => import("@/views/throughputreport/queues/DetectedBrokerQueuesView.vue"),
+          },
+        ],
+      },
+      {
+        title: "Endpoints",
+        path: routeLinks.throughput.endpoints.root,
+        redirect: routeLinks.throughput.endpoints.licensedEndpoints.link,
+        component: () => import("@/views/throughputreport/EndpointsView.vue"),
+        children: [
+          {
+            title: "Licensed Endpoints",
+            path: routeLinks.throughput.endpoints.licensedEndpoints.template,
+            component: () => import("@/views/throughputreport/endpoints/LicensedEndpointsView.vue"),
           },
         ],
       },

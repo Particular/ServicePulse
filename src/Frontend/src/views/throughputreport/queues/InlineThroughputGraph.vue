@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ThroughputGraph from "./ThroughputGraph.vue";
-import type { MonthlyThroughput } from "@/resources/EndpointThroughputSummary.ts";
+import type { MonthlyThroughput } from "@/resources/QueueThroughputSummary.ts";
 import FAIcon from "@/components/FAIcon.vue";
 import { faLineChart } from "@fortawesome/free-solid-svg-icons";
 
@@ -45,6 +45,11 @@ const showContent = ref(false);
   left: 20%;
   height: 7.5rem;
   box-shadow: 1px 2px 3px hsl(var(--shadow-color));
+}
+
+.position-right .graph {
+  left: unset;
+  right: 20%;
 }
 
 .graph-container:hover .graph,

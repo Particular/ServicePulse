@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import type EndpointThroughputSummary from "@/resources/EndpointThroughputSummary";
-import { UserIndicator } from "@/views/throughputreport/endpoints/userIndicator";
+import type QueueThroughputSummary from "@/resources/QueueThroughputSummary.ts";
+import { UserIndicator } from "@/views/throughputreport/queues/userIndicator.ts";
 import DropDown, { type Item } from "@/components/DropDown.vue";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import createThroughputClient from "@/views/throughputreport/throughputClient";
 import type UpdateUserIndicator from "@/resources/UpdateUserIndicator";
 import { TYPE } from "vue-toastification";
-import { DataSource } from "@/views/throughputreport/endpoints/dataSource";
-import { userIndicatorMapper } from "./userIndicatorMapper";
+import { DataSource } from "@/views/throughputreport/queues/dataSource.ts";
+import { userIndicatorMapper } from "./userIndicatorMapper.ts";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import { useShowToast } from "@/composables/toast";
 import ResultsCount from "@/components/ResultsCount.vue";
-import { useHiddenFeature } from "./useHiddenFeature";
+import { useHiddenFeature } from "./useHiddenFeature.ts";
 import FAIcon from "@/components/FAIcon.vue";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { useLicenseStore } from "@/stores/LicenseStore";
@@ -26,13 +26,13 @@ enum NameFilterType {
 interface SortData {
   text: string;
   value: string;
-  comparer: (a: EndpointThroughputSummary, b: EndpointThroughputSummary) => number;
+  comparer: (a: QueueThroughputSummary, b: QueueThroughputSummary) => number;
 }
 
 const sortData: SortData[] = [
-  { text: "name", comparer: (a: EndpointThroughputSummary, b: EndpointThroughputSummary) => a.name.localeCompare(b.name) },
-  { text: "throughput", comparer: (a: EndpointThroughputSummary, b: EndpointThroughputSummary) => a.max_daily_throughput - b.max_daily_throughput },
-  { text: "endpoint type", comparer: (a: EndpointThroughputSummary, b: EndpointThroughputSummary) => a.user_indicator.localeCompare(b.user_indicator) },
+  { text: "name", comparer: (a: QueueThroughputSummary, b: QueueThroughputSummary) => a.name.localeCompare(b.name) },
+  { text: "throughput", comparer: (a: QueueThroughputSummary, b: QueueThroughputSummary) => a.max_daily_throughput - b.max_daily_throughput },
+  { text: "endpoint type", comparer: (a: QueueThroughputSummary, b: QueueThroughputSummary) => a.user_indicator.localeCompare(b.user_indicator) },
 ].flatMap((item) => {
   return [
     { text: item.text, value: item.text, comparer: item.comparer },
@@ -50,7 +50,7 @@ export interface DetectedListViewProps {
 
 const props = defineProps<DetectedListViewProps>();
 
-const data = ref<EndpointThroughputSummary[]>([]);
+const data = ref<QueueThroughputSummary[]>([]);
 const dataChanges = ref(new Map<string, { indicator: string }>());
 const filterData = reactive({ name: "", nameFilterType: NameFilterType.beginsWith, sort: "name", showUnsetOnly: false });
 
@@ -58,9 +58,9 @@ const licenseStore = useLicenseStore();
 const { license } = licenseStore;
 
 const filterNameOptions = [
-  { text: NameFilterType.beginsWith, filter: (a: EndpointThroughputSummary) => a.name.toLowerCase().startsWith(filterData.name.toLowerCase()) },
-  { text: NameFilterType.contains, filter: (a: EndpointThroughputSummary) => a.name.toLowerCase().includes(filterData.name.toLowerCase()) },
-  { text: NameFilterType.endsWith, filter: (a: EndpointThroughputSummary) => a.name.toLowerCase().endsWith(filterData.name.toLowerCase()) },
+  { text: NameFilterType.beginsWith, filter: (a: QueueThroughputSummary) => a.name.toLowerCase().startsWith(filterData.name.toLowerCase()) },
+  { text: NameFilterType.contains, filter: (a: QueueThroughputSummary) => a.name.toLowerCase().includes(filterData.name.toLowerCase()) },
+  { text: NameFilterType.endsWith, filter: (a: QueueThroughputSummary) => a.name.toLowerCase().endsWith(filterData.name.toLowerCase()) },
 ];
 const filteredData = computed(() => {
   const sortItem = sortData.find((value) => value.value === filterData.sort);
@@ -105,7 +105,7 @@ function proceedWithChangesWarning() {
 }
 
 async function loadData() {
-  const results = await throughputClient.endpoints();
+  const results = await throughputClient.queues();
 
   data.value = results.filter((row) => row.is_known_endpoint === (props.source === DataSource.WellKnownEndpoint));
 }
@@ -153,7 +153,7 @@ function showUnsetChanged(event: Event) {
 
 const bulkOperation = ref<UserIndicator>(UserIndicator.NServiceBusEndpoint);
 
-function getDefaultEndpointType(row: EndpointThroughputSummary) {
+function getDefaultEndpointType(row: QueueThroughputSummary) {
   if (row.is_known_endpoint) {
     return UserIndicator.NServiceBusEndpoint.toString();
   }
@@ -252,6 +252,7 @@ async function save() {
             {{ row.name }}
           </div>
         </td>
+        <!--TODO: this needs to show average monthly, not max-->
         <td v-if="showMonthly" class="col text-end formatThroughputColumn" style="width: 250px" aria-label="maximum usage throughput">{{ row.max_monthly_throughput ? row.max_monthly_throughput.toLocaleString() : "0" }}</td>
         <td v-else class="col text-end formatThroughputColumn" style="width: 250px" aria-label="maximum usage throughput">{{ row.max_daily_throughput.toLocaleString() }}</td>
         <td class="col" style="width: 350px" aria-label="endpoint type">

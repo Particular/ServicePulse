@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import DetectedListView from "@/views/throughputreport/endpoints/DetectedListView.vue";
-import { DataSource } from "@/views/throughputreport/endpoints/dataSource";
-import { UserIndicator } from "@/views/throughputreport/endpoints/userIndicator";
+import DetectedListView from "@/views/throughputreport/queues/DetectedListView.vue";
+import { DataSource } from "@/views/throughputreport/queues/dataSource";
+import { UserIndicator } from "@/views/throughputreport/queues/userIndicator";
 import routeLinks from "@/router/routeLinks";
 import { storeToRefs } from "pinia";
 import FAIcon from "@/components/FAIcon.vue";

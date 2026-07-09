@@ -24,7 +24,7 @@ watch(itemsPerPage, () => emit("itemsPerPageChanged", itemsPerPage.value));
 </script>
 
 <template>
-  <slot name="data" :pageData="pageData" />
+  <slot name="data" :pageData="pageData" :pageNumber="pageNumber" />
   <div class="row">
     <ItemsPerPage v-if="showItemsPerPage" v-model="itemsPerPage" :options="itemsPerPageOptions" />
     <PaginationStrip v-if="showPagination" v-model="pageNumber" :totalCount="data.length" :itemsPerPage="itemsPerPage" />

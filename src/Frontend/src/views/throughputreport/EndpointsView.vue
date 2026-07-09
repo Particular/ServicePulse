@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
-import { UserIndicator } from "@/views/throughputreport/endpoints/userIndicator";
-import { userIndicatorMapper } from "@/views/throughputreport/endpoints/userIndicatorMapper";
+import { UserIndicator } from "@/views/throughputreport/queues/userIndicator.ts";
+import { userIndicatorMapper } from "@/views/throughputreport/queues/userIndicatorMapper.ts";
 import { ref, type Component } from "vue";
 import { storeToRefs } from "pinia";
 import LegendNServiceBusEndpoint from "./LegendNServiceBusEndpoint.vue";
@@ -39,7 +39,7 @@ function toggleOptionsLegendVisible() {
   <div class="box">
     <div class="row">
       <p>
-        Set an Endpoint Type for all detected endpoints and broker queues with the most appropriate option.<br />
+        Set an Endpoint Type for all detected endpoint and broker queues with the most appropriate option.<br />
         Use the filters to bulk set the Endpoint Types on similar named endpoints/queues.<br />
         If the names of the endpoints/queues contain confidential or proprietary information, make sure you set up <RouterLink :to="routeLinks.throughput.setup.mask.link">masking in Configuration</RouterLink>.<br />
         <a href="#" :aria-label="`${showLegend ? 'Hide' : 'Show'} Endpoint Types meaning`" @click.prevent="toggleOptionsLegendVisible()">{{ showLegend ? "Hide" : "Show" }} Endpoint Types meaning.</a>
@@ -56,11 +56,14 @@ function toggleOptionsLegendVisible() {
     <div class="row">
       <div class="col-sm-12">
         <div class="nav tabs">
-          <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.endpoints.detectedEndpoints.link) }">
-            <RouterLink :to="routeLinks.throughput.endpoints.detectedEndpoints.link">Detected Endpoints</RouterLink>
+          <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.queues.detectedEndpoints.link) }">
+            <RouterLink :to="routeLinks.throughput.queues.detectedEndpoints.link">Detected Endpoint Queues</RouterLink>
           </h5>
-          <h5 v-if="isBrokerTransport" class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.endpoints.detectedBrokerQueues.link) }">
-            <RouterLink :to="routeLinks.throughput.endpoints.detectedBrokerQueues.link">Detected Broker Queues</RouterLink>
+          <h5 v-if="isBrokerTransport" class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.queues.detectedBrokerQueues.link) }">
+            <RouterLink :to="routeLinks.throughput.queues.detectedBrokerQueues.link">Detected Broker Queues</RouterLink>
+          </h5>
+          <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.endpoints.licensedEndpoints.link) }">
+            <RouterLink :to="routeLinks.throughput.endpoints.licensedEndpoints.link">Licensed Endpoints</RouterLink>
           </h5>
         </div>
       </div>

@@ -4,9 +4,9 @@ import { Transport } from "@/views/throughputreport/transport";
 import { makeDriverForTests, render, screen, userEvent } from "@component-test-utils";
 import type { Driver, SetupFactoryOptions } from "../../../../test/driver";
 import { disableMonitoring } from "../../../../test/drivers/vitest/setup";
-import DetectedListView, { type DetectedListViewProps } from "@/views/throughputreport/endpoints/DetectedListView.vue";
-import { DataSource } from "@/views/throughputreport/endpoints/dataSource";
-import { UserIndicator } from "@/views/throughputreport/endpoints/userIndicator";
+import DetectedListView, { type DetectedListViewProps } from "@/views/throughputreport/queues/DetectedListView.vue";
+import { DataSource } from "@/views/throughputreport/queues/dataSource";
+import { UserIndicator } from "@/views/throughputreport/queues/userIndicator";
 import { within } from "@testing-library/vue";
 import type UpdateUserIndicator from "@/resources/UpdateUserIndicator";
 import { serviceControlWithThroughput } from "@/views/throughputreport/serviceControlWithThroughput";
@@ -62,8 +62,8 @@ describe("DetectedListView tests", () => {
       await renderComponent({}, async (driver) => {
         await driver.setUp(
           precondition.hasLicensingEndpoints([
-            { name: "I am a queue", is_known_endpoint: false, user_indicator: "", max_daily_throughput: 10 },
-            { name: "I am an endpoint", is_known_endpoint: true, user_indicator: "", max_daily_throughput: 100 },
+            { name: "I am a queue", name_hash: "", is_known_endpoint: false, user_indicator: "", max_daily_throughput: 10 },
+            { name: "I am an endpoint", name_hash: "", is_known_endpoint: true, user_indicator: "", max_daily_throughput: 100 },
           ])
         );
       });
@@ -76,8 +76,8 @@ describe("DetectedListView tests", () => {
       await renderComponent({ source: DataSource.WellKnownEndpoint }, async (driver) => {
         await driver.setUp(
           precondition.hasLicensingEndpoints([
-            { name: "I am a queue", is_known_endpoint: false, user_indicator: "", max_daily_throughput: 10 },
-            { name: "I am an endpoint", is_known_endpoint: true, user_indicator: "", max_daily_throughput: 100 },
+            { name: "I am a queue", name_hash: "", is_known_endpoint: false, user_indicator: "", max_daily_throughput: 10 },
+            { name: "I am an endpoint", name_hash: "", is_known_endpoint: true, user_indicator: "", max_daily_throughput: 100 },
           ])
         );
       });
@@ -104,9 +104,9 @@ describe("DetectedListView tests", () => {
       await renderComponent({ source: DataSource.WellKnownEndpoint }, async (driver) => {
         await driver.setUp(
           precondition.hasLicensingEndpoints([
-            ...[...Array(10).keys()].map((i) => ({ name: `Alpha${i}`, is_known_endpoint: true, user_indicator: "", max_daily_throughput: i })),
-            ...[...Array(10).keys()].map((i) => ({ name: `${i}Beta`, is_known_endpoint: true, user_indicator: "", max_daily_throughput: i })),
-            ...[...Array(10).keys()].map((i) => ({ name: `${i}Delta${i}`, is_known_endpoint: true, user_indicator: "", max_daily_throughput: i })),
+            ...[...Array(10).keys()].map((i) => ({ name: `Alpha${i}`, name_hash: "", is_known_endpoint: true, user_indicator: "", max_daily_throughput: i })),
+            ...[...Array(10).keys()].map((i) => ({ name: `${i}Beta`, name_hash: "", is_known_endpoint: true, user_indicator: "", max_daily_throughput: i })),
+            ...[...Array(10).keys()].map((i) => ({ name: `${i}Delta${i}`, name_hash: "", is_known_endpoint: true, user_indicator: "", max_daily_throughput: i })),
           ])
         );
       });
@@ -141,9 +141,9 @@ describe("DetectedListView tests", () => {
       await renderComponent({ source: DataSource.Broker, indicatorOptions: [UserIndicator.NServiceBusEndpoint] }, async (driver) => {
         await driver.setUp(
           precondition.hasLicensingEndpoints([
-            ...[...Array(10).keys()].map((i) => ({ name: `Alpha${i}`, is_known_endpoint: false, user_indicator: "", max_daily_throughput: i })),
-            ...[...Array(10).keys()].map((i) => ({ name: `${i}Beta`, is_known_endpoint: false, user_indicator: UserIndicator.NServiceBusEndpoint, max_daily_throughput: i })),
-            ...[...Array(10).keys()].map((i) => ({ name: `${i}Delta${i}`, is_known_endpoint: false, user_indicator: "", max_daily_throughput: i })),
+            ...[...Array(10).keys()].map((i) => ({ name: `Alpha${i}`, name_hash: "", is_known_endpoint: false, user_indicator: "", max_daily_throughput: i })),
+            ...[...Array(10).keys()].map((i) => ({ name: `${i}Beta`, name_hash: "", is_known_endpoint: false, user_indicator: UserIndicator.NServiceBusEndpoint, max_daily_throughput: i })),
+            ...[...Array(10).keys()].map((i) => ({ name: `${i}Delta${i}`, name_hash: "", is_known_endpoint: false, user_indicator: "", max_daily_throughput: i })),
           ])
         );
       });
@@ -163,10 +163,10 @@ describe("DetectedListView tests", () => {
       await renderComponent({ source: DataSource.Broker, indicatorOptions: [UserIndicator.NServiceBusEndpoint], ariaLabel: tableName }, async (driver) => {
         await driver.setUp(
           precondition.hasLicensingEndpoints([
-            ...[...Array(5).keys()].map((i) => ({ name: `${i}Beta`, is_known_endpoint: false, user_indicator: UserIndicator.PlannedToDecommission, max_daily_throughput: i })),
-            ...[...Array(8).keys()].map((i) => ({ name: `${i}Beta`, is_known_endpoint: false, user_indicator: UserIndicator.PlannedToDecommission, max_daily_throughput: i })),
-            ...[...Array(2).keys()].map((i) => ({ name: `${i}Delta${i}`, is_known_endpoint: false, user_indicator: UserIndicator.PlannedToDecommission, max_daily_throughput: i })),
-            { name: "boo", is_known_endpoint: false, user_indicator: "", max_daily_throughput: 11 },
+            ...[...Array(5).keys()].map((i) => ({ name: `${i}Beta`, name_hash: "", is_known_endpoint: false, user_indicator: UserIndicator.PlannedToDecommission, max_daily_throughput: i })),
+            ...[...Array(8).keys()].map((i) => ({ name: `${i}Beta`, name_hash: "", is_known_endpoint: false, user_indicator: UserIndicator.PlannedToDecommission, max_daily_throughput: i })),
+            ...[...Array(2).keys()].map((i) => ({ name: `${i}Delta${i}`, name_hash: "", is_known_endpoint: false, user_indicator: UserIndicator.PlannedToDecommission, max_daily_throughput: i })),
+            { name: "boo", name_hash: "", is_known_endpoint: false, user_indicator: "", max_daily_throughput: 11 },
           ])
         );
       });
@@ -193,7 +193,9 @@ describe("DetectedListView tests", () => {
       const dataLength = 5;
 
       await renderComponent({ source: DataSource.Broker, indicatorOptions: [UserIndicator.NServiceBusEndpoint], ariaLabel: tableName }, async (driver) => {
-        await driver.setUp(precondition.hasLicensingEndpoints([...[...Array(dataLength).keys()].map((i) => ({ name: `${i}Beta`, is_known_endpoint: false, user_indicator: UserIndicator.PlannedToDecommission, max_daily_throughput: i }))]));
+        await driver.setUp(
+          precondition.hasLicensingEndpoints([...[...Array(dataLength).keys()].map((i) => ({ name: `${i}Beta`, name_hash: "", is_known_endpoint: false, user_indicator: UserIndicator.PlannedToDecommission, max_daily_throughput: i }))])
+        );
       });
 
       const user = userEvent.setup();
@@ -243,7 +245,7 @@ describe("DetectedListView tests", () => {
       ];
 
       await renderComponent({ source: DataSource.Broker, indicatorOptions: [UserIndicator.NServiceBusEndpoint], ariaLabel: tableName }, async (driver) => {
-        await driver.setUp(precondition.hasLicensingEndpoints([...[...unsortedNames].map((name, idx) => ({ name, is_known_endpoint: false, user_indicator: UserIndicator.PlannedToDecommission, max_daily_throughput: idx }))]));
+        await driver.setUp(precondition.hasLicensingEndpoints([...[...unsortedNames].map((name, idx) => ({ name, name_hash: "", is_known_endpoint: false, user_indicator: UserIndicator.PlannedToDecommission, max_daily_throughput: idx }))]));
       });
 
       const user = userEvent.setup();
@@ -294,8 +296,8 @@ describe("DetectedListView tests", () => {
       const { driver } = await renderComponent({ source: DataSource.Broker, indicatorOptions: [UserIndicator.PlannedToDecommission, UserIndicator.NServiceBusEndpoint], ariaLabel: tableName }, async (driver) => {
         await driver.setUp(
           precondition.hasLicensingEndpoints([
-            { name: `Not set yet`, is_known_endpoint: false, user_indicator: "", max_daily_throughput: 100 },
-            { name: `Set and needs updating`, is_known_endpoint: false, user_indicator: UserIndicator.PlannedToDecommission, max_daily_throughput: 50 },
+            { name: `Not set yet`, name_hash: "", is_known_endpoint: false, user_indicator: "", max_daily_throughput: 100 },
+            { name: `Set and needs updating`, name_hash: "", is_known_endpoint: false, user_indicator: UserIndicator.PlannedToDecommission, max_daily_throughput: 50 },
           ])
         );
         await driver.setUp(updateLicensingEndpoints());
@@ -307,8 +309,8 @@ describe("DetectedListView tests", () => {
 
       await driver.setUp(
         precondition.hasLicensingEndpoints([
-          { name: `Not set yet`, is_known_endpoint: false, user_indicator: UserIndicator.NServiceBusEndpoint, max_daily_throughput: 100 },
-          { name: `Set and needs updating`, is_known_endpoint: false, user_indicator: UserIndicator.NServiceBusEndpoint, max_daily_throughput: 50 },
+          { name: `Not set yet`, name_hash: "", is_known_endpoint: false, user_indicator: UserIndicator.NServiceBusEndpoint, max_daily_throughput: 100 },
+          { name: `Set and needs updating`, name_hash: "", is_known_endpoint: false, user_indicator: UserIndicator.NServiceBusEndpoint, max_daily_throughput: 50 },
         ])
       );
 

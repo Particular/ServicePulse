@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MonthlyThroughput } from "@/resources/EndpointThroughputSummary";
+import type { MonthlyThroughput } from "@/resources/QueueThroughputSummary";
 import { computed } from "vue";
 
 const props = defineProps<{ data: MonthlyThroughput[] }>();

@@ -19,7 +19,7 @@ const throughputClient = createThroughputClient();
 const reportState = computedAsync(async () => (isThroughputSupported.value ? await throughputClient.reportAvailable() : null), null);
 
 async function generateReport() {
-  const results = await throughputClient.endpoints();
+  const results = await throughputClient.queues();
   const hasNonUserIndicatorEndpoint = results.find((value) => !value.user_indicator);
 
   if (hasNonUserIndicatorEndpoint) {
