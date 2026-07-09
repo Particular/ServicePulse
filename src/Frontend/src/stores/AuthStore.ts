@@ -8,6 +8,8 @@ import serviceControlClient from "@/components/serviceControlClient";
 
 interface AuthConfigResponse {
   enabled: boolean;
+  // Absent on ServiceControl versions older than the one that introduced this field.
+  role_based_authorization_enabled?: boolean;
   client_id: string;
   authority: string;
   api_scopes: string;
@@ -21,6 +23,8 @@ export const useAuthStore = defineStore("auth", () => {
   const authError = ref<string | null>(null);
   const authConfig = ref<AuthConfig | null>(null);
   const authEnabled = ref(false);
+  // undefined means ServiceControl didn't report this field (older version) — treat as enabled.
+  const authorizationEnabled = ref<boolean | undefined>(undefined);
   const loading = ref(true);
 
   async function refresh() {
@@ -29,6 +33,7 @@ export const useAuthStore = defineStore("auth", () => {
       const config = await getAuthConfig();
       if (config) {
         authEnabled.value = config.enabled;
+        authorizationEnabled.value = config.role_based_authorization_enabled;
         authConfig.value = config.enabled ? transformToAuthConfig(config) : null;
       }
     } finally {
@@ -108,6 +113,7 @@ export const useAuthStore = defineStore("auth", () => {
     authError,
     authConfig,
     authEnabled,
+    authorizationEnabled,
     loading,
     refresh,
     setToken,

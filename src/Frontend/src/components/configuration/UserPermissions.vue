@@ -89,12 +89,15 @@ export const groups: ApplicationCapabilityGroup[] = [
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { storeToRefs } from "pinia";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "@/components/FAIcon.vue";
 import ConditionalRender from "@/components/ConditionalRender.vue";
 import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { useAuthStore } from "@/stores/AuthStore";
 
 const { canCall, supported, roles } = useAllowedRoutes();
+const { authorizationEnabled } = storeToRefs(useAuthStore());
 
 const rows = computed(() =>
   groups.map((g) => ({
@@ -130,7 +133,21 @@ const rows = computed(() =>
           </div>
         </template>
 
-        <table class="permissions-table">
+        <div v-if="authorizationEnabled === false" class="container not-supported">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="text-center message">
+                <p>Role-based access control is not enabled.</p>
+                <p>Control who can see and do what in ServicePulse. Role-based authorization lets you restrict failed message retries, endpoint management, and other sensitive actions to the right people.</p>
+                <div>
+                  <a class="btn btn-default btn-primary" href="https://docs.particular.net/servicecontrol/security/configuration/authorization" target="_blank">Learn how to enable authorization</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <table v-else class="permissions-table">
           <thead>
             <tr>
               <th scope="col" class="area-col">Area</th>
