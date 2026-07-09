@@ -78,6 +78,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
   let conversationLoadedId = "";
 
   const configStore = useConfigurationStore();
+  configStore.ensureLoaded();
   const { store: environmentStore } = useEnvironmentAndVersionsAutoRefresh();
   const areSimpleHeadersSupported = environmentStore.serviceControlIsGreaterThan("5.2.0");
 
@@ -155,6 +156,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
       state.loading = false;
     }
 
+    await configStore.ensureLoaded();
     const countdown = dayjs(state.data.failure_metadata.last_modified).add(error_retention_period.value, "hours");
     state.data.failure_status.delete_soon = countdown < dayjs();
     state.data.failure_metadata.deleted_in = countdown.format();
