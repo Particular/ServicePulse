@@ -1,26 +1,27 @@
 <script setup lang="ts">
 import type { Endpoint } from "./types";
 import QueueData from "./QueueData.vue";
-
-// import { computed } from "vue";
-// import { compare } from "./utilities";
+import { computed } from "vue";
+import type { MonthlyThroughput } from "@/resources/QueueThroughputSummary.ts";
+import ThroughputGraph from "../queues/ThroughputGraph.vue";
 
 const props = defineProps<{ endpoint: Endpoint }>();
 
-// const throughput = computed(() =>
-//   props.endpoint.queues.every((queue) => queue.throughputByMonth.length || queue.throughput === 0)
-//     ? [
-//         ...props.endpoint.queues
-//           .flatMap((queue) => queue.throughputByMonth)
-//           .reduce((result, [month, value]) => {
-//             const existing = result.getOrInsert(month, 0);
-//             result.set(month, existing + value);
-//             return result;
-//           }, new Map()),
-//       ].sort(([x1], [x2]) => compare(x1, x2))
-//     : [],
-// );
-// const sortedQueues = computed(() => props.endpoint.queues.toSorted((q1, q2) => compare(q1.simplifiedName.toLowerCase(), q2.simplifiedName.toLowerCase())));
+const throughputByMonth = computed(() =>
+  [
+    ...props.endpoint.queues
+      .flatMap((queue) => queue.details?.monthly_throughput ?? [])
+      .reduce((result, { month, throughput }) => {
+        const existing = (result as any).getOrInsert(month, 0);
+        result.set(month, existing + throughput);
+        return result;
+      }, new Map()),
+  ]
+    .toSorted(([x1], [x2]) => x1.localeCompare(x2))
+    .map(([month, throughput]) => ({ month, throughput }) as MonthlyThroughput)
+);
+const totalThroughput = computed(() => throughputByMonth.value.map((tbm) => tbm.throughput).reduce((result, amount) => result + amount, 0));
+const sortedQueues = computed(() => props.endpoint.queues.toSorted((q1, q2) => q1.details?.name.toLowerCase().localeCompare(q2.details?.name.toLowerCase())));
 </script>
 
 <template>
@@ -30,12 +31,15 @@ const props = defineProps<{ endpoint: Endpoint }>();
         <label>Licensed Size</label><span>{{ endpoint.endpointSize }}</span>
       </div>
       <div class="details-item">
+        <label>Total Throughput</label><span>{{ totalThroughput }}</span>
+      </div>
+      <div class="details-item">
         <label>Current Size</label><span>{{ endpoint.endpointSize }}</span>
       </div>
     </div>
-    <!-- <ThroughputGraph :data="throughput" class="graph" v-if="throughput.length" /> -->
+    <ThroughputGraph :data="throughputByMonth" class="graph" v-if="throughputByMonth.length" />
     <div class="queue-data">
-      <QueueData :queues="endpoint.queues" />
+      <QueueData :queues="sortedQueues" />
     </div>
   </div>
 </template>
@@ -56,6 +60,7 @@ const props = defineProps<{ endpoint: Endpoint }>();
 
 .graph {
   grid-area: graph;
+  height: 7rem;
   margin-bottom: 1rem;
   justify-self: flex-end;
 }

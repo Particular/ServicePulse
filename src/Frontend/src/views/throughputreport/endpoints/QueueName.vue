@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type { Queue } from "./types";
+import { faWarning } from "@fortawesome/free-solid-svg-icons";
+import ExclamationMark from "@/components/ExclamationMark.vue";
+import { WarningLevel } from "@/components/WarningLevel";
 
 defineProps<{ queue: Queue }>();
 </script>
@@ -8,7 +11,8 @@ defineProps<{ queue: Queue }>();
   <div class="queue-name">
     <span>
       <span class="scope" v-if="queue.scope != null">{{ queue.scope }}</span>
-      <span class="name">{{ queue.details?.name ?? queue.nameHash }}</span>
+      <span class="name" v-if="queue.details">{{ queue.details.name }}</span>
+      <ExclamationMark v-else :icon="faWarning" :type="WarningLevel.Danger" title="A queue existed when the usage report for the last license was generated which no longer exists. Please contact Particular Support" />
     </span>
   </div>
 </template>
@@ -17,10 +21,6 @@ defineProps<{ queue: Queue }>();
 .queue-name {
   display: flex;
   flex-direction: column;
-  font-family:
-    Consolas,
-    Lucida Console,
-    monospace;
 }
 
 .scope {
