@@ -38,6 +38,8 @@ describe("DetectedListView tests", () => {
       global: {
         directives: {
           tooltip: {},
+          // Add stub for tippy directive
+          tippy: () => {},
         },
       },
       container: document.body,
