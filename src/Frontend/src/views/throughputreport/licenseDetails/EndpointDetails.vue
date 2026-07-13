@@ -45,27 +45,26 @@ const sortedQueues = computed(() => props.endpoint.queues.toSorted((q1, q2) => q
 
 <style scoped>
 .card-body {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   gap: 2px;
-  grid-template-areas:
-    "details graph"
-    "queue-data queue-data";
 }
 
 .details {
-  grid-area: details;
   display: flex;
+  flex: 1;
+  margin-bottom: 1rem;
 }
 
 .graph {
-  grid-area: graph;
   height: 7rem;
   margin-bottom: 1rem;
   justify-self: flex-end;
 }
 
 .queue-data {
-  grid-area: queue-data;
+  flex-basis: 100%;
 }
 
 .details-item {
