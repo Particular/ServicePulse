@@ -76,7 +76,7 @@ const filteredData = computed(() => {
     .sort(sortItem?.comparer);
 });
 // We can remove this hidden toggle once we have new edition licenses.
-const hiddenFeatureToggle = useHiddenFeature(["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown"]);
+const hiddenFeatureToggle = useHiddenFeature(["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "m"]);
 const showMonthly = computed(() => license.edition === "MonthlyUsage" || hiddenFeatureToggle.value);
 
 const throughputClient = createThroughputClient();
