@@ -43,12 +43,12 @@ const dots = computed(() =>
 <template>
   <div class="graph" :style="{ '--pips': reportPeriod.length * 2 }">
     <div class="graph-content">
-      <svg class="graph-content" :viewBox="`-0.2 -0.03 ${reportPeriod.length * 2 + 0.1} 1.07`" preserveAspectRatio="none">
+      <svg class="graph-content" :viewBox="`-0.3 -0.07 ${reportPeriod.length * 2 + 0.1} 1.15`" preserveAspectRatio="none">
         <line v-for="({ x1, y1, x2, y2, isPartMonth }, i) in lines" :key="i" :x1="x1 * 2" :y1="y1" :x2="x2 * 2" :y2="y2" stroke="var(--bs-primary)" stroke-width="1" :stroke-dasharray="isPartMonth ? 4 : 0" vector-effect="non-scaling-stroke" />
         <line v-for="(_, pip) in reportPeriod" :key="pip" :x1="pip * 2" y1="1.07" :x2="pip * 2" y2="1" stroke="var(--bs-body-color)" stroke-width="1" vector-effect="non-scaling-stroke" />
         <g v-for="{ pip, value } in dots" :key="pip">
           <title>{{ value.toLocaleString() }}</title>
-          <path r="1" :cx="pip * 2" :cy="1 - value / maxValue" :d="`M ${pip * 2} ${1 - value / maxValue} l 0.0001 0`" vector-effect="non-scaling-stroke" stroke-width="5" stroke-linecap="round" :stroke="value === 0 ? 'red' : 'var(--bs-primary)'" />
+          <path :d="`M ${pip * 2} ${1 - value / maxValue} l 0.0001 0`" vector-effect="non-scaling-stroke" stroke-width="7.5" stroke-linecap="round" :stroke="value === 0 ? 'red' : 'var(--bs-primary)'" />
         </g>
       </svg>
       <div class="y-axis">
