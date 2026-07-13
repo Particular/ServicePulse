@@ -39,7 +39,7 @@ watch(
     </div>
     <div>
       <label>Classification:</label>
-      <select v-model="endpoint.classification" class="form-select">
+      <select v-model="endpoint.classification" class="form-select" disabled>
         <option v-for="[name, classification] in Object.entries(EndpointClassification).filter(([, classification]) => !isNaN(Number(classification)))" :value="classification">{{ name }}</option>
       </select>
     </div>

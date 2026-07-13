@@ -20,21 +20,20 @@ const throughputByMonth = computed(() =>
     .toSorted(([x1], [x2]) => x1.localeCompare(x2))
     .map(([month, throughput]) => ({ month, throughput }) as MonthlyThroughput)
 );
-const totalThroughput = computed(() => throughputByMonth.value.map((tbm) => tbm.throughput).reduce((result, amount) => result + amount, 0));
 const sortedQueues = computed(() => props.endpoint.queues.toSorted((q1, q2) => q1.details?.name.toLowerCase().localeCompare(q2.details?.name.toLowerCase())));
 </script>
 
 <template>
   <div class="card-body" :key="endpoint.clientId">
     <div class="details">
-      <div class="details-item">
-        <label>Licensed Size</label><span>{{ endpoint.endpointSize }}</span>
+      <div class="details-item" :title="endpoint.endpointSize.throughputText">
+        <label>Licensed Size</label><span>{{ endpoint.endpointSize.name }}</span>
       </div>
       <div class="details-item">
-        <label>Total Throughput</label><span>{{ totalThroughput }}</span>
+        <label>Total Throughput</label><span>{{ endpoint.totalThroughput.toLocaleString() }}</span>
       </div>
-      <div class="details-item">
-        <label>Current Size</label><span>{{ endpoint.endpointSize }}</span>
+      <div class="details-item" :title="endpoint.currentSize.throughputText">
+        <label>Current Size</label><span>{{ endpoint.currentSize.name }}</span>
       </div>
     </div>
     <ThroughputGraph :data="throughputByMonth" class="graph" v-if="throughputByMonth.length" />

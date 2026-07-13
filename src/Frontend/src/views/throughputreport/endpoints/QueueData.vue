@@ -31,7 +31,7 @@ const props = defineProps<{
               <div class="throughput">
                 <InlineThroughputGraph class="position-right" v-if="queue.details?.monthly_throughput?.length" :data="queue.details.monthly_throughput" />
                 <!-- {{ NumberFormat.format(queue.averageMonthlyThroughput) }} -->
-                {{ queue.details?.max_monthly_throughput }}
+                {{ queue.details?.max_monthly_throughput?.toLocaleString() }}
               </div>
             </td>
             <td v-if="actionsComponent">
