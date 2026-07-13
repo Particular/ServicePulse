@@ -59,7 +59,7 @@ const throughputLinks = (root: string) => {
   return {
     root: root,
     queues: throughputQueuesLinks(`${root}/queues`),
-    endpoints: throughputEndpointLinks(`${root}/endpoints`),
+    licenseDetails: throughputEndpointLinks(`${root}/license-details`),
     setup: throughputSetupLinks(`${root}/setup`),
   };
 };
@@ -97,6 +97,8 @@ const throughputEndpointLinks = (root: string) => {
   return {
     root,
     licensedEndpoints: createLink("licensed"),
+    infrastructureQueues: createLink("infrastructure"),
+    excludedQueues: createLink("excluded"),
   };
 };
 

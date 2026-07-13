@@ -62,8 +62,8 @@ function toggleOptionsLegendVisible() {
           <h5 v-if="isBrokerTransport" class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.queues.detectedBrokerQueues.link) }">
             <RouterLink :to="routeLinks.throughput.queues.detectedBrokerQueues.link">Detected Broker Queues</RouterLink>
           </h5>
-          <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.endpoints.licensedEndpoints.link) }">
-            <RouterLink :to="routeLinks.throughput.endpoints.licensedEndpoints.link">Licensed Endpoints</RouterLink>
+          <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.root) }">
+            <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">License Details</RouterLink>
           </h5>
         </div>
       </div>

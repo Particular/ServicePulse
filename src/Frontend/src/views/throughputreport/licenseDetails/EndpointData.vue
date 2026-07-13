@@ -1,11 +1,11 @@
 <script setup>
-import { ref } from 'vue';
-import EndpointDetails from './EndpointDetails.vue';
-import EndpointHeader from './EndpointHeader.vue';
-import CollapsedEndpoint from './CollapsedEndpoint.vue';
-import PageControl from './components/PageControl.vue';
-import { setEndpointElementReference } from './model/tabModel';
-import useEndpointListModel from './model/endpointListModel';
+import { ref } from "vue";
+import EndpointDetails from "./EndpointDetails.vue";
+import EndpointHeader from "./EndpointHeader.vue";
+import CollapsedEndpoint from "./CollapsedEndpoint.vue";
+import PageControl from "./components/PageControl.vue";
+import { setEndpointElementReference } from "./model/tabModel.ts";
+import useEndpointListModel from "./model/endpointListModel.ts";
 
 const collapsedEndpoints = ref(new Map());
 const endpointPageModel = useEndpointListModel();
@@ -15,23 +15,11 @@ const { pageItems } = endpointPageModel;
 <template>
   <div class="actions mb-2">
     <div class="backdrop"></div>
-    <PageControl
-      v-model="endpointPageModel"
-      @page-changed="collapsedEndpoints.clear()"
-      :item-desc="(endpoint) => endpoint.name"
-      class="pages"
-    />
-    <button type="button" class="btn btn-primary" @click="pageItems.forEach((endpoint) => collapsedEndpoints.set(endpoint, true))">
-      Collapse All
-    </button>
+    <PageControl v-model="endpointPageModel" @page-changed="collapsedEndpoints.clear()" :item-desc="(endpoint) => endpoint.name" class="pages" />
+    <button type="button" class="btn btn-primary" @click="pageItems.forEach((endpoint) => collapsedEndpoints.set(endpoint, true))">Collapse All</button>
   </div>
   <div class="card mb-3" v-for="endpoint in pageItems" :ref="(el) => setEndpointElementReference(endpoint, el)">
-    <CollapsedEndpoint
-      class="card-header"
-      v-if="collapsedEndpoints.get(endpoint)"
-      :endpoint="endpoint"
-      @expand="collapsedEndpoints.set(endpoint, false)"
-    />
+    <CollapsedEndpoint class="card-header" v-if="collapsedEndpoints.get(endpoint)" :endpoint="endpoint" @expand="collapsedEndpoints.set(endpoint, false)" />
     <template v-else>
       <EndpointHeader :endpoint="endpoint" class="card-header" @collapse="collapsedEndpoints.set(endpoint, true)" />
       <EndpointDetails :endpoint="endpoint" />

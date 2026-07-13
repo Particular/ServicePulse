@@ -169,15 +169,33 @@ const config: RouteItem[] = [
         ],
       },
       {
-        title: "Endpoints",
-        path: routeLinks.throughput.endpoints.root,
-        redirect: routeLinks.throughput.endpoints.licensedEndpoints.link,
+        title: "License Details",
+        path: routeLinks.throughput.licenseDetails.root,
+        redirect: routeLinks.throughput.licenseDetails.licensedEndpoints.link,
         component: () => import("@/views/throughputreport/EndpointsView.vue"),
         children: [
           {
-            title: "Licensed Endpoints",
-            path: routeLinks.throughput.endpoints.licensedEndpoints.template,
-            component: () => import("@/views/throughputreport/endpoints/LicensedEndpointsView.vue"),
+            title: "License Details",
+            path: routeLinks.throughput.licenseDetails.root,
+            redirect: routeLinks.throughput.licenseDetails.licensedEndpoints.link,
+            component: () => import("@/views/throughputreport/licenseDetails/LicenseDetails.vue"),
+            children: [
+              {
+                title: "Licensed Endpoints",
+                path: routeLinks.throughput.licenseDetails.licensedEndpoints.template,
+                component: () => import("@/views/throughputreport/licenseDetails/LicensedEndpointsView.vue"),
+              },
+              {
+                title: "Infrastructure Queues",
+                path: routeLinks.throughput.licenseDetails.infrastructureQueues.template,
+                component: () => import("@/views/throughputreport/licenseDetails/InfrastructureQueuesView.vue"),
+              },
+              {
+                title: "Excluded Queues",
+                path: routeLinks.throughput.licenseDetails.excludedQueues.template,
+                component: () => import("@/views/throughputreport/licenseDetails/ExcludedQueuesView.vue"),
+              },
+            ],
           },
         ],
       },
