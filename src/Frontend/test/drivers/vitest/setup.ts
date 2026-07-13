@@ -6,8 +6,7 @@ import monitoringClient from "@/components/monitoring/monitoringClient";
 import serviceControlClient from "@/components/serviceControlClient";
 import VueTippy from "vue-tippy";
 
-// Removes warnings about tippy:
-// [Vue warn]: Failed to resolve directive: tippy 
+// Removes test warning noise failing to resolve tippy
 if (!config.global.plugins.includes(VueTippy)) {
   config.global.plugins.push(VueTippy);
 }
