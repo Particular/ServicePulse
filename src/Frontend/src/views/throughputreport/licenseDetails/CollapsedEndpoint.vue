@@ -25,10 +25,10 @@ const endpointClassificationStyle = computed(() => {
     </div>
     <div class="details">
       <span>Queues: {{ endpoint.queues.length }}</span>
-      <span> Size: {{ endpoint.endpointSize }} </span>
+      <span> Size: {{ endpoint.endpointSize.name }} </span>
       <span>
         Throughput:
-        <!-- {{ `${NumberFormat.format(displayEndpointSizeModel ? endpoint.averageMonthlyThroughput : endpoint.estimatedDailyThroughput)}/${displayEndpointSizeModel ? "month" : "day"}` }} -->
+        {{ endpoint.totalMonthlyThroughput.toLocaleString() }}
       </span>
     </div>
     <!-- <div>

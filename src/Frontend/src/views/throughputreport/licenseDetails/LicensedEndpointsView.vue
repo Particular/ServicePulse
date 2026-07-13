@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DataView from "@/components/DataView.vue";
-import { ref } from "vue";
+import { computed, reactive } from "vue";
 import CollapsedEndpoint from "./CollapsedEndpoint.vue";
 import EndpointHeader from "./EndpointHeader.vue";
 import EndpointDetails from "./EndpointDetails.vue";
@@ -10,15 +10,21 @@ import { storeToRefs } from "pinia";
 const licenseDetailsStore = useLicenseDetailsStore();
 const { endpoints } = storeToRefs(licenseDetailsStore);
 
-const collapsedEndpoints = ref(new Map());
+const collapsedEndpoints = reactive(new Map());
+const collapsedLength = computed(() => [...collapsedEndpoints.values()].filter((value) => value).length);
 </script>
 
 <template>
   <div class="mt-2">
-    <DataView :data="endpoints" :items-per-page="5">
+    <DataView :data="endpoints" :items-per-page="5" @page-changed="collapsedEndpoints.clear()">
       <template #data="{ pageData, pageNumber }">
         <!--parent div with key ensures that any state for the details below is reset on page change-->
         <div :key="pageNumber">
+          <div class="actions mb-2">
+            <div class="backdrop"></div>
+            <button type="button" class="btn btn-default" :disabled="collapsedLength === 0" @click="pageData.forEach((endpoint) => collapsedEndpoints.set(endpoint, false))">Expand All</button>
+            <button type="button" class="btn btn-default" :disabled="collapsedLength === pageData.length" @click="pageData.forEach((endpoint) => collapsedEndpoints.set(endpoint, true))">Collapse All</button>
+          </div>
           <div class="card mb-3" v-for="endpoint in pageData">
             <CollapsedEndpoint class="card-header" v-if="collapsedEndpoints.get(endpoint)" :endpoint="endpoint" @expand="collapsedEndpoints.set(endpoint, false)" />
             <template v-else>
@@ -50,11 +56,10 @@ const collapsedEndpoints = ref(new Map());
 
 .actions {
   display: flex;
-  gap: 0.25rem;
-  justify-content: space-between;
-  align-items: end;
+  gap: 5px;
   position: sticky;
-  top: 0;
+  /* the main container-fluid has 40px of top padding */
+  top: -40px;
   z-index: 10;
 }
 

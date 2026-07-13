@@ -18,9 +18,10 @@ const pageNumber = ref(1);
 const itemsPerPage = ref(props.itemsPerPage);
 const pageData = computed(() => props.data.slice((pageNumber.value - 1) * itemsPerPage.value, Math.min(pageNumber.value * itemsPerPage.value, props.data.length)));
 
-const emit = defineEmits<{ itemsPerPageChanged: [value: number] }>();
+const emit = defineEmits<{ itemsPerPageChanged: [value: number]; pageChanged: [] }>();
 
 watch(itemsPerPage, () => emit("itemsPerPageChanged", itemsPerPage.value));
+watch(pageNumber, () => emit("pageChanged"));
 </script>
 
 <template>

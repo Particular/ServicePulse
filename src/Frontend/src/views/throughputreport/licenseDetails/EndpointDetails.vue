@@ -30,7 +30,7 @@ const sortedQueues = computed(() => props.endpoint.queues.toSorted((q1, q2) => q
         <label>Licensed Size</label><span>{{ endpoint.endpointSize.name }}</span>
       </div>
       <div class="details-item">
-        <label>Total Throughput</label><span>{{ endpoint.totalThroughput.toLocaleString() }}</span>
+        <label>Total Throughput</label><span>{{ endpoint.totalMonthlyThroughput.toLocaleString() }}</span>
       </div>
       <div class="details-item" :title="endpoint.currentSize.throughputText">
         <label>Current Size</label><span>{{ endpoint.currentSize.name }}</span>

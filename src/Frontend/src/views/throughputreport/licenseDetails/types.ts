@@ -28,12 +28,12 @@ export class Endpoint {
     this.availableSizes = availableSizes;
   }
 
-  get totalThroughput() {
+  get totalMonthlyThroughput() {
     return this.queues.map((queue) => queue.details?.max_monthly_throughput ?? 0).reduce((total, value) => total + value, 0);
   }
 
   get currentSize() {
-    return this.availableSizes.find((size) => size.throughputMin <= this.totalThroughput && (size.throughputMax ?? Number.MAX_VALUE) > this.totalThroughput)!;
+    return this.availableSizes.find((size) => size.throughputMin <= this.totalMonthlyThroughput && (size.throughputMax ?? Number.MAX_VALUE) > this.totalMonthlyThroughput)!;
   }
 }
 
