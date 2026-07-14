@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Endpoint } from "./types.ts";
+import { EndpointClassification, type Endpoint } from "./types.ts";
 import QueueData from "./QueueData.vue";
 import { computed } from "vue";
 import type { MonthlyThroughput } from "@/resources/QueueThroughputSummary.ts";
@@ -26,14 +26,15 @@ const sortedQueues = computed(() => props.endpoint.queues.toSorted((q1, q2) => q
 <template>
   <div class="card-body" :key="endpoint.clientId">
     <div class="details">
-      <div class="details-item" :title="endpoint.endpointSize.throughputText">
-        <label>Licensed Size</label><span>{{ endpoint.endpointSize.name }}</span>
+      <div class="details-item">
+        <label>Licensed Size</label
+        ><span :title="endpoint.classification === EndpointClassification.Full ? endpoint.endpointSize.throughputText : undefined">{{ endpoint.classification === EndpointClassification.Full ? endpoint.endpointSize.name : "Send Only" }}</span>
       </div>
       <div class="details-item">
-        <label>Total Throughput</label><span>{{ endpoint.totalMonthlyThroughput.toLocaleString() }}</span>
+        <label>Average Throughput/Month</label><span>{{ endpoint.totalMonthlyThroughput.toLocaleString() }}</span>
       </div>
-      <div class="details-item" :title="endpoint.currentSize.throughputText">
-        <label>Current Size</label><span>{{ endpoint.currentSize.name }}</span>
+      <div class="details-item" v-if="endpoint.classification === EndpointClassification.Full">
+        <label>Current Size</label><span :title="endpoint.currentSize.throughputText">{{ endpoint.currentSize.name }}</span>
       </div>
     </div>
     <ThroughputGraph :data="throughputByMonth" class="graph" v-if="throughputByMonth.length" />
@@ -53,13 +54,13 @@ const sortedQueues = computed(() => props.endpoint.queues.toSorted((q1, q2) => q
 
 .details {
   display: flex;
+  flex-direction: column;
   flex: 1;
-  margin-bottom: 1rem;
+  max-width: 25em;
 }
 
 .graph {
   height: 7rem;
-  margin-bottom: 1rem;
   justify-self: flex-end;
 }
 

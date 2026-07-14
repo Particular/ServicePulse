@@ -35,7 +35,7 @@ const allSizes = computed(() => [...new Set([...licensedCounts.value.keys(), ...
 <template>
   <div class="box">
     <h3>Licensed Endpoints</h3>
-    <div class="licensed-endpoints col-4">
+    <div class="licensed-endpoints col-6">
       <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
         <ColumnHeader name="Size" label="Size (Average Messages/Month)" class="col-8" />
         <ColumnHeader name="Licensed" label="Licensed" class="col-2" />
@@ -45,7 +45,7 @@ const allSizes = computed(() => [...new Set([...licensedCounts.value.keys(), ...
         <template #data="{ pageData }">
           <div role="rowgroup" aria-label="endpoints">
             <div role="row" class="row grid-row" v-for="size in pageData" :key="size">
-              <span class="col-8">
+              <span class="col-8" :title="endpointSizes.find((eps) => eps.name === size)?.throughputText">
                 {{ size }}
               </span>
               <span class="col-2">

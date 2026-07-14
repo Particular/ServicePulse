@@ -10,7 +10,7 @@ const emit = defineEmits(["collapse"]);
 const endpointClassificationStyle = computed(() => {
   switch (props.endpoint.classification) {
     case EndpointClassification.Full:
-      return "--full";
+      return props.endpoint.isInBreach ? "--breach" : "--full";
     case EndpointClassification.SendOnly:
       return "--send-only";
   }
@@ -36,12 +36,6 @@ watch(
     <div class="endpoint-name">
       <FAIcon :icon="faCircleChevronUp" class="collapse-button" size="lg" tabindex="0" title="collapse" @click="emit('collapse')" />
       <strong :title="endpoint.name">{{ endpoint.name }}</strong>
-    </div>
-    <div>
-      <label>Classification:</label>
-      <select v-model="endpoint.classification" class="form-select" disabled>
-        <option v-for="[name, classification] in Object.entries(EndpointClassification).filter(([, classification]) => !isNaN(Number(classification)))" :value="classification">{{ name }}</option>
-      </select>
     </div>
     <div class="header-buttons d-print-none">
       <!-- <ModalButton
@@ -73,6 +67,7 @@ watch(
   background-color: hsl(from var(--endpoint-header-bg) h s 90%);
 }
 
+/* not currently used */
 .dark-mode .endpoint-header {
   background-color: var(--endpoint-header-bg);
 }

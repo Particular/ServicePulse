@@ -42,6 +42,7 @@ const collapsedLength = computed(() => [...collapsedEndpoints.values()].filter((
 .card {
   --full: hsl(196deg 100% 31%);
   --send-only: hsl(159deg 100% 31%);
+  --breach: hsl(40deg 80% 64%);
   --shadow-color: 215deg 50% 30%;
   box-shadow:
     0px 0.1px 0.4px hsl(var(--shadow-color) / 0.34),

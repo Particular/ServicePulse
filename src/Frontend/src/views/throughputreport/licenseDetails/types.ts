@@ -35,6 +35,10 @@ export class Endpoint {
   get currentSize() {
     return this.availableSizes.find((size) => size.throughputMin <= this.totalMonthlyThroughput && (size.throughputMax ?? Number.MAX_VALUE) > this.totalMonthlyThroughput)!;
   }
+
+  get isInBreach() {
+    return this.endpointSize !== this.currentSize;
+  }
 }
 
 export class EndpointSize {

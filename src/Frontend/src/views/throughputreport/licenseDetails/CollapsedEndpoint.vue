@@ -10,7 +10,7 @@ const emit = defineEmits(["expand"]);
 const endpointClassificationStyle = computed(() => {
   switch (props.endpoint.classification) {
     case EndpointClassification.Full:
-      return "--full";
+      return props.endpoint.isInBreach ? "--breach" : "--full";
     case EndpointClassification.SendOnly:
       return "--send-only";
   }
@@ -24,12 +24,10 @@ const endpointClassificationStyle = computed(() => {
       <strong :title="endpoint.name">{{ endpoint.name }}</strong>
     </div>
     <div class="details">
-      <span>Queues: {{ endpoint.queues.length }}</span>
-      <span> Size: {{ endpoint.endpointSize.name }} </span>
-      <span>
-        Throughput:
-        {{ endpoint.totalMonthlyThroughput.toLocaleString() }}
-      </span>
+      <span class="queues">Queues: {{ endpoint.queues.length }}</span>
+      <span class="l-size">Licensed Size: {{ endpoint.endpointSize.name }} </span>
+      <span class="throughput">Throughput: {{ endpoint.totalMonthlyThroughput.toLocaleString() }}</span>
+      <span class="c-size">Current Size: {{ endpoint.currentSize.name }}</span>
     </div>
     <!-- <div>
       <RemoveEndpoint :endpoint="endpoint" />
@@ -71,8 +69,21 @@ const endpointClassificationStyle = computed(() => {
 
 .endpoint-header .details {
   font-size: 0.9em;
-  gap: 2em;
-  flex-basis: 35em;
+  gap: 1em;
+  flex-basis: 60em;
+}
+
+.endpoint-header .details .queues {
+  width: 7em;
+}
+
+.endpoint-header .details .l-size,
+.endpoint-header .details .c-size {
+  width: 10em;
+}
+
+.endpoint-header .details .throughput {
+  width: 12em;
 }
 
 .endpoint-header .endpoint-name {
