@@ -12,10 +12,10 @@ const throughputByMonth = computed(() =>
     ...props.endpoint.queues
       .flatMap((queue) => queue.details?.monthly_throughput ?? [])
       .reduce((result, { month, throughput }) => {
-        const existing = (result as any).getOrInsert(month, 0);
+        const existing = result.get(month) ?? 0;
         result.set(month, existing + throughput);
         return result;
-      }, new Map()),
+      }, new Map<string, number>()),
   ]
     .toSorted(([x1], [x2]) => x1.localeCompare(x2))
     .map(([month, throughput]) => ({ month, throughput }) as MonthlyThroughput)
