@@ -49,6 +49,10 @@ const props = defineProps<{
   width: 100%;
 }
 
+.table thead tr th {
+  background-color: transparent;
+}
+
 td:not(.queue-name),
 th:not(.queue-name) {
   width: 0;

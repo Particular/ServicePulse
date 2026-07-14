@@ -9,6 +9,8 @@ const { excludedQueues } = storeToRefs(licenseDetailsStore);
 </script>
 
 <template>
-  <QueueData v-if="excludedQueues.length" :queues="excludedQueues" />
+  <div class="mt-2" v-if="excludedQueues.length">
+    <QueueData :queues="excludedQueues" />
+  </div>
   <NoData v-else message="There are currently no excluded queues associated with your license"></NoData>
 </template>

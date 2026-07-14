@@ -36,8 +36,23 @@ function toggleOptionsLegendVisible() {
 </script>
 
 <template>
-  <div class="box">
-    <div class="row">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="nav tabs">
+        <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.queues.detectedEndpoints.link) }">
+          <RouterLink :to="routeLinks.throughput.queues.detectedEndpoints.link">Detected Endpoint Queues</RouterLink>
+        </h5>
+        <h5 v-if="isBrokerTransport" class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.queues.detectedBrokerQueues.link) }">
+          <RouterLink :to="routeLinks.throughput.queues.detectedBrokerQueues.link">Detected Broker Queues</RouterLink>
+        </h5>
+        <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.root) }">
+          <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">License Details</RouterLink>
+        </h5>
+      </div>
+    </div>
+  </div>
+  <div class="box" v-if="isRouteSelected(routeLinks.throughput.queues.root)">
+    <div class="row mt-2">
       <p>
         Set an Endpoint Type for all detected endpoint and broker queues with the most appropriate option.<br />
         Use the filters to bulk set the Endpoint Types on similar named endpoints/queues.<br />
@@ -53,25 +68,9 @@ function toggleOptionsLegendVisible() {
         </p>
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="nav tabs">
-          <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.queues.detectedEndpoints.link) }">
-            <RouterLink :to="routeLinks.throughput.queues.detectedEndpoints.link">Detected Endpoint Queues</RouterLink>
-          </h5>
-          <h5 v-if="isBrokerTransport" class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.queues.detectedBrokerQueues.link) }">
-            <RouterLink :to="routeLinks.throughput.queues.detectedBrokerQueues.link">Detected Broker Queues</RouterLink>
-          </h5>
-          <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.root) }">
-            <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">License Details</RouterLink>
-          </h5>
-        </div>
-      </div>
-    </div>
-    <div class="intro">
-      <RouterView />
-    </div>
+    <RouterView />
   </div>
+  <RouterView v-else />
 </template>
 
 <style scoped></style>
