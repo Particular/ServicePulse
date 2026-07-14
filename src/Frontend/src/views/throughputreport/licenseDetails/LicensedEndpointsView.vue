@@ -17,7 +17,7 @@ const expandedLength = computed(() => [...expandedEndpoints.values()].filter((va
 
 <template>
   <div class="mt-2">
-    <DataView :data="endpoints" :items-per-page="5" @page-changed="expandedEndpoints.clear()">
+    <DataView :data="endpoints" :items-per-page="5" @page-changed="expandedEndpoints.clear()" sticky-pagination>
       <template #data="{ pageData, pageNumber }">
         <!--parent div with key ensures that any state for the details below is reset on page change-->
         <div :key="pageNumber">
@@ -44,16 +44,16 @@ const expandedLength = computed(() => [...expandedEndpoints.values()].filter((va
   --full: hsl(196deg 100% 31%);
   --send-only: hsl(159deg 100% 31%);
   --breach: hsl(40deg 80% 64%);
-  --shadow-color: 215deg 50% 30%;
+  --shadow-color: hsl(215deg 50% 30%);
   box-shadow:
-    0px 0.1px 0.4px hsl(var(--shadow-color) / 0.34),
-    0px 0.1px 0.4px 0.7px hsl(var(--shadow-color) / 0.3),
-    0px 0.4px 1.2px 1.4px hsl(var(--shadow-color) / 0.25),
-    0px 1px 3px 2.1px hsl(var(--shadow-color) / 0.21),
-    0px 2.3px 7px 2.9px hsl(var(--shadow-color) / 0.17),
-    0px 4.3px 13.2px 3.6px hsl(var(--shadow-color) / 0.13),
-    0px 7.3px 22.4px 4.3px hsl(var(--shadow-color) / 0.09),
-    0px 11.6px 35.6px 5px hsl(var(--shadow-color) / 0.04);
+    0px 0.1px 0.4px hsl(from var(--shadow-color) h s l / 0.34),
+    0px 0.1px 0.4px 0.7px hsl(from var(--shadow-color) h s l / 0.3),
+    0px 0.4px 1.2px 1.4px hsl(from var(--shadow-color) h s l / 0.25),
+    0px 1px 3px 2.1px hsl(from var(--shadow-color) h s l / 0.21),
+    0px 2.3px 7px 2.9px hsl(from var(--shadow-color) h s l / 0.17),
+    0px 4.3px 13.2px 3.6px hsl(from var(--shadow-color) h s l / 0.13),
+    0px 7.3px 22.4px 4.3px hsl(from var(--shadow-color) h s l / 0.09),
+    0px 11.6px 35.6px 5px hsl(from var(--shadow-color) h s l / 0.04);
 }
 
 .actions {
