@@ -197,10 +197,6 @@ function rendercomponent({ initialState = {} }: { initialState?: { MessageStore?
         CodeEditor: true,
         CopyToClipboard: true,
       },
-      directives: {
-        // Add stub for tippy directive
-        tippy: () => {},
-      },
     },
   });
 

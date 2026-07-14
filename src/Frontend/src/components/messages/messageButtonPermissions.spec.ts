@@ -49,7 +49,6 @@ function renderButton(component: Component, allowedRouteKeys: string[], archived
           },
         }),
       ],
-      directives: { tippy: () => {} },
     },
   });
 }

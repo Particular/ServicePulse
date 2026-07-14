@@ -313,10 +313,6 @@ function renderComponent({ initialState = {} }: { initialState?: Record<string, 
           stubActions: true,
         }),
       ],
-      directives: {
-        // v-tippy is used by ActionButton; stub it in unit tests
-        tippy: () => {},
-      },
       stubs: {
         // RouterLink is used deep inside ServiceControlAvailable; stub it to
         // avoid "Failed to resolve component" warnings in unit tests
