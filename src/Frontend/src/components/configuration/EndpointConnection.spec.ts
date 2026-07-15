@@ -119,9 +119,6 @@ async function renderComponent({ initialState = {} }: { initialState?: Record<st
           stubActions: true,
         }),
       ],
-      directives: {
-        tippy: () => {},
-      },
       stubs: {
         RouterLink: true,
       },

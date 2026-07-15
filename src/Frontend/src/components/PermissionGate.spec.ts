@@ -6,7 +6,6 @@ function mountGate(allowed: boolean) {
   return render(PermissionGate, {
     props: { allowed, reason: "You don't have permission" },
     slots: { default: '<button class="btn">Do it</button>' },
-    global: { directives: { tippy: () => {} } },
   });
 }
 
