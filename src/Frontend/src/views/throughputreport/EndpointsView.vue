@@ -14,9 +14,15 @@ import LegendNotNServiceBusEndpoint from "./LegendNotNServiceBusEndpoint.vue";
 import LegendGatewayOrBridgeEndpoint from "./LegendGatewayOrBridgeEndpoint.vue";
 import LegendParticularPlatformEndpoint from "./LegendParticularPlatformEndpoint.vue";
 import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoRefresh";
+import ExclamationMark from "@/components/ExclamationMark.vue";
+import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore.ts";
+import { WarningLevel } from "@/components/WarningLevel.ts";
 
 const { store } = useThroughputStoreAutoRefresh();
 const { isBrokerTransport } = storeToRefs(store);
+const licenseDetailsStore = useLicenseDetailsStore();
+const { endpoints } = storeToRefs(licenseDetailsStore);
+
 const showLegend = ref(false);
 
 const legendOptions = new Map<UserIndicator, Component>([
@@ -46,7 +52,10 @@ function toggleOptionsLegendVisible() {
           <RouterLink :to="routeLinks.throughput.queues.detectedBrokerQueues.link">Detected Broker Queues</RouterLink>
         </h5>
         <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.root) }">
-          <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">License Details</RouterLink>
+          <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">
+            <span>License Details</span>
+            <ExclamationMark v-if="endpoints.some((endpoint) => endpoint.isInBreach)" :type="WarningLevel.Warning" />
+          </RouterLink>
         </h5>
       </div>
     </div>

@@ -24,11 +24,12 @@ const props = withDefaults(
 }
 
 .danger {
-  color: #ce4844 !important;
+  /* NOTE: this is currently being overwritten from main.css. https://github.com/Particular/ServicePulse/issues/3072 should address this */
+  color: #ce4844;
   background: linear-gradient(white, white) center/20% 72% no-repeat;
 }
 
 .warning {
-  color: #f3bc52 !important;
+  color: var(--bs-warning);
 }
 </style>
