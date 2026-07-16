@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ActionButton from "@/components/ActionButton.vue";
 import { useMessageStore } from "@/stores/MessageStore";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import EditRetryDialog from "@/components/failedmessages/EditRetryDialog.vue";
@@ -47,6 +47,10 @@ async function openDialog() {
   await store.downloadBody();
   isConfirmDialogVisible.value = true;
 }
+
+onMounted(() => {
+  store.ensureEditAndRetryConfigurationLoaded();
+});
 </script>
 
 <template>
