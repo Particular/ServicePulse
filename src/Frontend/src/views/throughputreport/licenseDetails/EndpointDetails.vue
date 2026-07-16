@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EndpointClassification, type Endpoint } from "./types.ts";
+import { EndpointClassification, type Endpoint } from "@/resources/LicenseDetails";
 import QueueData from "./QueueData.vue";
 import { computed } from "vue";
 import type { MonthlyThroughput } from "@/resources/QueueThroughputSummary.ts";

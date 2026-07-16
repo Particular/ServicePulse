@@ -8,7 +8,7 @@ interface QueueThroughputSummary {
   user_indicator: string;
   max_daily_throughput: number;
   monthly_throughput?: MonthlyThroughput[];
-  max_monthly_throughput?: number;
+  average_monthly_throughput?: number;
 }
 
 export interface MonthlyThroughput {

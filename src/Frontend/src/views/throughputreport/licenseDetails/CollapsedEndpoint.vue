@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { EndpointClassification, type Endpoint } from "./types";
+import { EndpointClassification, type Endpoint } from "@/resources/LicenseDetails";
 import FAIcon from "@/components/FAIcon.vue";
 import { faCircleChevronDown } from "@fortawesome/free-solid-svg-icons";
 

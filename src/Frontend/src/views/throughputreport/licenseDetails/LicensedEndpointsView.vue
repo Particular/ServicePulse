@@ -6,7 +6,6 @@ import EndpointHeader from "./EndpointHeader.vue";
 import EndpointDetails from "./EndpointDetails.vue";
 import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore.ts";
 import { storeToRefs } from "pinia";
-import type { Endpoint } from "./types.ts";
 
 const licenseDetailsStore = useLicenseDetailsStore();
 const { endpoints } = storeToRefs(licenseDetailsStore);

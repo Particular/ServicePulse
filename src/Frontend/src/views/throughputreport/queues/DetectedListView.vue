@@ -236,7 +236,7 @@ async function save() {
     <thead>
       <tr>
         <th scope="col">{{ props.columnTitle }}</th>
-        <th v-if="showMonthly" scope="col" class="text-end formatThroughputColumn">Highest monthly throughput <FAIcon :icon="faInfoCircle" class="text-primary" v-tippy="'In the last 12 months'" /></th>
+        <th v-if="showMonthly" scope="col" class="text-end formatThroughputColumn">Average monthly throughput <FAIcon :icon="faInfoCircle" class="text-primary" v-tippy="'In the last 12 months'" /></th>
         <th v-else scope="col" class="text-end formatThroughputColumn">Maximum daily throughput <FAIcon :icon="faInfoCircle" class="text-primary" v-tippy="'In the last 12 months'" /></th>
         <th scope="col">Endpoint Type <FAIcon :icon="faInfoCircle" class="text-primary" v-tippy="'Pick the most correct option'" /></th>
       </tr>
@@ -252,8 +252,7 @@ async function save() {
             {{ row.name }}
           </div>
         </td>
-        <!--TODO: this needs to show average monthly, not max-->
-        <td v-if="showMonthly" class="col text-end formatThroughputColumn" style="width: 250px" aria-label="maximum usage throughput">{{ row.max_monthly_throughput ? row.max_monthly_throughput.toLocaleString() : "0" }}</td>
+        <td v-if="showMonthly" class="col text-end formatThroughputColumn" style="width: 250px" aria-label="average monthly throughput">{{ row.average_monthly_throughput ? row.average_monthly_throughput.toLocaleString() : "0" }}</td>
         <td v-else class="col text-end formatThroughputColumn" style="width: 250px" aria-label="maximum usage throughput">{{ row.max_daily_throughput.toLocaleString() }}</td>
         <td class="col" style="width: 350px" aria-label="endpoint type">
           <select class="form-select endpointType format-text" @change="(event) => updateIndicator(event, row.name)">

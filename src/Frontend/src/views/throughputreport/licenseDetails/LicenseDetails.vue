@@ -9,10 +9,13 @@ import ColumnHeader from "@/components/ColumnHeader.vue";
 import ExclamationMark from "@/components/ExclamationMark.vue";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
 import { WarningLevel } from "@/components/WarningLevel";
+import useIsLicenseDetailsSupported, { minimumSCVersionForLicenseDetails } from "./isLicenseDetailsSupported";
+import ConditionalRender from "@/components/ConditionalRender.vue";
+
+const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
 
 const licenseDetailsStore = useLicenseDetailsStore();
-const { endpoints } = storeToRefs(licenseDetailsStore);
-const { endpointSizes } = licenseDetailsStore;
+const { endpoints, endpointSizes } = storeToRefs(licenseDetailsStore);
 
 const sizes = computed(() =>
   endpoints.value.reduce(
@@ -29,54 +32,68 @@ const sizes = computed(() =>
 );
 const licensedCounts = computed(() => sizes.value.licensed);
 const currentCounts = computed(() => sizes.value.current);
-const allSizes = computed(() => [...new Set([...licensedCounts.value.keys(), ...currentCounts.value.keys()])].sort((a, b) => endpointSizes.findIndex((size) => size.name === a) - endpointSizes.findIndex((size) => size.name === b)));
+const allSizes = computed(() => [...new Set([...licensedCounts.value.keys(), ...currentCounts.value.keys()])].sort((a, b) => endpointSizes.value.findIndex((size) => size.name === a) - endpointSizes.value.findIndex((size) => size.name === b)));
 </script>
 
 <template>
-  <div class="box">
-    <h3>Licensed Endpoints</h3>
-    <div class="licensed-endpoints col-6">
-      <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
-        <ColumnHeader name="Size" label="Size (Average Messages/Month)" class="col-8" />
-        <ColumnHeader name="Licensed" label="Licensed" class="col-2" />
-        <ColumnHeader name="Used" label="Used" class="col-2" />
-      </div>
-      <DataView :data="allSizes">
-        <template #data="{ pageData }">
-          <div role="rowgroup" aria-label="endpoints">
-            <div role="row" class="row grid-row" v-for="size in pageData" :key="size">
-              <span class="col-8" :title="endpointSizes.find((eps) => eps.name === size)?.throughputText">
-                {{ size }}
-              </span>
-              <span class="col-2">
-                {{ (licensedCounts.get(size) ?? 0).toLocaleString() }}
-              </span>
-              <span class="col-2 current-size">
-                {{ (currentCounts.get(size) ?? 0).toLocaleString() }}
-                <ExclamationMark v-if="(licensedCounts.get(size) ?? 0) !== (currentCounts.get(size) ?? 0)" :icon="faWarning" :type="WarningLevel.Warning" />
-              </span>
-            </div>
-          </div>
-        </template>
-      </DataView>
-    </div>
-    <div class="row mt-3">
-      <div class="col-sm-12">
-        <div class="nav tabs">
-          <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.licensedEndpoints.link) }">
-            <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">Licensed Endpoints</RouterLink>
-          </h5>
-          <h5 class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.infrastructureQueues.link) }">
-            <RouterLink :to="routeLinks.throughput.licenseDetails.infrastructureQueues.link">Infrastructure Queues</RouterLink>
-          </h5>
-          <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.excludedQueues.link) }">
-            <RouterLink :to="routeLinks.throughput.licenseDetails.excludedQueues.link">Excluded Queues</RouterLink>
-          </h5>
+  <ConditionalRender :supported="isLicenseDetailsSupported">
+    <template #unsupported>
+      <div class="not-supported">
+        <p>
+          The minimum version of ServiceControl required to enable this feature is
+          <span> {{ minimumSCVersionForLicenseDetails }} </span>.
+        </p>
+        <div>
+          <a class="btn btn-default btn-primary" href="https://particular.net/downloads" target="_blank">Update ServiceControl to latest version</a>
         </div>
       </div>
+    </template>
+
+    <div class="box">
+      <h3>Licensed Endpoints</h3>
+      <div class="licensed-endpoints col-6">
+        <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
+          <ColumnHeader name="Size" label="Size (Average Messages/Month)" class="col-8" />
+          <ColumnHeader name="Licensed" label="Licensed" class="col-2" />
+          <ColumnHeader name="Used" label="Used" class="col-2" />
+        </div>
+        <DataView :data="allSizes">
+          <template #data="{ pageData }">
+            <div role="rowgroup" aria-label="endpoints">
+              <div role="row" class="row grid-row" v-for="size in pageData" :key="size">
+                <span class="col-8" :title="endpointSizes.find((eps) => eps.name === size)?.throughputText">
+                  {{ size }}
+                </span>
+                <span class="col-2">
+                  {{ (licensedCounts.get(size) ?? 0).toLocaleString() }}
+                </span>
+                <span class="col-2 current-size">
+                  {{ (currentCounts.get(size) ?? 0).toLocaleString() }}
+                  <ExclamationMark v-if="(licensedCounts.get(size) ?? 0) !== (currentCounts.get(size) ?? 0)" :icon="faWarning" :type="WarningLevel.Warning" />
+                </span>
+              </div>
+            </div>
+          </template>
+        </DataView>
+      </div>
+      <div class="row mt-3">
+        <div class="col-sm-12">
+          <div class="nav tabs">
+            <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.licensedEndpoints.link) }">
+              <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">Licensed Endpoints</RouterLink>
+            </h5>
+            <h5 class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.infrastructureQueues.link) }">
+              <RouterLink :to="routeLinks.throughput.licenseDetails.infrastructureQueues.link">Infrastructure Queues</RouterLink>
+            </h5>
+            <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.excludedQueues.link) }">
+              <RouterLink :to="routeLinks.throughput.licenseDetails.excludedQueues.link">Excluded Queues</RouterLink>
+            </h5>
+          </div>
+        </div>
+      </div>
+      <RouterView />
     </div>
-    <RouterView />
-  </div>
+  </ConditionalRender>
 </template>
 
 <style scoped>

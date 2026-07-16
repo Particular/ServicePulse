@@ -1,50 +1,44 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { ref } from "vue";
+import logger from "@/logger";
+import { ref, watch } from "vue";
 import createThroughputClient from "@/views/throughputreport/throughputClient";
-import { Endpoint, EndpointSize, type Queue } from "@/views/throughputreport/licenseDetails/types";
-
-//TODO: get from the metadata file
-const endpointSizes = [
-  new EndpointSize("4", 0, 4),
-  new EndpointSize("16", 4, 16),
-  new EndpointSize("64", 16, 64),
-  new EndpointSize("256", 64, 256),
-  new EndpointSize("1024", 256, 1_024),
-  new EndpointSize("4K", 1_024, 4_096),
-  new EndpointSize("16K", 4_096, 16_384),
-  new EndpointSize("64K", 16_384, 65_536),
-  new EndpointSize("256K", 65_536, 262_144),
-  new EndpointSize("1024K", 262_144, 1_048_576),
-  new EndpointSize("4M", 1_048_576, 4_194_304),
-  new EndpointSize("16M", 4_194_304, 16_777_216),
-  new EndpointSize("64M", 16_777_216, 67_108_864),
-  new EndpointSize("256M", 67_108_864, 268_435_456),
-  new EndpointSize("1024M", 268_435_456, 1_073_741_824),
-  new EndpointSize("U", 1_073_741_824, null),
-];
+import { Endpoint, EndpointSize, type Queue } from "@/resources/LicenseDetails";
+import serviceControlClient from "@/components/serviceControlClient";
+import type { LicensedEndpointDetails } from "@/resources/LicenseDetails";
+import useIsLicenseDetailsSupported from "@/views/throughputreport/licenseDetails/isLicenseDetailsSupported";
 
 export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
+  const endpointSizes = ref<EndpointSize[]>([]);
   const endpoints = ref<Endpoint[]>([]);
   const infrastructureQueues = ref<Queue[]>([]);
   const excludedQueues = ref<Queue[]>([]);
 
   async function refresh() {
-    const sample: any = await import("@/views/throughputreport/licenseDetails/sample.json");
-    const throughputClient = createThroughputClient();
-    const scQueues = await throughputClient.queues();
+    try {
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<LicensedEndpointDetails>("license/details");
+      const throughputClient = createThroughputClient();
+      const scQueues = await throughputClient.queues();
 
-    const toQueue = (metaQ: any) =>
-      ({
-        nameHash: metaQ.nameHash,
-        scope: metaQ.scope,
-        details: scQueues.find((scQ) => scQ.name_hash === metaQ.nameHash),
-      }) as Queue;
+      const toQueue = (metaQ: any) =>
+        ({
+          nameHash: metaQ.nameHash,
+          scope: metaQ.scope,
+          details: scQueues.find((scQ) => scQ.name_hash === metaQ.name_hash),
+        }) as Queue;
 
-    endpoints.value = sample.endpoints.map((metaEp: any) => new Endpoint(crypto.randomUUID(), metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, endpointSizes.find((es) => es.name === metaEp.endpointSize)!, endpointSizes));
-    infrastructureQueues.value = sample.infrastructureQueues.map(toQueue);
-    excludedQueues.value = sample.excludedQueues.map(toQueue);
+      const sortedProducts = data.products.toSorted((p1, p2) => (p1.monthly_throughput ?? Number.MAX_VALUE) - (p2.monthly_throughput ?? Number.MAX_VALUE));
+      const sortedEndpointSizes = sortedProducts.map((product, i) => new EndpointSize(product.product_code, i > 0 ? (sortedProducts[i - 1].monthly_throughput ?? 0) : 0, product.monthly_throughput));
+      endpointSizes.value = sortedEndpointSizes;
+      endpoints.value = data.endpoints.map((metaEp: any) => new Endpoint(crypto.randomUUID(), metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes));
+      infrastructureQueues.value = data.infrastructure_queues.map(toQueue);
+      excludedQueues.value = data.excluded_queues.map(toQueue);
+    } catch (err) {
+      logger.error("Error fetching license information", err);
+    }
   }
-  refresh();
+
+  const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
+  watch(isLicenseDetailsSupported, (supported: boolean) => supported && refresh());
 
   return {
     endpoints,

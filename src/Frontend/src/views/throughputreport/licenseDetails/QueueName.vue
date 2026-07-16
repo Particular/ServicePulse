@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Queue } from "./types";
+import type { Queue } from "@/resources/LicenseDetails";
 import { faWarning } from "@fortawesome/free-solid-svg-icons";
 import ExclamationMark from "@/components/ExclamationMark.vue";
 import { WarningLevel } from "@/components/WarningLevel";

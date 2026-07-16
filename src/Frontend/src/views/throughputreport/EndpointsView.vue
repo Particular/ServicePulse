@@ -17,11 +17,13 @@ import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoR
 import ExclamationMark from "@/components/ExclamationMark.vue";
 import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore.ts";
 import { WarningLevel } from "@/components/WarningLevel.ts";
+import useIsLicenseDetailsSupported from "./licenseDetails/isLicenseDetailsSupported.ts";
 
 const { store } = useThroughputStoreAutoRefresh();
 const { isBrokerTransport } = storeToRefs(store);
 const licenseDetailsStore = useLicenseDetailsStore();
 const { endpoints } = storeToRefs(licenseDetailsStore);
+const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
 
 const showLegend = ref(false);
 
@@ -51,7 +53,7 @@ function toggleOptionsLegendVisible() {
         <h5 v-if="isBrokerTransport" class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.queues.detectedBrokerQueues.link) }">
           <RouterLink :to="routeLinks.throughput.queues.detectedBrokerQueues.link">Detected Broker Queues</RouterLink>
         </h5>
-        <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.root) }">
+        <h5 class="nav-item" v-if="isLicenseDetailsSupported" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.root) }">
           <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">
             <span>License Details</span>
             <ExclamationMark v-if="endpoints.some((endpoint) => endpoint.isInBreach)" :type="WarningLevel.Warning" />

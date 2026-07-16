@@ -2,7 +2,7 @@
 import DataView from "@/components/DataView.vue";
 import InlineThroughputGraph from "../queues/InlineThroughputGraph.vue";
 import QueueName from "./QueueName.vue";
-import type { Queue } from "./types.ts";
+import type { Queue } from "@/resources/LicenseDetails";
 
 const props = defineProps<{
   queues: Queue[];
@@ -30,8 +30,7 @@ const props = defineProps<{
             <td class="text-end">
               <div class="throughput">
                 <InlineThroughputGraph class="position-right" v-if="queue.details?.monthly_throughput?.length" :data="queue.details.monthly_throughput" />
-                <!-- {{ NumberFormat.format(queue.averageMonthlyThroughput) }} -->
-                {{ queue.details?.max_monthly_throughput?.toLocaleString() }}
+                {{ queue.details?.average_monthly_throughput?.toLocaleString() }}
               </div>
             </td>
             <td v-if="actionsComponent">
