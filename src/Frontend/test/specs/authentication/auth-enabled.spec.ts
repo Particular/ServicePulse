@@ -1,11 +1,10 @@
-import { vi } from "vitest";
+import { vi, expect } from "vitest";
 import { createOidcMock } from "../../mocks/oidc-client-mock";
 
 // Mock oidc-client-ts so the auth-config tests don't trigger real document navigation in JSDOM.
 vi.mock("oidc-client-ts", () => createOidcMock());
 
 import { test, describe } from "../../drivers/vitest/driver";
-import { expect } from "vitest";
 import * as precondition from "../../preconditions";
 
 describe("FEATURE: Authentication Enabled (Scenario 2)", () => {
