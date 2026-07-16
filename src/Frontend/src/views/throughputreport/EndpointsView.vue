@@ -22,7 +22,7 @@ import useIsLicenseDetailsSupported from "./licenseDetails/isLicenseDetailsSuppo
 const { store } = useThroughputStoreAutoRefresh();
 const { isBrokerTransport } = storeToRefs(store);
 const licenseDetailsStore = useLicenseDetailsStore();
-const { endpoints } = storeToRefs(licenseDetailsStore);
+const { endpoints, error: licenseDetailsError } = storeToRefs(licenseDetailsStore);
 const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
 
 const showLegend = ref(false);
@@ -57,6 +57,7 @@ function toggleOptionsLegendVisible() {
           <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">
             <span>License Details</span>
             <ExclamationMark v-if="endpoints.some((endpoint) => endpoint.isInBreach)" :type="WarningLevel.Warning" />
+            <ExclamationMark v-else-if="licenseDetailsError" :type="WarningLevel.Danger" />
           </RouterLink>
         </h5>
       </div>

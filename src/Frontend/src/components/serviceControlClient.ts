@@ -30,8 +30,17 @@ class ServiceControlClient {
 
   public async fetchTypedFromServiceControl<T>(suffix: string, signal?: AbortSignal): Promise<[Response, T]> {
     const response = await authFetch(`${this.url}${suffix}`, { signal });
-    if (!response.ok) throw new Error(response.statusText ?? "No response");
-    const data = await response.json();
+    if (!response.ok) {
+      let error = new Error(response.statusText ?? "No response");
+      if (response.status === 400) {
+        try {
+          const errorResponse = await response.json();
+          error = new Error(errorResponse.detail ?? errorResponse.title);
+        } catch {}
+      }
+      throw error;
+    }
+    const data = response.status !== 204 && (await response.json());
 
     return [response, data];
   }
@@ -44,6 +53,18 @@ class ServiceControlClient {
       requestOptions.headers = { "Content-Type": "application/json" };
       requestOptions.body = JSON.stringify(payload);
     }
+    return await authFetch(`${this.url}${suffix}`, requestOptions);
+  }
+
+  public async postFileToServiceControl(suffix: string, file: File, paramName = "file") {
+    const formData = new FormData();
+    formData.append(paramName, file);
+
+    const requestOptions: RequestInit = {
+      method: "POST",
+      body: formData,
+    };
+
     return await authFetch(`${this.url}${suffix}`, requestOptions);
   }
 

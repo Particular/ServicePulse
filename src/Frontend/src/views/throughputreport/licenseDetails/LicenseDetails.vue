@@ -11,11 +11,12 @@ import { faWarning } from "@fortawesome/free-solid-svg-icons";
 import { WarningLevel } from "@/components/WarningLevel";
 import useIsLicenseDetailsSupported, { minimumSCVersionForLicenseDetails } from "./isLicenseDetailsSupported";
 import ConditionalRender from "@/components/ConditionalRender.vue";
+import NoMetadata from "./NoMetadata.vue";
 
 const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
 
 const licenseDetailsStore = useLicenseDetailsStore();
-const { endpoints, endpointSizes } = storeToRefs(licenseDetailsStore);
+const { endpoints, endpointSizes, hasLicenseDetails, error } = storeToRefs(licenseDetailsStore);
 
 const sizes = computed(() =>
   endpoints.value.reduce(
@@ -49,50 +50,55 @@ const allSizes = computed(() => [...new Set([...licensedCounts.value.keys(), ...
       </div>
     </template>
 
-    <div class="box">
-      <h3>Licensed Endpoints</h3>
-      <div class="licensed-endpoints col-6">
-        <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
-          <ColumnHeader name="Size" label="Size (Average Messages/Month)" class="col-8" />
-          <ColumnHeader name="Licensed" label="Licensed" class="col-2" />
-          <ColumnHeader name="Used" label="Used" class="col-2" />
-        </div>
-        <DataView :data="allSizes">
-          <template #data="{ pageData }">
-            <div role="rowgroup" aria-label="endpoints">
-              <div role="row" class="row grid-row" v-for="size in pageData" :key="size">
-                <span class="col-8" :title="endpointSizes.find((eps) => eps.name === size)?.throughputText">
-                  {{ size }}
-                </span>
-                <span class="col-2">
-                  {{ (licensedCounts.get(size) ?? 0).toLocaleString() }}
-                </span>
-                <span class="col-2 current-size">
-                  {{ (currentCounts.get(size) ?? 0).toLocaleString() }}
-                  <ExclamationMark v-if="(licensedCounts.get(size) ?? 0) !== (currentCounts.get(size) ?? 0)" :icon="faWarning" :type="WarningLevel.Warning" />
-                </span>
+    <ConditionalRender :supported="hasLicenseDetails">
+      <template #unsupported>
+        <NoMetadata :metadataError="error" />
+      </template>
+      <div class="box">
+        <h3>Licensed Endpoints</h3>
+        <div class="licensed-endpoints col-6">
+          <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
+            <ColumnHeader name="Size" label="Size (Average Messages/Month)" class="col-8" />
+            <ColumnHeader name="Licensed" label="Licensed" class="col-2" />
+            <ColumnHeader name="Used" label="Used" class="col-2" />
+          </div>
+          <DataView :data="allSizes">
+            <template #data="{ pageData }">
+              <div role="rowgroup" aria-label="endpoints">
+                <div role="row" class="row grid-row" v-for="size in pageData" :key="size">
+                  <span class="col-8" :title="endpointSizes.find((eps) => eps.name === size)?.throughputText">
+                    {{ size }}
+                  </span>
+                  <span class="col-2">
+                    {{ (licensedCounts.get(size) ?? 0).toLocaleString() }}
+                  </span>
+                  <span class="col-2 current-size">
+                    {{ (currentCounts.get(size) ?? 0).toLocaleString() }}
+                    <ExclamationMark v-if="(licensedCounts.get(size) ?? 0) !== (currentCounts.get(size) ?? 0)" :icon="faWarning" :type="WarningLevel.Warning" />
+                  </span>
+                </div>
               </div>
+            </template>
+          </DataView>
+        </div>
+        <div class="row mt-3">
+          <div class="col-sm-12">
+            <div class="nav tabs">
+              <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.licensedEndpoints.link) }">
+                <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">Licensed Endpoints</RouterLink>
+              </h5>
+              <h5 class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.infrastructureQueues.link) }">
+                <RouterLink :to="routeLinks.throughput.licenseDetails.infrastructureQueues.link">Infrastructure Queues</RouterLink>
+              </h5>
+              <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.excludedQueues.link) }">
+                <RouterLink :to="routeLinks.throughput.licenseDetails.excludedQueues.link">Excluded Queues</RouterLink>
+              </h5>
             </div>
-          </template>
-        </DataView>
-      </div>
-      <div class="row mt-3">
-        <div class="col-sm-12">
-          <div class="nav tabs">
-            <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.licensedEndpoints.link) }">
-              <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">Licensed Endpoints</RouterLink>
-            </h5>
-            <h5 class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.infrastructureQueues.link) }">
-              <RouterLink :to="routeLinks.throughput.licenseDetails.infrastructureQueues.link">Infrastructure Queues</RouterLink>
-            </h5>
-            <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.excludedQueues.link) }">
-              <RouterLink :to="routeLinks.throughput.licenseDetails.excludedQueues.link">Excluded Queues</RouterLink>
-            </h5>
           </div>
         </div>
+        <RouterView />
       </div>
-      <RouterView />
-    </div>
+    </ConditionalRender>
   </ConditionalRender>
 </template>
 
