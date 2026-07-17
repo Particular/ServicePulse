@@ -14,6 +14,7 @@ import ConditionalRender from "@/components/ConditionalRender.vue";
 import NoMetadata from "./NoMetadata.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import UploadMetadata from "./UploadMetadata.vue";
+import DetailsItem from "@/components/DetailsItem.vue";
 
 const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
 
@@ -64,10 +65,9 @@ const allSizes = computed(() => [...new Set([...licensedCounts.value.keys(), ...
         <UploadMetadata />
       </template>
       <div class="license-details box">
-        <div class="inline-info">
-          <h4>License Expiry Date</h4>
-          <span>{{ serviceEndDate?.toLocaleDateString() }}</span>
-        </div>
+        <DetailsItem label="License Expiry Date" class="license-expiry">
+          {{ serviceEndDate?.toLocaleDateString() }}
+        </DetailsItem>
         <h3>Licensed Endpoints</h3>
         <div class="licensed-endpoints col-6">
           <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
@@ -140,18 +140,8 @@ const allSizes = computed(() => [...new Set([...licensedCounts.value.keys(), ...
   margin-bottom: 0.5rem;
 }
 
-.inline-info {
-  display: flex;
-  gap: 1em;
-  align-items: center;
-}
-
-.inline-info * {
-  margin: 0;
-}
-
-.inline-info h3::after {
-  content: ":";
+.license-expiry {
+  max-width: 22em;
 }
 
 .id-warning {
