@@ -9,14 +9,15 @@ import ExclamationMark from "@/components/ExclamationMark.vue";
 import { WarningLevel } from "@/components/WarningLevel";
 
 const licenseDetailsStore = useLicenseDetailsStore();
-const { endpoints } = storeToRefs(licenseDetailsStore);
+const { endpoints, validId, error: licenseDetailsError } = storeToRefs(licenseDetailsStore);
 </script>
 
 <template>
   <RouterLink :to="routeLinks.throughput.root">
     <FAIcon :icon="faFileLines" title="Usage" />
     <span class="navbar-label">Usage</span>
-    <ExclamationMark v-if="endpoints.some((endpoint) => endpoint.isInBreach)" :type="WarningLevel.Warning" />
+    <ExclamationMark v-if="licenseDetailsError || !validId" :type="WarningLevel.Danger" />
+    <ExclamationMark v-else-if="endpoints.some((endpoint) => endpoint.isInBreach)" :type="WarningLevel.Warning" />
   </RouterLink>
 </template>
 

@@ -6,6 +6,7 @@ export interface LicensedEndpointDetails {
   excluded_queues: Queue[];
   service_end_date: string;
   products: Product[];
+  valid_id: boolean;
 }
 
 interface LicensedEndpoint {

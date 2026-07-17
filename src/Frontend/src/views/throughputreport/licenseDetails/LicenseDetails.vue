@@ -7,16 +7,18 @@ import { computed } from "vue";
 import DataView from "@/components/DataView.vue";
 import ColumnHeader from "@/components/ColumnHeader.vue";
 import ExclamationMark from "@/components/ExclamationMark.vue";
-import { faWarning } from "@fortawesome/free-solid-svg-icons";
+import { faExternalLink, faWarning } from "@fortawesome/free-solid-svg-icons";
 import { WarningLevel } from "@/components/WarningLevel";
 import useIsLicenseDetailsSupported, { minimumSCVersionForLicenseDetails } from "./isLicenseDetailsSupported";
 import ConditionalRender from "@/components/ConditionalRender.vue";
 import NoMetadata from "./NoMetadata.vue";
+import FAIcon from "@/components/FAIcon.vue";
+import UploadMetadata from "./UploadMetadata.vue";
 
 const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
 
 const licenseDetailsStore = useLicenseDetailsStore();
-const { endpoints, endpointSizes, hasLicenseDetails, error } = storeToRefs(licenseDetailsStore);
+const { endpoints, endpointSizes, serviceEndDate, validId, hasLicenseDetails, error } = storeToRefs(licenseDetailsStore);
 
 const sizes = computed(() =>
   endpoints.value.reduce(
@@ -54,7 +56,18 @@ const allSizes = computed(() => [...new Set([...licensedCounts.value.keys(), ...
       <template #unsupported>
         <NoMetadata :metadataError="error" />
       </template>
-      <div class="box">
+      <template v-if="!validId">
+        <div class="id-warning alert alert-danger">
+          <span>The stored endpoint metadata file does not match the current license. Please download a new version from the Particular customer portal</span>
+          <button class="btn btn-primary">Customer Portal <FAIcon :icon="faExternalLink" /></button>
+        </div>
+        <UploadMetadata />
+      </template>
+      <div class="license-details box">
+        <div class="inline-info">
+          <h4>License Expiry Date</h4>
+          <span>{{ serviceEndDate?.toLocaleDateString() }}</span>
+        </div>
         <h3>Licensed Endpoints</h3>
         <div class="licensed-endpoints col-6">
           <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
@@ -81,6 +94,8 @@ const allSizes = computed(() => [...new Set([...licensedCounts.value.keys(), ...
             </template>
           </DataView>
         </div>
+      </div>
+      <div>
         <div class="row mt-3">
           <div class="col-sm-12">
             <div class="nav tabs">
@@ -119,5 +134,34 @@ const allSizes = computed(() => [...new Set([...licensedCounts.value.keys(), ...
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.license-details > div {
+  margin-bottom: 0.5rem;
+}
+
+.inline-info {
+  display: flex;
+  gap: 1em;
+  align-items: center;
+}
+
+.inline-info * {
+  margin: 0;
+}
+
+.inline-info h3::after {
+  content: ":";
+}
+
+.id-warning {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.id-warning button {
+  flex: 0;
+  white-space: nowrap;
 }
 </style>

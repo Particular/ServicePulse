@@ -38,6 +38,7 @@ watch(pageNumber, () => emit("pageChanged"));
   position: sticky;
   bottom: 0;
   margin-bottom: 0;
+  margin-top: 3em;
 }
 
 .sticky-pagination {

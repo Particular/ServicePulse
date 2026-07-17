@@ -12,6 +12,8 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   const endpoints = ref<Endpoint[]>([]);
   const infrastructureQueues = ref<Queue[]>([]);
   const excludedQueues = ref<Queue[]>([]);
+  const serviceEndDate = ref<Date>();
+  const validId = ref<boolean>(false);
   const hasLicenseDetails = ref(false);
   const error = ref<string | null>();
 
@@ -38,6 +40,8 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
       endpoints.value = data.endpoints.map((metaEp: any) => new Endpoint(crypto.randomUUID(), metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes));
       infrastructureQueues.value = data.infrastructure_queues.map(toQueue);
       excludedQueues.value = data.excluded_queues.map(toQueue);
+      serviceEndDate.value = new Date(data.service_end_date);
+      validId.value = data.valid_id;
     } catch (err: any) {
       error.value = `Error fetching endpoint metadata: ${err.message ?? err}`;
       logger.error("Error fetching endpoint metadata", err);
@@ -61,6 +65,8 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     endpointSizes,
     infrastructureQueues,
     excludedQueues,
+    serviceEndDate,
+    validId,
     hasLicenseDetails,
     error,
     uploadEndpointMetadata,

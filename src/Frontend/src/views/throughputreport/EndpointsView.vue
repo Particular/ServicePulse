@@ -22,7 +22,7 @@ import useIsLicenseDetailsSupported from "./licenseDetails/isLicenseDetailsSuppo
 const { store } = useThroughputStoreAutoRefresh();
 const { isBrokerTransport } = storeToRefs(store);
 const licenseDetailsStore = useLicenseDetailsStore();
-const { endpoints, error: licenseDetailsError } = storeToRefs(licenseDetailsStore);
+const { endpoints, validId, error: licenseDetailsError } = storeToRefs(licenseDetailsStore);
 const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
 
 const showLegend = ref(false);
@@ -56,8 +56,8 @@ function toggleOptionsLegendVisible() {
         <h5 class="nav-item" v-if="isLicenseDetailsSupported" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.root) }">
           <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">
             <span>License Details</span>
-            <ExclamationMark v-if="endpoints.some((endpoint) => endpoint.isInBreach)" :type="WarningLevel.Warning" />
-            <ExclamationMark v-else-if="licenseDetailsError" :type="WarningLevel.Danger" />
+            <ExclamationMark v-if="licenseDetailsError || !validId" :type="WarningLevel.Danger" />
+            <ExclamationMark v-else-if="endpoints.some((endpoint) => endpoint.isInBreach)" :type="WarningLevel.Warning" />
           </RouterLink>
         </h5>
       </div>
