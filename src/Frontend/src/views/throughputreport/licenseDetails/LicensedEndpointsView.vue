@@ -22,8 +22,8 @@ const expandedLength = computed(() => [...expandedEndpoints.values()].filter((va
         <div :key="pageNumber">
           <div class="actions mb-2">
             <div class="backdrop"></div>
-            <button type="button" class="btn btn-default" :disabled="expandedLength === pageData.length" @click="pageData.forEach((endpoint) => expandedEndpoints.set(endpoint, true))">Expand All</button>
-            <button type="button" class="btn btn-default" :disabled="expandedLength === 0" @click="pageData.forEach((endpoint) => expandedEndpoints.set(endpoint, false))">Collapse All</button>
+            <button type="button" class="btn btn-secondary" :disabled="expandedLength === pageData.length" @click="pageData.forEach((endpoint) => expandedEndpoints.set(endpoint, true))">Expand All</button>
+            <button type="button" class="btn btn-secondary" :disabled="expandedLength === 0" @click="pageData.forEach((endpoint) => expandedEndpoints.set(endpoint, false))">Collapse All</button>
           </div>
           <div class="card mb-3" v-for="endpoint in pageData">
             <template v-if="expandedEndpoints.get(endpoint)">
