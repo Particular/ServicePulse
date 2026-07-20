@@ -30,7 +30,7 @@ const { licenseStatus, license } = licenseStore;
           <div class="box">
             <div class="row">
               <div class="license-info">
-                <DetailsItem label="Platform License Type"> {{ typeText(license, configuration) }}{{ licenseEdition }} </DetailsItem>
+                <DetailsItem label="Platform License Type" aria-label="license-type"> {{ typeText(license, configuration) }}{{ licenseEdition }} </DetailsItem>
                 <template v-if="licenseStatus.isSubscriptionLicense">
                   <DetailsItem label="License Expiry Date">
                     <span

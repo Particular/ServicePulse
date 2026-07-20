@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import * as precondition from "../../../test/preconditions";
 import { createTestingPinia } from "@pinia/testing";
 import { Transport } from "@/views/throughputreport/transport";
@@ -27,6 +27,10 @@ describe("EndpointsView tests", () => {
 
     const driver = await setup(transport);
     await preSetup(driver);
+
+    vi.mock("@/composables/isRouteSelected.ts", () => ({
+      default: vi.fn(() => true),
+    }));
 
     const { debug } = render(EndpointsView, {
       global: {

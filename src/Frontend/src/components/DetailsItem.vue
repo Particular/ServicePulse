@@ -1,11 +1,11 @@
 <script setup lang="ts">
-defineProps<{ label: string; tooltip?: string }>();
+defineProps<{ label: string; tooltip?: string; ariaLabel?: string }>();
 </script>
 
 <template>
   <div class="details-item">
     <label>{{ label }}</label>
-    <span :title="tooltip"><slot></slot></span>
+    <span role="note" :title="tooltip" :aria-label="ariaLabel"><slot></slot></span>
   </div>
 </template>
 
