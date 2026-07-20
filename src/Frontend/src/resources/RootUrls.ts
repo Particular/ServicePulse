@@ -17,4 +17,7 @@ export default interface RootUrls {
   event_log_items: string;
   archived_groups_url: string;
   get_archive_group: string;
+  mypermissions_all?: string;
+  mypermissions_summary?: string;
+  my_routes_url?: string;
 }

@@ -40,10 +40,6 @@ describe("EndpointsView tests", () => {
           RouterLink: RouterLinkStub,
         },
         plugins: [makeRouter(), Toast],
-        directives: {
-          // Add stub for tippy directive
-          tippy: () => {},
-        },
       },
     });
     await flushPromises();

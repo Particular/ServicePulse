@@ -55,10 +55,6 @@ describe("SetupView tests", () => {
           RouterLink: RouterLinkStub,
         },
         plugins: [makeRouter()],
-        directives: {
-          // Add stub for tippy directive
-          tippy: () => {},
-        },
       },
     });
     await flushPromises();

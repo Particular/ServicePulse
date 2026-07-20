@@ -7,6 +7,7 @@ import * as precondition from ".";
  */
 export interface AuthConfigResponse {
   enabled: boolean;
+  role_based_authorization_enabled: boolean;
   client_id: string;
   authority: string;
   api_scopes: string;
@@ -19,6 +20,7 @@ export interface AuthConfigResponse {
  */
 export const authDisabledConfig: AuthConfigResponse = {
   enabled: false,
+  role_based_authorization_enabled: false,
   client_id: "",
   authority: "",
   api_scopes: "[]",
@@ -31,6 +33,7 @@ export const authDisabledConfig: AuthConfigResponse = {
  */
 export const authEnabledConfig: AuthConfigResponse = {
   enabled: true,
+  role_based_authorization_enabled: true,
   client_id: "servicepulse-test",
   authority: "https://login.microsoftonline.com/test-tenant-id/v2.0",
   api_scopes: '["api://servicecontrol/access_as_user"]',
@@ -66,6 +69,12 @@ export const hasAuthenticationEnabled =
     driver.mockEndpoint(`${serviceControlInstanceUrl}authentication/configuration`, {
       body: fullConfig,
     });
+    // Once authenticated the app fetches the my/routes manifest from each instance. These tests
+    // predate route gating and assert the full UI, so respond 404 on both: the store then fails
+    // open and gating stays inert. Gating itself is covered by dedicated store/composable tests.
+    const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+    driver.mockEndpoint(`${serviceControlInstanceUrl}my/routes`, { status: 404, body: [] });
+    driver.mockEndpoint(`${monitoringInstanceUrl}api/my/routes`, { status: 404, body: [] });
     return fullConfig;
   };
 

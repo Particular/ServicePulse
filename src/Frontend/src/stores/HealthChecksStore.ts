@@ -1,11 +1,13 @@
 import type EmailSettings from "@/components/configuration/EmailSettings";
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
 import type EmailNotifications from "@/resources/EmailNotifications";
 import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
 import { useEnvironmentAndVersionsStore } from "./EnvironmentAndVersionsStore";
 import logger from "@/logger";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { ApiRoutes } from "@/composables/apiRoutes";
 
 export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
   const emailNotifications = ref<EmailSettings>({
@@ -21,6 +23,10 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
 
   const environmentStore = useEnvironmentAndVersionsStore();
   const hasResponseStatusInHeaders = environmentStore.serviceControlIsGreaterThan("5.2");
+
+  const { canCall } = useAllowedRoutes();
+  const canManageNotifications = computed(() => canCall(ApiRoutes.manageNotifications));
+  const canTestNotifications = computed(() => canCall(ApiRoutes.testNotifications));
 
   async function refresh() {
     let result: EmailNotifications | null;
@@ -112,6 +118,8 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
   return {
     refresh,
     emailNotifications,
+    canManageNotifications,
+    canTestNotifications,
     toggleEmailNotifications,
     saveEmailNotifications,
     testEmailNotifications,

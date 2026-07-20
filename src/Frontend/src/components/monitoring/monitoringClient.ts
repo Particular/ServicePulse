@@ -1,5 +1,6 @@
 import { authFetch } from "@/composables/useAuthenticatedFetch";
 import type { Endpoint, EndpointDetails } from "@/resources/MonitoringEndpoint";
+import { HttpError } from "@/utils/HttpError";
 
 export interface MetricsConnectionDetails {
   Enabled: boolean;
@@ -36,9 +37,13 @@ class MonitoringClient {
   }
 
   public async getMonitoringVersion() {
-    const [response] = await this.fetchTypedFromMonitoring("");
-    if (response?.ok) {
-      return response.headers.get("X-Particular-Version") ?? "";
+    try {
+      const [response] = await this.fetchTypedFromMonitoring("");
+      if (response?.ok) {
+        return response.headers.get("X-Particular-Version") ?? "";
+      }
+    } catch {
+      // swallow the exception, the default return captures the intent
     }
     return "";
   }
@@ -49,8 +54,12 @@ class MonitoringClient {
   }
 
   public async getMonitoredEndpoints(historyPeriod: number) {
-    const [, data] = await this.fetchTypedFromMonitoring<Endpoint[]>(`monitored-endpoints?history=${historyPeriod}`);
-    return data ?? [];
+    try {
+      const [, data] = await this.fetchTypedFromMonitoring<Endpoint[]>(`monitored-endpoints?history=${historyPeriod}`);
+      return data ?? [];
+    } catch {
+      return [];
+    }
   }
 
   public async deletedMonitoredEndpoint(endpointName: string, instanceId: string) {
@@ -82,6 +91,15 @@ class MonitoringClient {
     return false;
   }
 
+  public async fetchAllowedRoutes() {
+    if (this.isMonitoringDisabled) {
+      return undefined;
+    }
+    // Unlike the other Monitoring endpoints (served at root), MyRoutesController has a class-level
+    // "api" route prefix (it is the shared controller used by both Primary and Monitoring instances).
+    return await authFetch(`${this.url}api/my/routes`);
+  }
+
   public get isMonitoringEnabled() {
     return this.url && this.url !== "!" ? true : false;
   }
@@ -96,6 +114,10 @@ class MonitoringClient {
     }
 
     const response = await authFetch(`${this.url}${suffix}`);
+    if (!response.ok) {
+      throw new HttpError(response.status, response.statusText);
+    }
+
     const data = await response.json();
 
     return [response, data];

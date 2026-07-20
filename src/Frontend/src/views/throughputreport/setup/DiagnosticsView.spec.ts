@@ -51,10 +51,6 @@ describe("DiagnosticsView tests", () => {
     const { debug } = render(DiagnosticsView, {
       global: {
         plugins: [],
-        directives: {
-          // Add stub for tippy directive
-          tippy: () => {},
-        },
       },
     });
 

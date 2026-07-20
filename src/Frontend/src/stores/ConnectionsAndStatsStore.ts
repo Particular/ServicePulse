@@ -6,6 +6,7 @@ import type { ConnectionState } from "@/resources/ConnectionState";
 import { useCounter } from "@vueuse/core";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import serviceControlClient from "@/components/serviceControlClient";
+import { HttpError } from "@/utils/HttpError";
 
 export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore", () => {
   const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
@@ -25,6 +26,7 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
     connecting: false,
     connectedRecently: false,
     unableToConnect: null,
+    forbidden: false,
   });
 
   const monitoringConnectionState = reactive<ConnectionState>({
@@ -32,6 +34,7 @@ export const useConnectionsAndStatsStore = defineStore("ConnectionsAndStatsStore
     connecting: false,
     connectedRecently: false,
     unableToConnect: null,
+    forbidden: false,
   });
 
   const displayConnectionsWarning = computed(() => (connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && isMonitoringEnabled)) ?? false);
@@ -87,6 +90,7 @@ async function fetchAndSetConnectionState(fetchFunction: () => Promise<number | 
     try {
       const data = await fetchFunction();
       connectionState.unableToConnect = false;
+      connectionState.forbidden = false;
       connectionState.connectedRecently = true;
       connectionState.connected = true;
       connectionState.connecting = false;
@@ -94,10 +98,17 @@ async function fetchAndSetConnectionState(fetchFunction: () => Promise<number | 
       return data ?? 0;
     } catch (err) {
       connectionState.connected = false;
-      connectionState.unableToConnect = true;
-      connectionState.connectedRecently = false;
       connectionState.connecting = false;
-      logger.error(err);
+      connectionState.connectedRecently = false;
+
+      if (err instanceof HttpError && err.status === 403) {
+        connectionState.forbidden = true;
+        connectionState.unableToConnect = false;
+      } else {
+        connectionState.forbidden = false;
+        connectionState.unableToConnect = true;
+        logger.error(err);
+      }
     }
   } catch {
     connectionState.connecting = false;

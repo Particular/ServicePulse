@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { RouterView, useRoute } from "vue-router";
 import PageFooter from "./components/PageFooter.vue";
 import PageHeader from "./components/PageHeader.vue";
@@ -8,10 +8,25 @@ import LicenseNotifications from "@/components/LicenseNotifications.vue";
 import BackendChecksNotifications from "@/components/BackendChecksNotifications.vue";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/AuthStore";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
 
 const authStore = useAuthStore();
 const route = useRoute();
 const { isAuthenticated, authEnabled } = storeToRefs(authStore);
+
+// Load the allowed-route manifest (my/routes) once authenticated, so the nav and other
+// UI can gate on it. Fail-safe: a missing/old endpoint just leaves the manifest unloaded
+// and the UI fails open.
+const { fetchManifest } = useAllowedRoutes();
+watch(
+  [authEnabled, isAuthenticated],
+  ([enabled, authenticated]) => {
+    if (enabled && authenticated) {
+      fetchManifest();
+    }
+  },
+  { immediate: true }
+);
 
 // Check if the current route allows anonymous access (e.g., logged-out page)
 const isAnonymousRoute = computed(() => route.meta?.allowAnonymous === true);
