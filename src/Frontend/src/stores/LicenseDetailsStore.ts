@@ -8,16 +8,19 @@ import type { LicensedEndpointDetails } from "@/resources/LicenseDetails";
 import useIsLicenseDetailsSupported from "@/views/throughputreport/licenseDetails/isLicenseDetailsSupported";
 
 export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
+  const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
+
   const endpointSizes = ref<EndpointSize[]>([]);
   const endpoints = ref<Endpoint[]>([]);
   const infrastructureQueues = ref<Queue[]>([]);
   const excludedQueues = ref<Queue[]>([]);
   const serviceEndDate = ref<Date>();
-  const validId = ref<boolean>(false);
+  const validId = ref<boolean>(true);
   const hasLicenseDetails = ref(false);
   const error = ref<string | null>();
 
   async function refresh() {
+    if (!isLicenseDetailsSupported) return;
     try {
       error.value = null;
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<LicensedEndpointDetails>("license/details");
@@ -57,7 +60,6 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     await refresh();
   }
 
-  const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
   watch(isLicenseDetailsSupported, (supported: boolean) => supported && refresh());
 
   return {
