@@ -77,7 +77,7 @@ const filteredData = computed(() => {
 });
 // We can remove this hidden toggle once we have new edition licenses.
 const hiddenFeatureToggle = useHiddenFeature(["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "m"]);
-const showMonthly = computed(() => license.edition === "MonthlyUsage" || hiddenFeatureToggle.value);
+const showMonthly = computed(() => license.edition === "Endpoint Size" || hiddenFeatureToggle.value);
 
 const throughputClient = createThroughputClient();
 
