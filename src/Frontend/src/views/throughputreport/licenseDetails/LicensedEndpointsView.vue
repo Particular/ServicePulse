@@ -16,7 +16,7 @@ const expandedLength = computed(() => [...expandedEndpoints.values()].filter((va
 
 <template>
   <div class="mt-2">
-    <DataView :data="endpoints" :items-per-page="5" @page-changed="expandedEndpoints.clear()" sticky-pagination>
+    <DataView :data="endpoints" :items-per-page="100" @page-changed="expandedEndpoints.clear()" sticky-pagination>
       <template #data="{ pageData, pageNumber }">
         <!--parent div with key ensures that any state for the details below is reset on page change-->
         <div :key="pageNumber">

@@ -5,6 +5,7 @@ defineProps<{ label: string; tooltip?: string; ariaLabel?: string }>();
 <template>
   <div class="details-item">
     <label>{{ label }}</label>
+    <!-- role and aria-label are used for tests -->
     <span role="note" :title="tooltip" :aria-label="ariaLabel"><slot></slot></span>
   </div>
 </template>

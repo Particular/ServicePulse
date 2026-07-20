@@ -12,7 +12,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <DataView v-if="queues" :data="queues" :items-per-page="4">
+  <DataView v-if="queues" :data="queues" :items-per-page="100">
     <template #data="{ pageData }">
       <table class="table">
         <thead>
