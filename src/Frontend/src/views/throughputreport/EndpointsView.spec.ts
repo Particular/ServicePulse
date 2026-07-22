@@ -56,7 +56,7 @@ describe("EndpointsView tests", () => {
 
     const use = userEvent.setup();
 
-    await use.click(screen.getByRole("link", { name: /Show Endpoint Types meaning/i }));
+    await use.click(screen.getByRole("button", { name: /Show Endpoint Types meaning/i }));
 
     expect(screen.queryByText(/Hide Endpoint Types meaning/i)).toBeInTheDocument();
   });
