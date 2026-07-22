@@ -1,22 +1,27 @@
 import type QueueThroughputSummary from "@/resources/QueueThroughputSummary";
 
 export interface LicensedEndpointDetails {
-  endpoints: LicensedEndpoint[];
-  infrastructure_queues: Queue[];
-  excluded_queues: Queue[];
+  endpoints: ApiEndpoint[];
+  infrastructure_queues: ApiQueue[];
+  excluded_queues: ApiQueue[];
   service_end_date: string;
-  products: Product[];
+  products: ApiProduct[];
   valid_id: boolean;
 }
 
-interface LicensedEndpoint {
+export interface ApiEndpoint {
   name: string;
   classification: EndpointClassification;
-  endpointSize: string;
-  queues: Queue[];
+  endpoint_size: string;
+  queues: ApiQueue[];
 }
 
-interface Product {
+export interface ApiQueue {
+  name_hash: string;
+  scope: string;
+}
+
+interface ApiProduct {
   product_code: string;
   monthly_throughput: number | null;
 }

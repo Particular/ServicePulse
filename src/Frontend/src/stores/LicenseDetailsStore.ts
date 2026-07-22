@@ -2,9 +2,8 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import logger from "@/logger";
 import { ref, watch } from "vue";
 import createThroughputClient from "@/views/throughputreport/throughputClient";
-import { Endpoint, EndpointSize, type Queue } from "@/resources/LicenseDetails";
+import { Endpoint, EndpointSize, type Queue, type LicensedEndpointDetails, type ApiQueue } from "@/resources/LicenseDetails";
 import serviceControlClient from "@/components/serviceControlClient";
-import type { LicensedEndpointDetails } from "@/resources/LicenseDetails";
 import useIsLicenseDetailsSupported from "@/views/throughputreport/licenseDetails/isLicenseDetailsSupported";
 
 export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
@@ -30,9 +29,9 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
       const throughputClient = createThroughputClient();
       const scQueues = await throughputClient.queues();
 
-      const toQueue = (metaQ: any) =>
+      const toQueue = (metaQ: ApiQueue) =>
         ({
-          nameHash: metaQ.nameHash,
+          nameHash: metaQ.name_hash,
           scope: metaQ.scope,
           details: scQueues.find((scQ) => scQ.name_hash === metaQ.name_hash),
         }) as Queue;
@@ -40,11 +39,12 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
       const sortedProducts = data.products.toSorted((p1, p2) => (p1.monthly_throughput ?? Number.MAX_VALUE) - (p2.monthly_throughput ?? Number.MAX_VALUE));
       const sortedEndpointSizes = sortedProducts.map((product, i) => new EndpointSize(product.product_code, i > 0 ? (sortedProducts[i - 1].monthly_throughput ?? 0) : 0, product.monthly_throughput));
       endpointSizes.value = sortedEndpointSizes;
-      endpoints.value = data.endpoints.map((metaEp: any) => new Endpoint(crypto.randomUUID(), metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes));
+      endpoints.value = data.endpoints.map((metaEp) => new Endpoint(crypto.randomUUID(), metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes));
       infrastructureQueues.value = data.infrastructure_queues.map(toQueue);
       excludedQueues.value = data.excluded_queues.map(toQueue);
       serviceEndDate.value = new Date(data.service_end_date);
       validId.value = data.valid_id;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       error.value = `Error fetching endpoint metadata: ${err.message ?? err}`;
       logger.error("Error fetching endpoint metadata", err);

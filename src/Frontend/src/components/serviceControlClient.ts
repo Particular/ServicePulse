@@ -43,6 +43,7 @@ class ServiceControlClient {
         try {
           const errorResponse = await response.json();
           error = new Error(errorResponse.detail ?? errorResponse.title);
+          // eslint-disable-next-line no-empty
         } catch {}
       }
       throw error;

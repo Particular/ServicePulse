@@ -25,7 +25,7 @@ const expandedLength = computed(() => [...expandedEndpoints.values()].filter((va
             <button type="button" class="btn btn-secondary" :disabled="expandedLength === pageData.length" @click="pageData.forEach((endpoint) => expandedEndpoints.set(endpoint, true))">Expand All</button>
             <button type="button" class="btn btn-secondary" :disabled="expandedLength === 0" @click="pageData.forEach((endpoint) => expandedEndpoints.set(endpoint, false))">Collapse All</button>
           </div>
-          <div class="card mb-3" v-for="endpoint in pageData">
+          <div class="card mb-3" v-for="endpoint in pageData" :key="endpoint.clientId">
             <template v-if="expandedEndpoints.get(endpoint)">
               <EndpointHeader :endpoint="endpoint" class="card-header" @collapse="expandedEndpoints.set(endpoint, false)" />
               <EndpointDetails :endpoint="endpoint" />

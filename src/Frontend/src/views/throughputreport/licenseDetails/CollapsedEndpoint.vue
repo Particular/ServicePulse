@@ -13,6 +13,8 @@ const endpointClassificationStyle = computed(() => {
       return props.endpoint.isInBreach ? "--breach" : "--full";
     case EndpointClassification.SendOnly:
       return "--send-only";
+    default:
+      throw new Error("Invalid endpoint classification");
   }
 });
 </script>

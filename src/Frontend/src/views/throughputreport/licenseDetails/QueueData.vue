@@ -4,10 +4,10 @@ import InlineThroughputGraph from "../queues/InlineThroughputGraph.vue";
 import QueueName from "./QueueName.vue";
 import type { Queue } from "@/resources/LicenseDetails";
 
-const props = defineProps<{
+defineProps<{
   queues: Queue[];
-  actionsComponent?: Object;
-  additionalData?: Object;
+  actionsComponent?: object;
+  additionalData?: object;
 }>();
 </script>
 

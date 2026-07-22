@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { EndpointClassification, type Endpoint } from "@/resources/LicenseDetails";
 import FAIcon from "@/components/FAIcon.vue";
 import { faCircleChevronUp } from "@fortawesome/free-solid-svg-icons";
@@ -13,17 +13,12 @@ const endpointClassificationStyle = computed(() => {
       return props.endpoint.isInBreach ? "--breach" : "--full";
     case EndpointClassification.SendOnly:
       return "--send-only";
+    default:
+      throw new Error("Invalid endpoint classification");
   }
 });
 
 const endpointName = ref(props.endpoint.name);
-const isValid = computed(() => endpointName.value?.length > 0 && endpointName.value?.length <= 80);
-const saveButton = useTemplateRef("save");
-const nameEdit = useTemplateRef("nameEdit");
-
-function saveName() {
-  if (isValid.value) props.endpoint.name = endpointName.value;
-}
 
 watch(
   () => props.endpoint.name,
@@ -37,25 +32,7 @@ watch(
       <FAIcon :icon="faCircleChevronUp" class="collapse-button" size="lg" tabindex="0" title="collapse" @click="emit('collapse')" />
       <strong :title="endpoint.name">{{ endpoint.name }}</strong>
     </div>
-    <div class="header-buttons d-print-none">
-      <!-- <ModalButton
-        class="btn btn-secondary"
-        :id="`editEndpointName${endpoint.clientId}`"
-        modal-title="Edit Endpoint Name"
-        @[`hidden.bs.modal`]="endpointName = endpoint.name"
-        @[`shown.bs.modal`]="nameEdit.focus()"
-      >
-        Edit Name
-        <template #modalBody>
-          <TextEdit ref="nameEdit" :maxlength="80" v-model="endpointName" @accept="saveButton.click()" />
-        </template>
-        <template #modalFooter>
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button ref="save" class="btn btn-primary" data-bs-dismiss="modal" @click="saveName" :disabled="!isValid">Save</button>
-        </template>
-      </ModalButton>
-      <RemoveEndpoint :endpoint="endpoint" /> -->
-    </div>
+    <div class="header-buttons d-print-none"></div>
   </div>
 </template>
 
