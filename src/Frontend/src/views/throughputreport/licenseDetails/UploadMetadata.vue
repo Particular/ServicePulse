@@ -21,6 +21,7 @@ async function handleSubmit() {
   try {
     await licenseDetailsStore.uploadEndpointMetadata(file.value);
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error(e);
     uploadError.value = true;
   } finally {
