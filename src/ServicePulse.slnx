@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/Installer/">
+    <File Path="Setup/Setup.csproj" />
+    <Project Path="ServicePulse.Install.CustomActions/ServicePulse.Install.CustomActions.csproj" />
+  </Folder>
+  <Folder Name="/SmokeTesting/">
+    <Project Path="SmokeTest.3rdParty/SmokeTest.3rdParty.csproj" />
+    <Project Path="SmokeTest.Client/SmokeTest.Client.csproj" />
+    <Project Path="SmokeTest.ClientNoHeartbeat/SmokeTest.ClientNoHeartbeat.csproj" />
+    <Project Path="SmokeTest.Server/SmokeTest.Server.csproj" />
+    <Project Path="SmokeTest.Shared/SmokeTest.Shared.csproj" />
+    <Project Path="SmokeTest.SignalrClient/SmokeTest.SignalrClient.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Custom.Build.props" />
+  </Folder>
+  <Project Path="Particular.PlatformSample.ServicePulse/Particular.PlatformSample.ServicePulse.csproj" />
+  <Project Path="Particular.ServicePulse.Core/Particular.ServicePulse.Core.csproj" />
+  <Project Path="ServicePulse.Host.Tests/ServicePulse.Host.Tests.csproj" />
+  <Project Path="ServicePulse.Host/ServicePulse.Host.csproj" />
+  <Project Path="ServicePulse.Tests/ServicePulse.Tests.csproj" />
+  <Project Path="ServicePulse/ServicePulse.csproj" />
+</Solution>
