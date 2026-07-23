@@ -1,5 +1,5 @@
 <Solution>
-  <Folder Name="/installer/">
+  <Folder Name="/Installer/">
     <File Path="Setup/Setup.csproj" />
     <Project Path="ServicePulse.Install.CustomActions/ServicePulse.Install.CustomActions.csproj" />
   </Folder>
