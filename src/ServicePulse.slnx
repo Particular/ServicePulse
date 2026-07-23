@@ -1,9 +1,7 @@
 <Solution>
   <Folder Name="/installer/">
+    <File Path="Setup/Setup.csproj" />
     <Project Path="ServicePulse.Install.CustomActions/ServicePulse.Install.CustomActions.csproj" />
-    <Project Path="Setup/Setup.csproj">
-      <Build Project="false" />
-    </Project>
   </Folder>
   <Folder Name="/SmokeTesting/">
     <Project Path="SmokeTest.3rdParty/SmokeTest.3rdParty.csproj" />
