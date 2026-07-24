@@ -11,7 +11,7 @@ describe("AuthErrorScreen", () => {
     });
 
     expect(await screen.findByText("Unable to sign in")).toBeVisible();
-    expect(screen.getByText(/offline_access scope may be disabled/)).toBeVisible();
+    expect(screen.getByText(/'offline_access' scope may be disabled/)).toBeVisible();
     expect(screen.getByText(/Invalid scopes: Pulse openid profile email offline_access/)).toBeVisible();
   });
 
