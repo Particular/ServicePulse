@@ -52,7 +52,7 @@ describe("FEATURE: OAuth Callback Error Handling (Scenario 16)", () => {
       });
 
       // Verify the error message contains the description
-      expect(authStore.authError).toContain("cancelled");
+      expect(authStore.authError?.description).toContain("cancelled");
 
       // User should not be authenticated
       expect(authStore.isAuthenticated).toBe(false);
@@ -94,7 +94,7 @@ describe("FEATURE: OAuth Callback Error Handling (Scenario 16)", () => {
       });
 
       // Verify the error captures the description
-      expect(authStore.authError).toContain("Missing");
+      expect(authStore.authError?.description).toContain("Missing");
 
       // User should not be authenticated
       expect(authStore.isAuthenticated).toBe(false);
@@ -136,12 +136,51 @@ describe("FEATURE: OAuth Callback Error Handling (Scenario 16)", () => {
       });
 
       // When no description, the error code should be used
-      expect(authStore.authError).toBe("server_error");
+      expect(authStore.authError?.description).toBe("server_error");
 
       // User should not be authenticated
       expect(authStore.isAuthenticated).toBe(false);
 
       // Restore original location
+      Object.defineProperty(window, "location", {
+        value: originalLocation,
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    test("EXAMPLE: invalid_scope error captures the OAuth error code", async ({ driver }) => {
+      const mockSearch = "?error=invalid_scope&error_description=Invalid%20scopes%3A%20Pulse%20openid%20profile%20email%20offline_access";
+
+      const mockLocation = {
+        ...originalLocation,
+        search: mockSearch,
+        hash: "#/dashboard",
+        href: `http://localhost:5173${mockSearch}#/dashboard`,
+      };
+
+      Object.defineProperty(window, "location", {
+        value: mockLocation,
+        writable: true,
+        configurable: true,
+      });
+
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasAuthenticationEnabled());
+
+      await driver.goTo("/dashboard");
+
+      const authStore = useAuthStore();
+
+      await waitFor(() => {
+        expect(authStore.authError).toBeTruthy();
+      });
+
+      expect(authStore.authError?.code).toBe("invalid_scope");
+      expect(authStore.authError?.description).toContain("Invalid scopes");
+
+      expect(authStore.isAuthenticated).toBe(false);
+
       Object.defineProperty(window, "location", {
         value: originalLocation,
         writable: true,

@@ -29,7 +29,7 @@ export function useAuth() {
       await userManager?.signinRedirect();
     } catch (error) {
       logger.error("Re-authentication after session loss failed:", error);
-      authStore.setAuthError(error instanceof Error ? error.message : "Re-authentication after session loss failed");
+      authStore.setAuthError({ description: error instanceof Error ? error.message : "Re-authentication after session loss failed" });
     } finally {
       authStore.setAuthenticating(false);
     }
@@ -116,7 +116,7 @@ export function useAuth() {
             errorMessage: error instanceof Error ? error.message : "Unknown error",
             errorStack: error instanceof Error ? error.stack : undefined,
           });
-          authStore.setAuthError(error instanceof Error ? error.message : "Callback failed");
+          authStore.setAuthError({ description: error instanceof Error ? error.message : "Callback failed" });
           // Don't continue - callback failed, user needs to try again
           return false;
         } finally {
@@ -124,9 +124,10 @@ export function useAuth() {
         }
       } else if (hasError) {
         // OAuth error in callback
+        const errorCode = params.get("error") ?? undefined;
         const errorDescription = params.get("error_description") || params.get("error");
         logger.error("OAuth error:", errorDescription);
-        authStore.setAuthError(errorDescription || "Authentication failed");
+        authStore.setAuthError({ code: errorCode, description: errorDescription || "Authentication failed" });
         return false;
       }
 
@@ -144,7 +145,7 @@ export function useAuth() {
     } catch (error) {
       authStore.setAuthenticating(false);
       const errorMessage = error instanceof Error ? error.message : "Unknown authentication error";
-      authStore.setAuthError(errorMessage);
+      authStore.setAuthError({ description: errorMessage });
       logger.error("Authentication error:", error);
       throw error;
     }

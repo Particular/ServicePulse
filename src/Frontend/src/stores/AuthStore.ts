@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import logger from "@/logger";
 import { ref } from "vue";
-import type { AuthConfig } from "@/types/auth";
+import type { AuthConfig, AuthError } from "@/types/auth";
 import { WebStorageStateStore } from "oidc-client-ts";
 import routeLinks from "@/router/routeLinks";
 import serviceControlClient from "@/components/serviceControlClient";
@@ -24,7 +24,7 @@ export const useAuthStore = defineStore("auth", () => {
   const token = ref<string | null>(null);
   const isAuthenticated = ref(false);
   const isAuthenticating = ref(false);
-  const authError = ref<string | null>(null);
+  const authError = ref<AuthError | null>(null);
   const authConfig = ref<AuthConfig | null>(null);
   const authEnabled = ref(false);
   // undefined means ServiceControl didn't report this field (older version) — treat as enabled.
@@ -110,7 +110,7 @@ export const useAuthStore = defineStore("auth", () => {
     isAuthenticating.value = value;
   }
 
-  function setAuthError(error: string | null) {
+  function setAuthError(error: AuthError | null) {
     authError.value = error;
   }
 

@@ -18,18 +18,21 @@ describe("AuthStore tests", () => {
   });
 
   test("uses the composed scopes field from ServiceControl when present", async () => {
+    // The store must pass `scopes` through untouched. This value deliberately differs from anything
+    // derivable from api_scopes (a different scope, and no offline_access) so the test fails if the
+    // store ever reverts to assembling the scope string itself instead of trusting ServiceControl.
     vi.spyOn(serviceControlClient, "fetchTypedFromServiceControl").mockResolvedValue([
       {} as Response,
       {
         ...baseResponse,
-        scopes: "api://test-audience/.default openid profile email",
+        scopes: "api://servicecontrol/composed-by-servicecontrol openid profile email",
       },
     ]);
 
     const store = useAuthStore();
     await store.refresh();
 
-    expect(store.authConfig?.scope).toBe("api://test-audience/.default openid profile email");
+    expect(store.authConfig?.scope).toBe("api://servicecontrol/composed-by-servicecontrol openid profile email");
   });
 
   test("falls back to assembling scopes from api_scopes when talking to an older ServiceControl", async () => {

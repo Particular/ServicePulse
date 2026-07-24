@@ -6,11 +6,12 @@ import { useAuthStore } from "@/stores/AuthStore";
 import routeLinks from "@/router/routeLinks";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import App from "./App.vue";
+import AuthErrorScreen from "@/components/AuthErrorScreen.vue";
 import logger from "@/logger";
 
 const { authenticate } = useAuth();
 const authStore = useAuthStore();
-const { isAuthenticating, loading } = storeToRefs(authStore);
+const { isAuthenticating, loading, authError } = storeToRefs(authStore);
 
 onMounted(async () => {
   try {
@@ -56,6 +57,7 @@ onMounted(async () => {
     <LoadingSpinner />
     <div class="loading-text">Authenticating...</div>
   </div>
+  <AuthErrorScreen v-else-if="authError" :error="authError" />
   <App v-else />
 </template>
 
