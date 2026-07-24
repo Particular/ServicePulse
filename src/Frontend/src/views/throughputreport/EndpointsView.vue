@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
-import { UserIndicator } from "@/views/throughputreport/endpoints/userIndicator";
-import { userIndicatorMapper } from "@/views/throughputreport/endpoints/userIndicatorMapper";
-import { ref, type Component } from "vue";
+import { UserIndicator } from "@/views/throughputreport/queues/userIndicator.ts";
+import { userIndicatorMapper } from "@/views/throughputreport/queues/userIndicatorMapper.ts";
+import { computed, ref, type Component } from "vue";
 import { storeToRefs } from "pinia";
 import LegendNServiceBusEndpoint from "./LegendNServiceBusEndpoint.vue";
 import LegendNServiceBusEndpointNoLongerInUse from "./LegendNServiceBusEndpointNoLongerInUse.vue";
@@ -14,9 +14,19 @@ import LegendNotNServiceBusEndpoint from "./LegendNotNServiceBusEndpoint.vue";
 import LegendGatewayOrBridgeEndpoint from "./LegendGatewayOrBridgeEndpoint.vue";
 import LegendParticularPlatformEndpoint from "./LegendParticularPlatformEndpoint.vue";
 import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoRefresh";
+import ExclamationMark from "@/components/ExclamationMark.vue";
+import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore.ts";
+import { WarningLevel } from "@/components/WarningLevel.ts";
+import { useLicenseStore } from "@/stores/LicenseStore.ts";
 
 const { store } = useThroughputStoreAutoRefresh();
 const { isBrokerTransport } = storeToRefs(store);
+const licenseDetailsStore = useLicenseDetailsStore();
+const { endpoints, validId, error: licenseDetailsError } = storeToRefs(licenseDetailsStore);
+const licenseStore = useLicenseStore();
+const { license } = storeToRefs(licenseStore);
+const enableLicenseDetails = computed(() => license.value.edition === "Endpoint Size");
+
 const showLegend = ref(false);
 
 const legendOptions = new Map<UserIndicator, Component>([
@@ -36,13 +46,32 @@ function toggleOptionsLegendVisible() {
 </script>
 
 <template>
-  <div class="box">
-    <div class="row">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="nav tabs">
+        <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.queues.detectedEndpoints.link) }">
+          <RouterLink :to="routeLinks.throughput.queues.detectedEndpoints.link">Detected Endpoint Queues</RouterLink>
+        </h5>
+        <h5 v-if="isBrokerTransport" class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.queues.detectedBrokerQueues.link) }">
+          <RouterLink :to="routeLinks.throughput.queues.detectedBrokerQueues.link">Detected Broker Queues</RouterLink>
+        </h5>
+        <h5 class="nav-item" v-if="enableLicenseDetails" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.root) }">
+          <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">
+            <span>License Details</span>
+            <ExclamationMark v-if="licenseDetailsError || !validId" :type="WarningLevel.Danger" />
+            <ExclamationMark v-else-if="endpoints.some((endpoint) => endpoint.isInBreach)" :type="WarningLevel.Warning" />
+          </RouterLink>
+        </h5>
+      </div>
+    </div>
+  </div>
+  <div class="box" v-if="isRouteSelected(routeLinks.throughput.queues.root)">
+    <div class="row mt-2">
       <p>
-        Set an Endpoint Type for all detected endpoints and broker queues with the most appropriate option.<br />
+        Set an Endpoint Type for all detected endpoint and broker queues with the most appropriate option.<br />
         Use the filters to bulk set the Endpoint Types on similar named endpoints/queues.<br />
         If the names of the endpoints/queues contain confidential or proprietary information, make sure you set up <RouterLink :to="routeLinks.throughput.setup.mask.link">masking in Configuration</RouterLink>.<br />
-        <a href="#" :aria-label="`${showLegend ? 'Hide' : 'Show'} Endpoint Types meaning`" @click.prevent="toggleOptionsLegendVisible()">{{ showLegend ? "Hide" : "Show" }} Endpoint Types meaning.</a>
+        <button class="btn btn-secondary" :aria-label="`${showLegend ? 'Hide' : 'Show'} Endpoint Types meaning`" @click.prevent="toggleOptionsLegendVisible()">{{ showLegend ? "Hide" : "Show" }} Endpoint Types meaning.</button>
       </p>
       <div v-show="showLegend" class="alert alert-info">
         <div v-for="[key, LegendComponent] in legendOptions" :key="key">
@@ -53,22 +82,9 @@ function toggleOptionsLegendVisible() {
         </p>
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="nav tabs">
-          <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.endpoints.detectedEndpoints.link) }">
-            <RouterLink :to="routeLinks.throughput.endpoints.detectedEndpoints.link">Detected Endpoints</RouterLink>
-          </h5>
-          <h5 v-if="isBrokerTransport" class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.endpoints.detectedBrokerQueues.link) }">
-            <RouterLink :to="routeLinks.throughput.endpoints.detectedBrokerQueues.link">Detected Broker Queues</RouterLink>
-          </h5>
-        </div>
-      </div>
-    </div>
-    <div class="intro">
-      <RouterView />
-    </div>
+    <RouterView />
   </div>
+  <RouterView v-else />
 </template>
 
 <style scoped></style>

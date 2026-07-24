@@ -11,6 +11,7 @@ import { useLicenseStore } from "@/stores/LicenseStore";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import ColumnHeader from "../ColumnHeader.vue";
 import DataView from "../DataView.vue";
+import DetailsItem from "../DetailsItem.vue";
 
 const configurationStore = useConfigurationStore();
 const { configuration } = storeToRefs(configurationStore);
@@ -29,13 +30,9 @@ const { licenseStatus, license } = licenseStore;
           <div class="box">
             <div class="row">
               <div class="license-info">
-                <div>
-                  <b>Platform license type:</b> <span role="note" aria-label="license-type">{{ typeText(license, configuration) }}{{ licenseEdition }}</span>
-                </div>
-
+                <DetailsItem label="Platform License Type" aria-label="license-type"> {{ typeText(license, configuration) }}{{ licenseEdition }} </DetailsItem>
                 <template v-if="licenseStatus.isSubscriptionLicense">
-                  <div>
-                    <b>License expiry date: </b>
+                  <DetailsItem label="License Expiry Date">
                     <span
                       role="note"
                       aria-label="license-expiry-date"
@@ -47,12 +44,11 @@ const { licenseStatus, license } = licenseStore;
                       <span role="note" aria-label="license-days-left">{{ licenseStatus.subscriptionDaysLeft }}</span>
                       <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
                     </span>
-                    <div class="license-expired-text" role="note" aria-label="license-expired" v-if="licenseStatus.isPlatformExpired">Your license expired. Please update the license to continue using the Particular Service Platform.</div>
-                  </div>
+                  </DetailsItem>
+                  <div class="license-expired-text" role="note" aria-label="license-expired" v-if="licenseStatus.isPlatformExpired">Your license expired. Please update the license to continue using the Particular Service Platform.</div>
                 </template>
                 <template v-if="licenseStatus.isTrialLicense">
-                  <div>
-                    <b>License expiry date: </b>
+                  <DetailsItem label="License Expiry Date">
                     <span
                       role="note"
                       aria-label="license-expiry-date"
@@ -64,41 +60,35 @@ const { licenseStatus, license } = licenseStore;
                       <span role="note" aria-label="license-days-left"> {{ licenseStatus.trialDaysLeft }}</span>
                       <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
                     </span>
-                    <div class="license-expired-text" role="note" aria-label="license-expired" v-if="licenseStatus.isPlatformTrialExpired">
-                      Your license expired. To continue using the Particular Service Platform you'll need to extend your license.
-                    </div>
-                    <div class="license-page-extend-trial" v-if="licenseStatus.isPlatformTrialExpiring && licenseStatus.isPlatformTrialExpired">
-                      <a class="btn btn-default btn-primary" :href="license.license_extension_url" target="_blank">Extend your license <FAIcon :icon="faExternalLink" /></a>
-                    </div>
+                  </DetailsItem>
+                  <div class="license-expired-text" role="note" aria-label="license-expired" v-if="licenseStatus.isPlatformTrialExpired">Your license expired. To continue using the Particular Service Platform you'll need to extend your license.</div>
+                  <div class="license-page-extend-trial" v-if="licenseStatus.isPlatformTrialExpiring && licenseStatus.isPlatformTrialExpired">
+                    <a class="btn btn-default btn-primary" :href="license.license_extension_url" target="_blank">Extend your license <FAIcon :icon="faExternalLink" /></a>
                   </div>
                 </template>
                 <template v-if="licenseStatus.isUpgradeProtectionLicense">
-                  <div>
-                    <span>
-                      <b>Upgrade protection expiry date:</b>
-                      <span
-                        role="note"
-                        aria-label="license-expiry-date"
-                        :class="{
-                          'license-expired': licenseStatus.isInvalidDueToUpgradeProtectionExpired,
-                        }"
-                      >
-                        {{ formattedUpgradeProtectionExpiration }}
-                        <span role="note" aria-label="license-days-left">{{ licenseStatus.upgradeDaysLeft }}</span>
-                        <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
-                      </span>
+                  <DetailsItem label="Upgrade Protection Expiry Date">
+                    <span
+                      role="note"
+                      aria-label="license-expiry-date"
+                      :class="{
+                        'license-expired': licenseStatus.isInvalidDueToUpgradeProtectionExpired,
+                      }"
+                    >
+                      {{ formattedUpgradeProtectionExpiration }}
+                      <span role="note" aria-label="license-days-left">{{ licenseStatus.upgradeDaysLeft }}</span>
+                      <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
                     </span>
-                    <div class="license-expired-text" role="note" aria-label="license-expired" v-if="licenseStatus.isValidWithExpiredUpgradeProtection || licenseStatus.isValidWithExpiringUpgradeProtection">
-                      <b>Warning:</b> Once upgrade protection expires, you'll no longer have access to support or new product versions.
-                    </div>
-                    <div class="license-expired-text" v-if="licenseStatus.isInvalidDueToUpgradeProtectionExpired">Your license upgrade protection expired before this version of ServicePulse was released.</div>
+                  </DetailsItem>
+                  <div class="license-expired-text" role="note" aria-label="license-expired" v-if="licenseStatus.isValidWithExpiredUpgradeProtection || licenseStatus.isValidWithExpiringUpgradeProtection">
+                    <b>Warning:</b> Once upgrade protection expires, you'll no longer have access to support or new product versions.
                   </div>
+                  <div class="license-expired-text" v-if="licenseStatus.isInvalidDueToUpgradeProtectionExpired">Your license upgrade protection expired before this version of ServicePulse was released.</div>
                 </template>
-                <div>
-                  <b>ServiceControl instance:</b>
+                <DetailsItem label="ServiceControl Instance">
                   {{ formattedInstanceName }}
-                </div>
-                <ul class="license-install-info">
+                </DetailsItem>
+                <ul class="license-install-info mt-2">
                   <li>
                     <a href="https://docs.particular.net/servicecontrol/license" target="_blank">Install or update a ServiceControl license</a>
                   </li>
@@ -143,7 +133,7 @@ const { licenseStatus, license } = licenseStore;
 <style scoped>
 .license-info {
   font-size: 16px;
-  line-height: 3em;
+  max-width: 35em;
 }
 
 .license-install-info li {
@@ -170,5 +160,16 @@ const { licenseStatus, license } = licenseStore;
 
 .licensed-endpoints span {
   padding: 10px;
+}
+
+.license-expired {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.license-expired-text {
+  overflow: visible;
+  white-space: nowrap;
 }
 </style>
