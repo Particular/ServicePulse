@@ -14,6 +14,10 @@ interface AuthConfigResponse {
   authority: string;
   api_scopes: string;
   audience: string;
+  // Complete scope string composed by ServiceControl (api scopes + openid profile email + offline_access,
+  // the last omitted if the operator disabled it). Absent on ServiceControl versions older than the one
+  // that introduced this field, in which case we fall back to assembling it ourselves below.
+  scopes?: string;
 }
 
 export const useAuthStore = defineStore("auth", () => {
@@ -52,7 +56,11 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   function transformToAuthConfig(config: AuthConfigResponse): AuthConfig {
+    // ServiceControl composes the full scope string (including whether offline_access is permitted
+    // by the identity provider). Older ServiceControl versions don't send it, so fall back to the
+    // previous behaviour of assembling it from api_scopes.
     const apiScope = JSON.parse(config.api_scopes).join(" ");
+    const scope = config.scopes ?? `${apiScope} openid profile email offline_access`;
     // Use hash-based URL for post-logout redirect since the app uses hash routing
     const postLogoutRedirectUri = `${window.location.origin}${window.location.pathname}#${routeLinks.loggedOut}`;
     return {
@@ -61,7 +69,7 @@ export const useAuthStore = defineStore("auth", () => {
       redirect_uri: window.location.origin,
       post_logout_redirect_uri: postLogoutRedirectUri,
       response_type: "code",
-      scope: `${apiScope} openid profile email offline_access`,
+      scope,
       automaticSilentRenew: true,
       loadUserInfo: false,
       includeIdTokenInSilentRenew: true,
