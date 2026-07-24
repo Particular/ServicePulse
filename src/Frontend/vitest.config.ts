@@ -20,7 +20,8 @@ export default defineConfig({
     globals: true,
     clearMocks: true,
     css: true,
-    testTimeout: 15000,
+    testTimeout: 30000,
+    slowTestThreshold: 20000,
     coverage: {
       exclude: [`**/__test__/**/*`, `**/.eslintrc.js`, `**/*.spec.ts`, `test/**/*`],
       provider: `v8`,

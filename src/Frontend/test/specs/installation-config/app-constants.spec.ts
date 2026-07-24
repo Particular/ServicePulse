@@ -38,7 +38,7 @@ describe("FEATURE: app.constants.js", () => {
       window.defaultConfig.default_route = "";
 
       //act
-      await driver.goTo("");
+      await driver.goTo("/");
 
       expect(window.location.href).toBe("http://localhost:3000/#/");
     });
@@ -49,7 +49,7 @@ describe("FEATURE: app.constants.js", () => {
       window.defaultConfig.default_route = "/";
 
       //act
-      await driver.goTo("");
+      await driver.goTo("/");
 
       expect(window.location.href).toBe("http://localhost:3000/#/");
     });

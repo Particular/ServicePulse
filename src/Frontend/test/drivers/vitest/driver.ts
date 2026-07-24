@@ -4,7 +4,7 @@ import type { Driver } from "../../driver";
 import { mount } from "@/mount";
 import makeRouter from "../../../src/router";
 import { mockEndpoint, mockEndpointDynamic } from "../../utils";
-import type { App } from "vue";
+import { h, type App } from "vue";
 import { mockServer } from "../../mock-server";
 
 function makeDriver() {
@@ -13,6 +13,17 @@ function makeDriver() {
   const driver = <Driver>{
     async goTo(path) {
       const router = makeRouter();
+      if (path === "/" && !router.getRoutes().some((route) => route.path === "/")) {
+        // In production the server can serve index.html at "/", but the hash router has no "/"
+        // route when default_route is empty or "/". Tests that open the app at root still need a
+        // valid client-side route to avoid Vue Router warnings during router.push("/").
+        router.addRoute({
+          path: "/",
+          component: {
+            render: () => h("div"),
+          },
+        });
+      }
       try {
         await router.push(path);
       } catch (error) {

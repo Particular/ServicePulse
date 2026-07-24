@@ -177,6 +177,10 @@ export const hasFailedMessage =
       body: withBody,
     });
 
+    driver.mockEndpoint(`${serviceControlUrl}messages/${withGroupId}/body`, {
+      body: withBody,
+    });
+
     driver.mockEndpoint(`${serviceControlUrl}messages/search/${withMessageId}`, {
       body: [
         <Message>{

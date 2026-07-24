@@ -150,6 +150,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       const endpointDetails = structuredClone(monitoredEndpointDetails);
       endpointDetails.errorCount = 5;
+      endpointDetails.serviceControlId = "group-id-1";
       await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
 
       // Act

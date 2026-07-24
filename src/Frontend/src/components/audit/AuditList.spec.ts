@@ -125,6 +125,7 @@ async function renderAuditList(messages: Message[] = []): Promise<RenderResult> 
     createSpy: vi.fn,
     initialState: {
       AuditStore: { messages, totalCount: messages.length },
+      ConfigurationStore: { isMassTransitConnected: false },
     },
   });
 

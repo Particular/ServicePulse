@@ -1,11 +1,17 @@
+import { vi, expect } from "vitest";
+import { createOidcMock } from "../../mocks/oidc-client-mock";
+
+// Mock oidc-client-ts so the auth-config tests don't trigger real document navigation in JSDOM.
+vi.mock("oidc-client-ts", () => createOidcMock());
+
 import { test, describe } from "../../drivers/vitest/driver";
-import { expect } from "vitest";
 import * as precondition from "../../preconditions";
 
 describe("FEATURE: Authentication Enabled (Scenario 2)", () => {
   describe("RULE: Authentication configuration endpoint should return valid OIDC config", () => {
     test("EXAMPLE: Auth config endpoint returns enabled with all required fields", async ({ driver }) => {
       const authConfig = await driver.setUp(precondition.scenarioAuthEnabled);
+      await driver.setUp(precondition.hasOidcDiscoveryMock());
 
       // Verify all required fields are present
       expect(authConfig.enabled).toBe(true);
@@ -23,6 +29,7 @@ describe("FEATURE: Authentication Enabled (Scenario 2)", () => {
     test("EXAMPLE: Auth config endpoint is accessible without authentication", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasAuthenticationEnabled());
+      await driver.setUp(precondition.hasOidcDiscoveryMock());
 
       // Navigate to trigger app mount
       await driver.goTo("/dashboard");
