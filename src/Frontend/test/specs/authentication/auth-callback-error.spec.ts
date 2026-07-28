@@ -1,8 +1,16 @@
-import { vi, expect, beforeEach } from "vitest";
+import { vi, expect, beforeEach, afterEach } from "vitest";
 import { createOidcMockUnauthenticated } from "../../mocks/oidc-client-mock";
 
 // Mock oidc-client-ts with unauthenticated state
 vi.mock("oidc-client-ts", () => createOidcMockUnauthenticated());
+const logger = vi.hoisted(() => ({
+  warn: vi.fn(),
+  error: vi.fn(),
+}));
+
+vi.mock("@/logger", () => ({
+  default: logger,
+}));
 
 import { test, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
@@ -17,6 +25,16 @@ describe("FEATURE: OAuth Callback Error Handling (Scenario 16)", () => {
     beforeEach(() => {
       // Save original location
       originalLocation = window.location;
+      logger.warn.mockReset();
+      logger.error.mockReset();
+    });
+
+    afterEach(() => {
+      Object.defineProperty(window, "location", {
+        value: originalLocation,
+        writable: true,
+        configurable: true,
+      });
     });
 
     test("EXAMPLE: access_denied error sets auth error state", async ({ driver }) => {
@@ -57,12 +75,7 @@ describe("FEATURE: OAuth Callback Error Handling (Scenario 16)", () => {
       // User should not be authenticated
       expect(authStore.isAuthenticated).toBe(false);
 
-      // Restore original location
-      Object.defineProperty(window, "location", {
-        value: originalLocation,
-        writable: true,
-        configurable: true,
-      });
+      expect(logger.error).toHaveBeenCalledWith("OAuth error:", "User cancelled the login");
     });
 
     test("EXAMPLE: invalid_request error sets auth error state", async ({ driver }) => {
@@ -99,12 +112,7 @@ describe("FEATURE: OAuth Callback Error Handling (Scenario 16)", () => {
       // User should not be authenticated
       expect(authStore.isAuthenticated).toBe(false);
 
-      // Restore original location
-      Object.defineProperty(window, "location", {
-        value: originalLocation,
-        writable: true,
-        configurable: true,
-      });
+      expect(logger.error).toHaveBeenCalledWith("OAuth error:", "Missing required parameter");
     });
 
     test("EXAMPLE: error without description uses error code", async ({ driver }) => {
@@ -141,12 +149,7 @@ describe("FEATURE: OAuth Callback Error Handling (Scenario 16)", () => {
       // User should not be authenticated
       expect(authStore.isAuthenticated).toBe(false);
 
-      // Restore original location
-      Object.defineProperty(window, "location", {
-        value: originalLocation,
-        writable: true,
-        configurable: true,
-      });
+      expect(logger.error).toHaveBeenCalledWith("OAuth error:", "server_error");
     });
   });
 });

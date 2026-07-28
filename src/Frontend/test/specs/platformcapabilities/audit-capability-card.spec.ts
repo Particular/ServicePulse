@@ -127,6 +127,7 @@ describe("FEATURE: Audit capability card", () => {
     test("EXAMPLE: Audit instance available with successful messages shows available status", async ({ driver }) => {
       // Arrange
       // Need to set up ServiceControl with version >= 6.6.0 for "All Messages" feature support
+      await driver.setUp(precondition.hasAuthenticationDisabled());
       await driver.setUp(precondition.hasActiveLicense);
       await driver.setUp(precondition.hasLicensingSettingTest());
       await driver.setUp(precondition.hasServiceControlMainInstance(precondition.serviceControlVersionSupportingAllMessages));
@@ -261,6 +262,7 @@ describe("FEATURE: Audit capability card", () => {
     test("EXAMPLE: ServiceControl version < 6.6.0 with successful messages still shows not configured status", async ({ driver }) => {
       // Arrange
       // Set up ServiceControl with version < 6.6.0 which does NOT support "All Messages" feature
+      await driver.setUp(precondition.hasAuthenticationDisabled());
       await driver.setUp(precondition.hasActiveLicense);
       await driver.setUp(precondition.hasLicensingSettingTest());
       await driver.setUp(precondition.hasServiceControlMainInstance(precondition.serviceControlVersionNotSupportingAllMessages));

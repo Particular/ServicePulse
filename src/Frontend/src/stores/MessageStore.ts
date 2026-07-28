@@ -74,6 +74,8 @@ export const useMessageStore = defineStore("MessageStore", () => {
   const conversationData = ref<DataContainer<Message[]>>({ data: [] });
 
   const editRetryResponse = ref<EditRetryResponse | null>(null);
+  let editAndRetryConfigPromise: Promise<void> | null = null;
+  let editAndRetryConfigLoaded = false;
   let bodyLoadedId = "";
   let conversationLoadedId = "";
 
@@ -84,17 +86,20 @@ export const useMessageStore = defineStore("MessageStore", () => {
   const { configuration } = storeToRefs(configStore);
   const error_retention_period = computed(() => timeSpanToDuration(configuration.value?.data_retention?.error_retention_period).asHours());
 
-  const { canCall } = useAllowedRoutes();
+  const { canCall, ensureManifestLoaded } = useAllowedRoutes();
   const canRetry = computed(() => canCall(ApiRoutes.retryMessage, state.data));
   const canEdit = computed(() => canCall(ApiRoutes.editMessage, state.data));
   const canDelete = computed(() => canCall(ApiRoutes.deleteMessage, state.data));
   const canRestore = computed(() => canCall(ApiRoutes.restoreMessage, state.data));
 
   async function loadEditAndRetryConfiguration() {
-    // edit/config is an edit-only endpoint (requires the edit permission). Skip it for users who
-    // cannot edit, leaving the default disabled config in place. A 403 (e.g. during the brief
-    // window before the route manifest loads) is the expected "not allowed" response, not an
-    // error, so it is swallowed silently rather than logged.
+    // edit/config is an edit-only endpoint (requires the edit permission). Wait for the route
+    // manifest before deciding, so we do not race the permission load and fail open into a
+    // request the user is not allowed to make.
+    await ensureManifestLoaded();
+    // Skip it for users who cannot edit, leaving the default disabled config in place. A 403
+    // remains an expected "not allowed" response (e.g. if permissions change server-side after
+    // the manifest was loaded), so it is swallowed silently rather than logged.
     if (!canEdit.value) return;
     try {
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EditAndRetryConfig>("edit/config");
@@ -104,7 +109,22 @@ export const useMessageStore = defineStore("MessageStore", () => {
       logger.warn("Failed to load Edit and Retry configuration");
     }
   }
-  loadEditAndRetryConfiguration();
+
+  async function ensureEditAndRetryConfigurationLoaded() {
+    if (editAndRetryConfigLoaded) {
+      return;
+    }
+
+    editAndRetryConfigPromise ??= loadEditAndRetryConfiguration()
+      .then(() => {
+        editAndRetryConfigLoaded = true;
+      })
+      .finally(() => {
+        editAndRetryConfigPromise = null;
+      });
+
+    await editAndRetryConfigPromise;
+  }
 
   function reset() {
     state.data = { failure_metadata: {}, failure_status: {}, dialog_status: {}, invoked_saga: {} };
@@ -155,6 +175,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
       state.loading = false;
     }
 
+    await configStore.ensureLoaded();
     const countdown = dayjs(state.data.failure_metadata.last_modified).add(error_retention_period.value, "hours");
     state.data.failure_status.delete_soon = countdown < dayjs();
     state.data.failure_metadata.deleted_in = countdown.format();
@@ -393,6 +414,7 @@ export const useMessageStore = defineStore("MessageStore", () => {
     loadConversation,
     downloadBody,
     exportMessage,
+    ensureEditAndRetryConfigurationLoaded,
     archiveMessage,
     restoreMessage,
     retryMessage,

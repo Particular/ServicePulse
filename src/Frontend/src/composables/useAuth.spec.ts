@@ -2,10 +2,19 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
 import routeLinks from "@/router/routeLinks";
 
+const logger = vi.hoisted(() => ({
+  warn: vi.fn(),
+  error: vi.fn(),
+}));
+
 // Capture the OIDC event callbacks useAuth registers, plus a spy on signinRedirect, so the tests
 // can fire "token expired" / "silent renew error" and assert that recovery re-authenticates.
 const signinRedirect = vi.fn().mockResolvedValue(undefined);
 const captured: { expired?: () => void; renewError?: (error: unknown) => void } = {};
+
+vi.mock("@/logger", () => ({
+  default: logger,
+}));
 
 vi.mock("oidc-client-ts", () => ({
   UserManager: class {
@@ -45,6 +54,8 @@ async function initAuth() {
 
 beforeEach(() => {
   vi.resetModules();
+  logger.warn.mockReset();
+  logger.error.mockReset();
   signinRedirect.mockClear();
   captured.expired = undefined;
   captured.renewError = undefined;
@@ -69,9 +80,11 @@ describe("useAuth recovers a lost session from OIDC events", () => {
     store.setAuthenticating(false);
     signinRedirect.mockClear();
 
-    captured.renewError!(new Error("silent renew failed"));
+    const error = new Error("silent renew failed");
+    captured.renewError!(error);
 
     expect(signinRedirect).toHaveBeenCalledTimes(1);
+    expect(logger.error).toHaveBeenCalledWith("Silent renew error:", error);
   });
 
   test("does not re-authenticate while an auth flow is already running", async () => {

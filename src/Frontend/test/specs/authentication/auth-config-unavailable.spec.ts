@@ -1,4 +1,4 @@
-import { vi, expect } from "vitest";
+import { vi, expect, beforeEach } from "vitest";
 import { createOidcMock } from "../../mocks/oidc-client-mock";
 
 // Mock oidc-client-ts
@@ -10,6 +10,12 @@ import { waitFor, screen } from "@testing-library/vue";
 import { useAuthStore } from "@/stores/AuthStore";
 
 describe("FEATURE: Auth Configuration Endpoint Unavailable (Scenario 15)", () => {
+  const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+
+  beforeEach(() => {
+    consoleError.mockClear();
+  });
+
   describe("RULE: App should handle ServiceControl unavailability gracefully", () => {
     test("EXAMPLE: App continues to load when auth config endpoint returns error", async ({ driver }) => {
       // Set up ServiceControl endpoints but auth config returns 500 error
@@ -28,6 +34,7 @@ describe("FEATURE: Auth Configuration Endpoint Unavailable (Scenario 15)", () =>
 
       // Since auth config failed, auth should be treated as disabled
       expect(authStore.authEnabled).toBe(false);
+      expect(consoleError).toHaveBeenCalledWith("Error fetching auth configuration", expect.any(Error));
 
       // Dashboard should still be accessible (graceful degradation)
       await waitFor(() => {
@@ -50,6 +57,7 @@ describe("FEATURE: Auth Configuration Endpoint Unavailable (Scenario 15)", () =>
         // Auth should be treated as disabled when config unavailable
         expect(authStore.authEnabled).toBe(false);
       });
+      expect(consoleError).toHaveBeenCalledWith("Error fetching auth configuration", expect.any(Error));
 
       // App should not crash or show blank screen
       await waitFor(() => {
@@ -78,6 +86,7 @@ describe("FEATURE: Auth Configuration Endpoint Unavailable (Scenario 15)", () =>
 
       // Auth should be disabled (graceful fallback)
       expect(authStore.authEnabled).toBe(false);
+      expect(consoleError).toHaveBeenCalledWith("Error fetching auth configuration", expect.any(Error));
 
       // Dashboard should still render
       await waitFor(() => {
