@@ -38,9 +38,9 @@ const shouldShowFullLayout = computed(() => !authEnabled.value || isAuthenticate
 
 watch(
   [loading, authEnabled, isAuthenticated],
-  ([isLoading, enabled, authenticated]) => {
+  async ([isLoading, enabled, authenticated]) => {
     if (!isLoading && (!enabled || authenticated)) {
-      configurationStore.ensureLoaded();
+      await configurationStore.ensureLoaded();
     }
   },
   { immediate: true }
