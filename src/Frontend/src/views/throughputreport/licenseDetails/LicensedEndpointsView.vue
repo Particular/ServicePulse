@@ -42,7 +42,7 @@ const expandedLength = computed(() => [...expandedEndpoints.values()].filter((va
 .card {
   --full: hsl(196deg 100% 31%);
   --send-only: hsl(159deg 100% 31%);
-  --breach: hsl(40deg 80% 64%);
+  --size-mismatch: hsl(40deg 80% 64%);
   --shadow-color: hsl(215deg 50% 30%);
   box-shadow:
     0px 0.1px 0.4px hsl(from var(--shadow-color) h s l / 0.34),

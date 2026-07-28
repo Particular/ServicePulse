@@ -18,7 +18,7 @@ export interface ApiEndpoint {
 
 export interface ApiQueue {
   name_hash: string;
-  scope: string;
+  scope_hash: string;
 }
 
 interface ApiProduct {
@@ -33,7 +33,7 @@ export enum EndpointClassification {
 
 export interface Queue {
   nameHash: string;
-  scope: string;
+  scopeHash: string;
   details: QueueThroughputSummary;
 }
 
@@ -62,8 +62,8 @@ export class Endpoint {
     return this.availableSizes.find((size) => size.throughputMin <= this.totalMonthlyThroughput && (size.throughputMax ?? Number.MAX_VALUE) > this.totalMonthlyThroughput)!;
   }
 
-  get isInBreach() {
-    return this.endpointSize !== this.currentSize;
+  get matchesLicensedSize() {
+    return this.endpointSize === this.currentSize;
   }
 }
 

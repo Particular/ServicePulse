@@ -32,8 +32,8 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
       const toQueue = (metaQ: ApiQueue) =>
         ({
           nameHash: metaQ.name_hash,
-          scope: metaQ.scope,
-          details: scQueues.find((scQ) => scQ.name_hash === metaQ.name_hash),
+          scopeHash: metaQ.scope_hash,
+          details: scQueues.find((scQ) => scQ.name_hash === metaQ.name_hash && ((!metaQ.scope_hash && !scQ.scope_hash) || metaQ.scope_hash === scQ.scope_hash)),
         }) as Queue;
 
       const sortedProducts = data.products.toSorted((p1, p2) => (p1.monthly_throughput ?? Number.MAX_VALUE) - (p2.monthly_throughput ?? Number.MAX_VALUE));

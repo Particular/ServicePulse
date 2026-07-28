@@ -4,6 +4,8 @@
 interface QueueThroughputSummary {
   name: string;
   name_hash: string;
+  scope?: string;
+  scope_hash?: string;
   is_known_endpoint: boolean;
   user_indicator: string;
   max_daily_throughput: number;

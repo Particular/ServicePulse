@@ -10,7 +10,7 @@ const emit = defineEmits(["collapse"]);
 const endpointClassificationStyle = computed(() => {
   switch (props.endpoint.classification) {
     case EndpointClassification.Full:
-      return props.endpoint.isInBreach ? "--breach" : "--full";
+      return !props.endpoint.matchesLicensedSize ? "--size-mismatch" : "--full";
     case EndpointClassification.SendOnly:
       return "--send-only";
     default:

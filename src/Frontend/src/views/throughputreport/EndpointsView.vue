@@ -59,7 +59,7 @@ function toggleOptionsLegendVisible() {
           <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">
             <span>License Details</span>
             <ExclamationMark v-if="licenseDetailsError || !validId" :type="WarningLevel.Danger" />
-            <ExclamationMark v-else-if="endpoints.some((endpoint) => endpoint.isInBreach)" :type="WarningLevel.Warning" />
+            <ExclamationMark v-else-if="endpoints.some((endpoint) => !endpoint.matchesLicensedSize)" :type="WarningLevel.Warning" />
           </RouterLink>
         </h5>
       </div>
