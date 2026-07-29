@@ -15,6 +15,7 @@ import NoMetadata from "./NoMetadata.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import UploadMetadata from "./UploadMetadata.vue";
 import DetailsItem from "@/components/DetailsItem.vue";
+import { EndpointClassification } from "@/resources/LicenseDetails.ts";
 
 const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
 
@@ -22,17 +23,19 @@ const licenseDetailsStore = useLicenseDetailsStore();
 const { endpoints, endpointSizes, serviceEndDate, validId, hasLicenseDetails, error } = storeToRefs(licenseDetailsStore);
 
 const sizes = computed(() =>
-  endpoints.value.reduce(
-    (result, endpoint) => {
-      const { licensed, current } = result;
-      const licensedCount = licensed.get(endpoint.endpointSize.name) ?? 0;
-      const currentCount = current.get(endpoint.currentSize.name) ?? 0;
-      licensed.set(endpoint.endpointSize.name, licensedCount + 1);
-      current.set(endpoint.currentSize.name, currentCount + 1);
-      return { licensed, current };
-    },
-    { licensed: new Map<string, number>(), current: new Map<string, number>() }
-  )
+  endpoints.value
+    .filter((endpoint) => endpoint.classification === EndpointClassification.Full)
+    .reduce(
+      (result, endpoint) => {
+        const { licensed, current } = result;
+        const licensedCount = licensed.get(endpoint.endpointSize.name) ?? 0;
+        const currentCount = current.get(endpoint.currentSize.name) ?? 0;
+        licensed.set(endpoint.endpointSize.name, licensedCount + 1);
+        current.set(endpoint.currentSize.name, currentCount + 1);
+        return { licensed, current };
+      },
+      { licensed: new Map<string, number>(), current: new Map<string, number>() }
+    )
 );
 const licensedCounts = computed(() => sizes.value.licensed);
 const currentCounts = computed(() => sizes.value.current);
@@ -98,8 +101,8 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
           </div>
         </div>
         <!-- awaiting update to the pricing page to support this functionality -->
-        <div v-if="false">
-          <a :href="`https://particular.net/pricing?${estimateUrlParams}`" class="btn btn-primary" target="_blank">Estimate Renewal Price <FAIcon :icon="faExternalLink" /></a>
+        <div v-if="true">
+          <a :href="`https://set-pricing-sizes.test.particular.net/pricing/new?${estimateUrlParams}`" class="btn btn-primary" target="_blank">Estimate Renewal Price <FAIcon :icon="faExternalLink" /></a>
         </div>
       </div>
       <div>
