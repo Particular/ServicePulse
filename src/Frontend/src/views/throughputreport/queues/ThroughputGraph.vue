@@ -7,7 +7,7 @@ const props = defineProps<{ data: MonthlyThroughput[] }>();
 const date = new Date();
 date.setMonth(date.getMonth() - 13);
 const reportPeriod = Array.from({ length: 13 }).map(() => {
-  date.setMonth(date.getMonth() + 1);
+  date.setMonth(date.getMonth() + 1, 1);
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}`;
 });
 
