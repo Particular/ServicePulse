@@ -101,8 +101,8 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
           </div>
         </div>
         <!-- awaiting update to the pricing page to support this functionality -->
-        <div v-if="true">
-          <a :href="`https://set-pricing-sizes.test.particular.net/pricing/new?${estimateUrlParams}`" class="btn btn-primary" target="_blank">Estimate Renewal Price <FAIcon :icon="faExternalLink" /></a>
+        <div v-if="false">
+          <a :href="`https://particular.net/pricing?${estimateUrlParams}`" class="btn btn-primary" target="_blank">Estimate Renewal Price <FAIcon :icon="faExternalLink" /></a>
         </div>
       </div>
       <div>

@@ -19,7 +19,14 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   const error = ref<string | null>();
 
   async function refresh() {
-    if (!isLicenseDetailsSupported) return;
+    if (!isLicenseDetailsSupported) {
+      endpointSizes.value = [];
+      endpoints.value = [];
+      infrastructureQueues.value = [];
+      excludedQueues.value = [];
+      hasLicenseDetails.value = false;
+      return;
+    }
     try {
       error.value = null;
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<LicensedEndpointDetails>("license/details");
@@ -37,7 +44,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
         }) as Queue;
 
       const sortedProducts = data.products.toSorted((p1, p2) => (p1.monthly_throughput ?? Number.MAX_VALUE) - (p2.monthly_throughput ?? Number.MAX_VALUE));
-      const sortedEndpointSizes = sortedProducts.map((product, i) => new EndpointSize(product.product_code, i > 0 ? (sortedProducts[i - 1].monthly_throughput ?? 0) : 0, product.monthly_throughput));
+      const sortedEndpointSizes = sortedProducts.map((product, i) => new EndpointSize(product.product_code, i > 0 ? (sortedProducts[i - 1].monthly_throughput ?? 0) + 1 : 0, product.monthly_throughput));
       endpointSizes.value = sortedEndpointSizes;
       endpoints.value = data.endpoints.map((metaEp) => new Endpoint(crypto.randomUUID(), metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes));
       infrastructureQueues.value = data.infrastructure_queues.map(toQueue);
@@ -60,7 +67,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     await refresh();
   }
 
-  watch(isLicenseDetailsSupported, (supported: boolean) => supported && refresh());
+  watch(isLicenseDetailsSupported, refresh);
 
   return {
     endpoints,

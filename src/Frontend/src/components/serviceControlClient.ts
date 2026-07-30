@@ -36,7 +36,6 @@ class ServiceControlClient {
   // Fetch from an absolute URL, e.g. one discovered from the ServiceControl root document.
   public async fetchTypedFromUrl<T>(url: string, signal?: AbortSignal): Promise<[Response, T]> {
     const response = await authFetch(url, { signal });
-    if (!response.ok) throw new HttpError(response.status, response.statusText ?? "No response");
     if (!response.ok) {
       let error: Error = new HttpError(response.status, response.statusText ?? "No response");
       if (response.status === 400) {

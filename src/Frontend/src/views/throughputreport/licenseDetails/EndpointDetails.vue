@@ -28,7 +28,7 @@ const sortedQueues = computed(() => props.endpoint.queues.toSorted((q1, q2) => q
   <div class="card-body" :key="endpoint.clientId">
     <div class="details">
       <DetailsItem label="Average Throughput/Month">
-        {{ endpoint.totalMonthlyThroughput.toLocaleString() }}
+        {{ endpoint.totalAverageMonthlyThroughput.toLocaleString() }}
       </DetailsItem>
       <DetailsItem v-if="endpoint.classification === EndpointClassification.Full" label="Current Size" :tooltip="endpoint.currentSize.throughputText">
         {{ endpoint.currentSize.name }}
