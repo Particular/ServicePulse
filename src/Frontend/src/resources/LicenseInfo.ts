@@ -17,6 +17,7 @@ export default interface LicenseInfo {
   license_extension_url?: string;
   status: string;
   products: LicensedProduct[];
+  has_endpoint_metadata: boolean;
 }
 
 export function typeText(license: LicenseInfo, configuration: Configuration | null) {

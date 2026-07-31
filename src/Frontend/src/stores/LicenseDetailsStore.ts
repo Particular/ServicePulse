@@ -18,19 +18,26 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   const hasLicenseDetails = ref(false);
   const error = ref<string | null>();
 
+  function reset() {
+    endpointSizes.value = [];
+    endpoints.value = [];
+    infrastructureQueues.value = [];
+    excludedQueues.value = [];
+    hasLicenseDetails.value = false;
+  }
+
   async function refresh() {
     if (!isLicenseDetailsSupported) {
-      endpointSizes.value = [];
-      endpoints.value = [];
-      infrastructureQueues.value = [];
-      excludedQueues.value = [];
-      hasLicenseDetails.value = false;
+      reset();
       return;
     }
     try {
       error.value = null;
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<LicensedEndpointDetails>("license/details");
-      if (!data) return;
+      if (!data) {
+        reset();
+        return;
+      }
 
       hasLicenseDetails.value = true;
       const throughputClient = createThroughputClient();

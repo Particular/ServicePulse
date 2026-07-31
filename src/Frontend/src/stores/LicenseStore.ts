@@ -21,6 +21,7 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
     license_status: LicenseStatus.Unavailable,
     license_extension_url: "",
     products: [],
+    has_endpoint_metadata: false,
   });
 
   const licenseStatus = reactive({
@@ -82,6 +83,7 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
       license.registered_to = lic.registered_to;
       license.status = lic.status;
       license.products = lic.products;
+      license.has_endpoint_metadata = lic.has_endpoint_metadata;
       license.license_extension_url = lic.license_extension_url ?? "https://particular.net/extend-your-trial?p=servicepulse";
       license.upgrade_protection_expiration = lic.upgrade_protection_expiration;
 

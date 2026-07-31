@@ -25,7 +25,7 @@ const licenseDetailsStore = useLicenseDetailsStore();
 const { endpoints, validId, error: licenseDetailsError } = storeToRefs(licenseDetailsStore);
 const licenseStore = useLicenseStore();
 const { license } = storeToRefs(licenseStore);
-const enableLicenseDetails = computed(() => license.value.edition === "Endpoint Size");
+const enableLicenseDetails = computed(() => license.value.edition === "Endpoint Size" && license.value.has_endpoint_metadata);
 
 const showLegend = ref(false);
 
