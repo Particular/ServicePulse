@@ -65,7 +65,6 @@ export const recoverabilityHistoryDefaultHandler = ({ driver }: SetupFactoryOpti
   const serviceControlUrl = window.defaultConfig.service_control_url;
   driver.mockEndpoint(`${serviceControlUrl}recoverability/history`, {
     body: <RecoverabilityHistoryResponse>{
-      id: "RetryOperations/History",
       historic_operations: [],
       unacknowledged_operations: [],
     },
