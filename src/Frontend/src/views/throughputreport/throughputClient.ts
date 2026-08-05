@@ -1,4 +1,4 @@
-import type EndpointThroughputSummary from "@/resources/EndpointThroughputSummary";
+import type QueueThroughputSummary from "@/resources/QueueThroughputSummary";
 import type UpdateUserIndicator from "@/resources/UpdateUserIndicator";
 import type ConnectionTestResults from "@/resources/ConnectionTestResults";
 import type ThroughputConnectionSettings from "@/resources/ThroughputConnectionSettings";
@@ -10,8 +10,8 @@ import serviceControlClient from "@/components/serviceControlClient";
 class ThroughputClient {
   constructor(readonly basePath: string) {}
 
-  public async endpoints() {
-    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EndpointThroughputSummary[]>(`${this.basePath}/endpoints`);
+  public async queues() {
+    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<QueueThroughputSummary[]>(`${this.basePath}/endpoints`);
 
     return data;
   }

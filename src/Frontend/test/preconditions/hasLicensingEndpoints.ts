@@ -1,10 +1,10 @@
 import type { SetupFactoryOptions } from "../driver";
-import type EndpointThroughputSummary from "@/resources/EndpointThroughputSummary";
+import type QueueThroughputSummary from "@/resources/QueueThroughputSummary";
 
 export const hasLicensingEndpoints =
   (
-    body: EndpointThroughputSummary[] = [
-      <EndpointThroughputSummary>{
+    body: QueueThroughputSummary[] = [
+      <QueueThroughputSummary>{
         name: "Sender",
         is_known_endpoint: true,
         user_indicator: "",

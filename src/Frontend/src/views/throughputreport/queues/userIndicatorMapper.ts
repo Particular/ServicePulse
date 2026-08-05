@@ -1,4 +1,4 @@
-import { UserIndicator } from "@/views/throughputreport/endpoints/userIndicator";
+import { UserIndicator } from "@/views/throughputreport/queues/userIndicator";
 
 export const userIndicatorMapper = new Map<UserIndicator, string>([
   [UserIndicator.NServiceBusEndpoint, "NServiceBus Endpoint"],

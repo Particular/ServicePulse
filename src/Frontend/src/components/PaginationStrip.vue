@@ -118,7 +118,7 @@ const pages = computed(() => {
 </script>
 
 <template>
-  <div v-if="showPagination" class="col align-self-center">
+  <div v-if="showPagination" class="pagination-controls col align-self-center">
     <ul aria-label="pagination" class="pagination justify-content-center">
       <li v-for="page of pages" class="page-item" :key="page.key">
         <button :aria-pressed="page.class?.active" :disabled="page.class?.disabled" :aria-label="page.key" class="page-link" @click="pageNumber = page.page" :class="page.class">{{ page.label }}</button>
@@ -135,5 +135,14 @@ const pages = computed(() => {
 .page-link.disabled {
   cursor: not-allowed;
   pointer-events: all !important;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+}
+
+.pagination-controls .page-link.active {
+  z-index: 0; /* pagination.scss has this set higher, for no obvious reason, which messes up with sticky-pagination over the top of other pagination */
 }
 </style>

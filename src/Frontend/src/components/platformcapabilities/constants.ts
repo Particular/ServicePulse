@@ -10,4 +10,5 @@ export enum Capability {
   Monitoring = "Monitoring",
   Auditing = "Auditing",
   Error = "Recoverability",
+  LicensedEndpointTracking = "Licensed Endpoint Tracking",
 }

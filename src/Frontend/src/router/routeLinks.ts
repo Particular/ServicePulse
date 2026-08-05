@@ -59,7 +59,8 @@ const configurationLinks = (root: string) => {
 const throughputLinks = (root: string) => {
   return {
     root: root,
-    endpoints: throughputEndpointLinks(`${root}/endpoints`),
+    queues: throughputQueuesLinks(`${root}/queues`),
+    licenseDetails: throughputEndpointLinks(`${root}/license-details`),
     setup: throughputSetupLinks(`${root}/setup`),
   };
 };
@@ -77,7 +78,7 @@ const throughputSetupLinks = (root: string) => {
   };
 };
 
-const throughputEndpointLinks = (root: string) => {
+const throughputQueuesLinks = (root: string) => {
   function createLink(template: string) {
     return { link: `${root}/${template}`, template: template };
   }
@@ -86,6 +87,19 @@ const throughputEndpointLinks = (root: string) => {
     root,
     detectedEndpoints: createLink("known"),
     detectedBrokerQueues: createLink("broker"),
+  };
+};
+
+const throughputEndpointLinks = (root: string) => {
+  function createLink(template: string) {
+    return { link: `${root}/${template}`, template: template };
+  }
+
+  return {
+    root,
+    licensedEndpoints: createLink("licensed"),
+    infrastructureQueues: createLink("infrastructure"),
+    excludedQueues: createLink("excluded"),
   };
 };
 

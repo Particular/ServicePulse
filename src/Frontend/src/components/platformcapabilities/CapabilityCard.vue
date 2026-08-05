@@ -2,7 +2,7 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import FAIcon from "@/components/FAIcon.vue";
-import { faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faExternalLink, faTimes } from "@fortawesome/free-solid-svg-icons";
 import type { StatusIndicator, WizardPage } from "@/components/platformcapabilities/types";
 import { Capability, CapabilityStatus } from "@/components/platformcapabilities/constants";
 import WizardDialog from "./WizardDialog.vue";
@@ -13,17 +13,21 @@ const emit = defineEmits<{
   hide: [];
 }>();
 
-const props = defineProps<{
-  status: CapabilityStatus;
-  title: Capability;
-  subtitle: string;
-  helpButtonText: string;
-  helpButtonUrl: string;
-  description: string;
-  indicators?: StatusIndicator[];
-  isLoading?: boolean;
-  wizardPages?: WizardPage[];
-}>();
+const props = withDefaults(
+  defineProps<{
+    status: CapabilityStatus;
+    title: Capability;
+    subtitle: string;
+    helpButtonText: string;
+    helpButtonUrl: string;
+    description: string;
+    indicators?: StatusIndicator[];
+    isLoading?: boolean;
+    wizardPages?: WizardPage[];
+    allowDismiss?: boolean;
+  }>(),
+  { allowDismiss: true }
+);
 
 const showWizard = ref(false);
 
@@ -33,14 +37,12 @@ const shouldShowWizard = computed(() => {
 
 const dataStatus = computed(() => (props.isLoading ? "loading" : props.status.toLowerCase().replace(/ /g, "-")));
 
-function isExternalUrl(url: string): boolean {
-  return url.startsWith("http://") || url.startsWith("https://");
-}
+const isExternalUrl = computed(() => props.helpButtonUrl.startsWith("http://") || props.helpButtonUrl.startsWith("https://"));
 
 function handleButtonClick() {
   if (shouldShowWizard.value) {
     showWizard.value = true;
-  } else if (isExternalUrl(props.helpButtonUrl)) {
+  } else if (isExternalUrl.value) {
     window.open(props.helpButtonUrl, "_blank");
   } else {
     router.push(props.helpButtonUrl);
@@ -83,7 +85,7 @@ function handleButtonClick() {
           >
             {{ props.status }}
           </span>
-          <button class="hide-card-btn" @click="emit('hide')" v-tippy="'Hide this card'">
+          <button v-if="allowDismiss" class="hide-card-btn" @click="emit('hide')" v-tippy="'Hide this card'">
             <FAIcon :icon="faTimes" />
           </button>
         </div>
@@ -94,9 +96,7 @@ function handleButtonClick() {
       <div class="capability-description">
         {{ props.description }}
       </div>
-      <button class="btn btn-primary" @click="handleButtonClick">
-        {{ props.helpButtonText }}
-      </button>
+      <button class="btn btn-primary" @click="handleButtonClick">{{ props.helpButtonText }} <FAIcon v-if="!shouldShowWizard && isExternalUrl" :icon="faExternalLink" /></button>
     </div>
 
     <WizardDialog v-if="showWizard && wizardPages" :title="`Getting Started with ${props.title}`" :pages="wizardPages" @close="showWizard = false" />
