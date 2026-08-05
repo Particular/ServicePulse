@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/vue";
 import { createTestingPinia } from "@pinia/testing";
 import { createRouter, createMemoryHistory } from "vue-router";
 import FailedMessagesView from "@/views/FailedMessagesView.vue";
+import routeLinks from "@/router/routeLinks";
 
 /**
  * DSL for the Pending Retries Tab Visibility feature.
@@ -68,37 +69,47 @@ async function renderComponent(options: RenderOptions = {}): Promise<RenderResul
     routes: [
       {
         path: "/",
-        redirect: "/failed-messages/groups",
+        redirect: routeLinks.failedMessage.failedMessagesGroups.link,
       },
       {
-        path: "/failed-messages",
+        path: routeLinks.failedMessage.root,
         name: "failed-messages",
         component: FailedMessagesView,
         children: [
           {
-            path: "groups",
+            path: routeLinks.failedMessage.failedMessagesGroups.template,
             name: "failed-messages-groups",
             component: { template: "<div>Groups</div>" },
           },
           {
-            path: "all",
+            path: routeLinks.failedMessage.failedMessages.template,
             name: "failed-messages-all",
             component: { template: "<div>All Messages</div>" },
           },
           {
-            path: "deleted-groups",
+            path: routeLinks.failedMessage.deletedMessagesGroup.template,
             name: "failed-messages-deleted-groups",
             component: { template: "<div>Deleted Groups</div>" },
           },
           {
-            path: "deleted",
+            path: routeLinks.failedMessage.deletedMessages.template,
             name: "failed-messages-deleted",
             component: { template: "<div>Deleted</div>" },
           },
           {
-            path: "pending-retries",
+            path: routeLinks.failedMessage.pendingRetries.template,
             name: "failed-messages-pending-retries",
             component: { template: "<div>Pending Retries</div>" },
+          },
+          {
+            path: routeLinks.failedMessage.group.template,
+            name: "failed-messages-group",
+            component: { template: "<div>Group</div>" },
+          },
+          {
+            path: routeLinks.failedMessage.deletedGroup.template,
+            name: "failed-messages-deleted-group",
+            component: { template: "<div>Deleted Group</div>" },
           },
         ],
       },
@@ -110,7 +121,7 @@ async function renderComponent(options: RenderOptions = {}): Promise<RenderResul
     stubActions: true,
   });
 
-  await router.push("/failed-messages/groups");
+  await router.push(routeLinks.failedMessage.failedMessagesGroups.link);
   await router.isReady();
 
   render(FailedMessagesView, {

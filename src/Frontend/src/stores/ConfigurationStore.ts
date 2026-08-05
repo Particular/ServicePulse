@@ -6,22 +6,37 @@ import logger from "@/logger";
 
 export const useConfigurationStore = defineStore("ConfigurationStore", () => {
   const configuration = ref<Configuration | null>(null);
+  let refreshPromise: Promise<void> | null = null;
 
   const isMassTransitConnected = computed(() => configuration.value?.mass_transit_connector !== undefined);
 
-  serviceControlClient
-    .fetchFromServiceControl("configuration")
-    .then(async (response) => {
-      configuration.value = await response.json();
-      return configuration.value;
-    })
-    .catch((error) => {
-      logger.error("Failed to fetch configuration:", error);
-    });
+  async function refresh() {
+    refreshPromise ??= (async () => {
+      try {
+        const response = await serviceControlClient.fetchFromServiceControl("configuration");
+        configuration.value = await response.json();
+      } catch (error) {
+        logger.error("Failed to fetch configuration:", error);
+      } finally {
+        refreshPromise = null;
+      }
+    })();
+
+    await refreshPromise;
+  }
+
+  async function ensureLoaded() {
+    if (configuration.value !== null) {
+      return;
+    }
+    await refresh();
+  }
 
   return {
     configuration,
     isMassTransitConnected,
+    ensureLoaded,
+    refresh,
   };
 });
 

@@ -159,7 +159,8 @@ function togglePanel(panelNum: number) {
   panel.value = panelNum;
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await messageStore.ensureEditAndRetryConfigurationLoaded();
   togglePanel(1);
   initializeMessageBodyAndHeaders();
 });

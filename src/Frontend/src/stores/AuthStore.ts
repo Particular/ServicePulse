@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import logger from "@/logger";
 import { ref } from "vue";
-import type { AuthConfig } from "@/types/auth";
+import type { AuthConfig, AuthError } from "@/types/auth";
 import { WebStorageStateStore } from "oidc-client-ts";
 import routeLinks from "@/router/routeLinks";
 import serviceControlClient from "@/components/serviceControlClient";
@@ -14,13 +14,17 @@ interface AuthConfigResponse {
   authority: string;
   api_scopes: string;
   audience: string;
+  // Complete scope string composed by ServiceControl (api scopes + openid profile email + offline_access,
+  // the last omitted if the operator disabled it). Absent on ServiceControl versions older than the one
+  // that introduced this field, in which case we fall back to assembling it ourselves below.
+  scopes?: string;
 }
 
 export const useAuthStore = defineStore("auth", () => {
   const token = ref<string | null>(null);
   const isAuthenticated = ref(false);
   const isAuthenticating = ref(false);
-  const authError = ref<string | null>(null);
+  const authError = ref<AuthError | null>(null);
   const authConfig = ref<AuthConfig | null>(null);
   const authEnabled = ref(false);
   // undefined means ServiceControl didn't report this field (older version) — treat as enabled.
@@ -52,7 +56,11 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   function transformToAuthConfig(config: AuthConfigResponse): AuthConfig {
+    // ServiceControl composes the full scope string (including whether offline_access is permitted
+    // by the identity provider). Older ServiceControl versions don't send it, so fall back to the
+    // previous behaviour of assembling it from api_scopes.
     const apiScope = JSON.parse(config.api_scopes).join(" ");
+    const scope = config.scopes ?? `${apiScope} openid profile email offline_access`;
     // Use hash-based URL for post-logout redirect since the app uses hash routing
     const postLogoutRedirectUri = `${window.location.origin}${window.location.pathname}#${routeLinks.loggedOut}`;
     return {
@@ -61,7 +69,7 @@ export const useAuthStore = defineStore("auth", () => {
       redirect_uri: window.location.origin,
       post_logout_redirect_uri: postLogoutRedirectUri,
       response_type: "code",
-      scope: `${apiScope} openid profile email offline_access`,
+      scope,
       automaticSilentRenew: true,
       loadUserInfo: false,
       includeIdTokenInSilentRenew: true,
@@ -102,7 +110,7 @@ export const useAuthStore = defineStore("auth", () => {
     isAuthenticating.value = value;
   }
 
-  function setAuthError(error: string | null) {
+  function setAuthError(error: AuthError | null) {
     authError.value = error;
   }
 

@@ -1,5 +1,5 @@
 import { test, describe } from "../../drivers/vitest/driver";
-import { expect } from "vitest";
+import { expect, vi, beforeEach } from "vitest";
 import * as precondition from "../../preconditions";
 import { waitFor } from "@testing-library/vue";
 import {
@@ -15,6 +15,12 @@ import {
 import { disableMonitoring } from "../../drivers/vitest/setup";
 
 describe("FEATURE: Monitoring capability card", () => {
+  const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+
+  beforeEach(() => {
+    consoleError.mockClear();
+  });
+
   describe("RULE: When monitoring instance is available with endpoints sending data, show 'Available' status", () => {
     test("EXAMPLE: Monitoring instance available with monitored endpoints shows available status", async ({ driver }) => {
       // Arrange
@@ -115,6 +121,7 @@ describe("FEATURE: Monitoring capability card", () => {
       await waitFor(async () => {
         expect(await isMonitoringCardUnavailable()).toBe(true);
       });
+      expect(consoleError).toHaveBeenCalled();
 
       const statusBadge = await monitoringStatusBadge();
       expect(statusBadge).toBeInTheDocument();

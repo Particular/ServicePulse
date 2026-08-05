@@ -7,6 +7,7 @@ vi.mock("oidc-client-ts", () => createOidcMock());
 import { test, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
 import { waitFor, screen } from "@testing-library/vue";
+import routeLinks from "@/router/routeLinks";
 
 describe("FEATURE: Session Storage Behavior", () => {
   describe("RULE: Sessions should be isolated per browser tab", () => {
@@ -47,7 +48,7 @@ describe("FEATURE: Session Storage Behavior", () => {
       expect(initialToken).toBe(defaultMockUser.access_token);
 
       // Navigate to a different route
-      await driver.goTo("/failed-messages/all");
+      await driver.goTo(routeLinks.customChecks);
 
       // Wait for navigation to complete
       await waitFor(() => {

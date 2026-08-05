@@ -3,9 +3,17 @@ import { setActivePinia, createPinia } from "pinia";
 import { ApiRoutes } from "@/composables/apiRoutes";
 import { normalizeRouteKey } from "@/composables/routeMatching";
 
+const logger = vi.hoisted(() => ({
+  warn: vi.fn(),
+  error: vi.fn(),
+}));
+
 const rootFetch = vi.fn();
 const scFetch = vi.fn();
 const monFetch = vi.fn();
+vi.mock("@/logger", () => ({
+  default: logger,
+}));
 vi.mock("@/components/serviceControlClient", () => ({
   default: {
     fetchTypedFromServiceControl: (s: string) => rootFetch(s),
@@ -30,6 +38,8 @@ const rootDoc = (myRoutesUrl?: string) => [{}, myRoutesUrl === undefined ? {} : 
 describe("AllowedRoutesStore", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    logger.warn.mockReset();
+    logger.error.mockReset();
     rootFetch.mockReset();
     scFetch.mockReset();
     monFetch.mockReset();
@@ -80,6 +90,9 @@ describe("AllowedRoutesStore", () => {
     await store.refresh();
     expect(store.loaded).toBe(false);
     expect(store.loadAttempted).toBe(true);
+    expect(logger.warn).toHaveBeenCalledTimes(2);
+    expect(logger.warn).toHaveBeenNthCalledWith(1, "Failed to fetch allowed routes", expect.any(Error));
+    expect(logger.warn).toHaveBeenNthCalledWith(2, "Failed to fetch allowed routes", expect.any(Error));
   });
 
   it("Monitoring manifest entry at root (no /api prefix) matches the ApiRoutes registry path", async () => {
@@ -106,6 +119,7 @@ describe("AllowedRoutesStore", () => {
     expect(store.loaded).toBe(true);
     expect(store.routes.has("GET /api/errors")).toBe(true);
     expect(store.routes.size).toBe(1);
+    expect(logger.warn).toHaveBeenCalledWith("Skipping malformed allowed-route entry", { method: "POST" });
   });
 
   it("skips the primary fetch entirely when the root document omits my_routes_url", async () => {

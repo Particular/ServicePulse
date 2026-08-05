@@ -36,6 +36,7 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   const endpoints = ref<string[]>([]);
 
   const configurationStore = useConfigurationStore();
+  configurationStore.ensureLoaded();
   const { configuration } = storeToRefs(configurationStore);
 
   const cookies = useCookies();
@@ -109,6 +110,9 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   async function refresh() {
     try {
       if (!messageStatus) return;
+      if (messageStatus === FailedMessageStatus.Archived) {
+        await configurationStore.ensureLoaded();
+      }
 
       updateDateRangeForPeriod();
       const additionalQuery = buildAdditionalQuery();
