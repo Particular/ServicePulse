@@ -74,7 +74,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     await refresh();
   }
 
-  watch(isLicenseDetailsSupported, refresh);
+  watch(isLicenseDetailsSupported, refresh, { immediate: true });
 
   return {
     endpoints,
