@@ -11,6 +11,8 @@
  *   "dev:mocks:auth-disabled": "cross-env NODE_ENV=dev-mocks VITE_MOCK_SCENARIO=auth-disabled vite"
  */
 
+import logger from "@/logger";
+
 type ScenarioModule = {
   worker: import("msw/browser").SetupWorker;
   setupComplete?: Promise<void>;
@@ -48,7 +50,7 @@ export async function loadScenario(): Promise<ScenarioModule> {
   const loader = scenarios[scenarioName];
 
   if (!loader) {
-    console.warn(`Unknown mock scenario: "${scenarioName}", falling back to default. Available: ${Object.keys(scenarios).join(", ")}`);
+    logger.warn(`Unknown mock scenario: "${scenarioName}", falling back to default. Available: ${Object.keys(scenarios).join(", ")}`);
     const module = await scenarios.default();
     if (module.setupComplete) await module.setupComplete;
     return module;
