@@ -3,7 +3,6 @@ import type { StatusIndicator } from "@/components/platformcapabilities/types";
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import { storeToRefs } from "pinia";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
-import monitoringClient from "@/components/monitoring/monitoringClient";
 import usePlatformCapabilitiesRefresh from "@/composables/usePlatformCapabilitiesRefresh";
 import routeLinks from "@/router/routeLinks";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
@@ -30,9 +29,6 @@ const MonitoringHelpButtonUrl: CapabilityStatusToStringMap = {
 };
 
 enum MonitoringIndicatorTooltip {
-  InstanceAvailable = "The Monitoring instance is configured and available",
-  InstanceUnavailable = "The Monitoring instance is configured but not responding",
-  InstanceNotConfigured = "Monitoring is not configured in ServicePulse",
   DataAvailable = "Endpoints have been configured to send throughput data",
   DataUnavailable = "No endpoints are sending throughput data. Endpoints may not be running or may not have the monitoring plugin enabled.",
 }
@@ -83,15 +79,8 @@ export function useMonitoringCapability(): CapabilityComposable {
   const monitoringIndicators = computed(() => {
     const indicators: StatusIndicator[] = [];
 
-    // Instance specific states
     const connectionSuccessful = platformModelStore.monitoring?.health === "healthy";
     const instanceAvailable = hasMonitoringInstance.value && connectionSuccessful;
-
-    const instanceTooltip = instanceAvailable ? MonitoringIndicatorTooltip.InstanceAvailable : !hasMonitoringInstance.value ? MonitoringIndicatorTooltip.InstanceNotConfigured : MonitoringIndicatorTooltip.InstanceUnavailable;
-
-    if (hasMonitoringInstance.value) {
-      indicators.push(createIndicator("Instance", instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, instanceTooltip, platformModelStore.monitoring?.apiUrl ?? monitoringClient.url, platformModelStore.monitoring?.version));
-    }
 
     // data available indicator - only show if instance is connected
     if (instanceAvailable) {

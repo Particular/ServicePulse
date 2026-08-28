@@ -50,8 +50,6 @@ const AuditingHelpButtonUrl: CapabilityStatusToStringMap = {
 };
 
 enum AuditingIndicatorTooltip {
-  InstanceAvailable = "The Audit instance is configured and available",
-  InstanceUnavailable = "The Audit instance is configured but not responding",
   MessagesAvailable = "Endpoints have been configured to send audit messages",
   MessagesUnavailable = "No successful messages have been processed yet or auditing is not enabled for any endpoints",
   AllMessagesNotSupported = `The 'All Messages' feature requires ServiceControl ${minimumSCVersionForAllMessages} or higher`,
@@ -150,17 +148,6 @@ export function useAuditingCapability(): CapabilityComposable {
   // Determine indicators
   const auditIndicators = computed(() => {
     const indicators: StatusIndicator[] = [];
-
-    // Add an indicator for each remote audit instance
-    if (auditInstances.value.length > 0) {
-      auditInstances.value.forEach((instance, index) => {
-        const isAvailable = instance.status === RemoteInstanceStatus.Online;
-        const label = auditInstances.value.length > 1 ? `Instance ${index + 1}` : "Instance";
-        const tooltip = isAvailable ? AuditingIndicatorTooltip.InstanceAvailable : AuditingIndicatorTooltip.InstanceUnavailable;
-
-        indicators.push(createIndicator(label, isAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, tooltip, instance.api_uri, instance.version));
-      });
-    }
 
     // Messages available indicator - show if at least one instance is available
     if (hasAvailableAuditInstances(auditInstances.value)) {
