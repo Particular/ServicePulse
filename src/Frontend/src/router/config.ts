@@ -10,6 +10,7 @@ import HeartbeatsView from "@/views/HeartbeatsView.vue";
 import ThroughputReportView from "@/views/ThroughputReportView.vue";
 import AuditView from "@/views/AuditView.vue";
 import LoggedOutView from "@/views/LoggedOutView.vue";
+import PlatformHealthView from "@/views/PlatformHealthView.vue";
 
 export interface RouteItem {
   path: string;
@@ -32,6 +33,11 @@ const config: RouteItem[] = [
     path: routeLinks.dashboard,
     component: DashboardView,
     title: "Dashboard",
+  },
+  {
+    path: routeLinks.platformHealth,
+    component: PlatformHealthView,
+    title: "Platform health",
   },
   {
     path: routeLinks.heartbeats.instances.template,

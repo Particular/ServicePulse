@@ -1,12 +1,9 @@
 import { computed } from "vue";
-import { storeToRefs } from "pinia";
 import type { StatusIndicator } from "@/components/platformcapabilities/types";
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
-import serviceControlClient from "@/components/serviceControlClient";
-import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 import routeLinks from "@/router/routeLinks";
+import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 
 const ErrorDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.Unavailable]: "The ServiceControl instance is not responding.",
@@ -29,18 +26,10 @@ enum ErrorIndicatorTooltip {
 
 export function useErrorCapability(): CapabilityComposable {
   const { getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
-
-  // This tells us the connection state to the ServiceControl instance.
-  // Auto refreshed every 5 seconds.
-  const connectionsStore = useConnectionsAndStatsStore();
-  const connectionState = connectionsStore.connectionState;
-
-  // This gives us version information for the ServiceControl instance
-  const environmentStore = useEnvironmentAndVersionsStore();
-  const { environment } = storeToRefs(environmentStore);
+  const platformModelStore = usePlatformModelStore();
 
   // Check if instance is connected
-  const isConnected = computed(() => connectionState.connected && !connectionState.unableToConnect);
+  const isConnected = computed(() => platformModelStore.primary?.health === "healthy");
 
   // Determine overall error status
   const errorStatus = computed(() => {
@@ -64,13 +53,13 @@ export function useErrorCapability(): CapabilityComposable {
     const indicators: StatusIndicator[] = [];
 
     const tooltip = isConnected.value ? ErrorIndicatorTooltip.InstanceAvailable : ErrorIndicatorTooltip.InstanceUnavailable;
-    indicators.push(createIndicator("Instance", isConnected.value ? CapabilityStatus.Available : CapabilityStatus.Unavailable, tooltip, serviceControlClient.url, environment.value.sc_version));
+    indicators.push(createIndicator("Instance", isConnected.value ? CapabilityStatus.Available : CapabilityStatus.Unavailable, tooltip, platformModelStore.primary?.sourceUrl, platformModelStore.primary?.version));
 
     return indicators;
   });
 
   // Loading state - error is loading if we haven't attempted connection yet
-  const isLoading = computed(() => !connectionState.connected && !connectionState.unableToConnect && connectionState.connecting);
+  const isLoading = computed(() => platformModelStore.model === null);
 
   return {
     status: errorStatus,

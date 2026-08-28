@@ -4,10 +4,10 @@ import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import useIsAllMessagesSupported, { minimumSCVersionForAllMessages } from "@/components/audit/isAllMessagesSupported";
 import { storeToRefs } from "pinia";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
-import useRemoteInstancesAutoRefresh from "@/composables/useRemoteInstancesAutoRefresh";
 import usePlatformCapabilitiesRefresh from "@/composables/usePlatformCapabilitiesRefresh";
 import { RemoteInstanceStatus, RemoteInstanceType, type RemoteInstance } from "@/resources/RemoteInstance";
 import routeLinks from "@/router/routeLinks";
+import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 
 /**
  * Checks if a remote instance is an audit instance using the cached instance type
@@ -99,14 +99,15 @@ export function hasPartiallyUnavailableAuditInstances(instances: RemoteInstance[
 
 export function useAuditingCapability(): CapabilityComposable {
   const { getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
-
-  // This gives us the list of remote instances configured in ServiceControl.
-  // Uses auto-refresh to periodically check status (every 5 seconds)
-  const { store: remoteInstancesStore } = useRemoteInstancesAutoRefresh();
-  const { remoteInstances } = storeToRefs(remoteInstancesStore);
-
-  // Filter to only include audit instances (those with audit_retention_period in configuration)
-  const auditInstances = computed(() => filterAuditInstances(remoteInstances.value));
+  const platformModelStore = usePlatformModelStore();
+  const auditInstances = computed(() =>
+    platformModelStore.auditInstances.map((instance) => ({
+      api_uri: instance.sourceUrl ?? instance.name,
+      version: instance.version,
+      status: instance.health === "healthy" ? RemoteInstanceStatus.Online : RemoteInstanceStatus.Unavailable,
+      cachedInstanceType: RemoteInstanceType.Audit,
+    }))
+  );
 
   // This gives us the hasSuccessfulMessages flag which indicates if any successful messages exist.
   // Uses auto-refresh (minimal) to periodically check for at least 1 successful message (every 5 seconds)
@@ -186,7 +187,7 @@ export function useAuditingCapability(): CapabilityComposable {
   });
 
   // Loading state - true if remote instances haven't been loaded yet
-  const isLoading = computed(() => remoteInstances.value === null || remoteInstances.value === undefined);
+  const isLoading = computed(() => platformModelStore.model === null);
 
   return {
     status: auditStatus,

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import FAIcon from "@/components/FAIcon.vue";
 import { faCircle, faExternalLink, faTimes } from "@fortawesome/free-solid-svg-icons";
 import type { StatusIndicator, WizardPage } from "@/components/platformcapabilities/types";
 import { Capability, CapabilityStatus } from "@/components/platformcapabilities/constants";
 import WizardDialog from "./WizardDialog.vue";
+import routeLinks from "@/router/routeLinks";
 
 const router = useRouter();
 
@@ -74,8 +75,9 @@ function handleButtonClick() {
           </div>
         </div>
         <div class="title-row-actions">
-          <span
+          <RouterLink
             v-if="props.status !== CapabilityStatus.EndpointsNotConfigured && props.status !== CapabilityStatus.InstanceNotConfigured"
+            :to="routeLinks.platformHealth"
             class="status-badge"
             :class="{
               'status-available': props.status === CapabilityStatus.Available,
@@ -84,7 +86,7 @@ function handleButtonClick() {
             }"
           >
             {{ props.status }}
-          </span>
+          </RouterLink>
           <button v-if="allowDismiss" class="hide-card-btn" @click="emit('hide')" v-tippy="'Hide this card'">
             <FAIcon :icon="faTimes" />
           </button>
@@ -235,6 +237,8 @@ function handleButtonClick() {
 }
 
 .status-badge {
+  display: inline-flex;
+  align-items: center;
   white-space: nowrap;
   padding: 4px 12px;
   border-radius: 12px;
@@ -242,6 +246,7 @@ function handleButtonClick() {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-decoration: none;
 }
 
 .status-available {

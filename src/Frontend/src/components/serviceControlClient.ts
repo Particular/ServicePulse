@@ -135,11 +135,11 @@ class ServiceControlClient {
 
     const searchParams = new URLSearchParams(window.location.search);
     const scu = searchParams.get("scu");
-    const existingScu = window.localStorage.getItem("scu");
+    const existingScu = safeStorageGet("scu");
 
     if (scu) {
       if (scu !== existingScu) {
-        window.localStorage.setItem("scu", scu);
+        safeStorageSet("scu", scu);
       }
       return scu;
     } else if (existingScu) {
@@ -149,6 +149,22 @@ class ServiceControlClient {
     }
 
     return undefined;
+  }
+}
+
+function safeStorageGet(key: string) {
+  try {
+    return window.localStorage?.getItem(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function safeStorageSet(key: string, value: string) {
+  try {
+    window.localStorage?.setItem(key, value);
+  } catch {
+    // ignore storage access errors
   }
 }
 

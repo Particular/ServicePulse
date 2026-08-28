@@ -1,0 +1,143 @@
+import { describe, expect, render, screen, test, userEvent } from "@component-test-utils";
+import { createTestingPinia } from "@pinia/testing";
+import { setActivePinia } from "pinia";
+import { beforeEach, vi } from "vitest";
+import PlatformHealthView from "@/views/PlatformHealthView.vue";
+import { usePlatformHealthStore } from "@/stores/PlatformHealthStore";
+import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+
+const downloadFileFromString = vi.fn();
+
+vi.mock("@/composables/fileDownloadCreator", () => ({
+  downloadFileFromString: (...args: unknown[]) => downloadFileFromString(...args),
+}));
+
+vi.mock("@/composables/usePlatformHealthStoreAutoRefresh", () => ({
+  default: () => ({
+    store: usePlatformHealthStore(),
+  }),
+}));
+
+describe("PlatformHealthView", () => {
+  beforeEach(() => {
+    setActivePinia(createTestingPinia({ stubActions: false }));
+    downloadFileFromString.mockReset();
+
+    const environmentAndVersionsStore = useEnvironmentAndVersionsStore();
+    environmentAndVersionsStore.newVersions.newSCVersion.newscversion = true;
+    environmentAndVersionsStore.newVersions.newSCVersion.newscversionnumber = "6.19.3";
+    environmentAndVersionsStore.newVersions.newSCVersion.newscversionlink = "https://github.com/Particular/ServiceControl/releases/tag/6.19.3";
+  });
+
+  test("requires the configuration download before enabling the support link", async () => {
+    const store = usePlatformHealthStore();
+    store.payload = {
+      mode: "single-region",
+      primary: {
+        name: "Particular.ServiceControl",
+        instanceType: "error",
+        role: "primary-error",
+        version: "6.19.3",
+        status: "healthy",
+        ingestErrorMessages: true,
+      },
+      remotes: [],
+      monitoring: null,
+      warnings: [],
+    };
+
+    render(PlatformHealthView, {
+      global: {
+        plugins: [],
+      },
+    });
+
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole("button", { name: /Open support case/i }));
+
+    const supportLink = screen.getByRole("link", { name: /Then open the support case/i });
+    expect(supportLink).toHaveAttribute("aria-disabled", "true");
+
+    await user.click(screen.getByRole("button", { name: /Download platform configuration/i }));
+
+    expect(downloadFileFromString).toHaveBeenCalledTimes(1);
+    expect(downloadFileFromString).toHaveBeenCalledWith(expect.stringContaining('"platformHealth"'), "application/json", "platform-configuration.json");
+    expect(supportLink).toHaveAttribute("aria-disabled", "false");
+  });
+
+  test("shows an inline upgrade cue for an outdated instance version", () => {
+    const store = usePlatformHealthStore();
+    store.payload = {
+      mode: "single-region",
+      primary: {
+        name: "Particular.ServiceControl",
+        instanceType: "error",
+        role: "primary-error",
+        version: "6.19.3",
+        status: "healthy",
+        ingestErrorMessages: true,
+      },
+      remotes: [
+        {
+          name: "Particular.ServiceControl.Audit-Blue",
+          instanceType: "audit",
+          role: "remote-audit",
+          version: "6.17.0",
+          status: "healthy",
+        },
+      ],
+      monitoring: null,
+      warnings: [],
+    };
+
+    render(PlatformHealthView, {
+      global: {
+        plugins: [],
+      },
+    });
+
+    expect(screen.getByText(/v6.19.3 available/i)).toBeInTheDocument();
+  });
+
+  test("renders monitoring when present even in multi-region", () => {
+    const store = usePlatformHealthStore();
+    store.payload = {
+      mode: "multi-region",
+      primary: {
+        name: "Particular.ServiceControl.CrossRegion",
+        instanceType: "error",
+        role: "cross-region-primary",
+        version: "6.19.3",
+        status: "healthy",
+        ingestErrorMessages: false,
+      },
+      remotes: [
+        {
+          name: "Particular.ServiceControl.RegionA",
+          instanceType: "error",
+          role: "remote-error",
+          version: "6.19.3",
+          status: "healthy",
+          ingestErrorMessages: true,
+        },
+      ],
+      monitoring: {
+        configured: true,
+        name: "Particular.ServiceControl.Monitoring",
+        instanceType: "monitoring",
+        version: "6.19.3",
+        status: "healthy",
+      },
+      warnings: [],
+    };
+
+    render(PlatformHealthView, {
+      global: {
+        plugins: [],
+      },
+    });
+
+    expect(screen.getByText(/Particular.ServiceControl.Monitoring/i)).toBeInTheDocument();
+  });
+});

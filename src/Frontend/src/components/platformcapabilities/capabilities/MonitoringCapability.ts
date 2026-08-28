@@ -2,12 +2,11 @@ import { computed } from "vue";
 import type { StatusIndicator } from "@/components/platformcapabilities/types";
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import { storeToRefs } from "pinia";
-import { useConnectionsAndStatsStore } from "@/stores/ConnectionsAndStatsStore";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
 import monitoringClient from "@/components/monitoring/monitoringClient";
-import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 import usePlatformCapabilitiesRefresh from "@/composables/usePlatformCapabilitiesRefresh";
 import routeLinks from "@/router/routeLinks";
+import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 
 const MonitoringDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.EndpointsNotConfigured]:
@@ -48,20 +47,12 @@ export function useMonitoringCapability(): CapabilityComposable {
   // Uses auto-refresh to periodically check for monitored endpoints (every 5 seconds)
   const { store: platformCapabilitiesStore } = usePlatformCapabilitiesRefresh();
   const { hasMonitoredEndpoints } = storeToRefs(platformCapabilitiesStore);
-
-  // this tells us the connection state to the monitoring instance
-  // this is auto refreshed in the ConnectionsAndStatsStore (every 5 seconds)
-  const connectionsStore = useConnectionsAndStatsStore();
-  const monitoringConnectionState = connectionsStore.monitoringConnectionState;
-
-  // this gives us version information for the monitoring instance
-  const environmentStore = useEnvironmentAndVersionsStore();
-  const { environment } = storeToRefs(environmentStore);
+  const platformModelStore = usePlatformModelStore();
 
   // Determine overall monitoring status
   const monitoringStatus = computed(() => {
     const isConfiguredInServicePulse = isMonitoringEnabled;
-    const connectionSuccessful = monitoringConnectionState.connected && !monitoringConnectionState.unableToConnect;
+    const connectionSuccessful = platformModelStore.monitoring?.health === "healthy";
 
     // 1. Check if monitoring is configured in ServicePulse
     if (!isConfiguredInServicePulse) {
@@ -96,13 +87,15 @@ export function useMonitoringCapability(): CapabilityComposable {
     const indicators: StatusIndicator[] = [];
 
     // Instance specific states
-    const connectionSuccessful = monitoringConnectionState.connected && !monitoringConnectionState.unableToConnect;
+    const connectionSuccessful = platformModelStore.monitoring?.health === "healthy";
     const instanceAvailable = isMonitoringEnabled && connectionSuccessful;
 
     const instanceTooltip = instanceAvailable ? MonitoringIndicatorTooltip.InstanceAvailable : !isMonitoringEnabled ? MonitoringIndicatorTooltip.InstanceNotConfigured : MonitoringIndicatorTooltip.InstanceUnavailable;
 
     if (isMonitoringEnabled) {
-      indicators.push(createIndicator("Instance", instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, instanceTooltip, monitoringClient.url, environment.value.monitoring_version));
+      indicators.push(
+        createIndicator("Instance", instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, instanceTooltip, platformModelStore.monitoring?.sourceUrl ?? monitoringClient.url, platformModelStore.monitoring?.version)
+      );
     }
 
     // data available indicator - only show if instance is connected
@@ -120,7 +113,7 @@ export function useMonitoringCapability(): CapabilityComposable {
   });
 
   // Loading state - monitoring is loading if we haven't attempted connection yet
-  const isLoading = computed(() => !monitoringConnectionState.connected && !monitoringConnectionState.unableToConnect && monitoringConnectionState.connecting);
+  const isLoading = computed(() => platformModelStore.model === null);
 
   return {
     status: monitoringStatus,
