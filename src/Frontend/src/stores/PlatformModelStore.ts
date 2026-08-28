@@ -5,12 +5,12 @@ import monitoringClient from "@/components/monitoring/monitoringClient";
 import { authFetch } from "@/composables/useAuthenticatedFetch";
 import type RootUrls from "@/resources/RootUrls";
 import type { RemoteInstance } from "@/resources/RemoteInstance";
-import type { PlatformInstanceHealth, PlatformInstanceModel, PlatformModel, PlatformModelMode } from "@/resources/PlatformModel";
+import type { PlatformInstance, PlatformInstanceHealth, PlatformModel, PlatformTopologyMode } from "@/resources/PlatformModel";
 
 interface ServiceControlRoot {
   name?: string;
   platform_health_status?: PlatformInstanceHealth;
-  platform_health_mode?: PlatformModelMode;
+  platform_health_mode?: PlatformTopologyMode;
   platform_health_warnings?: string[];
   platform_health_version?: string;
 }
@@ -96,7 +96,7 @@ async function getMonitoringRoot(): Promise<MonitoringRoot | null> {
   }
 }
 
-function mapPrimary(primaryRoot: ServiceControlRootDocument | null, mode: PlatformModelMode): PlatformInstanceModel | null {
+function mapPrimary(primaryRoot: ServiceControlRootDocument | null, mode: PlatformTopologyMode): PlatformInstance | null {
   if (!primaryRoot) {
     return {
       id: "primary",
@@ -123,7 +123,7 @@ function mapPrimary(primaryRoot: ServiceControlRootDocument | null, mode: Platfo
   };
 }
 
-function mapRemotes(remotes: RemoteInstance[]): PlatformInstanceModel[] {
+function mapRemotes(remotes: RemoteInstance[]): PlatformInstance[] {
   return remotes.map((remote, index) => {
     const isError = remote.configuration?.data_retention?.error_retention_period !== undefined;
     const kind = isError ? "error" : "audit";
@@ -142,7 +142,7 @@ function mapRemotes(remotes: RemoteInstance[]): PlatformInstanceModel[] {
   });
 }
 
-function mapMonitoring(monitoringRoot: MonitoringRoot | null): PlatformInstanceModel | null {
+function mapMonitoring(monitoringRoot: MonitoringRoot | null): PlatformInstance | null {
   if (!monitoringClient.isMonitoringEnabled || monitoringRoot === null) {
     return null;
   }
@@ -159,7 +159,7 @@ function mapMonitoring(monitoringRoot: MonitoringRoot | null): PlatformInstanceM
   };
 }
 
-function detectMode(primaryRoot: ServiceControlRootDocument | null, remotes: RemoteInstance[]): PlatformModelMode {
+function detectMode(primaryRoot: ServiceControlRootDocument | null, remotes: RemoteInstance[]): PlatformTopologyMode {
   if (primaryRoot?.platform_health_mode) {
     return primaryRoot.platform_health_mode;
   }
