@@ -25,17 +25,39 @@ const warningLevel = computed(() => {
 
   return WarningLevel.None;
 });
+
+const tooltip = computed(() => {
+  if (store.severity === "danger") {
+    return "Platform health: Action required. One or more platform instances are unavailable.";
+  }
+
+  if (store.severity === "warning") {
+    return "Platform health: Attention needed. One or more platform instances are degraded or platform warnings are present.";
+  }
+
+  if (store.outdatedOnly) {
+    return "Platform health: Update available. One or more platform instances are out of date.";
+  }
+
+  return "Platform health: No issues detected.";
+});
 </script>
 
 <template>
   <RouterLink :to="routeLinks.platformHealth">
-    <FAIcon :icon="faServer" title="Platform health" />
+    <FAIcon :icon="faServer" />
     <span class="navbar-label">Platform health</span>
-    <ExclamationMark :type="warningLevel" v-if="warningLevel !== WarningLevel.None" />
+    <span title="" class="tooltip-target" v-tippy="tooltip">
+      <ExclamationMark :type="warningLevel" v-if="warningLevel !== WarningLevel.None" />
+    </span>
   </RouterLink>
 </template>
 
 <style scoped>
 @import "@/assets/navbar.css";
 @import "@/assets/header-menu-item.css";
+
+.tooltip-target {
+  display: inline-flex;
+}
 </style>
