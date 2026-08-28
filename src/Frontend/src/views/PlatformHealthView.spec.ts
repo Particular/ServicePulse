@@ -41,7 +41,6 @@ describe("PlatformHealthView", () => {
         role: "primary-error",
         version: "6.19.3",
         health: "healthy",
-        configured: true,
       },
       remotes: [],
       monitoring: null,
@@ -79,7 +78,6 @@ describe("PlatformHealthView", () => {
         role: "primary-error",
         version: "6.19.3",
         health: "healthy",
-        configured: true,
       },
       remotes: [
         {
@@ -89,7 +87,6 @@ describe("PlatformHealthView", () => {
           role: "remote-audit",
           version: "6.18.0",
           health: "healthy",
-          configured: true,
         },
       ],
       monitoring: null,
@@ -117,7 +114,6 @@ describe("PlatformHealthView", () => {
         role: "cross-region-primary",
         version: "6.19.3",
         health: "healthy",
-        configured: true,
       },
       remotes: [
         {
@@ -127,7 +123,6 @@ describe("PlatformHealthView", () => {
           role: "remote-error",
           version: "6.19.3",
           health: "healthy",
-          configured: true,
         },
       ],
       monitoring: {
@@ -137,7 +132,6 @@ describe("PlatformHealthView", () => {
         role: "monitoring",
         version: "6.19.3",
         health: "healthy",
-        configured: true,
       },
       warnings: [],
     } satisfies PlatformHealthResponse;

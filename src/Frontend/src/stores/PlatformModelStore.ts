@@ -96,7 +96,7 @@ async function getMonitoringRoot(): Promise<MonitoringRoot | null> {
   }
 }
 
-function mapPrimary(primaryRoot: ServiceControlRootDocument | null, mode: PlatformTopologyMode): PlatformInstance | null {
+function mapPrimary(primaryRoot: ServiceControlRootDocument | null, mode: PlatformTopologyMode): PlatformInstance {
   if (!primaryRoot) {
     return {
       id: "primary",
@@ -105,7 +105,6 @@ function mapPrimary(primaryRoot: ServiceControlRootDocument | null, mode: Platfo
       role: mode === "multi-region" ? "cross-region-primary" : "primary-error",
       version: "Unknown",
       health: "unavailable",
-      configured: true,
     };
   }
 
@@ -116,7 +115,6 @@ function mapPrimary(primaryRoot: ServiceControlRootDocument | null, mode: Platfo
     role: mode === "multi-region" ? "cross-region-primary" : "primary-error",
     version: primaryRoot.platform_health_version ?? "Unknown",
     health: primaryRoot.platform_health_status ?? "healthy",
-    configured: true,
     sourceUrl: serviceControlClient.url,
   };
 }
@@ -133,7 +131,6 @@ function mapRemotes(remotes: RemoteInstance[]): PlatformInstance[] {
       role: isError ? "remote-error" : "remote-audit",
       version: remote.version,
       health: remote.platform_health_status ?? (remote.status === "online" ? "healthy" : "unavailable"),
-      configured: true,
       sourceUrl: remote.api_uri,
     };
   });
@@ -151,7 +148,6 @@ function mapMonitoring(monitoringRoot: MonitoringRoot | null): PlatformInstance 
     role: "monitoring",
     version: monitoringRoot?.platform_health_version ?? "Unknown",
     health: monitoringRoot?.platform_health_status ?? "healthy",
-    configured: true,
     sourceUrl: monitoringClient.url,
   };
 }

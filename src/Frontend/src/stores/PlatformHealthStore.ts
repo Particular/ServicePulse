@@ -22,7 +22,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
       return "none";
     }
 
-    if (current.primary?.health === "unavailable") {
+    if (current.primary.health === "unavailable") {
       return "danger";
     }
 
@@ -30,7 +30,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
       return "danger";
     }
 
-    if (current.monitoring?.configured && current.monitoring.health === "unavailable") {
+    if (current.monitoring?.health === "unavailable") {
       return "danger";
     }
 
@@ -49,7 +49,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
 
   const rows = computed<PlatformHealthRow[]>(() => {
     const current = payload.value;
-    if (!current || current.primary === null) {
+    if (!current) {
       return [];
     }
 
@@ -60,7 +60,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
 
     const nextRows: PlatformHealthRow[] = [toRow(current.primary, latestServiceControlVersion, latestServiceControlLink), ...current.remotes.map((remote) => toRow(remote, latestServiceControlVersion, latestServiceControlLink))];
 
-    if (current.monitoring?.configured) {
+    if (current.monitoring) {
       nextRows.push(toRow(current.monitoring, latestMonitoringVersion, latestMonitoringLink));
     }
 
@@ -75,14 +75,14 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
 
     const issues: string[] = [];
 
-    if (current.primary?.health === "unavailable") {
+    if (current.primary.health === "unavailable") {
       issues.push("primary Error instance unavailable");
     }
 
     issues.push(...current.remotes.filter((remote) => remote.health === "degraded").map((remote) => `degraded ${formatInstanceType(remote.kind)}`));
     issues.push(...current.remotes.filter((remote) => remote.health === "unavailable").map((remote) => `unavailable ${formatInstanceType(remote.kind)}`));
 
-    if (current.mode === "single-region" && current.monitoring?.configured && current.monitoring.health === "unavailable") {
+    if (current.mode === "single-region" && current.monitoring?.health === "unavailable") {
       issues.push("unavailable Monitoring instance");
     }
 
@@ -128,7 +128,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
     rows,
     latestServiceControlVersion: computed(() => {
       const current = payload.value;
-      if (!current || current.primary === null) {
+      if (!current) {
         return "";
       }
 

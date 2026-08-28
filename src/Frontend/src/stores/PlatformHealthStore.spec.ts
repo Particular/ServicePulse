@@ -100,7 +100,6 @@ const singleRegionWarningModel: PlatformModel = {
     role: "primary-error",
     version: "6.19.3",
     health: "healthy",
-    configured: true,
   },
   remotes: [
     {
@@ -110,7 +109,6 @@ const singleRegionWarningModel: PlatformModel = {
       role: "remote-audit",
       version: "6.18.0",
       health: "healthy",
-      configured: true,
     },
     {
       id: "remote-1",
@@ -119,7 +117,6 @@ const singleRegionWarningModel: PlatformModel = {
       role: "remote-audit",
       version: "6.17.0",
       health: "degraded",
-      configured: true,
     },
   ],
   monitoring: {
@@ -129,7 +126,6 @@ const singleRegionWarningModel: PlatformModel = {
     role: "monitoring",
     version: "6.19.3",
     health: "healthy",
-    configured: true,
   },
   warnings: [],
 };
@@ -143,7 +139,6 @@ const multiRegionDangerModel: PlatformModel = {
     role: "cross-region-primary",
     version: "6.19.3",
     health: "healthy",
-    configured: true,
   },
   remotes: [
     {
@@ -153,7 +148,6 @@ const multiRegionDangerModel: PlatformModel = {
       role: "remote-error",
       version: "6.19.3",
       health: "healthy",
-      configured: true,
     },
     {
       id: "remote-1",
@@ -162,7 +156,6 @@ const multiRegionDangerModel: PlatformModel = {
       role: "remote-error",
       version: "6.19.3",
       health: "unavailable",
-      configured: true,
     },
   ],
   monitoring: null,

@@ -10,13 +10,12 @@ export interface PlatformInstance {
   role: PlatformInstanceRole;
   version: string;
   health: PlatformInstanceHealth;
-  configured: boolean;
   sourceUrl?: string;
 }
 
 export interface PlatformModel {
   mode: PlatformTopologyMode;
-  primary: PlatformInstance | null;
+  primary: PlatformInstance;
   remotes: PlatformInstance[];
   monitoring: PlatformInstance | null;
   warnings: string[];

@@ -40,22 +40,19 @@ enum MonitoringIndicatorTooltip {
 export function useMonitoringCapability(): CapabilityComposable {
   const { getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
 
-  // this tells us if monitoring is configured in ServicePulse
-  const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
-
   // this tells us if there are any endpoints sending data
   // Uses auto-refresh to periodically check for monitored endpoints (every 5 seconds)
   const { store: platformCapabilitiesStore } = usePlatformCapabilitiesRefresh();
   const { hasMonitoredEndpoints } = storeToRefs(platformCapabilitiesStore);
   const platformModelStore = usePlatformModelStore();
+  const hasMonitoringInstance = computed(() => platformModelStore.monitoring !== null);
 
   // Determine overall monitoring status
   const monitoringStatus = computed(() => {
-    const isConfiguredInServicePulse = isMonitoringEnabled;
     const connectionSuccessful = platformModelStore.monitoring?.health === "healthy";
 
-    // 1. Check if monitoring is configured in ServicePulse
-    if (!isConfiguredInServicePulse) {
+    // 1. Check if a monitoring instance exists in the shared platform model
+    if (!hasMonitoringInstance.value) {
       return CapabilityStatus.InstanceNotConfigured;
     }
 
@@ -88,11 +85,11 @@ export function useMonitoringCapability(): CapabilityComposable {
 
     // Instance specific states
     const connectionSuccessful = platformModelStore.monitoring?.health === "healthy";
-    const instanceAvailable = isMonitoringEnabled && connectionSuccessful;
+    const instanceAvailable = hasMonitoringInstance.value && connectionSuccessful;
 
-    const instanceTooltip = instanceAvailable ? MonitoringIndicatorTooltip.InstanceAvailable : !isMonitoringEnabled ? MonitoringIndicatorTooltip.InstanceNotConfigured : MonitoringIndicatorTooltip.InstanceUnavailable;
+    const instanceTooltip = instanceAvailable ? MonitoringIndicatorTooltip.InstanceAvailable : !hasMonitoringInstance.value ? MonitoringIndicatorTooltip.InstanceNotConfigured : MonitoringIndicatorTooltip.InstanceUnavailable;
 
-    if (isMonitoringEnabled) {
+    if (hasMonitoringInstance.value) {
       indicators.push(
         createIndicator("Instance", instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, instanceTooltip, platformModelStore.monitoring?.sourceUrl ?? monitoringClient.url, platformModelStore.monitoring?.version)
       );
