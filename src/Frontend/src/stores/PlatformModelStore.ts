@@ -18,7 +18,6 @@ interface ServiceControlRoot {
 type ServiceControlRootDocument = RootUrls & ServiceControlRoot;
 
 interface MonitoringRoot {
-  Metrics?: object | null;
   platform_health_status?: PlatformInstanceHealth;
   platform_health_version?: string;
 }
@@ -91,7 +90,6 @@ async function getMonitoringRoot(): Promise<MonitoringRoot | null> {
     return (await response.json()) as MonitoringRoot;
   } catch {
     return {
-      Metrics: null,
       platform_health_status: "unavailable",
       platform_health_version: "Unknown",
     };

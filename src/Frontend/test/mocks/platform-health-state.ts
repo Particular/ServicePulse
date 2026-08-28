@@ -121,7 +121,6 @@ export function getPlatformHealthMonitoringRoot() {
   }
 
   return {
-    Metrics: state.monitoring?.status === "unavailable" ? null : {},
     platform_health_status: state.monitoring?.status ?? "healthy",
     platform_health_version: state.monitoring?.version ?? latestPlatformVersion,
   };

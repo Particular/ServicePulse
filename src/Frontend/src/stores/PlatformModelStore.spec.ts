@@ -56,7 +56,7 @@ describe("PlatformModelStore", () => {
       ]);
     authFetch.mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ platform_health_status: "healthy", platform_health_version: "6.19.3", Metrics: {} }),
+      json: () => Promise.resolve({ platform_health_status: "healthy", platform_health_version: "6.19.3" }),
     } as Response);
 
     const store = usePlatformModelStore();
