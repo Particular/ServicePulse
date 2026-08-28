@@ -2,7 +2,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { isUpgradeAvailable } from "@/composables/serviceSemVer";
 import type { PlatformHealthResponse, PlatformHealthRow, PlatformHealthSeverity } from "@/resources/PlatformHealth";
-import type { PlatformInstanceRole } from "@/resources/PlatformModel";
+import type { PlatformInstance } from "@/resources/PlatformModel";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 
@@ -22,19 +22,19 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
       return "none";
     }
 
-    if (current.primary.status === "unavailable") {
+    if (current.primary?.health === "unavailable") {
       return "danger";
     }
 
-    if (current.mode === "multi-region" && current.remotes.some((remote) => remote.instanceType === "error" && remote.status !== "healthy")) {
+    if (current.mode === "multi-region" && current.remotes.some((remote) => remote.kind === "error" && remote.health !== "healthy")) {
       return "danger";
     }
 
-    if (current.monitoring?.configured && current.monitoring.status === "unavailable") {
+    if (current.monitoring?.configured && current.monitoring.health === "unavailable") {
       return "danger";
     }
 
-    if (current.remotes.some((remote) => remote.instanceType === "audit" && remote.status === "degraded")) {
+    if (current.remotes.some((remote) => remote.kind === "audit" && remote.health === "degraded")) {
       return "warning";
     }
 
@@ -49,7 +49,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
 
   const rows = computed<PlatformHealthRow[]>(() => {
     const current = payload.value;
-    if (!current) {
+    if (!current || current.primary === null) {
       return [];
     }
 
@@ -61,16 +61,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
     const nextRows: PlatformHealthRow[] = [toRow(current.primary, latestServiceControlVersion, latestServiceControlLink), ...current.remotes.map((remote) => toRow(remote, latestServiceControlVersion, latestServiceControlLink))];
 
     if (current.monitoring?.configured) {
-      nextRows.push({
-        type: "Monitoring instance",
-        instanceName: current.monitoring.name,
-        version: current.monitoring.version,
-        health: current.monitoring.status,
-        note: "Monitoring instance",
-        upgradeAvailable: hasMonitoringUpgrade(current.monitoring.version, latestMonitoringVersion),
-        latestVersion: latestMonitoringVersion,
-        upgradeLink: latestMonitoringLink,
-      });
+      nextRows.push(toRow(current.monitoring, latestMonitoringVersion, latestMonitoringLink));
     }
 
     return nextRows;
@@ -84,14 +75,14 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
 
     const issues: string[] = [];
 
-    if (current.primary.status === "unavailable") {
+    if (current.primary?.health === "unavailable") {
       issues.push("primary Error instance unavailable");
     }
 
-    issues.push(...current.remotes.filter((remote) => remote.status === "degraded").map((remote) => `degraded ${formatInstanceType(remote.instanceType)}`));
-    issues.push(...current.remotes.filter((remote) => remote.status === "unavailable").map((remote) => `unavailable ${formatInstanceType(remote.instanceType)}`));
+    issues.push(...current.remotes.filter((remote) => remote.health === "degraded").map((remote) => `degraded ${formatInstanceType(remote.kind)}`));
+    issues.push(...current.remotes.filter((remote) => remote.health === "unavailable").map((remote) => `unavailable ${formatInstanceType(remote.kind)}`));
 
-    if (current.mode === "single-region" && current.monitoring?.configured && current.monitoring.status === "unavailable") {
+    if (current.mode === "single-region" && current.monitoring?.configured && current.monitoring.health === "unavailable") {
       issues.push("unavailable Monitoring instance");
     }
 
@@ -124,35 +115,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   async function refresh() {
     await platformModelStore.refresh();
 
-    payload.value = {
-      mode: platformModelStore.model?.mode ?? "single-region",
-      primary: {
-        name: platformModelStore.primary?.name ?? "Particular.ServiceControl",
-        instanceType: "error",
-        role: toPlatformHealthRole(platformModelStore.primary?.role),
-        version: platformModelStore.primary?.version ?? "Unknown",
-        status: platformModelStore.primary?.health ?? "unavailable",
-        ingestErrorMessages: platformModelStore.primary?.ingestErrorMessages,
-      },
-      remotes: platformModelStore.remotes.map((instance) => ({
-        name: instance.name,
-        instanceType: instance.kind === "error" ? "error" : "audit",
-        role: instance.role === "remote-error" ? "remote-error" : "remote-audit",
-        version: instance.version,
-        status: instance.health,
-        ingestErrorMessages: instance.ingestErrorMessages,
-      })),
-      monitoring: platformModelStore.monitoring
-        ? {
-            configured: platformModelStore.monitoring.configured,
-            name: platformModelStore.monitoring.name,
-            instanceType: "monitoring",
-            version: platformModelStore.monitoring.version,
-            status: platformModelStore.monitoring.health,
-          }
-        : null,
-      warnings: platformModelStore.warnings,
-    };
+    payload.value = platformModelStore.model;
   }
 
   return {
@@ -165,7 +128,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
     rows,
     latestServiceControlVersion: computed(() => {
       const current = payload.value;
-      if (!current) {
+      if (!current || current.primary === null) {
         return "";
       }
 
@@ -176,12 +139,12 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   };
 });
 
-function toRow(instance: PlatformHealthResponse["primary"], latestVersion: string, upgradeLink: string): PlatformHealthRow {
+function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: string): PlatformHealthRow {
   return {
     type: formatRowType(instance),
     instanceName: instance.name,
     version: instance.version,
-    health: instance.status,
+    health: instance.health,
     note: formatRole(instance.role),
     upgradeAvailable: hasUpgrade(instance.version, latestVersion),
     latestVersion,
@@ -189,9 +152,13 @@ function toRow(instance: PlatformHealthResponse["primary"], latestVersion: strin
   };
 }
 
-function formatRowType(instance: PlatformHealthResponse["primary"]) {
-  if (instance.instanceType === "audit") {
+function formatRowType(instance: PlatformInstance) {
+  if (instance.kind === "audit") {
     return "Audit instance";
+  }
+
+  if (instance.kind === "monitoring") {
+    return "Monitoring instance";
   }
 
   if (instance.role === "cross-region-primary") {
@@ -201,7 +168,7 @@ function formatRowType(instance: PlatformHealthResponse["primary"]) {
   return "Error instance";
 }
 
-function formatRole(role: PlatformHealthResponse["primary"]["role"]) {
+function formatRole(role: PlatformInstance["role"]) {
   switch (role) {
     case "primary-error":
       return "Primary error processing instance";
@@ -211,18 +178,23 @@ function formatRole(role: PlatformHealthResponse["primary"]["role"]) {
       return "Audit instance";
     case "remote-error":
       return "Regional error instance";
+    case "monitoring":
+      return "Monitoring instance";
   }
 }
 
-function formatInstanceType(instanceType: PlatformHealthResponse["primary"]["instanceType"]) {
-  return instanceType === "audit" ? "Audit instance" : "Error instance";
+function formatInstanceType(instanceType: PlatformInstance["kind"]) {
+  switch (instanceType) {
+    case "audit":
+      return "Audit instance";
+    case "monitoring":
+      return "Monitoring instance";
+    default:
+      return "Error instance";
+  }
 }
 
 function hasUpgrade(currentVersion: string, latestVersion: string) {
-  return !!latestVersion && isUpgradeAvailable(currentVersion, latestVersion);
-}
-
-function hasMonitoringUpgrade(currentVersion: string, latestVersion: string) {
   return !!latestVersion && isUpgradeAvailable(currentVersion, latestVersion);
 }
 
@@ -232,14 +204,6 @@ function buildReleaseLink(version: string) {
 
 function firstKnownVersion(...versions: Array<string | null | undefined>) {
   return versions.find((version) => version && version !== "Unknown") ?? "";
-}
-
-function toPlatformHealthRole(role: PlatformInstanceRole | undefined): PlatformHealthResponse["primary"]["role"] {
-  if (role === "cross-region-primary") {
-    return role;
-  }
-
-  return "primary-error";
 }
 
 if (import.meta.hot) {

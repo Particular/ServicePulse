@@ -5,6 +5,7 @@ import { beforeEach, vi } from "vitest";
 import PlatformHealthView from "@/views/PlatformHealthView.vue";
 import { usePlatformHealthStore } from "@/stores/PlatformHealthStore";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+import type { PlatformHealthResponse } from "@/resources/PlatformHealth";
 
 const downloadFileFromString = vi.fn();
 
@@ -34,17 +35,18 @@ describe("PlatformHealthView", () => {
     store.payload = {
       mode: "single-region",
       primary: {
+        id: "primary",
         name: "Particular.ServiceControl",
-        instanceType: "error",
+        kind: "error",
         role: "primary-error",
         version: "6.19.3",
-        status: "healthy",
-        ingestErrorMessages: true,
+        health: "healthy",
+        configured: true,
       },
       remotes: [],
       monitoring: null,
       warnings: [],
-    };
+    } satisfies PlatformHealthResponse;
 
     render(PlatformHealthView, {
       global: {
@@ -71,25 +73,28 @@ describe("PlatformHealthView", () => {
     store.payload = {
       mode: "single-region",
       primary: {
+        id: "primary",
         name: "Particular.ServiceControl",
-        instanceType: "error",
+        kind: "error",
         role: "primary-error",
         version: "6.19.3",
-        status: "healthy",
-        ingestErrorMessages: true,
+        health: "healthy",
+        configured: true,
       },
       remotes: [
         {
+          id: "remote-0",
           name: "Particular.ServiceControl.Audit",
-          instanceType: "audit",
+          kind: "audit",
           role: "remote-audit",
           version: "6.18.0",
-          status: "healthy",
+          health: "healthy",
+          configured: true,
         },
       ],
       monitoring: null,
       warnings: [],
-    };
+    } satisfies PlatformHealthResponse;
 
     render(PlatformHealthView, {
       global: {
@@ -106,32 +111,36 @@ describe("PlatformHealthView", () => {
     store.payload = {
       mode: "multi-region",
       primary: {
+        id: "primary",
         name: "Particular.ServiceControl.CrossRegion",
-        instanceType: "error",
+        kind: "error",
         role: "cross-region-primary",
         version: "6.19.3",
-        status: "healthy",
-        ingestErrorMessages: false,
+        health: "healthy",
+        configured: true,
       },
       remotes: [
         {
+          id: "remote-0",
           name: "Particular.ServiceControl.RegionA",
-          instanceType: "error",
+          kind: "error",
           role: "remote-error",
           version: "6.19.3",
-          status: "healthy",
-          ingestErrorMessages: true,
+          health: "healthy",
+          configured: true,
         },
       ],
       monitoring: {
-        configured: true,
+        id: "monitoring",
         name: "Particular.ServiceControl.Monitoring",
-        instanceType: "monitoring",
+        kind: "monitoring",
+        role: "monitoring",
         version: "6.19.3",
-        status: "healthy",
+        health: "healthy",
+        configured: true,
       },
       warnings: [],
-    };
+    } satisfies PlatformHealthResponse;
 
     render(PlatformHealthView, {
       global: {

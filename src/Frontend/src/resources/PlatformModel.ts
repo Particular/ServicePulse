@@ -12,7 +12,6 @@ export interface PlatformInstance {
   health: PlatformInstanceHealth;
   configured: boolean;
   sourceUrl?: string;
-  ingestErrorMessages?: boolean;
 }
 
 export interface PlatformModel {

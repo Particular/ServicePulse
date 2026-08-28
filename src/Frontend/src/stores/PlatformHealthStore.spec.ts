@@ -101,7 +101,6 @@ const singleRegionWarningModel: PlatformModel = {
     version: "6.19.3",
     health: "healthy",
     configured: true,
-    ingestErrorMessages: true,
   },
   remotes: [
     {
@@ -145,7 +144,6 @@ const multiRegionDangerModel: PlatformModel = {
     version: "6.19.3",
     health: "healthy",
     configured: true,
-    ingestErrorMessages: false,
   },
   remotes: [
     {
@@ -156,7 +154,6 @@ const multiRegionDangerModel: PlatformModel = {
       version: "6.19.3",
       health: "healthy",
       configured: true,
-      ingestErrorMessages: true,
     },
     {
       id: "remote-1",
@@ -166,7 +163,6 @@ const multiRegionDangerModel: PlatformModel = {
       version: "6.19.3",
       health: "unavailable",
       configured: true,
-      ingestErrorMessages: true,
     },
   ],
   monitoring: null,

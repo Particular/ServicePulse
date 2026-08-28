@@ -106,7 +106,6 @@ function mapPrimary(primaryRoot: ServiceControlRootDocument | null, mode: Platfo
       version: "Unknown",
       health: "unavailable",
       configured: true,
-      ingestErrorMessages: mode !== "multi-region",
     };
   }
 
@@ -119,7 +118,6 @@ function mapPrimary(primaryRoot: ServiceControlRootDocument | null, mode: Platfo
     health: primaryRoot.platform_health_status ?? "healthy",
     configured: true,
     sourceUrl: serviceControlClient.url,
-    ingestErrorMessages: mode !== "multi-region",
   };
 }
 
@@ -137,7 +135,6 @@ function mapRemotes(remotes: RemoteInstance[]): PlatformInstance[] {
       health: remote.platform_health_status ?? (remote.status === "online" ? "healthy" : "unavailable"),
       configured: true,
       sourceUrl: remote.api_uri,
-      ingestErrorMessages: isError ? true : undefined,
     };
   });
 }

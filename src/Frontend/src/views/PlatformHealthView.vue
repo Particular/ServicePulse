@@ -23,7 +23,7 @@ function openSupportModal() {
 }
 
 function getUpgradeTargetVersion(row: (typeof store.rows)[number]) {
-  return row.latestVersion || store.payload?.primary.version || "";
+  return row.latestVersion || store.payload?.primary?.version || "";
 }
 
 function getUpgradeTargetLink(row: (typeof store.rows)[number]) {
