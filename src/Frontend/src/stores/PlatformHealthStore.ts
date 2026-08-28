@@ -140,6 +140,7 @@ function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: s
   return {
     type: formatRowType(instance),
     instanceName: instance.name,
+    apiUrl: instance.apiUrl,
     version: instance.version,
     health: instance.health,
     note: formatRole(instance.role),

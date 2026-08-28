@@ -7,6 +7,7 @@ export type PlatformHealthResponse = PlatformModel;
 export interface PlatformHealthRow {
   type: string;
   instanceName: string;
+  apiUrl: string;
   version: string;
   health: PlatformInstanceHealth;
   note: string;

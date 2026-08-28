@@ -104,6 +104,43 @@ describe("PlatformHealthView", () => {
     expect(screen.getByText(/v6.19.3 available/i)).toBeInTheDocument();
   });
 
+  test("links each instance name to the instance api url", () => {
+    const store = usePlatformHealthStore();
+    store.payload = {
+      primary: {
+        id: "primary",
+        name: "Particular.ServiceControl",
+        kind: "error",
+        role: "primary-error",
+        version: "6.19.3",
+        health: "healthy",
+        apiUrl: "http://localhost:33333/api/",
+      },
+      remotes: [
+        {
+          id: "remote-0",
+          name: "Particular.ServiceControl.Audit",
+          kind: "audit",
+          role: "remote-audit",
+          version: "6.19.3",
+          health: "healthy",
+          apiUrl: "http://localhost:33334/api/",
+        },
+      ],
+      monitoring: null,
+      warnings: [],
+    } satisfies PlatformHealthResponse;
+
+    render(PlatformHealthView, {
+      global: {
+        plugins: [],
+      },
+    });
+
+    expect(screen.getByRole("link", { name: "Particular.ServiceControl" })).toHaveAttribute("href", "http://localhost:33333/api/");
+    expect(screen.getByRole("link", { name: "Particular.ServiceControl.Audit" })).toHaveAttribute("href", "http://localhost:33334/api/");
+  });
+
   test("renders monitoring when present even in multi-region", () => {
     const store = usePlatformHealthStore();
     store.payload = {

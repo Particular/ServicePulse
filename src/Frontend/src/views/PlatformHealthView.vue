@@ -74,7 +74,7 @@ function shouldShowUpgradeCue(row: (typeof store.rows)[number]) {
                 <tr v-for="row in store.rows" :key="`${row.type}-${row.instanceName}`">
                   <td class="type-cell">{{ row.type }}</td>
                   <td>
-                    <div class="instance-name">{{ row.instanceName }}</div>
+                    <a class="instance-name" :href="row.apiUrl" target="_blank" rel="noopener noreferrer">{{ row.instanceName }}</a>
                     <div class="instance-note">{{ row.note }}</div>
                   </td>
                   <td>
@@ -171,6 +171,16 @@ tbody tr:last-child td {
 .type-cell,
 .instance-name {
   font-weight: 700;
+}
+
+.instance-name {
+  color: var(--sp-blue);
+  text-decoration: none;
+}
+
+.instance-name:hover {
+  color: #007f98;
+  text-decoration: underline;
 }
 
 .type-cell {
