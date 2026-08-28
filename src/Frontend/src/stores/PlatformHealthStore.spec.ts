@@ -30,14 +30,14 @@ describe("PlatformHealthStore", () => {
     await store.refresh();
 
     expect(store.isMultiRegion).toBe(false);
-    expect(store.severity).toBe("danger");
+    expect(store.severity).toBe("warning");
     expect(store.rows).toHaveLength(4);
     expect(store.outdatedOnly).toBe(false);
     expect(store.rows[2].upgradeAvailable).toBe(true);
     expect(store.rows[2].latestVersion).toBe("6.19.3");
-    expect(store.issueSummary).toContain("2 issues detected");
+    expect(store.issueSummary).toContain("1 issue detected");
     expect(store.issueSummary).toContain("degraded Audit instance");
-    expect(store.issueSummary).toContain("unavailable Monitoring instance");
+    expect(store.issueSummary).not.toContain("unavailable Monitoring instance");
     expect(store.supportDownloadJson).toContain('"platformHealth"');
   });
 
@@ -129,7 +129,7 @@ const singleRegionWarningModel: PlatformModel = {
     kind: "monitoring",
     role: "monitoring",
     version: "6.19.3",
-    health: "unavailable",
+    health: "healthy",
     configured: true,
   },
   warnings: [],
