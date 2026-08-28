@@ -116,6 +116,10 @@ export function getPlatformHealthRemoteInstances(): RemoteInstance[] {
 }
 
 export function getPlatformHealthMonitoringRoot() {
+  if (state.monitoring === null) {
+    return null;
+  }
+
   return {
     Metrics: state.monitoring?.status === "unavailable" ? null : {},
     platform_health_status: state.monitoring?.status ?? "healthy",
@@ -216,7 +220,7 @@ function createScenario(name: PlatformHealthMockScenarioName): PlatformHealthMoc
         primary: { name: "Particular.ServiceControl.CrossRegion", version: latestPlatformVersion, status: "healthy" },
         remotes: [
           { id: "remote-0", apiUri: "http://Particular.ServiceControl.RegionA/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "degraded", instanceType: "error" },
+          { id: "remote-1", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "unavailable", instanceType: "error" },
         ],
         monitoring: null,
         warnings: [],

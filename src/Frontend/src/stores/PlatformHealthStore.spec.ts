@@ -55,7 +55,7 @@ describe("PlatformHealthStore", () => {
     expect(store.severity).toBe("danger");
     expect(store.rows).toHaveLength(3);
     expect(store.rows.every((row) => row.type === "Error instance" || row.type === "Monitoring instance")).toBe(true);
-    expect(store.issueSummary).toContain("degraded Error instance");
+    expect(store.issueSummary).toContain("unavailable Error instance");
   });
 
   test("uses dev mock state as a latest-version fallback for upgrade cues", async () => {
@@ -164,7 +164,7 @@ const multiRegionDangerModel: PlatformModel = {
       kind: "error",
       role: "remote-error",
       version: "6.19.3",
-      health: "degraded",
+      health: "unavailable",
       configured: true,
       ingestErrorMessages: true,
     },

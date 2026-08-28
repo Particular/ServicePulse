@@ -145,7 +145,7 @@ function mapRemotes(remotes: RemoteInstance[]): PlatformInstanceModel[] {
 }
 
 function mapMonitoring(monitoringRoot: MonitoringRoot | null): PlatformInstanceModel | null {
-  if (!monitoringClient.isMonitoringEnabled) {
+  if (!monitoringClient.isMonitoringEnabled || monitoringRoot === null) {
     return null;
   }
 
