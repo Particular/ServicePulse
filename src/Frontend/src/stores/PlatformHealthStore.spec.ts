@@ -32,6 +32,7 @@ describe("PlatformHealthStore", () => {
     expect(store.isMultiRegion).toBe(false);
     expect(store.severity).toBe("danger");
     expect(store.rows).toHaveLength(4);
+    expect(store.outdatedOnly).toBe(false);
     expect(store.rows[2].upgradeAvailable).toBe(true);
     expect(store.rows[2].latestVersion).toBe("6.19.3");
     expect(store.issueSummary).toContain("2 issues detected");
@@ -86,6 +87,7 @@ describe("PlatformHealthStore", () => {
 
     expect(store.rows[2].upgradeAvailable).toBe(true);
     expect(store.rows[2].latestVersion).toBe("6.19.3");
+    expect(store.outdatedOnly).toBe(false);
   });
 });
 
@@ -107,7 +109,7 @@ const singleRegionWarningModel: PlatformModel = {
       name: "Particular.ServiceControl.Audit",
       kind: "audit",
       role: "remote-audit",
-      version: "6.19.3",
+      version: "6.18.0",
       health: "healthy",
       configured: true,
     },

@@ -19,6 +19,10 @@ const warningLevel = computed(() => {
     return WarningLevel.Warning;
   }
 
+  if (store.outdatedOnly) {
+    return WarningLevel.Info;
+  }
+
   return WarningLevel.None;
 });
 </script>

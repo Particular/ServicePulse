@@ -51,7 +51,7 @@ function shouldShowUpgradeCue(row: (typeof store.rows)[number]) {
 
       <div class="row">
         <div class="col-sm-12">
-          <p :class="issueSummaryClass">{{ store.issueSummary }}</p>
+          <p v-if="store.issueSummary !== 'No issues detected.'" :class="issueSummaryClass">{{ store.issueSummary }}</p>
           <div v-if="store.payload?.warnings.length" class="platform-warning-list alert alert-warning" role="note">
             <div v-for="warning in store.payload.warnings" :key="warning">{{ warning }}</div>
           </div>
@@ -79,9 +79,10 @@ function shouldShowUpgradeCue(row: (typeof store.rows)[number]) {
                   </td>
                   <td>
                     <span>{{ row.version }}</span>
-                    <span v-if="shouldShowUpgradeCue(row)" class="upgrade-cue">
-                      (<FAIcon class="footer-icon fake-link" :icon="faArrowTurnUp" /> <a :href="getUpgradeTargetLink(row)" target="_blank">v{{ getUpgradeTargetVersion(row) }} available</a>)</span
-                    >
+                    <a v-if="shouldShowUpgradeCue(row)" class="upgrade-badge" :href="getUpgradeTargetLink(row)" target="_blank">
+                      <FAIcon class="footer-icon fake-link" :icon="faArrowTurnUp" />
+                      <span>v{{ getUpgradeTargetVersion(row) }} available</span>
+                    </a>
                   </td>
                   <td>
                     <span class="health-badge" :class="row.health">{{ row.health.charAt(0).toUpperCase() + row.health.slice(1) }}</span>
@@ -216,8 +217,25 @@ tbody tr:last-child td {
   margin-right: 4px;
 }
 
-.upgrade-cue {
-  margin-left: 0.25rem;
+.upgrade-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 0.5rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #eef7fa;
+  color: var(--sp-blue);
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.upgrade-badge:hover {
+  color: #007f98;
+  background: #dff1f6;
+  text-decoration: none;
 }
 
 @media (max-width: 600px) {

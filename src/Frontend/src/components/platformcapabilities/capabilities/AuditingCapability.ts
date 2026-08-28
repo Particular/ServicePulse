@@ -32,7 +32,7 @@ const AuditingDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.InstanceNotConfigured]: "A ServiceControl Audit instance has not been configured. Click 'Get Started' to learn more about setting up auditing.",
   [CapabilityStatus.Unavailable]: "All ServiceControl Audit instances are configured but not responding. Click 'Learn More' for troubleshooting steps.",
   [CapabilityStatus.PartiallyUnavailable]: "Some ServiceControl Audit instances are not responding.",
-  [CapabilityStatus.Available]: "All ServiceControl Audit instances are available and endpoints have been configured to send audit messages.",
+  [CapabilityStatus.Available]: "All ServiceControl Audit instances are available.",
 };
 
 const AuditingHelpButtonText: CapabilityStatusToStringMap = {
@@ -134,12 +134,7 @@ export function useAuditingCapability(): CapabilityComposable {
       return CapabilityStatus.PartiallyUnavailable;
     }
 
-    // 4. Check if the 'All Messages' feature is not supported OR there are no successful messages
-    if (!isAllMessagesSupported.value || !hasSuccessfulMessages.value) {
-      return CapabilityStatus.EndpointsNotConfigured;
-    }
-
-    // 5. Audit instance is available and there are successful audit messages
+    // 4. All configured audit instances are available.
     return CapabilityStatus.Available;
   });
 

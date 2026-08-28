@@ -80,10 +80,10 @@ describe("PlatformHealthView", () => {
       },
       remotes: [
         {
-          name: "Particular.ServiceControl.Audit-Blue",
+          name: "Particular.ServiceControl.Audit",
           instanceType: "audit",
           role: "remote-audit",
-          version: "6.17.0",
+          version: "6.18.0",
           status: "healthy",
         },
       ],
@@ -97,6 +97,7 @@ describe("PlatformHealthView", () => {
       },
     });
 
+    expect(screen.queryByText(/Outdated/i)).not.toBeInTheDocument();
     expect(screen.getByText(/v6.19.3 available/i)).toBeInTheDocument();
   });
 

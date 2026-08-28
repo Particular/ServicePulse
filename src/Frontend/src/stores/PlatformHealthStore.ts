@@ -45,6 +45,8 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
     return "none";
   });
 
+  const outdatedOnly = computed(() => severity.value === "none" && rows.value.some((row) => row.upgradeAvailable));
+
   const rows = computed<PlatformHealthRow[]>(() => {
     const current = payload.value;
     if (!current) {
@@ -157,6 +159,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
     payload,
     refresh,
     severity,
+    outdatedOnly,
     isMultiRegion,
     issueSummary,
     rows,

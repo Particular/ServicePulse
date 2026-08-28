@@ -98,7 +98,7 @@ describe("FEATURE: Audit capability card", () => {
   });
 
   describe("RULE: When audit instance is available but no messages exist, show 'Endpoints Not Configured' status", () => {
-    test("EXAMPLE: Audit instance available but no successful messages shows not configured status", async ({ driver }) => {
+    test("EXAMPLE: Audit instance available but no successful messages still shows available status", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasAvailableAuditInstance());
@@ -114,12 +114,15 @@ describe("FEATURE: Audit capability card", () => {
       });
 
       await waitFor(async () => {
-        expect(await isAuditingCardNotConfigured()).toBe(true);
+        expect(await isAuditingCardAvailable()).toBe(true);
       });
 
       const actionButton = await auditingActionButton();
       expect(actionButton).toBeInTheDocument();
-      expect(actionButton?.textContent).toMatch(/Learn More/i);
+      expect(actionButton?.textContent).toMatch(/View Messages/i);
+
+      const messagesIndicator = await auditingIndicatorByLabel("Messages");
+      expect(messagesIndicator).toBeInTheDocument();
     });
   });
 
@@ -259,7 +262,7 @@ describe("FEATURE: Audit capability card", () => {
   });
 
   describe("RULE: When ServiceControl version does not support 'All Messages' feature, show 'Endpoints Not Configured' status", () => {
-    test("EXAMPLE: ServiceControl version < 6.6.0 with successful messages still shows not configured status", async ({ driver }) => {
+    test("EXAMPLE: ServiceControl version < 6.6.0 with successful messages still shows available status", async ({ driver }) => {
       // Arrange
       // Set up ServiceControl with version < 6.6.0 which does NOT support "All Messages" feature
       await driver.setUp(precondition.hasAuthenticationDisabled());
@@ -303,15 +306,16 @@ describe("FEATURE: Audit capability card", () => {
         expect(card).toBeInTheDocument();
       });
 
-      // Even though there are successful messages, the status should be "not configured"
-      // because the ServiceControl version doesn't support the "All Messages" feature
       await waitFor(async () => {
-        expect(await isAuditingCardNotConfigured()).toBe(true);
+        expect(await isAuditingCardAvailable()).toBe(true);
       });
 
       const actionButton = await auditingActionButton();
       expect(actionButton).toBeInTheDocument();
-      expect(actionButton?.textContent).toMatch(/Learn More/i);
+      expect(actionButton?.textContent).toMatch(/View Messages/i);
+
+      const messagesIndicator = await auditingIndicatorByLabel("Messages");
+      expect(messagesIndicator).toBeInTheDocument();
     });
   });
 });

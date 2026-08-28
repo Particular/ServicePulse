@@ -3,7 +3,7 @@ import type RootUrls from "@/resources/RootUrls";
 
 const latestPlatformVersion = "6.19.3";
 
-export type PlatformHealthMockScenarioName = "single-region-healthy" | "single-region-warning" | "single-region-danger" | "multi-region-healthy" | "multi-region-warning" | "multi-region-danger";
+export type PlatformHealthMockScenarioName = "single-region-healthy" | "single-region-warning" | "single-region-danger" | "single-region-outdated" | "multi-region-healthy" | "multi-region-warning" | "multi-region-danger";
 
 export type PlatformHealthMockStatus = "healthy" | "degraded" | "unavailable";
 
@@ -149,7 +149,7 @@ function createScenario(name: PlatformHealthMockScenarioName): PlatformHealthMoc
         scenario: name,
         primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "healthy" },
         remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: latestPlatformVersion, status: "healthy", instanceType: "audit" },
+          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
           { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "healthy", instanceType: "audit" },
         ],
         monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
@@ -160,7 +160,7 @@ function createScenario(name: PlatformHealthMockScenarioName): PlatformHealthMoc
         scenario: name,
         primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "healthy" },
         remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: latestPlatformVersion, status: "healthy", instanceType: "audit" },
+          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
           { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "degraded", instanceType: "audit" },
         ],
         monitoring: { configured: true, version: latestPlatformVersion, status: "unavailable" },
@@ -171,10 +171,21 @@ function createScenario(name: PlatformHealthMockScenarioName): PlatformHealthMoc
         scenario: name,
         primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "unavailable" },
         remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: latestPlatformVersion, status: "healthy", instanceType: "audit" },
+          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
           { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "degraded", instanceType: "audit" },
         ],
         monitoring: { configured: true, version: latestPlatformVersion, status: "unavailable" },
+        warnings: [],
+      };
+    case "single-region-outdated":
+      return {
+        scenario: name,
+        primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "healthy" },
+        remotes: [
+          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
+          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: latestPlatformVersion, status: "healthy", instanceType: "audit" },
+        ],
+        monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
         warnings: [],
       };
     case "multi-region-healthy":
