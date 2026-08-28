@@ -92,7 +92,6 @@ describe("PlatformHealthStore", () => {
 });
 
 const singleRegionWarningModel: PlatformModel = {
-  mode: "single-region",
   primary: {
     id: "primary",
     name: "Particular.ServiceControl",
@@ -131,12 +130,11 @@ const singleRegionWarningModel: PlatformModel = {
 };
 
 const multiRegionDangerModel: PlatformModel = {
-  mode: "multi-region",
   primary: {
     id: "primary",
     name: "Particular.ServiceControl.CrossRegion",
     kind: "error",
-    role: "cross-region-primary",
+    role: "primary-error",
     version: "6.19.3",
     health: "healthy",
   },

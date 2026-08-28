@@ -37,7 +37,6 @@ describe("PlatformModelStore", () => {
         { headers: new Headers() },
         {
           name: "Particular.ServiceControl.CrossRegion",
-          platform_health_mode: "multi-region",
           platform_health_status: "healthy",
           platform_health_version: "6.19.3",
           platform_health_warnings: [],
@@ -65,6 +64,7 @@ describe("PlatformModelStore", () => {
     expect(store.isMultiRegion).toBe(true);
     expect(store.monitoring).not.toBeNull();
     expect(store.monitoring?.role).toBe("monitoring");
+    expect(store.primary?.role).toBe("primary-error");
     expect(store.errorInstances).toHaveLength(1);
   });
 });

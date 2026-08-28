@@ -1,6 +1,5 @@
-export type PlatformTopologyMode = "single-region" | "multi-region";
 export type PlatformInstanceKind = "error" | "audit" | "monitoring";
-export type PlatformInstanceRole = "primary-error" | "cross-region-primary" | "remote-error" | "remote-audit" | "monitoring";
+export type PlatformInstanceRole = "primary-error" | "remote-error" | "remote-audit" | "monitoring";
 export type PlatformInstanceHealth = "healthy" | "degraded" | "unavailable";
 
 export interface PlatformInstance {
@@ -14,7 +13,6 @@ export interface PlatformInstance {
 }
 
 export interface PlatformModel {
-  mode: PlatformTopologyMode;
   primary: PlatformInstance;
   remotes: PlatformInstance[];
   monitoring: PlatformInstance | null;

@@ -5,12 +5,11 @@ import monitoringClient from "@/components/monitoring/monitoringClient";
 import { authFetch } from "@/composables/useAuthenticatedFetch";
 import type RootUrls from "@/resources/RootUrls";
 import type { RemoteInstance } from "@/resources/RemoteInstance";
-import type { PlatformInstance, PlatformInstanceHealth, PlatformModel, PlatformTopologyMode } from "@/resources/PlatformModel";
+import type { PlatformInstance, PlatformInstanceHealth, PlatformModel } from "@/resources/PlatformModel";
 
 interface ServiceControlRoot {
   name?: string;
   platform_health_status?: PlatformInstanceHealth;
-  platform_health_mode?: PlatformTopologyMode;
   platform_health_warnings?: string[];
   platform_health_version?: string;
 }
@@ -30,16 +29,14 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
   const monitoring = computed(() => model.value?.monitoring ?? null);
   const auditInstances = computed(() => remotes.value.filter((instance) => instance.kind === "audit"));
   const errorInstances = computed(() => remotes.value.filter((instance) => instance.kind === "error"));
-  const isMultiRegion = computed(() => model.value?.mode === "multi-region");
+  const isMultiRegion = computed(() => model.value?.remotes.some((instance) => instance.role === "remote-error") ?? false);
   const warnings = computed(() => model.value?.warnings ?? []);
 
   async function refresh() {
     const [primaryRoot, remotesResponse, monitoringResponse] = await Promise.all([getPrimaryRoot(), getRemotes(), getMonitoringRoot()]);
-    const mode = detectMode(primaryRoot, remotesResponse);
 
     model.value = {
-      mode,
-      primary: mapPrimary(primaryRoot, mode),
+      primary: mapPrimary(primaryRoot),
       remotes: mapRemotes(remotesResponse),
       monitoring: mapMonitoring(monitoringResponse),
       warnings: primaryRoot?.platform_health_warnings ?? readDevWarnings(),
@@ -96,13 +93,13 @@ async function getMonitoringRoot(): Promise<MonitoringRoot | null> {
   }
 }
 
-function mapPrimary(primaryRoot: ServiceControlRootDocument | null, mode: PlatformTopologyMode): PlatformInstance {
+function mapPrimary(primaryRoot: ServiceControlRootDocument | null): PlatformInstance {
   if (!primaryRoot) {
     return {
       id: "primary",
       name: "Particular.ServiceControl",
       kind: "error",
-      role: mode === "multi-region" ? "cross-region-primary" : "primary-error",
+      role: "primary-error",
       version: "Unknown",
       health: "unavailable",
     };
@@ -112,7 +109,7 @@ function mapPrimary(primaryRoot: ServiceControlRootDocument | null, mode: Platfo
     id: "primary",
     name: primaryRoot.name || "Particular.ServiceControl",
     kind: "error",
-    role: mode === "multi-region" ? "cross-region-primary" : "primary-error",
+    role: "primary-error",
     version: primaryRoot.platform_health_version ?? "Unknown",
     health: primaryRoot.platform_health_status ?? "healthy",
     sourceUrl: serviceControlClient.url,
@@ -150,18 +147,6 @@ function mapMonitoring(monitoringRoot: MonitoringRoot | null): PlatformInstance 
     health: monitoringRoot?.platform_health_status ?? "healthy",
     sourceUrl: monitoringClient.url,
   };
-}
-
-function detectMode(primaryRoot: ServiceControlRootDocument | null, remotes: RemoteInstance[]): PlatformTopologyMode {
-  if (primaryRoot?.platform_health_mode) {
-    return primaryRoot.platform_health_mode;
-  }
-
-  const primaryName = primaryRoot?.name?.toLowerCase() ?? "";
-  const hasCrossRegionName = primaryName.includes("crossregion") || primaryName.includes("cross-region");
-  const hasRemoteErrors = remotes.some((remote) => remote.configuration?.data_retention?.error_retention_period !== undefined);
-
-  return hasCrossRegionName || hasRemoteErrors ? "multi-region" : "single-region";
 }
 
 function extractInstanceName(apiUri: string) {

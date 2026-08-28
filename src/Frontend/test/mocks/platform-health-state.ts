@@ -93,7 +93,6 @@ export function getPlatformHealthPrimaryRoot(): RootUrls {
     archived_groups_url: "http://localhost:33333/api/errors/groups/{classifier?}",
     get_archive_group: "http://localhost:33333/api/archive/groups/id/{groupId}",
     platform_health_status: current.primary.status,
-    platform_health_mode: current.scenario.startsWith("multi-region") ? "multi-region" : "single-region",
     platform_health_warnings: current.warnings,
     platform_health_version: current.primary.version,
   } as RootUrls;

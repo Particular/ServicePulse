@@ -33,7 +33,6 @@ describe("PlatformHealthView", () => {
   test("requires the configuration download before enabling the support link", async () => {
     const store = usePlatformHealthStore();
     store.payload = {
-      mode: "single-region",
       primary: {
         id: "primary",
         name: "Particular.ServiceControl",
@@ -70,7 +69,6 @@ describe("PlatformHealthView", () => {
   test("shows an inline upgrade cue for an outdated instance version", () => {
     const store = usePlatformHealthStore();
     store.payload = {
-      mode: "single-region",
       primary: {
         id: "primary",
         name: "Particular.ServiceControl",
@@ -106,12 +104,11 @@ describe("PlatformHealthView", () => {
   test("renders monitoring when present even in multi-region", () => {
     const store = usePlatformHealthStore();
     store.payload = {
-      mode: "multi-region",
       primary: {
         id: "primary",
         name: "Particular.ServiceControl.CrossRegion",
         kind: "error",
-        role: "cross-region-primary",
+        role: "primary-error",
         version: "6.19.3",
         health: "healthy",
       },

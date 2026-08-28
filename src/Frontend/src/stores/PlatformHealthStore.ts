@@ -14,7 +14,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   const environmentAndVersionsStore = useEnvironmentAndVersionsStore();
   const platformModelStore = usePlatformModelStore();
 
-  const isMultiRegion = computed(() => payload.value?.mode === "multi-region");
+  const isMultiRegion = computed(() => payload.value?.remotes.some((remote) => remote.role === "remote-error") ?? false);
 
   const severity = computed<PlatformHealthSeverity>(() => {
     const current = payload.value;
@@ -26,7 +26,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
       return "danger";
     }
 
-    if (current.mode === "multi-region" && current.remotes.some((remote) => remote.kind === "error" && remote.health !== "healthy")) {
+    if (current.remotes.some((remote) => remote.role === "remote-error" && remote.health !== "healthy")) {
       return "danger";
     }
 
@@ -82,7 +82,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
     issues.push(...current.remotes.filter((remote) => remote.health === "degraded").map((remote) => `degraded ${formatInstanceType(remote.kind)}`));
     issues.push(...current.remotes.filter((remote) => remote.health === "unavailable").map((remote) => `unavailable ${formatInstanceType(remote.kind)}`));
 
-    if (current.mode === "single-region" && current.monitoring?.health === "unavailable") {
+    if (!isMultiRegion.value && current.monitoring?.health === "unavailable") {
       issues.push("unavailable Monitoring instance");
     }
 
@@ -161,10 +161,6 @@ function formatRowType(instance: PlatformInstance) {
     return "Monitoring instance";
   }
 
-  if (instance.role === "cross-region-primary") {
-    return "Error instance";
-  }
-
   return "Error instance";
 }
 
@@ -172,8 +168,6 @@ function formatRole(role: PlatformInstance["role"]) {
   switch (role) {
     case "primary-error":
       return "Primary error processing instance";
-    case "cross-region-primary":
-      return "Connected cross-region primary";
     case "remote-audit":
       return "Audit instance";
     case "remote-error":
