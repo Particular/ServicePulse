@@ -90,9 +90,7 @@ export function useMonitoringCapability(): CapabilityComposable {
     const instanceTooltip = instanceAvailable ? MonitoringIndicatorTooltip.InstanceAvailable : !hasMonitoringInstance.value ? MonitoringIndicatorTooltip.InstanceNotConfigured : MonitoringIndicatorTooltip.InstanceUnavailable;
 
     if (hasMonitoringInstance.value) {
-      indicators.push(
-        createIndicator("Instance", instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, instanceTooltip, platformModelStore.monitoring?.sourceUrl ?? monitoringClient.url, platformModelStore.monitoring?.version)
-      );
+      indicators.push(createIndicator("Instance", instanceAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, instanceTooltip, platformModelStore.monitoring?.apiUrl ?? monitoringClient.url, platformModelStore.monitoring?.version));
     }
 
     // data available indicator - only show if instance is connected

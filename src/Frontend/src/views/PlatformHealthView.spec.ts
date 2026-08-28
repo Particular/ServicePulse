@@ -40,6 +40,7 @@ describe("PlatformHealthView", () => {
         role: "primary-error",
         version: "6.19.3",
         health: "healthy",
+        apiUrl: "http://localhost:33333/api/",
       },
       remotes: [],
       monitoring: null,
@@ -76,6 +77,7 @@ describe("PlatformHealthView", () => {
         role: "primary-error",
         version: "6.19.3",
         health: "healthy",
+        apiUrl: "http://localhost:33333/api/",
       },
       remotes: [
         {
@@ -85,6 +87,7 @@ describe("PlatformHealthView", () => {
           role: "remote-audit",
           version: "6.18.0",
           health: "healthy",
+          apiUrl: "http://Particular.ServiceControl.Audit/api/",
         },
       ],
       monitoring: null,
@@ -111,6 +114,7 @@ describe("PlatformHealthView", () => {
         role: "primary-error",
         version: "6.19.3",
         health: "healthy",
+        apiUrl: "http://localhost:33333/api/",
       },
       remotes: [
         {
@@ -120,6 +124,7 @@ describe("PlatformHealthView", () => {
           role: "remote-error",
           version: "6.19.3",
           health: "healthy",
+          apiUrl: "http://Particular.ServiceControl.RegionA/api/",
         },
       ],
       monitoring: {
@@ -129,6 +134,7 @@ describe("PlatformHealthView", () => {
         role: "monitoring",
         version: "6.19.3",
         health: "healthy",
+        apiUrl: "http://localhost:33633/",
       },
       warnings: [],
     } satisfies PlatformHealthResponse;

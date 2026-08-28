@@ -53,7 +53,7 @@ export function useErrorCapability(): CapabilityComposable {
     const indicators: StatusIndicator[] = [];
 
     const tooltip = isConnected.value ? ErrorIndicatorTooltip.InstanceAvailable : ErrorIndicatorTooltip.InstanceUnavailable;
-    indicators.push(createIndicator("Instance", isConnected.value ? CapabilityStatus.Available : CapabilityStatus.Unavailable, tooltip, platformModelStore.primary?.sourceUrl, platformModelStore.primary?.version));
+    indicators.push(createIndicator("Instance", isConnected.value ? CapabilityStatus.Available : CapabilityStatus.Unavailable, tooltip, platformModelStore.primary?.apiUrl, platformModelStore.primary?.version));
 
     return indicators;
   });

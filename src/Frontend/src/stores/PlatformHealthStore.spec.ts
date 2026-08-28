@@ -99,6 +99,7 @@ const singleRegionWarningModel: PlatformModel = {
     role: "primary-error",
     version: "6.19.3",
     health: "healthy",
+    apiUrl: "http://localhost:33333/api/",
   },
   remotes: [
     {
@@ -108,6 +109,7 @@ const singleRegionWarningModel: PlatformModel = {
       role: "remote-audit",
       version: "6.18.0",
       health: "healthy",
+      apiUrl: "http://Particular.ServiceControl.Audit/api/",
     },
     {
       id: "remote-1",
@@ -116,6 +118,7 @@ const singleRegionWarningModel: PlatformModel = {
       role: "remote-audit",
       version: "6.17.0",
       health: "degraded",
+      apiUrl: "http://Particular.ServiceControl.Audit-Blue/api/",
     },
   ],
   monitoring: {
@@ -125,6 +128,7 @@ const singleRegionWarningModel: PlatformModel = {
     role: "monitoring",
     version: "6.19.3",
     health: "healthy",
+    apiUrl: "http://localhost:33633/",
   },
   warnings: [],
 };
@@ -137,6 +141,7 @@ const multiRegionDangerModel: PlatformModel = {
     role: "primary-error",
     version: "6.19.3",
     health: "healthy",
+    apiUrl: "http://localhost:33333/api/",
   },
   remotes: [
     {
@@ -146,6 +151,7 @@ const multiRegionDangerModel: PlatformModel = {
       role: "remote-error",
       version: "6.19.3",
       health: "healthy",
+      apiUrl: "http://Particular.ServiceControl.RegionA/api/",
     },
     {
       id: "remote-1",
@@ -154,6 +160,7 @@ const multiRegionDangerModel: PlatformModel = {
       role: "remote-error",
       version: "6.19.3",
       health: "unavailable",
+      apiUrl: "http://Particular.ServiceControl.RegionB/api/",
     },
   ],
   monitoring: null,

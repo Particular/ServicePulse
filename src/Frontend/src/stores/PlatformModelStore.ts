@@ -102,6 +102,7 @@ function mapPrimary(primaryRoot: ServiceControlRootDocument | null): PlatformIns
       role: "primary-error",
       version: "Unknown",
       health: "unavailable",
+      apiUrl: serviceControlClient.url ?? "",
     };
   }
 
@@ -112,7 +113,7 @@ function mapPrimary(primaryRoot: ServiceControlRootDocument | null): PlatformIns
     role: "primary-error",
     version: primaryRoot.platform_health_version ?? "Unknown",
     health: primaryRoot.platform_health_status ?? "healthy",
-    sourceUrl: serviceControlClient.url,
+    apiUrl: serviceControlClient.url ?? "",
   };
 }
 
@@ -128,7 +129,7 @@ function mapRemotes(remotes: RemoteInstance[]): PlatformInstance[] {
       role: isError ? "remote-error" : "remote-audit",
       version: remote.version,
       health: remote.platform_health_status ?? (remote.status === "online" ? "healthy" : "unavailable"),
-      sourceUrl: remote.api_uri,
+      apiUrl: remote.api_uri,
     };
   });
 }
@@ -145,7 +146,7 @@ function mapMonitoring(monitoringRoot: MonitoringRoot | null): PlatformInstance 
     role: "monitoring",
     version: monitoringRoot?.platform_health_version ?? "Unknown",
     health: monitoringRoot?.platform_health_status ?? "healthy",
-    sourceUrl: monitoringClient.url,
+    apiUrl: monitoringClient.url ?? "",
   };
 }
 

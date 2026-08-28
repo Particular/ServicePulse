@@ -9,7 +9,7 @@ export interface PlatformInstance {
   role: PlatformInstanceRole;
   version: string;
   health: PlatformInstanceHealth;
-  sourceUrl?: string;
+  apiUrl: string;
 }
 
 export interface PlatformModel {
