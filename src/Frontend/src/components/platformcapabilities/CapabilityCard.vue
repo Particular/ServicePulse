@@ -75,18 +75,20 @@ function handleButtonClick() {
           </div>
         </div>
         <div class="title-row-actions">
-          <RouterLink
-            v-if="props.status !== CapabilityStatus.EndpointsNotConfigured && props.status !== CapabilityStatus.InstanceNotConfigured"
-            :to="routeLinks.platformHealth"
+          <component
+            :is="props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured ? 'span' : RouterLink"
+            v-if="!props.isLoading"
+            :to="props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured ? undefined : routeLinks.platformHealth"
             class="status-badge"
             :class="{
               'status-available': props.status === CapabilityStatus.Available,
               'status-unavailable': props.status === CapabilityStatus.Unavailable,
               'status-partially-unavailable': props.status === CapabilityStatus.PartiallyUnavailable,
+              'status-not-configured': props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured,
             }"
           >
-            {{ props.status }}
-          </RouterLink>
+            {{ props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured ? "Not configured" : props.status }}
+          </component>
           <button v-if="allowDismiss" class="hide-card-btn" @click="emit('hide')" v-tippy="'Hide this card'">
             <FAIcon :icon="faTimes" />
           </button>
@@ -262,6 +264,11 @@ function handleButtonClick() {
 .status-partially-unavailable {
   background-color: #fff3cd;
   color: #856404;
+}
+
+.status-not-configured {
+  background-color: #e9ecef;
+  color: #495057;
 }
 
 .capability-footer {
