@@ -167,7 +167,7 @@ function formatRowType(instance: PlatformInstance) {
 function formatRole(role: PlatformInstance["role"]) {
   switch (role) {
     case "primary-error":
-      return "Primary error processing instance";
+      return "Primary error instance";
     case "remote-audit":
       return "Audit instance";
     case "remote-error":
