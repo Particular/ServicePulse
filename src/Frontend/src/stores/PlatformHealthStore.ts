@@ -14,8 +14,6 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   const environmentAndVersionsStore = useEnvironmentAndVersionsStore();
   const platformModelStore = usePlatformModelStore();
 
-  const isMultiRegion = computed(() => payload.value?.remotes.some((remote) => remote.role === "remote-error") ?? false);
-
   const severity = computed<PlatformHealthSeverity>(() => {
     const current = payload.value;
     if (!current) {
@@ -82,7 +80,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
     issues.push(...current.remotes.filter((remote) => remote.health === "degraded").map((remote) => `degraded ${formatInstanceType(remote.kind)}`));
     issues.push(...current.remotes.filter((remote) => remote.health === "unavailable").map((remote) => `unavailable ${formatInstanceType(remote.kind)}`));
 
-    if (!isMultiRegion.value && current.monitoring?.health === "unavailable") {
+    if (current.monitoring?.health === "unavailable") {
       issues.push("unavailable Monitoring instance");
     }
 
@@ -123,7 +121,6 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
     refresh,
     severity,
     outdatedOnly,
-    isMultiRegion,
     issueSummary,
     rows,
     latestServiceControlVersion: computed(() => {

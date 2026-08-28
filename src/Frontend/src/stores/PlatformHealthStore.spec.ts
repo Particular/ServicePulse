@@ -29,7 +29,6 @@ describe("PlatformHealthStore", () => {
 
     await store.refresh();
 
-    expect(store.isMultiRegion).toBe(false);
     expect(store.severity).toBe("warning");
     expect(store.rows).toHaveLength(4);
     expect(store.outdatedOnly).toBe(false);
@@ -51,11 +50,36 @@ describe("PlatformHealthStore", () => {
 
     await store.refresh();
 
-    expect(store.isMultiRegion).toBe(true);
     expect(store.severity).toBe("danger");
     expect(store.rows).toHaveLength(3);
     expect(store.rows.every((row) => row.type === "Error instance" || row.type === "Monitoring instance")).toBe(true);
     expect(store.issueSummary).toContain("unavailable Error instance");
+  });
+
+  test("includes monitoring unavailability in the issue summary whenever monitoring is configured", async () => {
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.refresh = vi.fn(() => {
+      platformModelStore.model = {
+        ...multiRegionDangerModel,
+        monitoring: {
+          id: "monitoring",
+          name: "Particular.ServiceControl.Monitoring",
+          kind: "monitoring",
+          role: "monitoring",
+          version: "6.19.3",
+          health: "unavailable",
+          apiUrl: "http://localhost:33633/",
+        },
+      };
+      return Promise.resolve();
+    });
+    const store = usePlatformHealthStore();
+
+    await store.refresh();
+
+    expect(store.severity).toBe("danger");
+    expect(store.issueSummary).toContain("unavailable Error instance");
+    expect(store.issueSummary).toContain("unavailable Monitoring instance");
   });
 
   test("uses dev mock state as a latest-version fallback for upgrade cues", async () => {
