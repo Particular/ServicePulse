@@ -92,13 +92,10 @@ describe("PlatformHealthStore", () => {
         primary: { name: "Particular.ServiceControl", version: "6.19.3", status: "healthy" },
         remotes: [],
         monitoring: { configured: true, version: "6.19.3", status: "healthy" },
-        warnings: [],
       }),
       reset: vi.fn(),
       setScenario: vi.fn(),
       setStatus: vi.fn(),
-      setWarnings: vi.fn(),
-      clearWarnings: vi.fn(),
     };
     const platformModelStore = usePlatformModelStore();
     platformModelStore.refresh = vi.fn(() => {
@@ -154,7 +151,6 @@ const singleRegionWarningModel: PlatformModel = {
     health: "healthy",
     apiUrl: "http://localhost:33633/",
   },
-  warnings: [],
 };
 
 const multiRegionDangerModel: PlatformModel = {
@@ -188,5 +184,4 @@ const multiRegionDangerModel: PlatformModel = {
     },
   ],
   monitoring: null,
-  warnings: [],
 };

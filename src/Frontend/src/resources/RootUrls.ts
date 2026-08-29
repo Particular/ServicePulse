@@ -21,6 +21,5 @@ export default interface RootUrls {
   mypermissions_summary?: string;
   my_routes_url?: string;
   platform_health_status?: "healthy" | "degraded" | "unavailable";
-  platform_health_warnings?: string[];
   platform_health_version?: string;
 }

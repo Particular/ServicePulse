@@ -52,9 +52,6 @@ function shouldShowUpgradeCue(row: (typeof store.rows)[number]) {
       <div class="row">
         <div class="col-sm-12">
           <p v-if="store.issueSummary !== 'No issues detected.'" :class="issueSummaryClass">{{ store.issueSummary }}</p>
-          <div v-if="store.payload?.warnings.length" class="platform-warning-list alert alert-warning" role="note">
-            <div v-for="warning in store.payload.warnings" :key="warning">{{ warning }}</div>
-          </div>
         </div>
       </div>
 
@@ -216,10 +213,6 @@ tbody tr:last-child td {
 .health-badge.unavailable {
   background: #fde5e3;
   color: #b53a31;
-}
-
-.platform-warning-list {
-  margin-bottom: 1rem;
 }
 
 .footer-icon {

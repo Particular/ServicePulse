@@ -8,7 +8,10 @@ export interface ServiceControlInstanceConnection {
   errors: string[];
 }
 
-export type ServiceControlRootDocument = RootUrls;
+export type ServiceControlRootDocument = RootUrls & {
+  platform_health_status: "healthy" | "degraded" | "unavailable";
+  platform_health_version: string;
+};
 
 class ServiceControlClient {
   private _url: string | undefined = undefined;

@@ -16,5 +16,4 @@ export interface PlatformModel {
   primary: PlatformInstance;
   remotes: PlatformInstance[];
   monitoring: PlatformInstance | null;
-  warnings: string[];
 }

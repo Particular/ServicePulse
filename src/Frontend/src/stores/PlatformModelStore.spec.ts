@@ -36,7 +36,6 @@ describe("PlatformModelStore", () => {
       name: "Particular.ServiceControl.CrossRegion",
       platform_health_status: "healthy",
       platform_health_version: "6.19.3",
-      platform_health_warnings: [],
     });
     getRemoteInstances.mockResolvedValue([
       {
@@ -56,5 +55,22 @@ describe("PlatformModelStore", () => {
     expect(store.monitoring?.role).toBe("monitoring");
     expect(store.primary?.role).toBe("primary-error");
     expect(store.errorInstances).toHaveLength(1);
+  });
+
+  test("uses primary root values directly when the request succeeds", async () => {
+    getRoot.mockResolvedValue({
+      name: "Particular.ServiceControl.Primary",
+      platform_health_status: "degraded",
+      platform_health_version: "6.18.1",
+    });
+    getRemoteInstances.mockResolvedValue([]);
+    getMonitoringRoot.mockResolvedValue(null);
+
+    const store = usePlatformModelStore();
+    await store.refresh();
+
+    expect(store.primary?.name).toBe("Particular.ServiceControl.Primary");
+    expect(store.primary?.health).toBe("degraded");
+    expect(store.primary?.version).toBe("6.18.1");
   });
 });

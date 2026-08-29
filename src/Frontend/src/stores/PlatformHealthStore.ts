@@ -36,10 +36,6 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
       return "warning";
     }
 
-    if (current.warnings.length > 0) {
-      return "warning";
-    }
-
     return "none";
   });
 
@@ -83,8 +79,6 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
     if (current.monitoring?.health === "unavailable") {
       issues.push("unavailable Monitoring instance");
     }
-
-    issues.push(...current.warnings.map((warning) => `topology warning: ${warning}`));
 
     if (issues.length === 0) {
       return "No issues detected.";

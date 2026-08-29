@@ -15,7 +15,7 @@ vi.mock("@/composables/usePlatformHealthStoreAutoRefresh", () => ({
 }));
 
 describe("PlatformHealthMenuItem", () => {
-  test("shows a no-issues tooltip when there are no warnings", () => {
+  test("shows a no-issues tooltip when there are no issues", () => {
     store.severity = "none";
     store.outdatedOnly = false;
 
@@ -41,7 +41,7 @@ describe("PlatformHealthMenuItem", () => {
     expect(container.querySelector(".info")).not.toBeNull();
   });
 
-  test("shows a warning tooltip when platform warnings are present", () => {
+  test("shows a warning tooltip when instances are degraded", () => {
     store.severity = "warning";
     store.outdatedOnly = false;
 
@@ -50,7 +50,7 @@ describe("PlatformHealthMenuItem", () => {
     const tooltipTarget = document.querySelector(".tooltip-target");
 
     expect(tooltipTarget).toHaveAttribute("title", "");
-    expect(tooltipTarget).toHaveAttribute("data-tooltip", "Platform health: Attention needed. One or more platform instances are degraded or platform warnings are present.");
+    expect(tooltipTarget).toHaveAttribute("data-tooltip", "Platform health: Attention needed. One or more platform instances are degraded.");
     expect(container.querySelector(".warning")).not.toBeNull();
   });
 

@@ -32,7 +32,7 @@ const tooltip = computed(() => {
   }
 
   if (store.severity === "warning") {
-    return "Platform health: Attention needed. One or more platform instances are degraded or platform warnings are present.";
+    return "Platform health: Attention needed. One or more platform instances are degraded.";
   }
 
   if (store.outdatedOnly) {

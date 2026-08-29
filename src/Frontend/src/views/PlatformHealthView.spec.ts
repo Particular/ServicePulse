@@ -44,7 +44,6 @@ describe("PlatformHealthView", () => {
       },
       remotes: [],
       monitoring: null,
-      warnings: [],
     } satisfies PlatformHealthResponse;
 
     render(PlatformHealthView, {
@@ -91,7 +90,6 @@ describe("PlatformHealthView", () => {
         },
       ],
       monitoring: null,
-      warnings: [],
     } satisfies PlatformHealthResponse;
 
     render(PlatformHealthView, {
@@ -128,7 +126,6 @@ describe("PlatformHealthView", () => {
         },
       ],
       monitoring: null,
-      warnings: [],
     } satisfies PlatformHealthResponse;
 
     render(PlatformHealthView, {
@@ -173,7 +170,6 @@ describe("PlatformHealthView", () => {
         health: "healthy",
         apiUrl: "http://localhost:33633/",
       },
-      warnings: [],
     } satisfies PlatformHealthResponse;
 
     render(PlatformHealthView, {

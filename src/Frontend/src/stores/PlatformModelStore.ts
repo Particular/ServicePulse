@@ -14,7 +14,6 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
   const auditInstances = computed(() => remotes.value.filter((instance) => instance.kind === "audit"));
   const errorInstances = computed(() => remotes.value.filter((instance) => instance.kind === "error"));
   const isMultiRegion = computed(() => model.value?.remotes.some((instance) => instance.role === "remote-error") ?? false);
-  const warnings = computed(() => model.value?.warnings ?? []);
 
   async function refresh() {
     const [primaryRoot, remotesResponse, monitoringResponse] = await Promise.all([getPrimaryRoot(), getRemotes(), getMonitoringRoot()]);
@@ -23,7 +22,6 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
       primary: mapPrimary(primaryRoot),
       remotes: mapRemotes(remotesResponse),
       monitoring: mapMonitoring(monitoringResponse),
-      warnings: primaryRoot?.platform_health_warnings ?? readDevWarnings(),
     };
   }
 
@@ -35,7 +33,6 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
     auditInstances,
     errorInstances,
     isMultiRegion,
-    warnings,
     refresh,
   };
 });
@@ -86,11 +83,11 @@ function mapPrimary(primaryRoot: ServiceControlRootDocument | null): PlatformIns
 
   return {
     id: "primary",
-    name: primaryRoot.name || "Particular.ServiceControl",
+    name: primaryRoot.name,
     kind: "error",
     role: "primary-error",
-    version: primaryRoot.platform_health_version ?? "Unknown",
-    health: primaryRoot.platform_health_status ?? "healthy",
+    version: primaryRoot.platform_health_version,
+    health: primaryRoot.platform_health_status,
     apiUrl: serviceControlClient.url ?? "",
   };
 }
@@ -135,10 +132,6 @@ function extractInstanceName(apiUri: string) {
   } catch {
     return apiUri;
   }
-}
-
-function readDevWarnings() {
-  return window.__platformHealth?.getState().warnings ?? [];
 }
 
 if (import.meta.hot) {

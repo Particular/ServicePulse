@@ -3,7 +3,7 @@ import type RootUrls from "@/resources/RootUrls";
 
 const latestPlatformVersion = "6.19.3";
 
-export type PlatformHealthMockScenarioName = "single-region-healthy" | "single-region-warning" | "single-region-danger" | "single-region-outdated" | "multi-region-healthy" | "multi-region-warning" | "multi-region-danger";
+export type PlatformHealthMockScenarioName = "single-region-healthy" | "single-region-warning" | "single-region-danger" | "single-region-outdated" | "multi-region-healthy" | "multi-region-danger";
 
 export type PlatformHealthMockStatus = "healthy" | "degraded" | "unavailable";
 
@@ -26,7 +26,6 @@ export interface PlatformHealthMockState {
     version: string;
     status: PlatformHealthMockStatus;
   } | null;
-  warnings: string[];
 }
 
 declare global {
@@ -36,8 +35,6 @@ declare global {
       reset: () => PlatformHealthMockState;
       setScenario: (name: PlatformHealthMockScenarioName) => PlatformHealthMockState;
       setStatus: (id: "primary" | "monitoring" | `remote-${number}`, status: PlatformHealthMockStatus) => PlatformHealthMockState;
-      setWarnings: (warnings: string[]) => PlatformHealthMockState;
-      clearWarnings: () => PlatformHealthMockState;
     };
   }
 }
@@ -57,14 +54,6 @@ export function installPlatformHealthDevControls() {
     },
     setStatus: (id, status) => {
       state = updateStatus(state, id, status);
-      return cloneState(state);
-    },
-    setWarnings: (warnings) => {
-      state = { ...state, warnings: [...warnings] };
-      return cloneState(state);
-    },
-    clearWarnings: () => {
-      state = { ...state, warnings: [] };
       return cloneState(state);
     },
   };
@@ -93,7 +82,6 @@ export function getPlatformHealthPrimaryRoot(): RootUrls {
     archived_groups_url: "http://localhost:33333/api/errors/groups/{classifier?}",
     get_archive_group: "http://localhost:33333/api/archive/groups/id/{groupId}",
     platform_health_status: current.primary.status,
-    platform_health_warnings: current.warnings,
     platform_health_version: current.primary.version,
   } as RootUrls;
 }
@@ -125,10 +113,6 @@ export function getPlatformHealthMonitoringRoot() {
   };
 }
 
-export function getPlatformHealthWarnings() {
-  return [...state.warnings];
-}
-
 function updateStatus(current: PlatformHealthMockState, id: "primary" | "monitoring" | `remote-${number}`, status: PlatformHealthMockStatus) {
   if (id === "primary") {
     return { ...current, primary: { ...current.primary, status } };
@@ -155,7 +139,6 @@ function createScenario(name: PlatformHealthMockScenarioName): PlatformHealthMoc
           { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "healthy", instanceType: "audit" },
         ],
         monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
-        warnings: [],
       };
     case "single-region-warning":
       return {
@@ -166,7 +149,6 @@ function createScenario(name: PlatformHealthMockScenarioName): PlatformHealthMoc
           { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "degraded", instanceType: "audit" },
         ],
         monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
-        warnings: [],
       };
     case "single-region-danger":
       return {
@@ -177,7 +159,6 @@ function createScenario(name: PlatformHealthMockScenarioName): PlatformHealthMoc
           { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "degraded", instanceType: "audit" },
         ],
         monitoring: { configured: true, version: latestPlatformVersion, status: "unavailable" },
-        warnings: [],
       };
     case "single-region-outdated":
       return {
@@ -188,7 +169,6 @@ function createScenario(name: PlatformHealthMockScenarioName): PlatformHealthMoc
           { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: latestPlatformVersion, status: "healthy", instanceType: "audit" },
         ],
         monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
-        warnings: [],
       };
     case "multi-region-healthy":
       return {
@@ -199,18 +179,6 @@ function createScenario(name: PlatformHealthMockScenarioName): PlatformHealthMoc
           { id: "remote-1", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
         ],
         monitoring: null,
-        warnings: [],
-      };
-    case "multi-region-warning":
-      return {
-        scenario: name,
-        primary: { name: "Particular.ServiceControl.CrossRegion", version: latestPlatformVersion, status: "healthy" },
-        remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.RegionA/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
-        ],
-        monitoring: null,
-        warnings: ["Cross-region topology metadata is inferred in this prototype."],
       };
     case "multi-region-danger":
       return {
@@ -221,7 +189,6 @@ function createScenario(name: PlatformHealthMockScenarioName): PlatformHealthMoc
           { id: "remote-1", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "unavailable", instanceType: "error" },
         ],
         monitoring: null,
-        warnings: [],
       };
   }
 }
@@ -232,6 +199,5 @@ function cloneState(current: PlatformHealthMockState): PlatformHealthMockState {
     primary: { ...current.primary },
     remotes: current.remotes.map((remote) => ({ ...remote })),
     monitoring: current.monitoring ? { ...current.monitoring } : null,
-    warnings: [...current.warnings],
   };
 }
