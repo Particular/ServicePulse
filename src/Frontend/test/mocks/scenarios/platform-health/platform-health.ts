@@ -1,4 +1,5 @@
 import * as precondition from "../../../preconditions";
+import { ApiRoutes } from "@/composables/apiRoutes";
 import { createScenario } from "../scenario-helper";
 import { getPlatformHealthCustomChecks, getPlatformHealthMonitoringRoot, getPlatformHealthPrimaryRoot, getPlatformHealthRemoteInstances, installPlatformHealthDevControls } from "../../platform-health-state";
 
@@ -30,8 +31,8 @@ export const setupComplete = (async () => {
         headers: { "Total-Count": body.filter((check) => check.status === "Fail").length.toString() },
       });
     });
-    driver.mockEndpoint(`${window.defaultConfig.service_control_url}my/routes`, { body: { roles: [], routes: [] } });
-    driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}api/my/routes`, { body: { roles: [], routes: [] } });
+    driver.mockEndpoint(`${window.defaultConfig.service_control_url}my/routes`, { body: permissiveManifest() });
+    driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}api/my/routes`, { body: permissiveManifest() });
     driver.mockEndpointDynamic(`${window.defaultConfig.monitoring_urls[0]}`, "get", () => {
       const body = getPlatformHealthMonitoringRoot();
 
@@ -48,4 +49,14 @@ export const setupComplete = (async () => {
 
 function stateVersion() {
   return "6.19.3";
+}
+
+function permissiveManifest() {
+  return {
+    roles: [],
+    routes: Object.values(ApiRoutes).map((route) => ({
+      method: route.method,
+      url_template: route.path,
+    })),
+  };
 }
