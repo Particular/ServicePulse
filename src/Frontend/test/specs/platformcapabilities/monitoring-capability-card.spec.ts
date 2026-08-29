@@ -154,8 +154,8 @@ describe("FEATURE: Monitoring capability card", () => {
     });
   });
 
-  describe("RULE: Status indicators should show instance and metrics status", () => {
-    test("EXAMPLE: Available monitoring instance shows instance indicator", async ({ driver }) => {
+  describe("RULE: Status indicators should show capability-specific status", () => {
+    test("EXAMPLE: Available monitoring instance with endpoints shows metrics indicator", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasMonitoringWithEndpoints());
@@ -175,8 +175,8 @@ describe("FEATURE: Monitoring capability card", () => {
         expect(indicators!.length).toBeGreaterThanOrEqual(1);
       });
 
-      const instanceIndicator = await monitoringIndicatorByLabel("Instance");
-      expect(instanceIndicator).toBeInTheDocument();
+      const metricsIndicator = await monitoringIndicatorByLabel("Metrics");
+      expect(metricsIndicator).toBeInTheDocument();
     });
 
     test("EXAMPLE: Available monitoring instance with endpoints shows metrics indicator", async ({ driver }) => {

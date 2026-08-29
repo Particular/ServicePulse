@@ -2,7 +2,7 @@ import { test, describe } from "../../drivers/vitest/driver";
 import { expect } from "vitest";
 import * as precondition from "../../preconditions";
 import { waitFor } from "@testing-library/vue";
-import { recoverabilityCapabilityCard, recoverabilityStatusBadge, recoverabilityActionButton, recoverabilityStatusIndicators, isRecoverabilityCardAvailable, recoverabilityIndicatorByLabel } from "./questions/recoverabilityCapabilityCard";
+import { recoverabilityCapabilityCard, recoverabilityStatusBadge, recoverabilityActionButton, recoverabilityStatusIndicators, isRecoverabilityCardAvailable } from "./questions/recoverabilityCapabilityCard";
 
 // NOTE: The Recoverability card has two states: Available and Unavailable.
 // However, the Unavailable state cannot be tested because when ServiceControl
@@ -38,8 +38,8 @@ describe("FEATURE: Recoverability capability card", () => {
     });
   });
 
-  describe("RULE: Status indicators should show instance status", () => {
-    test("EXAMPLE: Shows 'Instance' indicator", async ({ driver }) => {
+  describe("RULE: Recoverability card no longer duplicates instance-level widgets", () => {
+    test("EXAMPLE: Shows no status indicators", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
 
@@ -54,12 +54,8 @@ describe("FEATURE: Recoverability capability card", () => {
 
       await waitFor(async () => {
         const indicators = await recoverabilityStatusIndicators();
-        expect(indicators).not.toBeNull();
-        expect(indicators!.length).toBeGreaterThanOrEqual(1);
+        expect(indicators).toHaveLength(0);
       });
-
-      const instanceIndicator = await recoverabilityIndicatorByLabel("Instance");
-      expect(instanceIndicator).toBeInTheDocument();
     });
   });
 });

@@ -184,8 +184,8 @@ describe("FEATURE: Audit capability card", () => {
     });
   });
 
-  describe("RULE: Status indicators should show instance and message status", () => {
-    test("EXAMPLE: Available audit instance shows instance indicator as green", async ({ driver }) => {
+  describe("RULE: Status indicators should show capability-specific status", () => {
+    test("EXAMPLE: Available audit instance with successful messages shows messages indicator", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasAvailableAuditInstance());
@@ -206,8 +206,8 @@ describe("FEATURE: Audit capability card", () => {
         expect(indicators!.length).toBeGreaterThanOrEqual(1);
       });
 
-      const instanceIndicator = await auditingIndicatorByLabel("Instance");
-      expect(instanceIndicator).toBeInTheDocument();
+      const messagesIndicator = await auditingIndicatorByLabel("Messages");
+      expect(messagesIndicator).toBeInTheDocument();
     });
 
     test("EXAMPLE: Available audit instance with successful messages shows messages indicator", async ({ driver }) => {
@@ -231,7 +231,7 @@ describe("FEATURE: Audit capability card", () => {
       });
     });
 
-    test("EXAMPLE: Multiple audit instances show numbered instance indicators", async ({ driver }) => {
+    test("EXAMPLE: Multiple audit instances still show only the shared messages indicator", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasMultipleAvailableAuditInstances);
@@ -249,15 +249,11 @@ describe("FEATURE: Audit capability card", () => {
       await waitFor(async () => {
         const indicators = await auditingStatusIndicators();
         expect(indicators).not.toBeNull();
-        // Should have Instance 1, Instance 2, and Messages indicators
-        expect(indicators!.length).toBeGreaterThanOrEqual(3);
+        expect(indicators!.length).toBe(1);
       });
 
-      const instance1Indicator = await auditingIndicatorByLabel("Instance 1");
-      expect(instance1Indicator).toBeInTheDocument();
-
-      const instance2Indicator = await auditingIndicatorByLabel("Instance 2");
-      expect(instance2Indicator).toBeInTheDocument();
+      const messagesIndicator = await auditingIndicatorByLabel("Messages");
+      expect(messagesIndicator).toBeInTheDocument();
     });
   });
 
