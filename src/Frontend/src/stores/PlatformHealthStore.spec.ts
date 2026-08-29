@@ -204,6 +204,7 @@ describe("PlatformHealthStore", () => {
     expect(store.payload?.primary.health).toBe("degraded");
     expect(store.severity).toBe("warning");
     expect(store.issueSummary).toContain("primary Error instance degraded");
+    expect(store.rows[0].details).toContain("Error Message Ingestion Process: Error ingestion stopped");
   });
 });
 

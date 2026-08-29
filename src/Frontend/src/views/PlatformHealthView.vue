@@ -11,6 +11,7 @@ import { faArrowTurnUp } from "@fortawesome/free-solid-svg-icons";
 const { store } = usePlatformHealthStoreAutoRefresh();
 useEnvironmentAndVersionsAutoRefresh();
 const showSupportModal = ref(false);
+const expandedRowKey = ref<string | null>(null);
 
 const issueSummaryClass = computed(() => ({
   "issues-summary": true,
@@ -34,6 +35,26 @@ function shouldShowUpgradeCue(row: (typeof store.rows)[number]) {
   const targetVersion = getUpgradeTargetVersion(row);
 
   return row.upgradeAvailable || (!!targetVersion && row.version !== "Unknown" && row.version !== targetVersion);
+}
+
+function rowKey(row: (typeof store.rows)[number]) {
+  return `${row.type}-${row.instanceName}`;
+}
+
+function isExpandable(row: (typeof store.rows)[number]) {
+  return row.isExpandable && (row.health === "degraded" || row.health === "unavailable");
+}
+
+function isExpanded(row: (typeof store.rows)[number]) {
+  return expandedRowKey.value === rowKey(row);
+}
+
+function toggleRow(row: (typeof store.rows)[number]) {
+  if (!isExpandable(row)) {
+    return;
+  }
+
+  expandedRowKey.value = isExpanded(row) ? null : rowKey(row);
 }
 </script>
 
@@ -68,23 +89,35 @@ function shouldShowUpgradeCue(row: (typeof store.rows)[number]) {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="row in store.rows" :key="`${row.type}-${row.instanceName}`">
-                  <td class="type-cell">{{ row.type }}</td>
-                  <td>
-                    <a class="instance-name" :href="row.apiUrl" target="_blank" rel="noopener noreferrer">{{ row.instanceName }}</a>
-                    <div class="instance-note">{{ row.note }}</div>
-                  </td>
-                  <td>
-                    <span>{{ row.version }}</span>
-                    <a v-if="shouldShowUpgradeCue(row)" class="upgrade-badge" :href="getUpgradeTargetLink(row)" target="_blank">
-                      <FAIcon class="footer-icon fake-link" :icon="faArrowTurnUp" />
-                      <span>v{{ getUpgradeTargetVersion(row) }} available</span>
-                    </a>
-                  </td>
-                  <td>
-                    <span class="health-badge" :class="row.health">{{ row.health.charAt(0).toUpperCase() + row.health.slice(1) }}</span>
-                  </td>
-                </tr>
+                <template v-for="row in store.rows" :key="rowKey(row)">
+                  <tr>
+                    <td class="type-cell">{{ row.type }}</td>
+                    <td>
+                      <a class="instance-name" :href="row.apiUrl" target="_blank" rel="noopener noreferrer">{{ row.instanceName }}</a>
+                      <div class="instance-note">{{ row.note }}</div>
+                    </td>
+                    <td>
+                      <span>{{ row.version }}</span>
+                      <a v-if="shouldShowUpgradeCue(row)" class="upgrade-badge" :href="getUpgradeTargetLink(row)" target="_blank">
+                        <FAIcon class="footer-icon fake-link" :icon="faArrowTurnUp" />
+                        <span>v{{ getUpgradeTargetVersion(row) }} available</span>
+                      </a>
+                    </td>
+                    <td>
+                      <button v-if="isExpandable(row)" type="button" class="health-badge health-badge-button" :class="row.health" :aria-expanded="isExpanded(row)" :aria-controls="`${rowKey(row)}-details`" @click="toggleRow(row)">
+                        {{ row.health.charAt(0).toUpperCase() + row.health.slice(1) }}
+                      </button>
+                      <span v-else class="health-badge" :class="row.health">{{ row.health.charAt(0).toUpperCase() + row.health.slice(1) }}</span>
+                    </td>
+                  </tr>
+                  <tr v-if="isExpanded(row)" :id="`${rowKey(row)}-details`" class="details-row">
+                    <td colspan="4" class="details-cell">
+                      <ul class="details-list">
+                        <li v-for="detail in row.details" :key="detail">{{ detail }}</li>
+                      </ul>
+                    </td>
+                  </tr>
+                </template>
               </tbody>
             </table>
           </section>
@@ -200,6 +233,20 @@ tbody tr:last-child td {
   white-space: nowrap;
 }
 
+.health-badge-button {
+  border: none;
+  cursor: pointer;
+}
+
+.health-badge-button:hover {
+  filter: brightness(0.97);
+}
+
+.health-badge-button:focus-visible {
+  outline: 2px solid var(--sp-blue);
+  outline-offset: 2px;
+}
+
 .health-badge.healthy {
   background: #e3f6ea;
   color: #1f7a3f;
@@ -213,6 +260,20 @@ tbody tr:last-child td {
 .health-badge.unavailable {
   background: #fde5e3;
   color: #b53a31;
+}
+
+.details-row td {
+  padding-top: 0;
+}
+
+.details-cell {
+  background: #f9fbfb;
+}
+
+.details-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #4c5b5c;
 }
 
 .footer-icon {

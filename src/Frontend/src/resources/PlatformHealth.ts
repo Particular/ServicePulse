@@ -14,4 +14,6 @@ export interface PlatformHealthRow {
   upgradeAvailable: boolean;
   latestVersion: string;
   upgradeLink: string;
+  isExpandable: boolean;
+  details: string[];
 }

@@ -56,15 +56,20 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
       return [];
     }
 
+    const platformChecks = normalizeChecks(rawFailedChecks.value);
+
     const latestServiceControlVersion = environmentAndVersionsStore.newVersions.newSCVersion.newscversionnumber || firstKnownVersion(current.primary.version, window.__platformHealth?.getState().primary.version);
     const latestServiceControlLink = environmentAndVersionsStore.newVersions.newSCVersion.newscversionlink || buildReleaseLink(latestServiceControlVersion);
     const latestMonitoringVersion = environmentAndVersionsStore.newVersions.newMVersion.newmversionnumber || firstKnownVersion(current.monitoring?.version, window.__platformHealth?.getState().monitoring?.version, latestServiceControlVersion);
     const latestMonitoringLink = environmentAndVersionsStore.newVersions.newMVersion.newmversionlink || buildReleaseLink(latestMonitoringVersion);
 
-    const nextRows: PlatformHealthRow[] = [toRow(current.primary, latestServiceControlVersion, latestServiceControlLink), ...current.remotes.map((remote) => toRow(remote, latestServiceControlVersion, latestServiceControlLink))];
+    const nextRows: PlatformHealthRow[] = [
+      toRow(current.primary, latestServiceControlVersion, latestServiceControlLink, detailsForInstance(current.primary, current, platformChecks)),
+      ...current.remotes.map((remote) => toRow(remote, latestServiceControlVersion, latestServiceControlLink, detailsForInstance(remote, current, platformChecks))),
+    ];
 
     if (current.monitoring) {
-      nextRows.push(toRow(current.monitoring, latestMonitoringVersion, latestMonitoringLink));
+      nextRows.push(toRow(current.monitoring, latestMonitoringVersion, latestMonitoringLink, detailsForInstance(current.monitoring, current, platformChecks)));
     }
 
     return nextRows;
@@ -143,7 +148,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   };
 });
 
-function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: string): PlatformHealthRow {
+function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: string, details: string[]): PlatformHealthRow {
   return {
     type: formatRowType(instance),
     instanceName: instance.name,
@@ -154,6 +159,8 @@ function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: s
     upgradeAvailable: hasUpgrade(instance.version, latestVersion),
     latestVersion,
     upgradeLink,
+    isExpandable: details.length > 0,
+    details,
   };
 }
 
@@ -221,6 +228,67 @@ function applyPlatformHealthChecks(model: PlatformModel, checks: CustomCheck[]) 
     primary,
     remotes,
   } satisfies PlatformModel;
+}
+
+function detailsForInstance(instance: PlatformInstance, model: PlatformModel, checks: CustomCheck[]) {
+  const matchingPlatformChecks = checks.filter((check) => matchesInstance(check, instance));
+  const details = matchingPlatformChecks.map((check) => formatCustomCheckDetail(check));
+
+  if (details.length > 0) {
+    return details;
+  }
+
+  return fallbackDetails(instance, model);
+}
+
+function matchesInstance(check: CustomCheck, instance: PlatformInstance) {
+  const platformCheck = getBuiltInPlatformCheck(check);
+  if (!platformCheck) {
+    return false;
+  }
+
+  switch (platformCheck.target) {
+    case "primary":
+      return instance.role === "primary-error";
+    case "remote-error":
+      return instance.role === "remote-error";
+    case "audit":
+      return instance.role === "remote-audit";
+    case "transport":
+      return instance.role === "remote-audit";
+    default:
+      return false;
+  }
+}
+
+function formatCustomCheckDetail(check: CustomCheck) {
+  return check.failure_reason ? `${check.custom_check_id}: ${check.failure_reason}` : check.custom_check_id;
+}
+
+function fallbackDetails(instance: PlatformInstance, model: PlatformModel) {
+  if (instance.role === "monitoring" && instance.health === "unavailable") {
+    return ["Monitoring root endpoint is unavailable."];
+  }
+
+  if (instance.role === "remote-error" && instance.health === "unavailable") {
+    return ["Regional error instance is unavailable."];
+  }
+
+  if (instance.role === "remote-audit" && instance.health === "degraded") {
+    return ["Audit instance is degraded."];
+  }
+
+  if (instance.role === "primary-error") {
+    if (instance.health === "unavailable") {
+      return ["Primary error instance is unavailable."];
+    }
+
+    if (instance.health === "degraded" && model.primary.health === "degraded") {
+      return ["Primary error instance is degraded."];
+    }
+  }
+
+  return [];
 }
 
 function applyPlatformCheckHealthToPrimary(primary: PlatformInstance, platformChecks: Array<ReturnType<typeof getBuiltInPlatformCheck>>) {

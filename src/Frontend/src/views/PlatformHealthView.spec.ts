@@ -180,4 +180,117 @@ describe("PlatformHealthView", () => {
 
     expect(screen.getByText(/Particular.ServiceControl.Monitoring/i)).toBeInTheDocument();
   });
+
+  test("shows details when clicking a degraded health badge", async () => {
+    const store = usePlatformHealthStore();
+    store.payload = {
+      primary: {
+        id: "primary",
+        name: "Particular.ServiceControl",
+        kind: "error",
+        role: "primary-error",
+        version: "6.19.3",
+        health: "healthy",
+        apiUrl: "http://localhost:33333/api/",
+      },
+      remotes: [
+        {
+          id: "remote-0",
+          name: "Particular.ServiceControl.Audit",
+          kind: "audit",
+          role: "remote-audit",
+          version: "6.19.3",
+          health: "degraded",
+          apiUrl: "http://localhost:33334/api/",
+        },
+      ],
+      monitoring: null,
+    } satisfies PlatformHealthResponse;
+
+    const rows = vi.spyOn(store, "rows", "get").mockReturnValue([
+      {
+        type: "Error instance",
+        instanceName: "Particular.ServiceControl",
+        apiUrl: "http://localhost:33333/api/",
+        version: "6.19.3",
+        health: "healthy",
+        note: "Primary error instance",
+        upgradeAvailable: false,
+        latestVersion: "6.19.3",
+        upgradeLink: "",
+        isExpandable: false,
+        details: [],
+      },
+      {
+        type: "Audit instance",
+        instanceName: "Particular.ServiceControl.Audit",
+        apiUrl: "http://localhost:33334/api/",
+        version: "6.19.3",
+        health: "degraded",
+        note: "Audit instance",
+        upgradeAvailable: false,
+        latestVersion: "6.19.3",
+        upgradeLink: "",
+        isExpandable: true,
+        details: ["Audit Message Ingestion: Audit ingestion failed"],
+      },
+    ]);
+
+    render(PlatformHealthView, {
+      global: {
+        plugins: [],
+      },
+    });
+
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: "Degraded" }));
+
+    expect(screen.getByText("Audit Message Ingestion: Audit ingestion failed")).toBeInTheDocument();
+
+    rows.mockRestore();
+  });
+
+  test("does not make healthy rows expandable", () => {
+    const store = usePlatformHealthStore();
+    store.payload = {
+      primary: {
+        id: "primary",
+        name: "Particular.ServiceControl",
+        kind: "error",
+        role: "primary-error",
+        version: "6.19.3",
+        health: "healthy",
+        apiUrl: "http://localhost:33333/api/",
+      },
+      remotes: [],
+      monitoring: null,
+    } satisfies PlatformHealthResponse;
+
+    const rows = vi.spyOn(store, "rows", "get").mockReturnValue([
+      {
+        type: "Error instance",
+        instanceName: "Particular.ServiceControl",
+        apiUrl: "http://localhost:33333/api/",
+        version: "6.19.3",
+        health: "healthy",
+        note: "Primary error instance",
+        upgradeAvailable: false,
+        latestVersion: "6.19.3",
+        upgradeLink: "",
+        isExpandable: false,
+        details: [],
+      },
+    ]);
+
+    render(PlatformHealthView, {
+      global: {
+        plugins: [],
+      },
+    });
+
+    expect(screen.queryByRole("button", { name: "Healthy" })).not.toBeInTheDocument();
+    expect(screen.getByText("Healthy")).toBeInTheDocument();
+
+    rows.mockRestore();
+  });
 });
