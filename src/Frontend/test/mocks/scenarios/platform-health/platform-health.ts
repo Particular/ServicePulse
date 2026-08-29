@@ -1,6 +1,6 @@
 import * as precondition from "../../../preconditions";
 import { createScenario } from "../scenario-helper";
-import { getPlatformHealthMonitoringRoot, getPlatformHealthPrimaryRoot, getPlatformHealthRemoteInstances, installPlatformHealthDevControls } from "../../platform-health-state";
+import { getPlatformHealthCustomChecks, getPlatformHealthMonitoringRoot, getPlatformHealthPrimaryRoot, getPlatformHealthRemoteInstances, installPlatformHealthDevControls } from "../../platform-health-state";
 
 const { worker, driver, runScenario } = createScenario();
 
@@ -21,6 +21,15 @@ export const setupComplete = (async () => {
       });
     });
     driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}configuration/remotes`, "get", () => Promise.resolve({ body: getPlatformHealthRemoteInstances() }));
+    driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}customchecks`, "get", (url) => {
+      const status = url.searchParams.get("status");
+      const body = getPlatformHealthCustomChecks();
+
+      return Promise.resolve({
+        body: status === "fail" ? body.filter((check) => check.status === "Fail") : body,
+        headers: { "Total-Count": body.filter((check) => check.status === "Fail").length.toString() },
+      });
+    });
     driver.mockEndpointDynamic(`${window.defaultConfig.monitoring_urls[0]}`, "get", () => {
       const body = getPlatformHealthMonitoringRoot();
 

@@ -91,12 +91,18 @@ describe("PlatformHealthStore", () => {
     window.__platformHealth = {
       getState: () => ({
         scenario: "single-region-warning",
+        customCheckPreset: "none",
         primary: { name: "Particular.ServiceControl", version: "6.19.3", status: "healthy" },
         remotes: [],
         monitoring: { configured: true, version: "6.19.3", status: "healthy" },
+        customChecks: [],
       }),
+      getCustomChecks: vi.fn(() => []),
       reset: vi.fn(),
       setScenario: vi.fn(),
+      setCustomCheckPreset: vi.fn(),
+      setCustomChecks: vi.fn(),
+      clearCustomChecks: vi.fn(),
       setStatus: vi.fn(),
     };
     const platformModelStore = usePlatformModelStore();
@@ -156,6 +162,48 @@ describe("PlatformHealthStore", () => {
     expect(store.payload?.primary.health).toBe("unavailable");
     expect(store.payload?.remotes[0].health).toBe("degraded");
     expect(store.severity).toBe("danger");
+  });
+
+  test("maps built-in degraded primary custom checks to primary degraded", async () => {
+    const customChecksStore = useCustomChecksStore();
+    customChecksStore.replaceFailedChecks([
+      {
+        id: "customchecks/primary-degraded",
+        custom_check_id: "Error Message Ingestion Process",
+        category: "ServiceControl Health",
+        status: Status.Fail,
+        reported_at: "2025-01-10T05:06:30.4074087Z",
+        failure_reason: "Error ingestion stopped",
+        originating_endpoint: {
+          name: "Particular.ServiceControl",
+          host_id: "host-1",
+          host: "Host A",
+        },
+      },
+    ]);
+
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.refresh = vi.fn(() => {
+      platformModelStore.model = {
+        ...singleRegionWarningModel,
+        primary: {
+          ...singleRegionWarningModel.primary,
+          health: "healthy",
+        },
+        remotes: singleRegionWarningModel.remotes.map((remote) => ({
+          ...remote,
+          health: "healthy",
+        })),
+      };
+      return Promise.resolve();
+    });
+    const store = usePlatformHealthStore();
+
+    await store.refresh();
+
+    expect(store.payload?.primary.health).toBe("degraded");
+    expect(store.severity).toBe("warning");
+    expect(store.issueSummary).toContain("primary Error instance degraded");
   });
 });
 

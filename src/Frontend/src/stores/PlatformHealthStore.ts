@@ -29,6 +29,10 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
       return "danger";
     }
 
+    if (current.primary.health === "degraded") {
+      return "warning";
+    }
+
     if (current.remotes.some((remote) => remote.role === "remote-error" && remote.health !== "healthy")) {
       return "danger";
     }
@@ -76,6 +80,10 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
 
     if (current.primary.health === "unavailable") {
       issues.push("primary Error instance unavailable");
+    }
+
+    if (current.primary.health === "degraded") {
+      issues.push("primary Error instance degraded");
     }
 
     issues.push(...current.remotes.filter((remote) => remote.health === "degraded").map((remote) => `degraded ${formatInstanceType(remote.kind)}`));
