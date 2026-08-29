@@ -2,13 +2,15 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 
-const fetchTypedFromServiceControl = vi.fn();
-const authFetch = vi.fn();
+const getRoot = vi.fn();
+const getRemoteInstances = vi.fn();
+const getMonitoringRoot = vi.fn();
 
 vi.mock("@/components/serviceControlClient", () => ({
   default: {
     url: "http://localhost:33333/api/",
-    fetchTypedFromServiceControl: (...args: unknown[]) => fetchTypedFromServiceControl(...args),
+    getRoot: () => getRoot(),
+    getRemoteInstances: (...args: unknown[]) => getRemoteInstances(...args),
   },
 }));
 
@@ -16,47 +18,35 @@ vi.mock("@/components/monitoring/monitoringClient", () => ({
   default: {
     url: "http://localhost:33633/",
     isMonitoringEnabled: true,
+    getMonitoringRoot: (...args: unknown[]) => getMonitoringRoot(...args),
   },
-}));
-
-vi.mock("@/composables/useAuthenticatedFetch", () => ({
-  authFetch: (...args: unknown[]) => authFetch(...args),
 }));
 
 describe("PlatformModelStore", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    fetchTypedFromServiceControl.mockReset();
-    authFetch.mockReset();
+    getRoot.mockReset();
+    getRemoteInstances.mockReset();
+    getMonitoringRoot.mockReset();
     window.__platformHealth = undefined;
   });
 
   test("keeps monitoring in the shared model for multi-region", async () => {
-    fetchTypedFromServiceControl
-      .mockResolvedValueOnce([
-        { headers: new Headers() },
-        {
-          name: "Particular.ServiceControl.CrossRegion",
-          platform_health_status: "healthy",
-          platform_health_version: "6.19.3",
-          platform_health_warnings: [],
-        },
-      ])
-      .mockResolvedValueOnce([
-        { headers: new Headers() },
-        [
-          {
-            api_uri: "http://Particular.ServiceControl.RegionA/api/",
-            version: "6.19.3",
-            status: "online",
-            configuration: { data_retention: { error_retention_period: "14.00:00:00" } },
-          },
-        ],
-      ]);
-    authFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ platform_health_status: "healthy", platform_health_version: "6.19.3" }),
-    } as Response);
+    getRoot.mockResolvedValue({
+      name: "Particular.ServiceControl.CrossRegion",
+      platform_health_status: "healthy",
+      platform_health_version: "6.19.3",
+      platform_health_warnings: [],
+    });
+    getRemoteInstances.mockResolvedValue([
+      {
+        api_uri: "http://Particular.ServiceControl.RegionA/api/",
+        version: "6.19.3",
+        status: "online",
+        configuration: { data_retention: { error_retention_period: "14.00:00:00" } },
+      },
+    ]);
+    getMonitoringRoot.mockResolvedValue({ platform_health_status: "healthy", platform_health_version: "6.19.3" });
 
     const store = usePlatformModelStore();
     await store.refresh();

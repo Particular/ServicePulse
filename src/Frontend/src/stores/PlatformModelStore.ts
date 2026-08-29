@@ -1,25 +1,9 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
-import serviceControlClient from "@/components/serviceControlClient";
-import monitoringClient from "@/components/monitoring/monitoringClient";
-import { authFetch } from "@/composables/useAuthenticatedFetch";
-import type RootUrls from "@/resources/RootUrls";
+import serviceControlClient, { type ServiceControlRootDocument } from "@/components/serviceControlClient";
+import monitoringClient, { type MonitoringRoot } from "@/components/monitoring/monitoringClient";
 import type { RemoteInstance } from "@/resources/RemoteInstance";
-import type { PlatformInstance, PlatformInstanceHealth, PlatformModel } from "@/resources/PlatformModel";
-
-interface ServiceControlRoot {
-  name?: string;
-  platform_health_status?: PlatformInstanceHealth;
-  platform_health_warnings?: string[];
-  platform_health_version?: string;
-}
-
-type ServiceControlRootDocument = RootUrls & ServiceControlRoot;
-
-interface MonitoringRoot {
-  platform_health_status?: PlatformInstanceHealth;
-  platform_health_version?: string;
-}
+import type { PlatformInstance, PlatformModel } from "@/resources/PlatformModel";
 
 export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
   const model = ref<PlatformModel | null>(null);
@@ -58,8 +42,7 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
 
 async function getPrimaryRoot(): Promise<ServiceControlRootDocument | null> {
   try {
-    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<ServiceControlRootDocument>("");
-    return data;
+    return await serviceControlClient.getRoot();
   } catch {
     return null;
   }
@@ -67,8 +50,7 @@ async function getPrimaryRoot(): Promise<ServiceControlRootDocument | null> {
 
 async function getRemotes(): Promise<RemoteInstance[]> {
   try {
-    const [, data] = await serviceControlClient.fetchTypedFromServiceControl<RemoteInstance[]>("configuration/remotes");
-    return data;
+    return await serviceControlClient.getRemoteInstances();
   } catch {
     return [];
   }
@@ -80,11 +62,7 @@ async function getMonitoringRoot(): Promise<MonitoringRoot | null> {
   }
 
   try {
-    const response = await authFetch(`${monitoringClient.url ?? ""}`);
-    if (!response.ok) {
-      throw new Error("Monitoring unavailable");
-    }
-    return (await response.json()) as MonitoringRoot;
+    return await monitoringClient.getMonitoringRoot();
   } catch {
     return {
       platform_health_status: "unavailable",

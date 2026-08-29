@@ -8,6 +8,11 @@ export interface MetricsConnectionDetails {
   Interval?: string;
 }
 
+export interface MonitoringRoot {
+  platform_health_status?: "healthy" | "degraded" | "unavailable";
+  platform_health_version?: string;
+}
+
 class MonitoringClient {
   private _url: string | undefined | null = null;
 
@@ -34,6 +39,15 @@ class MonitoringClient {
     } catch {
       return { Metrics: null, errors: ["Could not retrieve the monitoring connection"] };
     }
+  }
+
+  public async getMonitoringRoot() {
+    if (this.isMonitoringDisabled) {
+      return null;
+    }
+
+    const [, root] = await this.fetchTypedFromMonitoring<MonitoringRoot>("");
+    return root ?? null;
   }
 
   public async getMonitoringVersion() {

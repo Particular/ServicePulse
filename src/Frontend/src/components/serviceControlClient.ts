@@ -1,10 +1,14 @@
 import { authFetch } from "@/composables/useAuthenticatedFetch";
+import type RootUrls from "@/resources/RootUrls";
+import type { RemoteInstance } from "@/resources/RemoteInstance";
 import { HttpError } from "@/utils/HttpError";
 
 export interface ServiceControlInstanceConnection {
   settings: { [key: string]: object };
   errors: string[];
 }
+
+export type ServiceControlRootDocument = RootUrls;
 
 class ServiceControlClient {
   private _url: string | undefined = undefined;
@@ -27,6 +31,16 @@ class ServiceControlClient {
     } catch {
       return { errors: [`Error reaching ServiceControl at ${this.url} connection`] } as ServiceControlInstanceConnection;
     }
+  }
+
+  public async getRoot() {
+    const [, data] = await this.fetchTypedFromServiceControl<ServiceControlRootDocument>("");
+    return data;
+  }
+
+  public async getRemoteInstances() {
+    const [, data] = await this.fetchTypedFromServiceControl<RemoteInstance[]>("configuration/remotes");
+    return data;
   }
 
   public fetchTypedFromServiceControl<T>(suffix: string, signal?: AbortSignal): Promise<[Response, T]> {
