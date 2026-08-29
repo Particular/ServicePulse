@@ -32,7 +32,7 @@
     "@tinyhttp/content-disposition": "2.2.4",
     "@vue-flow/controls": "1.1.3",
     "@vue-flow/core": "1.48.2",
-    "@vuepic/vue-datepicker": "13.0.0",
+    "@vuepic/vue-datepicker": "14.0.0",
     "@vueuse/core": "14.3.0",
     "bootstrap": "5.3.8",
     "codemirror": "6.0.2",
