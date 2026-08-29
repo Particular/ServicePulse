@@ -30,6 +30,8 @@ export const setupComplete = (async () => {
         headers: { "Total-Count": body.filter((check) => check.status === "Fail").length.toString() },
       });
     });
+    driver.mockEndpoint(`${window.defaultConfig.service_control_url}my/routes`, { body: { roles: [], routes: [] } });
+    driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}api/my/routes`, { body: { roles: [], routes: [] } });
     driver.mockEndpointDynamic(`${window.defaultConfig.monitoring_urls[0]}`, "get", () => {
       const body = getPlatformHealthMonitoringRoot();
 
