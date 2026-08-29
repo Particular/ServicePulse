@@ -1,9 +1,12 @@
-import { acceptHMRUpdate, defineStore } from "pinia";
+import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { isUpgradeAvailable } from "@/composables/serviceSemVer";
+import { getBuiltInPlatformCheck } from "@/components/customchecks/builtInPlatformChecks";
 import type { PlatformHealthResponse, PlatformHealthRow, PlatformHealthSeverity } from "@/resources/PlatformHealth";
-import type { PlatformInstance } from "@/resources/PlatformModel";
+import type CustomCheck from "@/resources/CustomCheck";
+import type { PlatformInstance, PlatformModel } from "@/resources/PlatformModel";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
+import { useCustomChecksStore } from "@/stores/CustomChecksStore";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 
 const supportCaseUrl = "https://customers.particular.net/request-support";
@@ -13,6 +16,8 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   const payload = ref<PlatformHealthResponse | null>(null);
   const environmentAndVersionsStore = useEnvironmentAndVersionsStore();
   const platformModelStore = usePlatformModelStore();
+  const customChecksStore = useCustomChecksStore();
+  const { rawFailedChecks } = storeToRefs(customChecksStore);
 
   const severity = computed<PlatformHealthSeverity>(() => {
     const current = payload.value;
@@ -107,7 +112,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   async function refresh() {
     await platformModelStore.refresh();
 
-    payload.value = platformModelStore.model;
+    payload.value = platformModelStore.model ? applyPlatformHealthChecks(platformModelStore.model, rawFailedChecks.value) : null;
   }
 
   return {
@@ -180,8 +185,8 @@ function formatInstanceType(instanceType: PlatformInstance["kind"]) {
   }
 }
 
-function hasUpgrade(currentVersion: string, latestVersion: string) {
-  return !!latestVersion && isUpgradeAvailable(currentVersion, latestVersion);
+function hasUpgrade(currentVersion: string | null | undefined, latestVersion: string) {
+  return !!currentVersion && !!latestVersion && isUpgradeAvailable(currentVersion, latestVersion);
 }
 
 function buildReleaseLink(version: string) {
@@ -197,3 +202,49 @@ if (import.meta.hot) {
 }
 
 export type PlatformHealthStore = ReturnType<typeof usePlatformHealthStore>;
+
+function applyPlatformHealthChecks(model: PlatformModel, checks: CustomCheck[]) {
+  const platformChecks = normalizeChecks(checks).map(getBuiltInPlatformCheck);
+  const primary = applyPlatformCheckHealthToPrimary(model.primary, platformChecks);
+  const remotes = applyPlatformCheckHealthToRemotes(model.remotes, platformChecks);
+
+  return {
+    ...model,
+    primary,
+    remotes,
+  } satisfies PlatformModel;
+}
+
+function applyPlatformCheckHealthToPrimary(primary: PlatformInstance, platformChecks: Array<ReturnType<typeof getBuiltInPlatformCheck>>) {
+  if (platformChecks.some((check) => check?.target === "primary" && check.severity === "unavailable")) {
+    return { ...primary, health: "unavailable" as const };
+  }
+
+  if (platformChecks.some((check) => check?.target === "primary" && check.severity === "degraded") && primary.health === "healthy") {
+    return { ...primary, health: "degraded" as const };
+  }
+
+  return primary;
+}
+
+function applyPlatformCheckHealthToRemotes(remotes: PlatformInstance[], platformChecks: Array<ReturnType<typeof getBuiltInPlatformCheck>>) {
+  const hasRemoteUnavailableCheck = platformChecks.some((check) => check?.target === "remote-error" && check.severity === "unavailable");
+  const hasAuditDegradedCheck = platformChecks.some((check) => check?.target === "audit" && check.severity === "degraded");
+  const hasTransportDegradedCheck = platformChecks.some((check) => check?.target === "transport" && check.severity === "degraded");
+
+  return remotes.map((remote) => {
+    if (remote.role === "remote-error" && hasRemoteUnavailableCheck) {
+      return { ...remote, health: "unavailable" as const };
+    }
+
+    if (remote.role === "remote-audit" && (hasAuditDegradedCheck || hasTransportDegradedCheck) && remote.health === "healthy") {
+      return { ...remote, health: "degraded" as const };
+    }
+
+    return remote;
+  });
+}
+
+function normalizeChecks(checks: CustomCheck[] | unknown) {
+  return Array.isArray(checks) ? checks : [];
+}

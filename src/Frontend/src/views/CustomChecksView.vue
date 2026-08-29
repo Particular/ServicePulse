@@ -7,14 +7,18 @@ import useCustomChecksStoreAutoRefresh from "@/composables/useCustomChecksStoreA
 
 const { store } = useCustomChecksStoreAutoRefresh();
 
-const { pageNumber, failingCount, failedChecks } = storeToRefs(store);
+const { pageNumber, failingCount, failedChecks, showPlatformCustomChecks } = storeToRefs(store);
 </script>
 
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-sm-12 padded">
+      <div class="col-sm-12 padded page-header-row">
         <h1>Custom checks</h1>
+        <label class="show-platform-toggle">
+          <input v-model="showPlatformCustomChecks" type="checkbox" aria-label="Show platform custom checks" />
+          <span>Show platform custom checks</span>
+        </label>
       </div>
     </div>
 
@@ -31,3 +35,28 @@ const { pageNumber, failingCount, failedChecks } = storeToRefs(store);
     </section>
   </div>
 </template>
+
+<style scoped>
+.page-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.show-platform-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+  font-size: 14px;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .page-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+</style>

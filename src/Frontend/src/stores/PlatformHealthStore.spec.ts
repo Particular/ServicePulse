@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
+import { Status } from "@/resources/CustomCheck";
 import { usePlatformHealthStore } from "@/stores/PlatformHealthStore";
+import { useCustomChecksStore } from "@/stores/CustomChecksStore";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 import type { PlatformModel } from "@/resources/PlatformModel";
@@ -109,6 +111,51 @@ describe("PlatformHealthStore", () => {
     expect(store.rows[2].upgradeAvailable).toBe(true);
     expect(store.rows[2].latestVersion).toBe("6.19.3");
     expect(store.outdatedOnly).toBe(false);
+  });
+
+  test("applies hidden built-in platform custom checks to platform health only", async () => {
+    const customChecksStore = useCustomChecksStore();
+    customChecksStore.replaceFailedChecks([
+      {
+        id: "customchecks/primary",
+        custom_check_id: "ServiceControl Primary Instance",
+        category: "Health",
+        status: Status.Fail,
+        reported_at: "2025-01-10T05:06:30.4074087Z",
+        failure_reason: "Critical error detected",
+        originating_endpoint: {
+          name: "Particular.ServiceControl",
+          host_id: "host-1",
+          host: "Host A",
+        },
+      },
+      {
+        id: "customchecks/audit",
+        custom_check_id: "Audit Message Ingestion",
+        category: "ServiceControl.Audit Health",
+        status: Status.Fail,
+        reported_at: "2025-01-10T05:06:30.4074087Z",
+        failure_reason: "Audit ingestion failed",
+        originating_endpoint: {
+          name: "Particular.ServiceControl.Audit",
+          host_id: "host-2",
+          host: "Host B",
+        },
+      },
+    ]);
+
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.refresh = vi.fn(() => {
+      platformModelStore.model = singleRegionWarningModel;
+      return Promise.resolve();
+    });
+    const store = usePlatformHealthStore();
+
+    await store.refresh();
+
+    expect(store.payload?.primary.health).toBe("unavailable");
+    expect(store.payload?.remotes[0].health).toBe("degraded");
+    expect(store.severity).toBe("danger");
   });
 });
 

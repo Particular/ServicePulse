@@ -1,9 +1,20 @@
 import { test, describe } from "../../drivers/vitest/driver";
 import { expect } from "vitest";
 import * as precondition from "../../preconditions";
-import { customChecksFailedRowsList, customChecksListElement, customChecksMessageElement, customChecksFailedReasonList, customChecksListPaginationElement, customChecksReportedDateList } from "./questions/failedCustomChecks";
+import {
+  customChecksFailedRowsList,
+  customChecksListElement,
+  customChecksMessageElement,
+  customChecksFailedReasonList,
+  customChecksListPaginationElement,
+  customChecksReportedDateList,
+  showPlatformCustomChecksToggle,
+} from "./questions/failedCustomChecks";
 import { waitFor } from "@testing-library/vue";
 import { updateCustomCheckItemByStatus } from "../../preconditions/customChecks";
+import userEvent from "@testing-library/user-event";
+import { queryCustomChecksDashboardItem } from "./questions/customChecksDashboardItem";
+import { Status } from "@/resources/CustomCheck";
 
 describe("FEATURE: Failing custom checks", () => {
   describe("RULE: Failed custom checks should be displayed", () => {
@@ -30,6 +41,44 @@ describe("FEATURE: Failing custom checks", () => {
           const textContent = reason.textContent?.trim();
           expect(textContent).not.toBe(""); //  the failed reason text content is not empty
         });
+      });
+    });
+
+    test("EXAMPLE: Built-in platform custom checks are hidden from the page by default", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(
+        precondition.getCustomChecks([
+          precondition.createCustomCheck({ custom_check_id: "ServiceControl Primary Instance", category: "Health", status: Status.Fail, failure_reason: "Primary unavailable" }),
+          precondition.createCustomCheck({ custom_check_id: "SampleCustomeCheck 1", category: "Some Category 1", status: Status.Fail, failure_reason: "configured to fail on endpoint 1" }),
+        ])
+      );
+
+      await driver.goTo("/custom-checks");
+
+      await waitFor(async () => {
+        expect(await customChecksFailedRowsList()).toHaveLength(1);
+      });
+      await userEvent.click(showPlatformCustomChecksToggle());
+
+      await waitFor(async () => {
+        expect(await customChecksFailedRowsList()).toHaveLength(2);
+      });
+    });
+
+    test("EXAMPLE: Built-in platform custom checks are hidden from the dashboard count by default", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(
+        precondition.getCustomChecks([
+          precondition.createCustomCheck({ custom_check_id: "ServiceControl Primary Instance", category: "Health", status: Status.Fail, failure_reason: "Primary unavailable" }),
+          precondition.createCustomCheck({ custom_check_id: "SampleCustomeCheck 1", category: "Some Category 1", status: Status.Fail, failure_reason: "configured to fail on endpoint 1" }),
+        ])
+      );
+
+      await driver.goTo("/dashboard");
+
+      await waitFor(async () => {
+        const dashboardItem = await queryCustomChecksDashboardItem();
+        expect(dashboardItem?.counterValue).toBe(1);
       });
     });
   });
