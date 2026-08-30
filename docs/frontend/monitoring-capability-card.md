@@ -8,16 +8,17 @@ The Monitoring Capability Card displays on the ServicePulse dashboard and shows 
 
 1. Whether the monitoring instance is configured in ServicePulse
 2. Whether the monitoring instance is available (responding)
-3. Whether endpoints are sending throughput data (monitoring plugin enabled)
+3. Capability-specific metrics readiness shown by the `Metrics` indicator
 
 ## Card States
 
-| Status                   | Condition                                         | Badge          | Action Button |
-|--------------------------|---------------------------------------------------|----------------|---------------|
-| Instance Not Configured  | Monitoring URL not configured in ServicePulse     | Not configured | Get Started   |
-| Unavailable              | Monitoring instance configured but not responding | Unavailable    | Learn More    |
-| Endpoints Not Configured | Instance available but no endpoints sending data  | Not configured | Learn More    |
-| Available                | Instance available with endpoints sending data    | Available      | View Metrics  |
+| Status                  | Condition                                         | Badge          | Action Button |
+|-------------------------|---------------------------------------------------|----------------|---------------|
+| Instance Not Configured | Monitoring URL not configured in ServicePulse     | Not configured | Get Started   |
+| Unavailable             | Monitoring instance configured but not responding | Unavailable    | Learn More    |
+| Available               | Monitoring instance configured and responding     | Available      | View Metrics  |
+
+The `Metrics` indicator carries the capability-specific readiness state. If no endpoints are currently sending throughput data, the card still stays `Available` while the indicator is yellow.
 
 ## Manual Testing with Mock Scenarios
 
@@ -55,11 +56,11 @@ Open the browser console to see available scenarios.
 
 #### Available Monitoring Scenarios
 
-| Scenario                  | Status                   | Badge          | Button       | Description                                                                                                       | Indicators  |
-|---------------------------|--------------------------|----------------|--------------|-------------------------------------------------------------------------------------------------------------------|-------------|
-| `monitoring-available`    | Available                | Available      | View Metrics | "The ServiceControl Monitoring instance is available and endpoints have been configured to send throughput data." | Metrics: ✅ |
-| `monitoring-unavailable`  | Unavailable              | Unavailable    | Learn More   | "The ServiceControl Monitoring instance is configured but not responding..."                                      | None        |
-| `monitoring-no-endpoints` | Endpoints Not Configured | Not configured | Learn More   | "The ServiceControl Monitoring instance is connected but no endpoints are sending throughput data..."             | Metrics: ⚠️ |
+| Scenario                  | Status      | Badge       | Button       | Description                                                                                                       | Indicators  |
+|---------------------------|-------------|-------------|--------------|-------------------------------------------------------------------------------------------------------------------|-------------|
+| `monitoring-available`    | Available   | Available   | View Metrics | "The ServiceControl Monitoring instance is available. Use the Metrics indicator to see whether endpoints are currently sending throughput data." | Metrics: ✅ |
+| `monitoring-unavailable`  | Unavailable | Unavailable | Learn More   | "The ServiceControl Monitoring instance is configured but not responding..."                                      | None        |
+| `monitoring-no-endpoints` | Available   | Available   | View Metrics | "The ServiceControl Monitoring instance is available. Use the Metrics indicator to see whether endpoints are currently sending throughput data." | Metrics: ⚠️ |
 
 **Indicator Legend:** ✅ = Available/Success, ❌ = Unavailable/Error, ⚠️ = Warning/Not Configured
 
@@ -149,13 +150,13 @@ npx vitest run test/specs/platformcapabilities/
 
 #### Application Tests (`monitoring-capability-card.spec.ts`)
 
-| Rule                                      | Test Case                                                |
-|-------------------------------------------|----------------------------------------------------------|
-| Available with endpoints sending data     | Shows "Available" status + "View Metrics" button       |
-| Available but no endpoints sending data   | Shows "Endpoints Not Configured" status                |
-| Instance configured but not responding    | Shows "Unavailable" status                             |
-| Monitoring not configured in ServicePulse | Shows "Get Started" button                             |
-| Shared card signals                       | Shows only the `Metrics` indicator when connected        |
+| Rule                                      | Test Case                                                      |
+|-------------------------------------------|----------------------------------------------------------------|
+| Available with endpoints sending data     | Shows "Available" status + "View Metrics" button             |
+| Available but no endpoints sending data   | Keeps card available and shows a warning `Metrics` indicator   |
+| Instance configured but not responding    | Shows "Unavailable" status                                   |
+| Monitoring not configured in ServicePulse | Shows "Get Started" button                                   |
+| Shared card signals                       | Shows only the `Metrics` indicator when connected              |
 
 ## Key Source Files
 
@@ -169,11 +170,10 @@ npx vitest run test/specs/platformcapabilities/
 
 ## How Monitoring Status is Determined
 
-The monitoring status is determined by checking three conditions in order:
+The monitoring status is determined by checking two conditions in order:
 
 1. **Is monitoring configured?** - Checks if `monitoring_urls` contains a valid URL (not "!" or empty)
 2. **Is the instance responding?** - Checks if the connection to the monitoring instance succeeds
-3. **Are endpoints sending data?** - Checks if any monitored endpoints exist
 
 ```typescript
 // Simplified status determination logic
@@ -182,9 +182,6 @@ if (!isMonitoringEnabled) {
 }
 if (!connectionSuccessful) {
   return CapabilityStatus.Unavailable;
-}
-if (!hasMonitoredEndpoints) {
-  return CapabilityStatus.EndpointsNotConfigured;
 }
 return CapabilityStatus.Available;
 ```

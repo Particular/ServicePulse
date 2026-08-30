@@ -8,21 +8,17 @@ import routeLinks from "@/router/routeLinks";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 
 const MonitoringDescriptions: CapabilityStatusToStringMap = {
-  [CapabilityStatus.EndpointsNotConfigured]:
-    "The ServiceControl Monitoring instance is connected but no endpoints are sending throughput data. This may be because no endpoints are running or no endpoints have the monitoring plugin enabled. Click 'Learn More' to find out how to set up monitoring for your endpoints.",
   [CapabilityStatus.InstanceNotConfigured]: "The ServiceControl Monitoring instance is not configured. Click 'Get Started' to learn more about setting up monitoring.",
   [CapabilityStatus.Unavailable]: "The ServiceControl Monitoring instance is configured but not responding. Click 'Learn More' to troubleshoot connection issues.",
-  [CapabilityStatus.Available]: "The ServiceControl Monitoring instance is available and endpoints have been configured to send throughput data.",
+  [CapabilityStatus.Available]: "The ServiceControl Monitoring instance is available. Use the Metrics indicator to see whether endpoints are currently sending throughput data.",
 };
 
 const MonitoringHelpButtonText: CapabilityStatusToStringMap = {
-  [CapabilityStatus.EndpointsNotConfigured]: "Learn More",
   [CapabilityStatus.InstanceNotConfigured]: "Get Started",
   [CapabilityStatus.Available]: "View Metrics",
 };
 
 const MonitoringHelpButtonUrl: CapabilityStatusToStringMap = {
-  [CapabilityStatus.EndpointsNotConfigured]: "https://docs.particular.net/monitoring/metrics/install-plugin",
   [CapabilityStatus.InstanceNotConfigured]: "https://docs.particular.net/servicecontrol/monitoring-instances/",
   [CapabilityStatus.Unavailable]: "https://docs.particular.net/servicecontrol/troubleshooting",
   [CapabilityStatus.Available]: routeLinks.monitoring.root,
@@ -57,12 +53,7 @@ export function useMonitoringCapability(): CapabilityComposable {
       return CapabilityStatus.Unavailable;
     }
 
-    // 3. Check if there are any endpoints sending data
-    if (!hasMonitoredEndpoints.value) {
-      return CapabilityStatus.EndpointsNotConfigured;
-    }
-
-    // 4. If all checks pass, monitoring is available
+    // 3. If the instance is configured and reachable, monitoring is available.
     return CapabilityStatus.Available;
   });
 
