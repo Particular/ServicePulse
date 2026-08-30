@@ -2,6 +2,8 @@
 
 This document describes the monitoring capability card component, its various states, and how to test them both manually and automatically.
 
+For shared frontend mock and Vitest workflow, see `docs/frontend/testing-basics.md`.
+
 ## Overview
 
 The Monitoring Capability Card displays on the ServicePulse dashboard and shows the status of the monitoring feature. The card's status depends on:
@@ -22,37 +24,7 @@ The `Metrics` indicator carries the capability-specific readiness state. If no e
 
 ## Manual Testing with Mock Scenarios
 
-### Prerequisites
-
-```bash
-cd src/Frontend
-npm install
-```
-
-### Running the Dev Server with Mocks
-
-```bash
-npm run dev:mocks
-```
-
-This starts the dev server at `http://localhost:5173` with MSW (Mock Service Worker) intercepting API calls.
-
-### Switching Between Scenarios
-
-Set the `VITE_MOCK_SCENARIO` environment variable before running the dev server:
-
-```bash
-# Linux/macOS
-VITE_MOCK_SCENARIO=monitoring-available npm run dev:mocks
-
-# Windows CMD
-set VITE_MOCK_SCENARIO=monitoring-available && npm run dev:mocks
-
-# Windows PowerShell
-$env:VITE_MOCK_SCENARIO="monitoring-available"; npm run dev:mocks
-```
-
-Open the browser console to see available scenarios.
+Start from the shared frontend mocking workflow in `docs/frontend/testing-basics.md`, then select one of the monitoring scenarios below.
 
 #### Available Monitoring Scenarios
 
@@ -79,53 +51,6 @@ window.defaultConfig = {
 };
 ```
 
-### Adding New Scenarios
-
-1. Add a scenario precondition to `src/Frontend/test/preconditions/platformCapabilities.ts`:
-
-```typescript
-export const scenarioMyScenario = async ({ driver }: SetupFactoryOptions) => {
-  await driver.setUp(precondition.serviceControlWithMonitoring);
-  // Add scenario-specific preconditions here
-};
-```
-
-1. Create a new file in `src/Frontend/test/mocks/scenarios/` (e.g., `my-scenario.ts`):
-
-```typescript
-import { setupWorker } from "msw/browser";
-import { Driver } from "../../driver";
-import { makeMockEndpoint, makeMockEndpointDynamic } from "../../mock-endpoint";
-import * as precondition from "../../preconditions";
-
-export const worker = setupWorker();
-const mockEndpoint = makeMockEndpoint({ mockServer: worker });
-const mockEndpointDynamic = makeMockEndpointDynamic({ mockServer: worker });
-
-const makeDriver = (): Driver => ({
-  goTo() { throw new Error("Not implemented"); },
-  mockEndpoint,
-  mockEndpointDynamic,
-  setUp(factory) { return factory({ driver: this }); },
-  disposeApp() { throw new Error("Not implemented"); },
-});
-
-const driver = makeDriver();
-
-export const setupComplete = (async () => {
-  await driver.setUp(precondition.scenarioMyScenario);
-})();
-```
-
-1. Register it in `src/Frontend/test/mocks/scenarios/index.ts`:
-
-```typescript
-const scenarios: Record<string, () => Promise<ScenarioModule>> = {
-  // ... existing scenarios
-  "my-scenario": () => import("./my-scenario"),
-};
-```
-
 ## Automated Tests
 
 ### Test Files
@@ -136,14 +61,10 @@ const scenarios: Record<string, () => Promise<ScenarioModule>> = {
 
 ### Running Automated Tests
 
-From the `src/Frontend` directory:
+Use the shared commands in `docs/frontend/testing-basics.md`, then run this monitoring-specific spec:
 
 ```bash
-# Run all monitoring capability tests
 npx vitest run test/specs/platformcapabilities/monitoring-capability-card.spec.ts
-
-# Run all platform capability tests
-npx vitest run test/specs/platformcapabilities/
 ```
 
 ### Test Coverage
@@ -199,18 +120,10 @@ Instance-level monitoring visibility now lives on the `Platform health` page.
 
 ## Troubleshooting
 
-### Scenario not loading
+Use `docs/frontend/testing-basics.md` for shared troubleshooting.
 
-1. Check the browser console for errors
-2. Verify the scenario name matches exactly (case-sensitive)
-3. Ensure MSW is enabled (look for "[MSW] Mocking enabled" in console)
+Monitoring-specific checks:
 
-### Tests failing
-
-1. Run `npm run type-check` to verify TypeScript compilation
-2. Check if preconditions are properly set up
-3. Use `--reporter=verbose` for detailed test output:
-
-   ```bash
-   npx vitest run test/specs/platformcapabilities/ --reporter=verbose
-   ```
+1. If the badge is wrong, verify whether the scenario is changing instance connectivity or only endpoint throughput presence.
+2. If the `Metrics` indicator is wrong, inspect the `monitored-endpoints` response for the active scenario.
+3. The `Instance Not Configured` case is still a config-driven manual case, not a standard mock scenario.

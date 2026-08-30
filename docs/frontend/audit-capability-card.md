@@ -2,6 +2,8 @@
 
 This document describes the audit capability card component, its various states, and how to test them both manually and automatically.
 
+For shared frontend mock and Vitest workflow, see `docs/frontend/testing-basics.md`.
+
 ## Overview
 
 The Audit Capability Card displays on the ServicePulse dashboard and shows the status of the auditing feature. The card's status depends on:
@@ -24,37 +26,7 @@ The `Messages` indicator carries the capability-specific readiness state. If no 
 
 ## Manual Testing with Mock Scenarios
 
-### Prerequisites
-
-```bash
-cd src/Frontend
-npm install
-```
-
-### Running the Dev Server with Mocks
-
-```bash
-npm run dev:mocks
-```
-
-This starts the dev server at `http://localhost:5173` with MSW (Mock Service Worker) intercepting API calls.
-
-### Switching Between Scenarios
-
-Set the `VITE_MOCK_SCENARIO` environment variable before running the dev server:
-
-```bash
-# Linux/macOS
-VITE_MOCK_SCENARIO=audit-available npm run dev:mocks
-
-# Windows CMD
-set VITE_MOCK_SCENARIO=audit-available && npm run dev:mocks
-
-# Windows PowerShell
-$env:VITE_MOCK_SCENARIO="audit-available"; npm run dev:mocks
-```
-
-Open the browser console to see available scenarios.
+Start from the shared frontend mocking workflow in `docs/frontend/testing-basics.md`, then select one of the audit scenarios below.
 
 #### Available Audit Scenarios
 
@@ -70,53 +42,6 @@ Open the browser console to see available scenarios.
 
 **Indicator Legend:** ✅ = Available/Success, ❌ = Unavailable/Error, ⚠️ = Warning/Not Configured
 
-### Adding New Scenarios
-
-1. Add a scenario precondition to `src/Frontend/test/preconditions/platformCapabilities.ts`:
-
-```typescript
-export const scenarioMyScenario = async ({ driver }: SetupFactoryOptions) => {
-  await driver.setUp(precondition.serviceControlWithMonitoring);
-  // Add scenario-specific preconditions here
-};
-```
-
-2. Create a new file in `src/Frontend/test/mocks/scenarios/` (e.g., `my-scenario.ts`):
-
-```typescript
-import { setupWorker } from "msw/browser";
-import { Driver } from "../../driver";
-import { makeMockEndpoint, makeMockEndpointDynamic } from "../../mock-endpoint";
-import * as precondition from "../../preconditions";
-
-export const worker = setupWorker();
-const mockEndpoint = makeMockEndpoint({ mockServer: worker });
-const mockEndpointDynamic = makeMockEndpointDynamic({ mockServer: worker });
-
-const makeDriver = (): Driver => ({
-  goTo() { throw new Error("Not implemented"); },
-  mockEndpoint,
-  mockEndpointDynamic,
-  setUp(factory) { return factory({ driver: this }); },
-  disposeApp() { throw new Error("Not implemented"); },
-});
-
-const driver = makeDriver();
-
-export const setupComplete = (async () => {
-  await driver.setUp(precondition.scenarioMyScenario);
-})();
-```
-
-1. Register it in `src/Frontend/test/mocks/scenarios/index.ts`:
-
-```typescript
-const scenarios: Record<string, () => Promise<ScenarioModule>> = {
-  // ... existing scenarios
-  "my-scenario": () => import("./my-scenario"),
-};
-```
-
 ## Automated Tests
 
 ### Test Files
@@ -128,17 +53,11 @@ const scenarios: Record<string, () => Promise<ScenarioModule>> = {
 
 ### Running Automated Tests
 
-From the `src/Frontend` directory:
+Use the shared commands in `docs/frontend/testing-basics.md`, then run these audit-specific specs:
 
 ```bash
-# Run all audit capability tests
 npx vitest run test/specs/platformcapabilities/audit-capability-card.spec.ts
-
-# Run helper function unit tests
 npx vitest run test/specs/platformcapabilities/auditing-capability-helpers.spec.ts
-
-# Run all platform capability tests
-npx vitest run test/specs/platformcapabilities/
 ```
 
 ### Test Coverage
@@ -190,18 +109,9 @@ Instance-level audit visibility now lives on the `Platform health` page.
 
 ## Troubleshooting
 
-### Scenario not loading
+Use `docs/frontend/testing-basics.md` for shared troubleshooting.
 
-1. Check the browser console for errors
-2. Verify the scenario name matches exactly (case-sensitive)
-3. Ensure MSW is enabled (look for "[MSW] Mocking enabled" in console)
+Audit-specific checks:
 
-### Tests failing
-
-1. Run `npm run type-check` to verify TypeScript compilation
-2. Check if preconditions are properly set up
-3. Use `--reporter=verbose` for detailed test output:
-
-   ```bash
-   npx vitest run test/specs/platformcapabilities/ --reporter=verbose
-   ```
+1. If the card badge is wrong, inspect whether the scenario is changing instance availability or only message readiness.
+2. If the `Messages` indicator is wrong, check both successful-message mocks and the ServiceControl version used by the scenario.

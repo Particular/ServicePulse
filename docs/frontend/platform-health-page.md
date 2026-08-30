@@ -2,6 +2,8 @@
 
 This document describes the Platform health page, how it derives its rows and severity, and how to test it manually and automatically.
 
+For shared frontend mock and Vitest workflow, see `docs/frontend/testing-basics.md`.
+
 ## Overview
 
 The Platform health page provides instance-level visibility across the ServiceControl platform.
@@ -84,20 +86,7 @@ The lookup is curated by `category + custom_check_id`, not by `custom_check_id` 
 
 ## Manual Testing with Mock Scenarios
 
-### Prerequisites
-
-```bash
-cd src/Frontend
-npm install
-```
-
-### Running the Dev Server with Mocks
-
-```bash
-VITE_MOCK_SCENARIO=platform-health npm run dev:mocks
-```
-
-This starts the dev server at `http://localhost:5173` with the shared Platform health mock controls enabled.
+Start from the shared frontend mocking workflow in `docs/frontend/testing-basics.md`, then use the Platform health scenario and runtime helpers below.
 
 ### Startup Scenario
 
@@ -172,7 +161,7 @@ Verify these behaviors from the single startup scenario plus runtime switches:
 
 ### Running Automated Tests
 
-From the `src/Frontend` directory:
+Use the shared commands in `docs/frontend/testing-basics.md`, then run these Platform health-specific specs:
 
 ```bash
 npx vitest run src/stores/PlatformHealthStore.spec.ts
@@ -202,11 +191,9 @@ npx vitest run test/mocks/platform-health-state.spec.ts
 
 ## Troubleshooting
 
-### Scenario not loading
+Use `docs/frontend/testing-basics.md` for shared troubleshooting.
 
-1. Check the browser console for errors.
-2. Verify `VITE_MOCK_SCENARIO=platform-health` is set when running `npm run dev:mocks`.
-3. Ensure MSW is enabled.
+Platform health-specific checks:
 
 ### Unexpected topology or custom-check state
 
@@ -216,6 +203,5 @@ npx vitest run test/mocks/platform-health-state.spec.ts
 
 ### Tests failing
 
-1. Run `npm run type-check`.
-2. Run the focused Platform health specs listed above.
-3. Use `npx vitest run <path> --reporter=verbose` for more detail.
+1. Run the focused Platform health specs listed above.
+2. If row details are wrong, inspect whether the scenario is changing instance health, built-in custom checks, or both.
