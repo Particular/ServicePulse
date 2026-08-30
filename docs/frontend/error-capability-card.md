@@ -55,9 +55,9 @@ Open the browser console to see available scenarios.
 
 #### Available Recoverability Scenarios
 
-| Scenario                   | Status    | Badge     | Button               | Description                                 | Indicators |
-|----------------------------|-----------|-----------|----------------------|---------------------------------------------|------------|
-| `recoverability-available` | Available | Available | View Failed Messages | "The ServiceControl instance is available." | None       |
+| Scenario                   | Status    | Badge     | Button               | Description                                 | Indicators                         |
+|----------------------------|-----------|-----------|----------------------|---------------------------------------------|------------------------------------|
+| `recoverability-available` | Available | Available | View Failed Messages | "The ServiceControl instance is available." | `FailedMessages`: ⚠️ in multi-region, ✅ in single-region |
 
 ### Testing "Unavailable" State
 
@@ -143,7 +143,8 @@ npx vitest run test/specs/platformcapabilities/
 | Rule                              | Test Case                                                |
 |-----------------------------------|----------------------------------------------------------|
 | ServiceControl instance available | Shows "Available" status + "View Failed Messages" button |
-| Card widgets                      | Shows no status indicators                               |
+| Single-region management          | Shows a green `FailedMessages` indicator                 |
+| Multi-region management           | Shows a yellow `FailedMessages` indicator                |
 
 **Note:** The "Unavailable" state is not tested because when ServiceControl is unavailable, the entire dashboard is replaced with a connection error view, making the recoverability card inaccessible.
 
@@ -172,9 +173,16 @@ return CapabilityStatus.Available;
 
 ## Status Indicators
 
-The recoverability card currently shows no status indicators.
+The recoverability card shows a single `FailedMessages` indicator whenever the primary ServiceControl instance is available.
 
-Instance-level visibility for ServiceControl now lives on the `Platform health` page instead of on the capability card.
+- green when failures can be managed from the current ServicePulse instance
+- yellow in multi-region mode, where failure management is read-only from the cross-region view
+
+Tooltip text for multi-region mode:
+
+`Message failures are read only in multi-region mode, use the region specific ServicePulse to manage failures.`
+
+Instance-level visibility for ServiceControl still lives on the `Platform health` page instead of on the capability card.
 
 ## Relationship with Dashboard
 

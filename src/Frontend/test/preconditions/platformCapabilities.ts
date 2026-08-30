@@ -193,6 +193,24 @@ export const hasMultipleMonitoredEndpoints =
 // RECOVERABILITY CAPABILITY
 // =============================================================================
 
+/** Precondition: A remote error instance is configured, putting Recoverability into multi-region mode */
+export const hasRemoteErrorInstance = ({ driver }: SetupFactoryOptions) => {
+  driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
+    body: [
+      {
+        api_uri: "http://localhost:33337/api/",
+        version: "6.19.3",
+        status: RemoteInstanceStatus.Online,
+        configuration: {
+          data_retention: {
+            error_retention_period: "30.00:00:00",
+          },
+        },
+      },
+    ],
+  });
+};
+
 /** Precondition: ServiceControl instance is unavailable */
 export const hasServiceControlUnavailable = ({ driver }: SetupFactoryOptions) => {
   const serviceControlInstanceUrl = window.defaultConfig.service_control_url;

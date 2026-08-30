@@ -4,6 +4,9 @@ import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabil
 import routeLinks from "@/router/routeLinks";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 
+const singleRegionTooltip = "Message failures can be managed from this ServicePulse instance.";
+const multiRegionTooltip = "Message failures are read only in multi-region mode, use the region specific ServicePulse to manage failures.";
+
 const ErrorDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.Unavailable]: "The ServiceControl instance is not responding.",
   [CapabilityStatus.Available]: "The ServiceControl instance is available.",
@@ -19,7 +22,7 @@ const ErrorHelpButtonUrl: CapabilityStatusToStringMap = {
 };
 
 export function useErrorCapability(): CapabilityComposable {
-  const { getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus } = useCapabilityBase();
+  const { getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
   const platformModelStore = usePlatformModelStore();
 
   // Check if instance is connected
@@ -42,13 +45,21 @@ export function useErrorCapability(): CapabilityComposable {
   // Determine help button URL based on status
   const errorHelpButtonUrl = computed(() => getHelpButtonUrlForStatus(errorStatus.value, ErrorHelpButtonUrl));
 
+  const errorIndicators = computed(() => {
+    if (!isConnected.value) {
+      return [];
+    }
+
+    return [createIndicator("FailedMessages", platformModelStore.isMultiRegion ? CapabilityStatus.PartiallyUnavailable : CapabilityStatus.Available, platformModelStore.isMultiRegion ? multiRegionTooltip : singleRegionTooltip)];
+  });
+
   // Loading state - error is loading if we haven't attempted connection yet
   const isLoading = computed(() => platformModelStore.model === null);
 
   return {
     status: errorStatus,
     description: errorDescription,
-    indicators: computed(() => []),
+    indicators: errorIndicators,
     isLoading,
     helpButtonText: errorHelpButtonText,
     helpButtonUrl: errorHelpButtonUrl,
