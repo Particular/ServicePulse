@@ -36,7 +36,6 @@ describe("PlatformHealthView", () => {
   });
 
   test("requires the configuration download before enabling the support link", async () => {
-    const store = usePlatformHealthStore();
     const platformModelStore = usePlatformModelStore();
     platformModelStore.model = {
       primary: {
