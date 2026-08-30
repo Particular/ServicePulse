@@ -51,6 +51,8 @@ Relevant frontend pieces:
 
 Platform health uses built-in platform checks even when the Custom Checks page hides them.
 
+Platform health also refreshes those custom checks directly, so this behavior does not depend on visiting the Custom Checks page first.
+
 That logic is documented in:
 
 - `docs/frontend/platform-health-page.md`

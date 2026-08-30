@@ -26,7 +26,7 @@ export function useErrorCapability(): CapabilityComposable {
   const platformModelStore = usePlatformModelStore();
 
   // Check if instance is connected
-  const isConnected = computed(() => platformModelStore.primary?.health === "healthy");
+  const isConnected = computed(() => platformModelStore.primary?.health !== "unavailable");
 
   // Determine overall error status
   const errorStatus = computed(() => {

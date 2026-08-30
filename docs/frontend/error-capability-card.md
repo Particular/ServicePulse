@@ -86,7 +86,7 @@ The recoverability status is determined by checking the primary instance in the 
 
 ```typescript
 // Simplified status determination logic
-const isConnected = platformModelStore.primary?.health === "healthy";
+const isConnected = platformModelStore.primary?.health !== "unavailable";
 
 if (!isConnected) {
   return CapabilityStatus.Unavailable;
@@ -97,6 +97,8 @@ return CapabilityStatus.Available;
 ## Status Indicators
 
 The recoverability card shows a single `FailedMessages` indicator whenever the primary ServiceControl instance is available.
+
+A degraded primary instance remains connected for this card. Platform health owns the degraded vs unavailable distinction at the instance level.
 
 - green when failures can be managed from this ServicePulse instance
 - yellow in multi-region mode, where failure management is read-only from the cross-region view

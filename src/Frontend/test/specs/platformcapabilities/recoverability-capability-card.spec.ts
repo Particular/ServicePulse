@@ -86,5 +86,28 @@ describe("FEATURE: Recoverability capability card", () => {
       expect(failedMessagesIndicator).toBeInTheDocument();
       expect(failedMessagesIndicator?.querySelector(".light-warning")).not.toBeNull();
     });
+
+    test("EXAMPLE: Degraded primary instance still shows available status while connected", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasServiceControlPrimaryDegraded);
+
+      await driver.goTo("/");
+
+      await waitFor(async () => {
+        const card = await recoverabilityCapabilityCard();
+        expect(card).toBeInTheDocument();
+      });
+
+      await waitFor(async () => {
+        expect(await isRecoverabilityCardAvailable()).toBe(true);
+      });
+
+      const statusBadge = await recoverabilityStatusBadge();
+      expect(statusBadge?.textContent).toMatch(/Available/i);
+
+      const failedMessagesIndicator = await recoverabilityIndicatorByLabel("FailedMessages");
+      expect(failedMessagesIndicator).toBeInTheDocument();
+      expect(failedMessagesIndicator?.querySelector(".light-success")).not.toBeNull();
+    });
   });
 });

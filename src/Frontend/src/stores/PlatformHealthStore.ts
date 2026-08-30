@@ -1,10 +1,11 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { isUpgradeAvailable } from "@/composables/serviceSemVer";
 import { getBuiltInPlatformCheck } from "@/components/customchecks/builtInPlatformChecks";
 import type { PlatformHealthResponse, PlatformHealthRow, PlatformHealthSeverity } from "@/resources/PlatformHealth";
 import type CustomCheck from "@/resources/CustomCheck";
 import type { PlatformInstance, PlatformModel } from "@/resources/PlatformModel";
+import logger from "@/logger";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 import { useCustomChecksStore } from "@/stores/CustomChecksStore";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
@@ -18,9 +19,18 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   const platformModelStore = usePlatformModelStore();
   const customChecksStore = useCustomChecksStore();
   const { rawFailedChecks } = storeToRefs(customChecksStore);
+  const { model: platformModel } = storeToRefs(platformModelStore);
+
+  const currentModel = computed(() => {
+    if (!platformModel.value) {
+      return null;
+    }
+
+    return applyPlatformHealthChecks(platformModel.value, rawFailedChecks.value);
+  });
 
   const severity = computed<PlatformHealthSeverity>(() => {
-    const current = payload.value;
+    const current = currentModel.value;
     if (!current) {
       return "none";
     }
@@ -51,7 +61,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   const outdatedOnly = computed(() => severity.value === "none" && rows.value.some((row) => row.upgradeAvailable));
 
   const rows = computed<PlatformHealthRow[]>(() => {
-    const current = payload.value;
+    const current = currentModel.value;
     if (!current) {
       return [];
     }
@@ -76,7 +86,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   });
 
   const issueSummary = computed(() => {
-    const current = payload.value;
+    const current = currentModel.value;
     if (!current) {
       return "No issues detected.";
     }
@@ -106,7 +116,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   });
 
   const supportDownloadJson = computed(() => {
-    if (!payload.value) {
+    if (!currentModel.value) {
       return "";
     }
 
@@ -115,7 +125,7 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
         schemaVersion: 1,
         generatedAt: new Date().toISOString(),
         supportCaseUrl,
-        platformHealth: payload.value,
+        platformHealth: currentModel.value,
       },
       null,
       2
@@ -123,10 +133,23 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   });
 
   async function refresh() {
-    await platformModelStore.refresh();
+    const [platformModelResult, customChecksResult] = await Promise.allSettled([platformModelStore.refresh(), customChecksStore.refresh()]);
 
-    payload.value = platformModelStore.model ? applyPlatformHealthChecks(platformModelStore.model, rawFailedChecks.value) : null;
+    if (platformModelResult.status === "rejected") {
+      throw platformModelResult.reason;
+    }
+
+    if (customChecksResult.status === "rejected") {
+      // Platform health still renders from platform availability data when custom checks cannot be loaded.
+      logger.warn("Unable to refresh custom checks for platform health", customChecksResult.reason);
+    }
+
+    payload.value = currentModel.value;
   }
+
+  watch(currentModel, (model) => {
+    payload.value = model;
+  });
 
   return {
     payload,

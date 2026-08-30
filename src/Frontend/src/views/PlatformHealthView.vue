@@ -18,17 +18,20 @@ function openSupportModal() {
 }
 
 function getUpgradeTargetVersion(row: (typeof store.rows)[number]) {
-  return row.latestVersion || store.payload?.primary.version || "";
+  return row.upgradeAvailable ? row.latestVersion : "";
 }
 
 function getUpgradeTargetLink(row: (typeof store.rows)[number]) {
-  return row.upgradeLink || `https://github.com/Particular/ServiceControl/releases/tag/${getUpgradeTargetVersion(row)}`;
+  const targetVersion = getUpgradeTargetVersion(row);
+  if (!targetVersion) {
+    return "";
+  }
+
+  return row.upgradeLink || `https://github.com/Particular/ServiceControl/releases/tag/${targetVersion}`;
 }
 
 function shouldShowUpgradeCue(row: (typeof store.rows)[number]) {
-  const targetVersion = getUpgradeTargetVersion(row);
-
-  return row.upgradeAvailable || (!!targetVersion && row.version !== "Unknown" && row.version !== targetVersion);
+  return row.upgradeAvailable && !!getUpgradeTargetVersion(row);
 }
 
 function rowKey(row: (typeof store.rows)[number]) {

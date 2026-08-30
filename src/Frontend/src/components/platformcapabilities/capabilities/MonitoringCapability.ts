@@ -38,18 +38,17 @@ export function useMonitoringCapability(): CapabilityComposable {
   const { hasMonitoredEndpoints } = storeToRefs(platformCapabilitiesStore);
   const platformModelStore = usePlatformModelStore();
   const hasMonitoringInstance = computed(() => platformModelStore.monitoring !== null);
+  const isMonitoringConnected = computed(() => platformModelStore.monitoring?.health !== "unavailable");
 
   // Determine overall monitoring status
   const monitoringStatus = computed(() => {
-    const connectionSuccessful = platformModelStore.monitoring?.health === "healthy";
-
     // 1. Check if a monitoring instance exists in the shared platform model
     if (!hasMonitoringInstance.value) {
       return CapabilityStatus.InstanceNotConfigured;
     }
 
     // 2. Check if we are connected to the monitoring instance
-    if (!connectionSuccessful) {
+    if (!isMonitoringConnected.value) {
       return CapabilityStatus.Unavailable;
     }
 
@@ -69,9 +68,7 @@ export function useMonitoringCapability(): CapabilityComposable {
   // Determine indicators
   const monitoringIndicators = computed(() => {
     const indicators: StatusIndicator[] = [];
-
-    const connectionSuccessful = platformModelStore.monitoring?.health === "healthy";
-    const instanceAvailable = hasMonitoringInstance.value && connectionSuccessful;
+    const instanceAvailable = hasMonitoringInstance.value && isMonitoringConnected.value;
 
     // data available indicator - only show if instance is connected
     if (instanceAvailable) {

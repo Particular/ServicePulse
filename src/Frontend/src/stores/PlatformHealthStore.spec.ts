@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
+import { nextTick } from "vue";
 import { Status } from "@/resources/CustomCheck";
 import { usePlatformHealthStore } from "@/stores/PlatformHealthStore";
 import { useCustomChecksStore } from "@/stores/CustomChecksStore";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 import type { PlatformModel } from "@/resources/PlatformModel";
+import logger from "@/logger";
 
 describe("PlatformHealthStore", () => {
   beforeEach(() => {
@@ -19,6 +21,11 @@ describe("PlatformHealthStore", () => {
     environmentAndVersionsStore.newVersions.newMVersion.newmversion = true;
     environmentAndVersionsStore.newVersions.newMVersion.newmversionnumber = "6.19.3";
     environmentAndVersionsStore.newVersions.newMVersion.newmversionlink = "https://github.com/Particular/ServiceControl/releases/tag/6.19.3";
+
+    vi.spyOn(logger, "warn").mockImplementation(() => undefined);
+
+    const customChecksStore = useCustomChecksStore();
+    customChecksStore.refresh = vi.fn(() => Promise.resolve());
   });
 
   test("derives warning severity and single-region rows", async () => {
@@ -300,6 +307,71 @@ describe("PlatformHealthStore", () => {
 
     expect(store.payload?.remotes[0].health).toBe("healthy");
     expect(store.payload?.remotes[1].health).toBe("degraded");
+  });
+
+  test("refreshes custom checks alongside the platform model and keeps rendering when custom checks fail", async () => {
+    const customChecksStore = useCustomChecksStore();
+    customChecksStore.refresh = vi.fn(() => Promise.reject(new Error("custom checks unavailable")));
+
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.refresh = vi.fn(() => {
+      platformModelStore.model = singleRegionWarningModel;
+      return Promise.resolve();
+    });
+
+    const store = usePlatformHealthStore();
+
+    await store.refresh();
+
+    expect(customChecksStore.refresh).toHaveBeenCalledTimes(1);
+    expect(platformModelStore.refresh).toHaveBeenCalledTimes(1);
+    expect(store.payload?.primary.health).toBe("healthy");
+    expect(logger.warn).toHaveBeenCalledWith("Unable to refresh custom checks for platform health", expect.any(Error));
+  });
+
+  test("recomputes payload-derived state when failed checks change after refresh", async () => {
+    const customChecksStore = useCustomChecksStore();
+    const platformModelStore = usePlatformModelStore();
+
+    customChecksStore.refresh = vi.fn(() => Promise.resolve());
+    platformModelStore.refresh = vi.fn(() => {
+      platformModelStore.model = {
+        ...singleRegionWarningModel,
+        remotes: singleRegionWarningModel.remotes.map((remote) => ({
+          ...remote,
+          health: "healthy",
+        })),
+      };
+      return Promise.resolve();
+    });
+
+    const store = usePlatformHealthStore();
+
+    await store.refresh();
+
+    expect(store.severity).toBe("none");
+
+    customChecksStore.replaceFailedChecks([
+      {
+        id: "customchecks/audit-targeted-instance",
+        custom_check_id: "Audit Message Ingestion",
+        category: "ServiceControl.Audit Health",
+        status: Status.Fail,
+        reported_at: "2025-01-10T05:06:30.4074087Z",
+        failure_reason: "Audit ingestion failed",
+        originating_endpoint: {
+          name: "Particular.ServiceControl.Audit-Blue",
+          host_id: "host-2",
+          host: "Host B",
+        },
+      },
+    ]);
+
+    await nextTick();
+
+    expect(store.payload?.remotes[1].health).toBe("degraded");
+    expect(store.severity).toBe("warning");
+    expect(store.rows[2].details).toContain("Audit Message Ingestion: Audit ingestion failed");
   });
 });
 

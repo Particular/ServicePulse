@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
+import { RemoteInstanceType } from "@/resources/RemoteInstance";
 
 const getRoot = vi.fn();
 const getRemoteInstances = vi.fn();
@@ -97,5 +98,29 @@ describe("PlatformModelStore", () => {
     expect(store.primary?.name).toBe("Particular.ServiceControl.Primary");
     expect(store.primary?.health).toBe("degraded");
     expect(store.primary?.version).toBe("6.18.1");
+  });
+
+  test("uses cached remote instance type when an unavailable remote no longer has configuration", async () => {
+    getRoot.mockResolvedValue({
+      name: "Particular.ServiceControl.Primary",
+      platform_health_status: "healthy",
+      platform_health_version: "6.19.3",
+    });
+    getRemoteInstances.mockResolvedValue([
+      {
+        api_uri: "http://localhost:33334/api/",
+        version: "6.19.3",
+        status: "unavailable",
+        cachedInstanceType: RemoteInstanceType.Error,
+      },
+    ]);
+    getMonitoringRoot.mockResolvedValue(null);
+
+    const store = usePlatformModelStore();
+    await store.refresh();
+
+    expect(store.remotes[0].kind).toBe("error");
+    expect(store.remotes[0].role).toBe("remote-error");
+    expect(store.isMultiRegion).toBe(true);
   });
 });

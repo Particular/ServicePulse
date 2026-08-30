@@ -22,6 +22,8 @@ The Monitoring Capability Card displays on the ServicePulse dashboard and shows 
 
 The `Metrics` indicator carries the capability-specific readiness state. If no endpoints are sending throughput data, the card stays `Available` while the indicator is yellow.
 
+A degraded monitoring instance still counts as connected for this card. Only `unavailable` drives the card into the unavailable state.
+
 ## Manual Testing with Mock Scenarios
 
 Start from the shared frontend mocking workflow in `docs/frontend/testing-basics.md`, then select one of the monitoring scenarios below.
@@ -77,6 +79,7 @@ npx vitest run test/specs/platformcapabilities/monitoring-capability-card.spec.t
 |-------------------------------------------|----------------------------------------------------------------|
 | Available with endpoints sending data     | Shows "Available" status + "View Metrics" button             |
 | Available but no endpoints sending data   | Keeps card available and shows a warning `Metrics` indicator   |
+| Degraded but responding instance          | Keeps card available and still shows `Metrics` behavior        |
 | Instance configured but not responding    | Shows "Unavailable" status                                   |
 | Monitoring not configured in ServicePulse | Shows "Get Started" button                                   |
 | Shared card signals                       | Shows only the `Metrics` indicator when connected              |

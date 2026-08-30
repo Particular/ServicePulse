@@ -24,6 +24,8 @@ The Audit Capability Card displays on the ServicePulse dashboard and shows the s
 
 The `Messages` indicator carries the capability-specific readiness state. If no successful messages exist yet, or if `All Messages` is not supported, the card remains `Available` while the indicator is yellow.
 
+An audit instance that is degraded but still responding remains available for this card. Only unavailable audit instances affect the badge state.
+
 ## Manual Testing with Mock Scenarios
 
 Start from the shared frontend mocking workflow in `docs/frontend/testing-basics.md`, then select one of the audit scenarios below.

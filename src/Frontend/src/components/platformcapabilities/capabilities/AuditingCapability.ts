@@ -102,7 +102,7 @@ export function useAuditingCapability(): CapabilityComposable {
     platformModelStore.auditInstances.map((instance) => ({
       api_uri: instance.apiUrl,
       version: instance.version,
-      status: instance.health === "healthy" ? RemoteInstanceStatus.Online : RemoteInstanceStatus.Unavailable,
+      status: instance.health === "unavailable" ? RemoteInstanceStatus.Unavailable : RemoteInstanceStatus.Online,
       cachedInstanceType: RemoteInstanceType.Audit,
     }))
   );

@@ -18,6 +18,7 @@ The page is frontend-first and mock-driven. It:
 - derives page-specific row and details behavior in `PlatformHealthStore`
 - keeps topology and instance visibility on the page instead of duplicating per-instance widgets on capability cards
 - uses built-in platform custom checks as secondary health signals for page-specific health inference, including instance-mapped degraded states
+- refreshes custom checks together with platform instance data so hidden built-in signals are available even when the Custom Checks page has not been opened
 
 ## Page Behavior
 
@@ -34,6 +35,7 @@ Each row shows:
 - current version
 - health state
 - upgrade cue when a newer version is known
+- no upgrade cue when the page only knows that versions differ but does not know a newer target version
 
 Rows for degraded or unavailable instances can expand to show details.
 
@@ -89,6 +91,7 @@ For the shared built-in-check catalog and Custom Checks page behavior, see `docs
 Platform health-specific rule:
 
 - when assigning a built-in degraded check to a specific instance, use `originating_endpoint.name` to match the emitting platform instance
+- built-in platform custom checks are loaded by `PlatformHealthStore` itself, not only as a side effect of visiting the Custom Checks page
 
 ## Manual Testing with Mock Scenarios
 
@@ -177,7 +180,7 @@ npx vitest run test/mocks/platform-health-state.spec.ts
 | Area | Covered behavior |
 |------|------------------|
 | Platform health store | warning/danger severity, multi-region danger, monitoring presence, version fallback, built-in custom-check health inference |
-| Platform health view | support download gating, upgrade cue rendering, direct instance links, monitoring row rendering, expandable degraded rows |
+| Platform health view | support download gating, known-version-only upgrade cue rendering, direct instance links, monitoring row rendering, expandable degraded rows |
 | Mock helpers | independent topology and custom-check switching |
 
 ## Key Source Files
@@ -208,3 +211,4 @@ Platform health-specific checks:
 
 1. Run the focused Platform health specs listed above.
 2. If a degraded row is missing or assigned to the wrong instance, inspect the check's `originating_endpoint.name` and the instance name carried in the platform model.
+3. If hidden platform checks are not affecting the page, inspect the `customchecks?status=fail` response instead of assuming the Custom Checks page must be visited first.

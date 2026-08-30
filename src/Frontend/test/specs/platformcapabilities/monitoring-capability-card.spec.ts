@@ -82,6 +82,30 @@ describe("FEATURE: Monitoring capability card", () => {
     });
   });
 
+  describe("RULE: When monitoring instance is degraded but still responding, keep the card available", () => {
+    test("EXAMPLE: Degraded monitoring instance still shows available status and metrics indicator behavior", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasMonitoringDegraded);
+
+      await driver.goTo("/");
+
+      await waitFor(async () => {
+        const card = await monitoringCapabilityCard();
+        expect(card).toBeInTheDocument();
+      });
+
+      await waitFor(async () => {
+        expect(await isMonitoringCardAvailable()).toBe(true);
+      });
+
+      const statusBadge = await monitoringStatusBadge();
+      expect(statusBadge?.textContent).toMatch(/Available/i);
+
+      const metricsIndicator = await monitoringIndicatorByLabel("Metrics");
+      expect(metricsIndicator).toBeInTheDocument();
+    });
+  });
+
   describe("RULE: When monitoring instance is configured but not responding, show 'Unavailable' status", () => {
     test("EXAMPLE: Monitoring instance unavailable shows unavailable status", async ({ driver }) => {
       // Arrange - Set up base preconditions first

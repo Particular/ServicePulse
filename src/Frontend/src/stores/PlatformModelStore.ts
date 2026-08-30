@@ -2,7 +2,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
 import serviceControlClient, { type ServiceControlRootDocument } from "@/components/serviceControlClient";
 import monitoringClient, { type MonitoringRoot } from "@/components/monitoring/monitoringClient";
-import type { RemoteInstance } from "@/resources/RemoteInstance";
+import { RemoteInstanceType, type RemoteInstance } from "@/resources/RemoteInstance";
 import type { PlatformInstance, PlatformModel } from "@/resources/PlatformModel";
 
 export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
@@ -94,7 +94,7 @@ function mapPrimary(primaryRoot: ServiceControlRootDocument | null): PlatformIns
 
 function mapRemotes(remotes: RemoteInstance[]): PlatformInstance[] {
   return remotes.map((remote, index) => {
-    const isError = remote.configuration?.data_retention?.error_retention_period !== undefined;
+    const isError = isRemoteErrorInstance(remote);
     const kind = isError ? "error" : "audit";
 
     return {
@@ -107,6 +107,18 @@ function mapRemotes(remotes: RemoteInstance[]): PlatformInstance[] {
       apiUrl: remote.api_uri,
     };
   });
+}
+
+function isRemoteErrorInstance(remote: RemoteInstance) {
+  if (remote.cachedInstanceType === RemoteInstanceType.Error) {
+    return true;
+  }
+
+  if (remote.cachedInstanceType === RemoteInstanceType.Audit) {
+    return false;
+  }
+
+  return remote.configuration?.data_retention?.error_retention_period !== undefined;
 }
 
 function mapMonitoring(monitoringRoot: MonitoringRoot | null): PlatformInstance | null {
