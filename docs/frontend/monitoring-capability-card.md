@@ -12,12 +12,12 @@ The Monitoring Capability Card displays on the ServicePulse dashboard and shows 
 
 ## Card States
 
-| Status                   | Condition                                         | Badge       | Action Button |
-|--------------------------|---------------------------------------------------|-------------|---------------|
-| Instance Not Configured  | Monitoring URL not configured in ServicePulse     | -           | Get Started   |
-| Unavailable              | Monitoring instance configured but not responding | Unavailable | Learn More    |
-| Endpoints Not Configured | Instance available but no endpoints sending data  | -           | Learn More    |
-| Available                | Instance available with endpoints sending data    | Available   | View Metrics  |
+| Status                   | Condition                                         | Badge          | Action Button |
+|--------------------------|---------------------------------------------------|----------------|---------------|
+| Instance Not Configured  | Monitoring URL not configured in ServicePulse     | Not configured | Get Started   |
+| Unavailable              | Monitoring instance configured but not responding | Unavailable    | Learn More    |
+| Endpoints Not Configured | Instance available but no endpoints sending data  | Not configured | Learn More    |
+| Available                | Instance available with endpoints sending data    | Available      | View Metrics  |
 
 ## Manual Testing with Mock Scenarios
 
@@ -55,11 +55,11 @@ Open the browser console to see available scenarios.
 
 #### Available Monitoring Scenarios
 
-| Scenario                  | Status                   | Badge       | Button       | Description                                                                                                       | Indicators               |
-|---------------------------|--------------------------|-------------|--------------|-------------------------------------------------------------------------------------------------------------------|--------------------------|
-| `monitoring-available`    | Available                | Available   | View Metrics | "The ServiceControl Monitoring instance is available and endpoints have been configured to send throughput data." | Instance: ✅, Metrics: ✅  |
-| `monitoring-unavailable`  | Unavailable              | Unavailable | Learn More   | "The ServiceControl Monitoring instance is configured but not responding..."                                      | Instance: ❌              |
-| `monitoring-no-endpoints` | Endpoints Not Configured | -           | Learn More   | "The ServiceControl Monitoring instance is connected but no endpoints are sending throughput data..."             | Instance: ✅, Metrics: ⚠️ |
+| Scenario                  | Status                   | Badge          | Button       | Description                                                                                                       | Indicators  |
+|---------------------------|--------------------------|----------------|--------------|-------------------------------------------------------------------------------------------------------------------|-------------|
+| `monitoring-available`    | Available                | Available      | View Metrics | "The ServiceControl Monitoring instance is available and endpoints have been configured to send throughput data." | Metrics: ✅ |
+| `monitoring-unavailable`  | Unavailable              | Unavailable    | Learn More   | "The ServiceControl Monitoring instance is configured but not responding..."                                      | None        |
+| `monitoring-no-endpoints` | Endpoints Not Configured | Not configured | Learn More   | "The ServiceControl Monitoring instance is connected but no endpoints are sending throughput data..."             | Metrics: ⚠️ |
 
 **Indicator Legend:** ✅ = Available/Success, ❌ = Unavailable/Error, ⚠️ = Warning/Not Configured
 
@@ -149,14 +149,13 @@ npx vitest run test/specs/platformcapabilities/
 
 #### Application Tests (`monitoring-capability-card.spec.ts`)
 
-| Rule                                      | Test Case                                            |
-|-------------------------------------------|------------------------------------------------------|
-| Available with endpoints sending data     | Shows "Available" status + "View Metrics" button     |
-| Available but no endpoints sending data   | Shows "Endpoints Not Configured" status              |
-| Instance configured but not responding    | Shows "Unavailable" status                           |
-| Monitoring not configured in ServicePulse | Shows "Get Started" button                           |
-| Instance indicator                        | Shows "Instance" label when monitoring is configured |
-| Metrics indicator                         | Shows "Metrics" label when instance is connected     |
+| Rule                                      | Test Case                                                |
+|-------------------------------------------|----------------------------------------------------------|
+| Available with endpoints sending data     | Shows "Available" status + "View Metrics" button       |
+| Available but no endpoints sending data   | Shows "Endpoints Not Configured" status                |
+| Instance configured but not responding    | Shows "Unavailable" status                             |
+| Monitoring not configured in ServicePulse | Shows "Get Started" button                             |
+| Shared card signals                       | Shows only the `Metrics` indicator when connected        |
 
 ## Key Source Files
 
@@ -164,6 +163,7 @@ npx vitest run test/specs/platformcapabilities/
 |-----------------------------------------------------------------------------------------|-------------------------------------|
 | `src/Frontend/src/components/platformcapabilities/capabilities/MonitoringCapability.ts` | Main composable for monitoring card |
 | `src/Frontend/src/components/monitoring/monitoringClient.ts`                            | Monitoring API client               |
+| `src/Frontend/src/stores/PlatformModelStore.ts`                                         | Shared platform model for monitoring state |
 | `src/Frontend/test/preconditions/platformCapabilities.ts`                               | Test preconditions and fixtures     |
 | `src/Frontend/test/mocks/scenarios/`                                                    | Manual testing scenarios            |
 
@@ -188,6 +188,17 @@ if (!hasMonitoredEndpoints) {
 }
 return CapabilityStatus.Available;
 ```
+
+## Status Indicators
+
+The monitoring card no longer renders a separate instance widget.
+
+It shows a single `Metrics` indicator only when the monitoring instance is configured and connected:
+
+- green when monitored endpoints exist
+- yellow when no endpoints are sending throughput data yet
+
+Instance-level monitoring visibility now lives on the `Platform health` page.
 
 ## Troubleshooting
 

@@ -38,7 +38,6 @@ const scenarios: Record<string, () => Promise<ScenarioModule>> = {
   "monitoring-no-endpoints": () => import("./monitoring/monitoring-no-endpoints"),
   // Platform health scenarios
   "platform-health": () => import("./platform-health/platform-health"),
-  "platform-health-outdated": () => import("./platform-health/platform-health-outdated"),
   // Recoverability scenarios
   "recoverability-available": () => import("./recoverability/recoverability-available"),
   "recoverability-unavailable": () => import("./recoverability/recoverability-unavailable"),

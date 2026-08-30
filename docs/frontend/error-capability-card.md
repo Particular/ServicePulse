@@ -4,7 +4,7 @@ This document describes the error/recoverability capability card component, its 
 
 ## Overview
 
-The Recoverability Capability Card displays on the ServicePulse dashboard and shows the status of the error handling (recoverability) feature. The card's status depends on whether the ServiceControl instance is available and responding.
+The Recoverability Capability Card displays on the ServicePulse dashboard and shows the status of the error handling (recoverability) feature. The card's status depends on whether the primary ServiceControl instance is available and responding.
 
 Unlike the Monitoring and Auditing cards, the Recoverability card has a simpler state model because:
 
@@ -55,9 +55,9 @@ Open the browser console to see available scenarios.
 
 #### Available Recoverability Scenarios
 
-| Scenario                   | Status    | Badge     | Button               | Description                                 | Indicators          |
-|----------------------------|-----------|-----------|----------------------|---------------------------------------------|---------------------|
-| `recoverability-available` | Available | Available | View Failed Messages | "The ServiceControl instance is available." | Instance: Available |
+| Scenario                   | Status    | Badge     | Button               | Description                                 | Indicators |
+|----------------------------|-----------|-----------|----------------------|---------------------------------------------|------------|
+| `recoverability-available` | Available | Available | View Failed Messages | "The ServiceControl instance is available." | None       |
 
 ### Testing "Unavailable" State
 
@@ -143,7 +143,7 @@ npx vitest run test/specs/platformcapabilities/
 | Rule                              | Test Case                                                |
 |-----------------------------------|----------------------------------------------------------|
 | ServiceControl instance available | Shows "Available" status + "View Failed Messages" button |
-| Instance indicator                | Shows "Instance" indicator with version info             |
+| Card widgets                      | Shows no status indicators                               |
 
 **Note:** The "Unavailable" state is not tested because when ServiceControl is unavailable, the entire dashboard is replaced with a connection error view, making the recoverability card inaccessible.
 
@@ -152,17 +152,17 @@ npx vitest run test/specs/platformcapabilities/
 | File                                                                                     | Purpose                                 |
 |------------------------------------------------------------------------------------------|-----------------------------------------|
 | `src/Frontend/src/components/platformcapabilities/capabilities/ErrorCapability.ts`       | Main composable for recoverability card |
-| `src/Frontend/src/stores/ConnectionsAndStatsStore.ts`                                    | Connection state management             |
+| `src/Frontend/src/stores/PlatformModelStore.ts`                                          | Shared platform state for primary health |
 | `src/Frontend/test/specs/platformcapabilities/questions/recoverabilityCapabilityCard.ts` | Test helper functions                   |
 | `src/Frontend/test/mocks/scenarios/`                                                     | Manual testing scenarios                |
 
 ## How Recoverability Status is Determined
 
-The recoverability status is determined by checking the ServiceControl connection state:
+The recoverability status is determined by checking the primary instance in the shared platform model:
 
 ```typescript
 // Simplified status determination logic
-const isConnected = connectionState.connected && !connectionState.unableToConnect;
+const isConnected = platformModelStore.primary?.health === "healthy";
 
 if (!isConnected) {
   return CapabilityStatus.Unavailable;
@@ -172,11 +172,9 @@ return CapabilityStatus.Available;
 
 ## Status Indicators
 
-The recoverability card shows a single "Instance" indicator that displays:
+The recoverability card currently shows no status indicators.
 
-- The ServiceControl instance URL
-- The ServiceControl version number
-- Connection status (Available or Unavailable icon)
+Instance-level visibility for ServiceControl now lives on the `Platform health` page instead of on the capability card.
 
 ## Relationship with Dashboard
 
@@ -186,6 +184,8 @@ The Recoverability capability card is tightly coupled to the main ServiceControl
 - When ServiceControl fails to connect, the dashboard shows a full-page connection error instead of loading the dashboard with an "Unavailable" card
 
 This is different from the Monitoring and Auditing cards, which can show "Unavailable" states independently while the dashboard remains functional.
+
+When the card is in an available or unavailable state, the status badge links to `Platform health`. There is no separate instance widget on the card.
 
 ## Troubleshooting
 
