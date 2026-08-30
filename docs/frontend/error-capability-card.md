@@ -25,6 +25,8 @@ Unlike the Monitoring and Auditing cards, the Recoverability card has a simpler 
 
 Start from the shared frontend mocking workflow in `docs/frontend/testing-basics.md`, then select the recoverability scenario below.
 
+For the shared meaning of primary, remote-error, and multi-region topology states, use `docs/frontend/platform-health-page.md` as the canonical reference. This page documents only the recoverability-specific layer on top.
+
 #### Available Recoverability Scenarios
 
 | Scenario                   | Status    | Badge     | Button               | Description                                 | Indicators                         |

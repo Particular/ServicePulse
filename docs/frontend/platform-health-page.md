@@ -4,6 +4,8 @@ This document describes the Platform health page, how it derives its rows and se
 
 For shared frontend mock and Vitest workflow, see `docs/frontend/testing-basics.md`.
 
+This page is also the canonical reference for shared platform topology scenarios used across Platform health and the capability-card docs.
+
 ## Overview
 
 The Platform health page provides instance-level visibility across the ServiceControl platform.

@@ -2,34 +2,15 @@ import { Status, type default as CustomCheck } from "@/resources/CustomCheck";
 import type { RemoteInstance } from "@/resources/RemoteInstance";
 import type RootUrls from "@/resources/RootUrls";
 import { createCustomCheck } from "../preconditions/customChecks";
+import { clonePlatformTopology, createPlatformTopology, latestPlatformVersion, toRemoteInstances, type PlatformTopology, type PlatformTopologyScenarioName, type PlatformTopologyStatus, updatePlatformTopologyStatus } from "./platform-topology";
 
-const latestPlatformVersion = "6.19.3";
-
-export type PlatformHealthMockScenarioName = "single-region-healthy" | "single-region-warning" | "single-region-danger" | "multi-region-healthy" | "multi-region-danger";
+export type PlatformHealthMockScenarioName = PlatformTopologyScenarioName;
 export type PlatformHealthCustomCheckPresetName = "none" | "user-only" | "platform-only-primary" | "platform-only-primary-degraded" | "platform-only-audit" | "mixed-primary-and-user";
 
-export type PlatformHealthMockStatus = "healthy" | "degraded" | "unavailable";
+export type PlatformHealthMockStatus = PlatformTopologyStatus;
 
-export interface PlatformHealthMockState {
-  scenario: PlatformHealthMockScenarioName;
+export interface PlatformHealthMockState extends PlatformTopology {
   customCheckPreset: PlatformHealthCustomCheckPresetName;
-  primary: {
-    name: string;
-    version: string;
-    status: PlatformHealthMockStatus;
-  };
-  remotes: Array<{
-    id: `remote-${number}`;
-    apiUri: string;
-    version: string;
-    status: PlatformHealthMockStatus;
-    instanceType: "audit" | "error";
-  }>;
-  monitoring: {
-    configured: boolean;
-    version: string;
-    status: PlatformHealthMockStatus;
-  } | null;
   customChecks: CustomCheck[];
 }
 
@@ -109,19 +90,7 @@ export function getPlatformHealthPrimaryRoot(): RootUrls {
 }
 
 export function getPlatformHealthRemoteInstances(): RemoteInstance[] {
-  return state.remotes.map(
-    (remote) =>
-      ({
-        api_uri: remote.apiUri,
-        version: remote.version,
-        status: remote.status === "healthy" ? "online" : "unavailable",
-        configuration: {
-          data_retention: remote.instanceType === "error" ? { error_retention_period: "14.00:00:00" } : { audit_retention_period: "7.00:00:00" },
-        },
-        platform_health_status: remote.status,
-        platform_health_id: remote.id,
-      }) as RemoteInstance
-  );
+  return toRemoteInstances(state);
 }
 
 export function getPlatformHealthMonitoringRoot() {
@@ -140,83 +109,11 @@ export function getPlatformHealthCustomChecks() {
 }
 
 function updateStatus(current: PlatformHealthMockState, id: "primary" | "monitoring" | `remote-${number}`, status: PlatformHealthMockStatus) {
-  if (id === "primary") {
-    return { ...current, primary: { ...current.primary, status } };
-  }
-
-  if (id === "monitoring" && current.monitoring) {
-    return { ...current, monitoring: { ...current.monitoring, status } };
-  }
-
   return {
-    ...current,
-    remotes: current.remotes.map((remote) => (remote.id === id ? { ...remote, status } : remote)),
+    ...updatePlatformTopologyStatus(current, id, status),
+    customCheckPreset: current.customCheckPreset,
+    customChecks: current.customChecks.map((check) => structuredClone(check)),
   };
-}
-
-function createScenario(name: PlatformHealthMockScenarioName): PlatformHealthMockState {
-  switch (name) {
-    case "single-region-healthy":
-      return {
-        scenario: name,
-        customCheckPreset: "none",
-        primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "healthy" },
-        remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "healthy", instanceType: "audit" },
-        ],
-        monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
-        customChecks: [],
-      };
-    case "single-region-warning":
-      return {
-        scenario: name,
-        customCheckPreset: "none",
-        primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "healthy" },
-        remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "degraded", instanceType: "audit" },
-        ],
-        monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
-        customChecks: [],
-      };
-    case "single-region-danger":
-      return {
-        scenario: name,
-        customCheckPreset: "none",
-        primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "unavailable" },
-        remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "degraded", instanceType: "audit" },
-        ],
-        monitoring: { configured: true, version: latestPlatformVersion, status: "unavailable" },
-        customChecks: [],
-      };
-    case "multi-region-healthy":
-      return {
-        scenario: name,
-        customCheckPreset: "none",
-        primary: { name: "Particular.ServiceControl.CrossRegion", version: latestPlatformVersion, status: "healthy" },
-        remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.RegionA/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
-        ],
-        monitoring: null,
-        customChecks: [],
-      };
-    case "multi-region-danger":
-      return {
-        scenario: name,
-        customCheckPreset: "none",
-        primary: { name: "Particular.ServiceControl.CrossRegion", version: latestPlatformVersion, status: "healthy" },
-        remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.RegionA/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "unavailable", instanceType: "error" },
-        ],
-        monitoring: null,
-        customChecks: [],
-      };
-  }
 }
 
 function withCustomChecks(baseState: PlatformHealthMockState, preset: PlatformHealthCustomCheckPresetName, customChecks = createCustomCheckPreset(preset)) {
@@ -279,10 +176,16 @@ function createCustomCheckPreset(name: PlatformHealthCustomCheckPresetName): Cus
 
 function cloneState(current: PlatformHealthMockState): PlatformHealthMockState {
   return {
-    ...current,
-    primary: { ...current.primary },
-    remotes: current.remotes.map((remote) => ({ ...remote })),
-    monitoring: current.monitoring ? { ...current.monitoring } : null,
+    ...clonePlatformTopology(current),
+    customCheckPreset: current.customCheckPreset,
     customChecks: current.customChecks.map((check) => structuredClone(check)),
+  };
+}
+
+function createScenario(name: PlatformHealthMockScenarioName): PlatformHealthMockState {
+  return {
+    ...createPlatformTopology(name),
+    customCheckPreset: "none",
+    customChecks: [],
   };
 }

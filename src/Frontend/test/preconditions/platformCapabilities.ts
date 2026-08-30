@@ -2,6 +2,7 @@ import { type RemoteInstance, RemoteInstanceStatus, RemoteInstanceType } from "@
 import { type default as Message, MessageStatus } from "@/resources/Message";
 import type { Endpoint } from "@/resources/MonitoringEndpoint";
 import { monitoredEndpointTemplate } from "../mocks/monitored-endpoint-template";
+import { createPlatformTopology, toRemoteInstances } from "../mocks/platform-topology";
 import type { SetupFactoryOptions } from "../driver";
 import * as precondition from ".";
 
@@ -80,7 +81,7 @@ export const hasAvailableAuditInstance =
 
 /** Precondition: Single audit instance that is unavailable */
 export const hasUnavailableAuditInstance = ({ driver }: SetupFactoryOptions) => {
-  const instance = createAuditInstance({ status: RemoteInstanceStatus.Unavailable });
+  const [instance] = toRemoteInstances({ remotes: [createPlatformTopology("single-region-danger").remotes[1]] });
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
     body: [instance],
   });
@@ -88,19 +89,17 @@ export const hasUnavailableAuditInstance = ({ driver }: SetupFactoryOptions) => 
 
 /** Precondition: Multiple audit instances with mixed availability */
 export const hasPartiallyUnavailableAuditInstances = ({ driver }: SetupFactoryOptions) => {
-  const onlineInstance = createAuditInstance({ apiUri: "http://localhost:33334/api/" });
-  const offlineInstance = createAuditInstance({ apiUri: "http://localhost:33336/api/", status: RemoteInstanceStatus.Unavailable });
+  const remotes = toRemoteInstances({ remotes: createPlatformTopology("single-region-warning").remotes });
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
-    body: [onlineInstance, offlineInstance],
+    body: remotes,
   });
 };
 
 /** Precondition: Multiple audit instances all online */
 export const hasMultipleAvailableAuditInstances = ({ driver }: SetupFactoryOptions) => {
-  const instance1 = createAuditInstance({ apiUri: "http://localhost:33334/api/" });
-  const instance2 = createAuditInstance({ apiUri: "http://localhost:33336/api/" });
+  const remotes = toRemoteInstances({ remotes: createPlatformTopology("single-region-healthy").remotes });
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
-    body: [instance1, instance2],
+    body: remotes,
   });
 };
 
@@ -196,18 +195,7 @@ export const hasMultipleMonitoredEndpoints =
 /** Precondition: A remote error instance is configured, putting Recoverability into multi-region mode */
 export const hasRemoteErrorInstance = ({ driver }: SetupFactoryOptions) => {
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
-    body: [
-      {
-        api_uri: "http://localhost:33337/api/",
-        version: "6.19.3",
-        status: RemoteInstanceStatus.Online,
-        configuration: {
-          data_retention: {
-            error_retention_period: "30.00:00:00",
-          },
-        },
-      },
-    ],
+    body: toRemoteInstances({ remotes: [createPlatformTopology("multi-region-healthy").remotes[0]] }),
   });
 };
 

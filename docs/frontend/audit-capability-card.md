@@ -28,6 +28,8 @@ The `Messages` indicator carries the capability-specific readiness state. If no 
 
 Start from the shared frontend mocking workflow in `docs/frontend/testing-basics.md`, then select one of the audit scenarios below.
 
+For the shared meaning of single-region and multi-region instance topologies, use `docs/frontend/platform-health-page.md` as the canonical reference. This page documents only the auditing-specific layer on top.
+
 #### Available Audit Scenarios
 
 | Scenario                   | Status                  | Badge          | Button        | Description                                                       | Indicators      |

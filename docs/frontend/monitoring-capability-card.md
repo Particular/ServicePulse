@@ -26,6 +26,8 @@ The `Metrics` indicator carries the capability-specific readiness state. If no e
 
 Start from the shared frontend mocking workflow in `docs/frontend/testing-basics.md`, then select one of the monitoring scenarios below.
 
+For the shared meaning of instance topology and availability states, use `docs/frontend/platform-health-page.md` as the canonical reference. This page documents only the monitoring-specific layer on top.
+
 #### Available Monitoring Scenarios
 
 | Scenario                  | Status      | Badge       | Button       | Description                                                                                                       | Indicators  |

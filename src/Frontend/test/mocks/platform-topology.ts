@@ -1,0 +1,122 @@
+import { RemoteInstanceStatus, RemoteInstanceType, type RemoteInstance } from "@/resources/RemoteInstance";
+
+export const latestPlatformVersion = "6.19.3";
+
+export type PlatformTopologyScenarioName = "single-region-healthy" | "single-region-warning" | "single-region-danger" | "multi-region-healthy" | "multi-region-danger";
+export type PlatformTopologyStatus = "healthy" | "degraded" | "unavailable";
+
+export interface PlatformTopologyRemote {
+  id: `remote-${number}`;
+  apiUri: string;
+  version: string;
+  status: PlatformTopologyStatus;
+  instanceType: "audit" | "error";
+}
+
+export interface PlatformTopology {
+  scenario: PlatformTopologyScenarioName;
+  primary: {
+    name: string;
+    version: string;
+    status: PlatformTopologyStatus;
+  };
+  remotes: PlatformTopologyRemote[];
+  monitoring: {
+    configured: boolean;
+    version: string;
+    status: PlatformTopologyStatus;
+  } | null;
+}
+
+export function createPlatformTopology(name: PlatformTopologyScenarioName): PlatformTopology {
+  switch (name) {
+    case "single-region-healthy":
+      return {
+        scenario: name,
+        primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "healthy" },
+        remotes: [
+          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
+          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "healthy", instanceType: "audit" },
+        ],
+        monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
+      };
+    case "single-region-warning":
+      return {
+        scenario: name,
+        primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "healthy" },
+        remotes: [
+          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
+          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "degraded", instanceType: "audit" },
+        ],
+        monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
+      };
+    case "single-region-danger":
+      return {
+        scenario: name,
+        primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "unavailable" },
+        remotes: [
+          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
+          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "degraded", instanceType: "audit" },
+        ],
+        monitoring: { configured: true, version: latestPlatformVersion, status: "unavailable" },
+      };
+    case "multi-region-healthy":
+      return {
+        scenario: name,
+        primary: { name: "Particular.ServiceControl.CrossRegion", version: latestPlatformVersion, status: "healthy" },
+        remotes: [
+          { id: "remote-0", apiUri: "http://Particular.ServiceControl.RegionA/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
+          { id: "remote-1", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
+        ],
+        monitoring: null,
+      };
+    case "multi-region-danger":
+      return {
+        scenario: name,
+        primary: { name: "Particular.ServiceControl.CrossRegion", version: latestPlatformVersion, status: "healthy" },
+        remotes: [
+          { id: "remote-0", apiUri: "http://Particular.ServiceControl.RegionA/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
+          { id: "remote-1", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "unavailable", instanceType: "error" },
+        ],
+        monitoring: null,
+      };
+  }
+}
+
+export function clonePlatformTopology(current: PlatformTopology): PlatformTopology {
+  return {
+    ...current,
+    primary: { ...current.primary },
+    remotes: current.remotes.map((remote) => ({ ...remote })),
+    monitoring: current.monitoring ? { ...current.monitoring } : null,
+  };
+}
+
+export function updatePlatformTopologyStatus(current: PlatformTopology, id: "primary" | "monitoring" | `remote-${number}`, status: PlatformTopologyStatus): PlatformTopology {
+  if (id === "primary") {
+    return { ...current, primary: { ...current.primary, status } };
+  }
+
+  if (id === "monitoring" && current.monitoring) {
+    return { ...current, monitoring: { ...current.monitoring, status } };
+  }
+
+  return {
+    ...current,
+    remotes: current.remotes.map((remote) => (remote.id === id ? { ...remote, status } : remote)),
+  };
+}
+
+export function toRemoteInstances(topology: Pick<PlatformTopology, "remotes">): RemoteInstance[] {
+  return topology.remotes.map((remote) => ({
+    api_uri: remote.apiUri,
+    version: remote.version,
+    status: remote.status === "healthy" ? RemoteInstanceStatus.Online : RemoteInstanceStatus.Unavailable,
+    configuration: {
+      data_retention: remote.instanceType === "error" ? { error_retention_period: "14.00:00:00" } : { audit_retention_period: "7.00:00:00" },
+    },
+    platform_health_status: remote.status,
+    platform_health_id: remote.id,
+    cachedInstanceType: remote.instanceType === "error" ? RemoteInstanceType.Error : RemoteInstanceType.Audit,
+  }));
+}
