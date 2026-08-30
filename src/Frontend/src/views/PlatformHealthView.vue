@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import LicenseNotExpired from "@/components/LicenseNotExpired.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import PlatformHealthSupportModal from "@/components/platformhealth/PlatformHealthSupportModal.vue";
@@ -12,12 +12,6 @@ const { store } = usePlatformHealthStoreAutoRefresh();
 useEnvironmentAndVersionsAutoRefresh();
 const showSupportModal = ref(false);
 const expandedRowKey = ref<string | null>(null);
-
-const issueSummaryClass = computed(() => ({
-  "issues-summary": true,
-  warning: store.severity === "warning",
-  danger: store.severity === "danger",
-}));
 
 function openSupportModal() {
   showSupportModal.value = true;
@@ -67,12 +61,6 @@ function toggleRow(row: (typeof store.rows)[number]) {
             <h1>Platform health</h1>
           </div>
           <ActionButton variant="primary" aria-label="Open support case" @click="openSupportModal">Open support case</ActionButton>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-12">
-          <p v-if="store.issueSummary !== 'No issues detected.'" :class="issueSummaryClass">{{ store.issueSummary }}</p>
         </div>
       </div>
 
@@ -145,19 +133,6 @@ function toggleRow(row: (typeof store.rows)[number]) {
   color: #4c5b5c;
   margin: 0 0 1.5rem;
   max-width: 760px;
-}
-
-.issues-summary {
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
-
-.issues-summary.warning {
-  color: #9b6200;
-}
-
-.issues-summary.danger {
-  color: #b53a31;
 }
 
 .panel {
