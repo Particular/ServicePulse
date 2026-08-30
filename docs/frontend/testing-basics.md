@@ -4,6 +4,7 @@ This document covers the shared workflow for frontend mock scenarios and focused
 
 Use the page-specific docs for feature behavior and scenario meaning:
 
+- `docs/frontend/custom-checks-page.md`
 - `docs/frontend/audit-capability-card.md`
 - `docs/frontend/monitoring-capability-card.md`
 - `docs/frontend/error-capability-card.md`
@@ -108,4 +109,4 @@ npx vitest run test/specs/platformcapabilities/ --reporter=verbose
 
 1. Run `npm run type-check`.
 2. Run only the focused spec for the affected page first.
-3. Verify the required preconditions are still registered for that scenario.
+3. Verify the required preconditions are registered for that scenario.

@@ -20,7 +20,7 @@ The Monitoring Capability Card displays on the ServicePulse dashboard and shows 
 | Unavailable             | Monitoring instance configured but not responding | Unavailable    | Learn More    |
 | Available               | Monitoring instance configured and responding     | Available      | View Metrics  |
 
-The `Metrics` indicator carries the capability-specific readiness state. If no endpoints are currently sending throughput data, the card still stays `Available` while the indicator is yellow.
+The `Metrics` indicator carries the capability-specific readiness state. If no endpoints are sending throughput data, the card stays `Available` while the indicator is yellow.
 
 ## Manual Testing with Mock Scenarios
 
@@ -28,13 +28,13 @@ Start from the shared frontend mocking workflow in `docs/frontend/testing-basics
 
 For the shared meaning of instance topology and availability states, use `docs/frontend/platform-health-page.md` as the canonical reference. This page documents only the monitoring-specific layer on top.
 
-#### Available Monitoring Scenarios
+### Available Monitoring Scenarios
 
 | Scenario                  | Status      | Badge       | Button       | Description                                                                                                       | Indicators  |
 |---------------------------|-------------|-------------|--------------|-------------------------------------------------------------------------------------------------------------------|-------------|
-| `monitoring-available`    | Available   | Available   | View Metrics | "The ServiceControl Monitoring instance is available. Use the Metrics indicator to see whether endpoints are currently sending throughput data." | Metrics: ✅ |
+| `monitoring-available`    | Available   | Available   | View Metrics | "The ServiceControl Monitoring instance is available. Use the Metrics indicator to see whether endpoints are sending throughput data." | Metrics: ✅ |
 | `monitoring-unavailable`  | Unavailable | Unavailable | Learn More   | "The ServiceControl Monitoring instance is configured but not responding..."                                      | None        |
-| `monitoring-no-endpoints` | Available   | Available   | View Metrics | "The ServiceControl Monitoring instance is available. Use the Metrics indicator to see whether endpoints are currently sending throughput data." | Metrics: ⚠️ |
+| `monitoring-no-endpoints` | Available   | Available   | View Metrics | "The ServiceControl Monitoring instance is available. Use the Metrics indicator to see whether endpoints are sending throughput data." | Metrics: ⚠️ |
 
 **Indicator Legend:** ✅ = Available/Success, ❌ = Unavailable/Error, ⚠️ = Warning/Not Configured
 
@@ -118,7 +118,7 @@ It shows a single `Metrics` indicator only when the monitoring instance is confi
 - green when monitored endpoints exist
 - yellow when no endpoints are sending throughput data yet
 
-Instance-level monitoring visibility now lives on the `Platform health` page.
+Instance-level monitoring visibility lives on the `Platform health` page.
 
 ## Troubleshooting
 
@@ -128,4 +128,4 @@ Monitoring-specific checks:
 
 1. If the badge is wrong, verify whether the scenario is changing instance connectivity or only endpoint throughput presence.
 2. If the `Metrics` indicator is wrong, inspect the `monitored-endpoints` response for the active scenario.
-3. The `Instance Not Configured` case is still a config-driven manual case, not a standard mock scenario.
+3. The `Instance Not Configured` case is a config-driven manual case, not a standard mock scenario.

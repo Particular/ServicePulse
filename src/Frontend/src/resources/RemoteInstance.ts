@@ -3,7 +3,12 @@ export interface RemoteInstanceDataRetention {
   error_retention_period?: string;
 }
 
+export interface RemoteInstanceHostConfiguration {
+  instance_name?: string;
+}
+
 export interface RemoteInstanceConfiguration {
+  host?: RemoteInstanceHostConfiguration;
   data_retention?: RemoteInstanceDataRetention;
 }
 

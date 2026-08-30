@@ -57,6 +57,31 @@ describe("PlatformModelStore", () => {
     expect(store.errorInstances).toHaveLength(1);
   });
 
+  test("prefers remote configuration host.instance_name over api hostname", async () => {
+    getRoot.mockResolvedValue({
+      name: "Particular.ServiceControl.Primary",
+      platform_health_status: "healthy",
+      platform_health_version: "6.19.3",
+    });
+    getRemoteInstances.mockResolvedValue([
+      {
+        api_uri: "http://localhost:33334/api/",
+        version: "6.19.3",
+        status: "online",
+        configuration: {
+          host: { instance_name: "Particular.ServiceControl.Audit.Blue" },
+          data_retention: { audit_retention_period: "7.00:00:00" },
+        },
+      },
+    ]);
+    getMonitoringRoot.mockResolvedValue(null);
+
+    const store = usePlatformModelStore();
+    await store.refresh();
+
+    expect(store.remotes[0].name).toBe("Particular.ServiceControl.Audit.Blue");
+  });
+
   test("uses primary root values directly when the request succeeds", async () => {
     getRoot.mockResolvedValue({
       name: "Particular.ServiceControl.Primary",

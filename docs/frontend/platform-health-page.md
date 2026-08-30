@@ -6,16 +6,18 @@ For shared frontend mock and Vitest workflow, see `docs/frontend/testing-basics.
 
 This page is also the canonical reference for shared platform topology scenarios used across Platform health and the capability-card docs.
 
+For Custom Checks page behavior around built-in platform checks, see `docs/frontend/custom-checks-page.md`.
+
 ## Overview
 
 The Platform health page provides instance-level visibility across the ServiceControl platform.
 
-It is intentionally frontend-first and mock-driven in this branch. The page:
+The page is frontend-first and mock-driven. It:
 
 - uses the shared platform model from `PlatformModelStore` as its source of truth for platform instances
 - derives page-specific row and details behavior in `PlatformHealthStore`
 - keeps topology and instance visibility on the page instead of duplicating per-instance widgets on capability cards
-- uses built-in platform custom checks as secondary health signals for page-specific health inference
+- uses built-in platform custom checks as secondary health signals for page-specific health inference, including instance-mapped degraded states
 
 ## Page Behavior
 
@@ -64,7 +66,7 @@ When severity is `none` but at least one row has an upgrade cue, the nav shows t
 
 ## Shared Model Split
 
-The current architecture intentionally separates shared platform state from page-specific health semantics:
+The architecture intentionally separates shared platform state from page-specific health semantics:
 
 - `src/Frontend/src/stores/PlatformModelStore.ts`
   - shared aggregation and normalization layer
@@ -73,18 +75,20 @@ The current architecture intentionally separates shared platform state from page
 - `src/Frontend/src/stores/PlatformHealthStore.ts`
   - page-specific severity, rows, upgrade cues, and details
 
-`PlatformHealthRow` remains page-specific and is not pushed into the shared platform model.
-
 ## Built-In Custom Checks
 
-Built-in platform custom checks are hidden by default from the Custom Checks page, dashboard tile, and menu badge.
+Platform health consumes built-in platform custom checks as secondary signals even when those checks are hidden by default on the Custom Checks page.
 
-On Platform health they are still used as secondary signals to:
+On Platform health they are used to:
 
 - degrade or fail platform-health rows
 - populate expanded row details, including `failure_reason`
 
-The lookup is curated by `category + custom_check_id`, not by `custom_check_id` alone.
+For the shared built-in-check catalog and Custom Checks page behavior, see `docs/frontend/custom-checks-page.md`.
+
+Platform health-specific rule:
+
+- when assigning a built-in degraded check to a specific instance, use `originating_endpoint.name` to match the emitting platform instance
 
 ## Manual Testing with Mock Scenarios
 
@@ -92,7 +96,7 @@ Start from the shared frontend mocking workflow in `docs/frontend/testing-basics
 
 ### Startup Scenario
 
-The Platform health page currently has a single startup scenario:
+The Platform health page has a single startup scenario:
 
 - `platform-health`
 
@@ -102,14 +106,12 @@ After startup, use the browser console runtime helpers to switch topology, statu
 
 ```javascript
 window.__platformHealth.getState()
-window.__platformHealth.getCustomChecks()
 window.__platformHealth.reset()
 window.__platformHealth.setScenario("single-region-healthy")
 window.__platformHealth.setStatus("remote-0", "degraded")
-window.__platformHealth.setCustomCheckPreset("platform-only-primary")
-window.__platformHealth.setCustomChecks([])
-window.__platformHealth.clearCustomChecks()
 ```
+
+For custom-check-specific helpers and presets, see `docs/frontend/custom-checks-page.md`.
 
 ### Topology Scenarios
 
@@ -118,8 +120,8 @@ Switch topology at runtime with `window.__platformHealth.setScenario(...)`:
 | Scenario | Purpose |
 |----------|---------|
 | `single-region-healthy` | Primary and monitoring healthy, audit remotes healthy |
-| `single-region-warning` | Monitoring healthy, one degraded audit instance |
-| `single-region-danger` | Primary unavailable, audit degraded, monitoring unavailable |
+| `single-region-warning` | Monitoring healthy, audit remotes healthy; pair with a built-in audit preset to exercise degraded audit state |
+| `single-region-danger` | Primary unavailable, audit remotes healthy, monitoring unavailable |
 | `multi-region-healthy` | Primary healthy with remote error instances and no monitoring |
 | `multi-region-danger` | One remote error instance unavailable |
 
@@ -133,7 +135,7 @@ Switch custom-check state independently with `window.__platformHealth.setCustomC
 | `user-only` | Non-platform custom checks only |
 | `platform-only-primary` | Built-in primary critical-error signal |
 | `platform-only-primary-degraded` | Built-in primary degraded signal |
-| `platform-only-audit` | Built-in audit degraded signal |
+| `platform-only-audit` | Built-in audit degraded signal targeted at a specific audit instance |
 | `mixed-primary-and-user` | Combined platform and user checks |
 
 ### Manual Checks
@@ -143,7 +145,7 @@ Verify these behaviors from the single startup scenario plus runtime switches:
 | Behavior | How to exercise it |
 |----------|--------------------|
 | Healthy single-region table | `setScenario("single-region-healthy")` |
-| Warning state from degraded audit instance | `setScenario("single-region-warning")` |
+| Warning state from degraded audit instance | `setScenario("single-region-warning")` plus `setCustomCheckPreset("platform-only-audit")` |
 | Danger state from unavailable instances | `setScenario("single-region-danger")` or `setScenario("multi-region-danger")` |
 | Multi-region topology | `setScenario("multi-region-healthy")` |
 | Built-in platform checks hidden from Custom Checks UI but applied to Platform health | `setCustomCheckPreset("platform-only-primary")` or `setCustomCheckPreset("platform-only-audit")` |
@@ -206,4 +208,4 @@ Platform health-specific checks:
 ### Tests failing
 
 1. Run the focused Platform health specs listed above.
-2. If row details are wrong, inspect whether the scenario is changing instance health, built-in custom checks, or both.
+2. If a degraded row is missing or assigned to the wrong instance, inspect the check's `originating_endpoint.name` and the instance name carried in the platform model.

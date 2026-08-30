@@ -22,7 +22,7 @@ The Audit Capability Card displays on the ServicePulse dashboard and shows the s
 | Degraded                | Some audit instances offline  | Degraded       | Learn More    |
 | Available               | All audit instances available | Available      | View Messages |
 
-The `Messages` indicator carries the capability-specific readiness state. If no successful messages exist yet, or if `All Messages` is not supported, the card can still be `Available` while the indicator is yellow.
+The `Messages` indicator carries the capability-specific readiness state. If no successful messages exist yet, or if `All Messages` is not supported, the card remains `Available` while the indicator is yellow.
 
 ## Manual Testing with Mock Scenarios
 
@@ -30,7 +30,7 @@ Start from the shared frontend mocking workflow in `docs/frontend/testing-basics
 
 For the shared meaning of single-region and multi-region instance topologies, use `docs/frontend/platform-health-page.md` as the canonical reference. This page documents only the auditing-specific layer on top.
 
-#### Available Audit Scenarios
+### Available Audit Scenarios
 
 | Scenario                   | Status                  | Badge          | Button        | Description                                                       | Indicators      |
 |----------------------------|-------------------------|----------------|---------------|-------------------------------------------------------------------|-----------------|
@@ -107,7 +107,7 @@ It shows a single `Messages` indicator when at least one audit instance is avail
 - yellow when no successful messages exist yet
 - yellow when the current ServiceControl version does not support `All Messages`
 
-Instance-level audit visibility now lives on the `Platform health` page.
+Instance-level audit visibility lives on the `Platform health` page.
 
 ## Troubleshooting
 

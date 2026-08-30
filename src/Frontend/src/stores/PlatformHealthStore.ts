@@ -219,9 +219,9 @@ if (import.meta.hot) {
 export type PlatformHealthStore = ReturnType<typeof usePlatformHealthStore>;
 
 function applyPlatformHealthChecks(model: PlatformModel, checks: CustomCheck[]) {
-  const platformChecks = normalizeChecks(checks).map(getBuiltInPlatformCheck);
-  const primary = applyPlatformCheckHealthToPrimary(model.primary, platformChecks);
-  const remotes = applyPlatformCheckHealthToRemotes(model.remotes, platformChecks);
+  const normalizedChecks = normalizeChecks(checks);
+  const primary = applyPlatformCheckHealthToInstance(model.primary, normalizedChecks);
+  const remotes = model.remotes.map((remote) => applyPlatformCheckHealthToInstance(remote, normalizedChecks));
 
   return {
     ...model,
@@ -247,18 +247,11 @@ function matchesInstance(check: CustomCheck, instance: PlatformInstance) {
     return false;
   }
 
-  switch (platformCheck.target) {
-    case "primary":
-      return instance.role === "primary-error";
-    case "remote-error":
-      return instance.role === "remote-error";
-    case "audit":
-      return instance.role === "remote-audit";
-    case "transport":
-      return instance.role === "remote-audit";
-    default:
-      return false;
+  if (platformCheck.target === "transport") {
+    return instance.role === "remote-audit" && check.originating_endpoint.name === instance.name;
   }
+
+  return check.originating_endpoint.name === instance.name;
 }
 
 function formatCustomCheckDetail(check: CustomCheck) {
@@ -291,34 +284,25 @@ function fallbackDetails(instance: PlatformInstance, model: PlatformModel) {
   return [];
 }
 
-function applyPlatformCheckHealthToPrimary(primary: PlatformInstance, platformChecks: Array<ReturnType<typeof getBuiltInPlatformCheck>>) {
-  if (platformChecks.some((check) => check?.target === "primary" && check.severity === "unavailable")) {
-    return { ...primary, health: "unavailable" as const };
+function applyPlatformCheckHealthToInstance(instance: PlatformInstance, checks: CustomCheck[]) {
+  const matchingPlatformChecks = checks
+    .filter((check) => matchesInstance(check, instance))
+    .map((check) => ({ check, platformCheck: getBuiltInPlatformCheck(check) }))
+    .filter((entry): entry is { check: CustomCheck; platformCheck: NonNullable<ReturnType<typeof getBuiltInPlatformCheck>> } => entry.platformCheck !== null);
+
+  if (matchingPlatformChecks.some(({ platformCheck }) => platformCheck.severity === "unavailable")) {
+    return { ...instance, health: "unavailable" as const };
   }
 
-  if (platformChecks.some((check) => check?.target === "primary" && check.severity === "degraded") && primary.health === "healthy") {
-    return { ...primary, health: "degraded" as const };
+  if (instance.health === "healthy" && matchingPlatformChecks.some(({ platformCheck }) => platformCheck.severity === "degraded")) {
+    return { ...instance, health: "degraded" as const };
   }
 
-  return primary;
-}
+  if (instance.health === "degraded" && !matchingPlatformChecks.some(({ platformCheck }) => platformCheck.severity === "degraded")) {
+    return { ...instance, health: "healthy" as const };
+  }
 
-function applyPlatformCheckHealthToRemotes(remotes: PlatformInstance[], platformChecks: Array<ReturnType<typeof getBuiltInPlatformCheck>>) {
-  const hasRemoteUnavailableCheck = platformChecks.some((check) => check?.target === "remote-error" && check.severity === "unavailable");
-  const hasAuditDegradedCheck = platformChecks.some((check) => check?.target === "audit" && check.severity === "degraded");
-  const hasTransportDegradedCheck = platformChecks.some((check) => check?.target === "transport" && check.severity === "degraded");
-
-  return remotes.map((remote) => {
-    if (remote.role === "remote-error" && hasRemoteUnavailableCheck) {
-      return { ...remote, health: "unavailable" as const };
-    }
-
-    if (remote.role === "remote-audit" && (hasAuditDegradedCheck || hasTransportDegradedCheck) && remote.health === "healthy") {
-      return { ...remote, health: "degraded" as const };
-    }
-
-    return remote;
-  });
+  return instance;
 }
 
 function normalizeChecks(checks: CustomCheck[] | unknown) {

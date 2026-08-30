@@ -22,6 +22,23 @@ describe("PlatformHealthStore", () => {
   });
 
   test("derives warning severity and single-region rows", async () => {
+    const customChecksStore = useCustomChecksStore();
+    customChecksStore.replaceFailedChecks([
+      {
+        id: "customchecks/audit-warning",
+        custom_check_id: "Audit Message Ingestion",
+        category: "ServiceControl.Audit Health",
+        status: Status.Fail,
+        reported_at: "2025-01-10T05:06:30.4074087Z",
+        failure_reason: "Audit ingestion failed",
+        originating_endpoint: {
+          name: "Particular.ServiceControl.Audit-Blue",
+          host_id: "host-2",
+          host: "Host B",
+        },
+      },
+    ]);
+
     const platformModelStore = usePlatformModelStore();
     platformModelStore.refresh = vi.fn(() => {
       platformModelStore.model = singleRegionWarningModel;
@@ -93,8 +110,11 @@ describe("PlatformHealthStore", () => {
         scenario: "single-region-warning",
         customCheckPreset: "none",
         primary: { name: "Particular.ServiceControl", version: "6.19.3", status: "healthy" },
-        remotes: [],
-        monitoring: { configured: true, version: "6.19.3", status: "healthy" },
+        remotes: [
+          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
+          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.19.3", status: "healthy", instanceType: "audit" },
+        ],
+        monitoring: { configured: true, version: "6.18.0", status: "healthy" },
         customChecks: [],
       }),
       getCustomChecks: vi.fn(() => []),
@@ -116,7 +136,7 @@ describe("PlatformHealthStore", () => {
 
     expect(store.rows[2].upgradeAvailable).toBe(true);
     expect(store.rows[2].latestVersion).toBe("6.19.3");
-    expect(store.outdatedOnly).toBe(false);
+    expect(store.outdatedOnly).toBe(true);
   });
 
   test("applies hidden built-in platform custom checks to platform health only", async () => {
@@ -143,7 +163,7 @@ describe("PlatformHealthStore", () => {
         reported_at: "2025-01-10T05:06:30.4074087Z",
         failure_reason: "Audit ingestion failed",
         originating_endpoint: {
-          name: "Particular.ServiceControl.Audit",
+          name: "Particular.ServiceControl.Audit-Blue",
           host_id: "host-2",
           host: "Host B",
         },
@@ -160,7 +180,8 @@ describe("PlatformHealthStore", () => {
     await store.refresh();
 
     expect(store.payload?.primary.health).toBe("unavailable");
-    expect(store.payload?.remotes[0].health).toBe("degraded");
+    expect(store.payload?.remotes[0].health).toBe("healthy");
+    expect(store.payload?.remotes[1].health).toBe("degraded");
     expect(store.severity).toBe("danger");
   });
 
@@ -206,6 +227,43 @@ describe("PlatformHealthStore", () => {
     expect(store.issueSummary).toContain("primary Error instance degraded");
     expect(store.rows[0].details).toContain("Error Message Ingestion Process: Error ingestion stopped");
   });
+
+  test("does not degrade an audit instance when the built-in check belongs to another audit instance", async () => {
+    const customChecksStore = useCustomChecksStore();
+    customChecksStore.replaceFailedChecks([
+      {
+        id: "customchecks/audit-other-instance",
+        custom_check_id: "Audit Message Ingestion",
+        category: "ServiceControl.Audit Health",
+        status: Status.Fail,
+        reported_at: "2025-01-10T05:06:30.4074087Z",
+        failure_reason: "Audit ingestion failed",
+        originating_endpoint: {
+          name: "Particular.ServiceControl.Audit.Other",
+          host_id: "host-2",
+          host: "Host B",
+        },
+      },
+    ]);
+
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.refresh = vi.fn(() => {
+      platformModelStore.model = {
+        ...singleRegionWarningModel,
+        remotes: singleRegionWarningModel.remotes.map((remote) => ({
+          ...remote,
+          health: "healthy",
+        })),
+      };
+      return Promise.resolve();
+    });
+    const store = usePlatformHealthStore();
+
+    await store.refresh();
+
+    expect(store.payload?.remotes.every((remote) => remote.health === "healthy")).toBe(true);
+    expect(store.severity).toBe("none");
+  });
 });
 
 const singleRegionWarningModel: PlatformModel = {
@@ -234,7 +292,7 @@ const singleRegionWarningModel: PlatformModel = {
       kind: "audit",
       role: "remote-audit",
       version: "6.17.0",
-      health: "degraded",
+      health: "healthy",
       apiUrl: "http://Particular.ServiceControl.Audit-Blue/api/",
     },
   ],

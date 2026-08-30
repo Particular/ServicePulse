@@ -99,7 +99,7 @@ function mapRemotes(remotes: RemoteInstance[]): PlatformInstance[] {
 
     return {
       id: remote.platform_health_id ?? `remote-${index}`,
-      name: extractInstanceName(remote.api_uri),
+      name: remote.configuration?.host?.instance_name ?? extractInstanceName(remote.api_uri),
       kind,
       role: isError ? "remote-error" : "remote-audit",
       version: remote.version,

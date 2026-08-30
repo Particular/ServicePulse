@@ -40,4 +40,21 @@ describe("platform-health-state", () => {
     expect(checks[0].custom_check_id).toBe("Error Message Ingestion Process");
     expect(checks[0].category).toBe("ServiceControl Health");
   });
+
+  test("keeps warning topology healthy until a related audit custom check is applied", () => {
+    window.__platformHealth?.setScenario("single-region-warning");
+
+    const state = window.__platformHealth?.getState();
+
+    expect(state?.remotes[1].status).toBe("healthy");
+  });
+
+  test("targets the audit degraded preset at a specific audit instance name", () => {
+    window.__platformHealth?.setCustomCheckPreset("platform-only-audit");
+
+    const checks = getPlatformHealthCustomChecks();
+
+    expect(checks).toHaveLength(1);
+    expect(checks[0].originating_endpoint.name).toBe("Particular.ServiceControl.Audit-Blue");
+  });
 });

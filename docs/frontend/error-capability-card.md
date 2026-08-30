@@ -27,7 +27,7 @@ Start from the shared frontend mocking workflow in `docs/frontend/testing-basics
 
 For the shared meaning of primary, remote-error, and multi-region topology states, use `docs/frontend/platform-health-page.md` as the canonical reference. This page documents only the recoverability-specific layer on top.
 
-#### Available Recoverability Scenarios
+### Available Recoverability Scenarios
 
 | Scenario                   | Status    | Badge     | Button               | Description                                 | Indicators                         |
 |----------------------------|-----------|-----------|----------------------|---------------------------------------------|------------------------------------|
@@ -98,14 +98,14 @@ return CapabilityStatus.Available;
 
 The recoverability card shows a single `FailedMessages` indicator whenever the primary ServiceControl instance is available.
 
-- green when failures can be managed from the current ServicePulse instance
+- green when failures can be managed from this ServicePulse instance
 - yellow in multi-region mode, where failure management is read-only from the cross-region view
 
 Tooltip text for multi-region mode:
 
 `Message failures are read only in multi-region mode, use the region specific ServicePulse to manage failures.`
 
-Instance-level visibility for ServiceControl still lives on the `Platform health` page instead of on the capability card.
+Instance-level visibility for ServiceControl lives on the `Platform health` page instead of on the capability card.
 
 ## Relationship with Dashboard
 

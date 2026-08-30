@@ -46,7 +46,7 @@ export function createPlatformTopology(name: PlatformTopologyScenarioName): Plat
         primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "healthy" },
         remotes: [
           { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "degraded", instanceType: "audit" },
+          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "healthy", instanceType: "audit" },
         ],
         monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
       };
@@ -56,7 +56,7 @@ export function createPlatformTopology(name: PlatformTopologyScenarioName): Plat
         primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "unavailable" },
         remotes: [
           { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "degraded", instanceType: "audit" },
+          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "healthy", instanceType: "audit" },
         ],
         monitoring: { configured: true, version: latestPlatformVersion, status: "unavailable" },
       };

@@ -163,7 +163,7 @@ function createCustomCheckPreset(name: PlatformHealthCustomCheckPresetName): Cus
           category: "ServiceControl.Audit Health",
           status: Status.Fail,
           failure_reason: "Audit ingestion failed",
-          originating_endpoint: { name: "Particular.ServiceControl.Audit", host_id: crypto.randomUUID(), host: "audit-host" },
+          originating_endpoint: { name: "Particular.ServiceControl.Audit-Blue", host_id: crypto.randomUUID(), host: "audit-host" },
         }),
       ];
     case "mixed-primary-and-user":
