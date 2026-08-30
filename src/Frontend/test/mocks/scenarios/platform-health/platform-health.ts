@@ -8,9 +8,7 @@ const { worker, driver, runScenario } = createScenario();
 export { worker };
 
 export const setupComplete = (async () => {
-  await runScenario(precondition.scenarioAuthenticatedUser);
-  await runScenario(precondition.hasNoDisconnectedEndpoints);
-  await runScenario(precondition.hasActiveLicense);
+  await runScenario(precondition.serviceControlWithMonitoring);
   await runScenario(() => {
     driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}`, "get", () => {
       const body = getPlatformHealthPrimaryRoot();
