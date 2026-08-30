@@ -2,7 +2,7 @@ import { RemoteInstanceStatus, RemoteInstanceType, type RemoteInstance } from "@
 
 export const latestPlatformVersion = "6.19.3";
 
-export type PlatformTopologyScenarioName = "single-region-healthy" | "single-region-warning" | "single-region-danger" | "multi-region-healthy" | "multi-region-danger";
+export type PlatformTopologyScenarioName = "single-region-healthy" | "single-region-danger" | "multi-region-healthy" | "multi-region-danger";
 export type PlatformTopologyStatus = "healthy" | "degraded" | "unavailable";
 
 export interface PlatformTopologyRemote {
@@ -31,16 +31,6 @@ export interface PlatformTopology {
 export function createPlatformTopology(name: PlatformTopologyScenarioName): PlatformTopology {
   switch (name) {
     case "single-region-healthy":
-      return {
-        scenario: name,
-        primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "healthy" },
-        remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "healthy", instanceType: "audit" },
-        ],
-        monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
-      };
-    case "single-region-warning":
       return {
         scenario: name,
         primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "healthy" },

@@ -108,7 +108,7 @@ After startup, use the browser console runtime helpers to switch topology, statu
 window.__platformHealth.getState()
 window.__platformHealth.reset()
 window.__platformHealth.setScenario("single-region-healthy")
-window.__platformHealth.setStatus("remote-0", "degraded")
+window.__platformHealth.setStatus("remote-0", "unavailable")
 ```
 
 For custom-check-specific helpers and presets, see `docs/frontend/custom-checks-page.md`.
@@ -120,7 +120,6 @@ Switch topology at runtime with `window.__platformHealth.setScenario(...)`:
 | Scenario | Purpose |
 |----------|---------|
 | `single-region-healthy` | Primary and monitoring healthy, audit remotes healthy |
-| `single-region-warning` | Monitoring healthy, audit remotes healthy; pair with a built-in audit preset to exercise degraded audit state |
 | `single-region-danger` | Primary unavailable, audit remotes healthy, monitoring unavailable |
 | `multi-region-healthy` | Primary healthy with remote error instances and no monitoring |
 | `multi-region-danger` | One remote error instance unavailable |
@@ -145,7 +144,7 @@ Verify these behaviors from the single startup scenario plus runtime switches:
 | Behavior | How to exercise it |
 |----------|--------------------|
 | Healthy single-region table | `setScenario("single-region-healthy")` |
-| Warning state from degraded audit instance | `setScenario("single-region-warning")` plus `setCustomCheckPreset("platform-only-audit")` |
+| Warning state from degraded audit instance | `setScenario("single-region-healthy")` plus `setCustomCheckPreset("platform-only-audit")` |
 | Danger state from unavailable instances | `setScenario("single-region-danger")` or `setScenario("multi-region-danger")` |
 | Multi-region topology | `setScenario("multi-region-healthy")` |
 | Built-in platform checks hidden from Custom Checks UI but applied to Platform health | `setCustomCheckPreset("platform-only-primary")` or `setCustomCheckPreset("platform-only-audit")` |

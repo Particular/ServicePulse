@@ -107,7 +107,7 @@ describe("PlatformHealthStore", () => {
     environmentAndVersionsStore.newVersions.newSCVersion.newscversionlink = "";
     window.__platformHealth = {
       getState: () => ({
-        scenario: "single-region-warning",
+        scenario: "single-region-healthy",
         customCheckPreset: "none",
         primary: { name: "Particular.ServiceControl", version: "6.19.3", status: "healthy" },
         remotes: [

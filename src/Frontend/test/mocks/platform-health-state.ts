@@ -7,7 +7,7 @@ import { clonePlatformTopology, createPlatformTopology, latestPlatformVersion, t
 export type PlatformHealthMockScenarioName = PlatformTopologyScenarioName;
 export type PlatformHealthCustomCheckPresetName = "none" | "user-only" | "platform-only-primary" | "platform-only-primary-degraded" | "platform-only-audit" | "mixed-primary-and-user";
 
-export type PlatformHealthMockStatus = PlatformTopologyStatus;
+export type PlatformHealthMockStatus = Exclude<PlatformTopologyStatus, "degraded">;
 
 export interface PlatformHealthMockState extends PlatformTopology {
   customCheckPreset: PlatformHealthCustomCheckPresetName;
@@ -29,14 +29,14 @@ declare global {
   }
 }
 
-let state = withCustomChecks(createScenario("single-region-warning"), "none");
+let state = withCustomChecks(createScenario("single-region-healthy"), "none");
 
 export function installPlatformHealthDevControls() {
   window.__platformHealth = {
     getState: () => cloneState(state),
     getCustomChecks: () => state.customChecks.map((check) => structuredClone(check)),
     reset: () => {
-      state = withCustomChecks(createScenario("single-region-warning"), "none");
+      state = withCustomChecks(createScenario("single-region-healthy"), "none");
       return cloneState(state);
     },
     setScenario: (name) => {

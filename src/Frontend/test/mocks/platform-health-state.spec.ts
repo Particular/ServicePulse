@@ -41,8 +41,8 @@ describe("platform-health-state", () => {
     expect(checks[0].category).toBe("ServiceControl Health");
   });
 
-  test("keeps warning topology healthy until a related audit custom check is applied", () => {
-    window.__platformHealth?.setScenario("single-region-warning");
+  test("keeps healthy single-region topology healthy until a related audit custom check is applied", () => {
+    window.__platformHealth?.setScenario("single-region-healthy");
 
     const state = window.__platformHealth?.getState();
 

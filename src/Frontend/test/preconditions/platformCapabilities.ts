@@ -89,7 +89,8 @@ export const hasUnavailableAuditInstance = ({ driver }: SetupFactoryOptions) => 
 
 /** Precondition: Multiple audit instances with mixed availability */
 export const hasPartiallyUnavailableAuditInstances = ({ driver }: SetupFactoryOptions) => {
-  const remotes = toRemoteInstances({ remotes: createPlatformTopology("single-region-warning").remotes });
+  const remotes = toRemoteInstances({ remotes: createPlatformTopology("single-region-healthy").remotes });
+  remotes[1].status = RemoteInstanceStatus.Unavailable;
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
     body: remotes,
   });
