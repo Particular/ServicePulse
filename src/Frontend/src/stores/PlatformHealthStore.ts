@@ -248,10 +248,10 @@ function matchesInstance(check: CustomCheck, instance: PlatformInstance) {
   }
 
   if (platformCheck.target === "transport") {
-    return instance.role === "remote-audit" && check.originating_endpoint.name === instance.name;
+    return instance.role === "remote-audit" && sameInstanceName(check.originating_endpoint.name, instance.name);
   }
 
-  return check.originating_endpoint.name === instance.name;
+  return sameInstanceName(check.originating_endpoint.name, instance.name);
 }
 
 function formatCustomCheckDetail(check: CustomCheck) {
@@ -307,4 +307,8 @@ function applyPlatformCheckHealthToInstance(instance: PlatformInstance, checks: 
 
 function normalizeChecks(checks: CustomCheck[] | unknown) {
   return Array.isArray(checks) ? checks : [];
+}
+
+function sameInstanceName(left: string, right: string) {
+  return left.localeCompare(right, undefined, { sensitivity: "accent" }) === 0;
 }

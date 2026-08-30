@@ -111,8 +111,8 @@ describe("PlatformHealthStore", () => {
         customCheckPreset: "none",
         primary: { name: "Particular.ServiceControl", version: "6.19.3", status: "healthy" },
         remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.19.3", status: "healthy", instanceType: "audit" },
+          { id: "remote-0", name: "Particular.ServiceControl.Audit", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
+          { id: "remote-1", name: "Particular.ServiceControl.Audit-Blue", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.19.3", status: "healthy", instanceType: "audit" },
         ],
         monitoring: { configured: true, version: "6.18.0", status: "healthy" },
         customChecks: [],
@@ -263,6 +263,43 @@ describe("PlatformHealthStore", () => {
 
     expect(store.payload?.remotes.every((remote) => remote.health === "healthy")).toBe(true);
     expect(store.severity).toBe("none");
+  });
+
+  test("maps the audit degraded preset to the targeted audit instance name from remote configuration", async () => {
+    const customChecksStore = useCustomChecksStore();
+    customChecksStore.replaceFailedChecks([
+      {
+        id: "customchecks/audit-targeted-instance",
+        custom_check_id: "Audit Message Ingestion",
+        category: "ServiceControl.Audit Health",
+        status: Status.Fail,
+        reported_at: "2025-01-10T05:06:30.4074087Z",
+        failure_reason: "Audit ingestion failed",
+        originating_endpoint: {
+          name: "Particular.ServiceControl.Audit-Blue",
+          host_id: "host-2",
+          host: "Host B",
+        },
+      },
+    ]);
+
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.refresh = vi.fn(() => {
+      platformModelStore.model = {
+        ...singleRegionWarningModel,
+        remotes: singleRegionWarningModel.remotes.map((remote) => ({
+          ...remote,
+          health: "healthy",
+        })),
+      };
+      return Promise.resolve();
+    });
+    const store = usePlatformHealthStore();
+
+    await store.refresh();
+
+    expect(store.payload?.remotes[0].health).toBe("healthy");
+    expect(store.payload?.remotes[1].health).toBe("degraded");
   });
 });
 

@@ -7,6 +7,7 @@ export type PlatformTopologyStatus = "healthy" | "degraded" | "unavailable";
 
 export interface PlatformTopologyRemote {
   id: `remote-${number}`;
+  name: string;
   apiUri: string;
   version: string;
   status: PlatformTopologyStatus;
@@ -35,8 +36,8 @@ export function createPlatformTopology(name: PlatformTopologyScenarioName): Plat
         scenario: name,
         primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "healthy" },
         remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "healthy", instanceType: "audit" },
+          { id: "remote-0", name: "Particular.ServiceControl.Audit", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
+          { id: "remote-1", name: "Particular.ServiceControl.Audit-Blue", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "healthy", instanceType: "audit" },
         ],
         monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
       };
@@ -45,8 +46,8 @@ export function createPlatformTopology(name: PlatformTopologyScenarioName): Plat
         scenario: name,
         primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "unavailable" },
         remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "healthy", instanceType: "audit" },
+          { id: "remote-0", name: "Particular.ServiceControl.Audit", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
+          { id: "remote-1", name: "Particular.ServiceControl.Audit-Blue", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "healthy", instanceType: "audit" },
         ],
         monitoring: { configured: true, version: latestPlatformVersion, status: "unavailable" },
       };
@@ -55,8 +56,8 @@ export function createPlatformTopology(name: PlatformTopologyScenarioName): Plat
         scenario: name,
         primary: { name: "Particular.ServiceControl.CrossRegion", version: latestPlatformVersion, status: "healthy" },
         remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.RegionA/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
+          { id: "remote-0", name: "Particular.ServiceControl.RegionA", apiUri: "http://Particular.ServiceControl.RegionA/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
+          { id: "remote-1", name: "Particular.ServiceControl.RegionB", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
         ],
         monitoring: null,
       };
@@ -65,8 +66,8 @@ export function createPlatformTopology(name: PlatformTopologyScenarioName): Plat
         scenario: name,
         primary: { name: "Particular.ServiceControl.CrossRegion", version: latestPlatformVersion, status: "healthy" },
         remotes: [
-          { id: "remote-0", apiUri: "http://Particular.ServiceControl.RegionA/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
-          { id: "remote-1", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "unavailable", instanceType: "error" },
+          { id: "remote-0", name: "Particular.ServiceControl.RegionA", apiUri: "http://Particular.ServiceControl.RegionA/api/", version: latestPlatformVersion, status: "healthy", instanceType: "error" },
+          { id: "remote-1", name: "Particular.ServiceControl.RegionB", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "unavailable", instanceType: "error" },
         ],
         monitoring: null,
       };
@@ -103,6 +104,9 @@ export function toRemoteInstances(topology: Pick<PlatformTopology, "remotes">): 
     version: remote.version,
     status: remote.status === "healthy" ? RemoteInstanceStatus.Online : RemoteInstanceStatus.Unavailable,
     configuration: {
+      host: {
+        instance_name: remote.name,
+      },
       data_retention: remote.instanceType === "error" ? { error_retention_period: "14.00:00:00" } : { audit_retention_period: "7.00:00:00" },
     },
     platform_health_status: remote.status,
