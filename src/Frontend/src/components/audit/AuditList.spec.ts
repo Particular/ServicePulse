@@ -41,8 +41,7 @@ interface QueryStateAssertions {
   messagesAreNotVisible(): void;
   refreshControlsKnowQueryIsInProgress(): void;
   refreshControlsKnowQueryIsIdle(): void;
-  filtersKnowQueryIsInProgress(): void;
-  filtersKnowQueryIsIdle(): void;
+  filtersAreNotBlockedByQuery(): void;
 }
 
 interface RenderResult {
@@ -172,11 +171,10 @@ async function renderAuditList(messages: Message[] = []): Promise<RenderResult> 
     refreshControlsKnowQueryIsIdle() {
       expect(getRefreshConfig().dataset.queryInProgress).toBe("false");
     },
-    filtersKnowQueryIsInProgress() {
-      expect(getFiltersPanel().dataset.queryInProgress).toBe("true");
-    },
-    filtersKnowQueryIsIdle() {
-      expect(getFiltersPanel().dataset.queryInProgress).toBe("false");
+    filtersAreNotBlockedByQuery() {
+      // The filters panel is deliberately not told about query progress: entering a new
+      // query must always be possible, even while a slow query is still running.
+      expect(getFiltersPanel().dataset.queryInProgress).toBe("undefined");
     },
   };
 
@@ -213,7 +211,7 @@ describe("FEATURE: Audit Messages Query State", () => {
       verify.spinnerIsVisible();
       verify.messagesAreNotVisible();
       verify.refreshControlsKnowQueryIsInProgress();
-      verify.filtersKnowQueryIsInProgress();
+      verify.filtersAreNotBlockedByQuery();
     });
 
     test("EXAMPLE: Spinner is hidden after the first fetch completes", async () => {
@@ -224,7 +222,7 @@ describe("FEATURE: Audit Messages Query State", () => {
       await waitFor(() => verify.spinnerIsNotVisible());
       verify.overlayIsNotVisible();
       verify.refreshControlsKnowQueryIsIdle();
-      verify.filtersKnowQueryIsIdle();
+      verify.filtersAreNotBlockedByQuery();
     });
   });
 
@@ -256,8 +254,8 @@ describe("FEATURE: Audit Messages Query State", () => {
     });
   });
 
-  describe("RULE: Query controls are disabled during a fetch", () => {
-    test("EXAMPLE: Query controls are disabled when a re-fetch is in-flight", async () => {
+  describe("RULE: Filters stay usable while a query is running", () => {
+    test("EXAMPLE: The filters are not blocked when a re-fetch is in-flight", async () => {
       const { verify, isRefreshing } = await renderAuditList([]);
 
       await waitForFirstLoadToComplete();
@@ -266,10 +264,10 @@ describe("FEATURE: Audit Messages Query State", () => {
       await nextTick();
 
       verify.refreshControlsKnowQueryIsInProgress();
-      verify.filtersKnowQueryIsInProgress();
+      verify.filtersAreNotBlockedByQuery();
     });
 
-    test("EXAMPLE: Query controls are re-enabled after the fetch completes", async () => {
+    test("EXAMPLE: The refresh action is re-enabled after the fetch completes", async () => {
       const { verify, isRefreshing } = await renderAuditList([]);
 
       await waitForFirstLoadToComplete();
@@ -281,36 +279,26 @@ describe("FEATURE: Audit Messages Query State", () => {
       await nextTick();
 
       verify.refreshControlsKnowQueryIsIdle();
-      verify.filtersKnowQueryIsIdle();
+      verify.filtersAreNotBlockedByQuery();
     });
   });
 
-  describe("RULE: A loading overlay is shown when re-fetching with existing results", () => {
-    test("EXAMPLE: Overlay appears over existing messages while a re-fetch is in-flight", async () => {
+  describe("RULE: Existing results stay visible and usable while a re-fetch runs", () => {
+    // The refresh button already signals the running query (spinner, Cancel, elapsed time).
+    // Covering the stale rows would only take them away from the user while waiting.
+    test("EXAMPLE: No overlay covers the rows during a re-fetch, however long it takes", async () => {
       const { verify, isRefreshing } = await renderAuditList([createMessage()]);
-
       await waitForFirstLoadToComplete();
       await waitFor(() => verify.messagesAreVisible());
 
       isRefreshing.value = true;
       await nextTick();
-
-      verify.overlayIsVisible();
-      verify.messagesAreVisible();
-    });
-
-    test("EXAMPLE: Overlay disappears after the re-fetch completes", async () => {
-      const { verify, isRefreshing } = await renderAuditList([createMessage()]);
-
-      await waitForFirstLoadToComplete();
-
-      isRefreshing.value = true;
-      await nextTick();
-      verify.overlayIsVisible();
-
-      isRefreshing.value = false;
-      await nextTick();
       verify.overlayIsNotVisible();
+      verify.spinnerIsNotVisible();
+
+      await new Promise((r) => setTimeout(r, 400));
+      verify.overlayIsNotVisible();
+      verify.messagesAreVisible();
     });
   });
 

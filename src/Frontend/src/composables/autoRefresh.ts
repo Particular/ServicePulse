@@ -1,22 +1,29 @@
-import { watch, ref, shallowReadonly, type WatchStopHandle } from "vue";
+import { watch, ref, computed, shallowReadonly, type WatchStopHandle } from "vue";
 import { useCounter, useDocumentVisibility, useTimeoutPoll } from "@vueuse/core";
 
 export default function useFetchWithAutoRefresh(_name: string, fetchFn: () => Promise<void>, intervalMs: number) {
   let watchStop: WatchStopHandle | null = null;
   const { count, inc, dec, reset } = useCounter(0);
   const interval = ref(intervalMs);
-  const isRefreshing = ref(false);
-  const fetchWrapper = async () => {
-    if (isRefreshing.value) {
-      return;
-    }
-    isRefreshing.value = true;
+  const inflight = ref(0);
+  const isRefreshing = computed(() => inflight.value > 0);
+  const run = async () => {
+    inflight.value++;
     try {
       await fetchFn();
     } finally {
-      isRefreshing.value = false;
+      inflight.value--;
     }
   };
+  // Poll path: a tick that lands while a fetch is running is skipped
+  const fetchWrapper = async () => {
+    if (inflight.value > 0) {
+      return;
+    }
+    await run();
+  };
+  // User path: never dropped — the fetchFn is expected to supersede its own in-flight work
+  const refreshNow = run;
   const { isActive, pause, resume } = useTimeoutPoll(
     fetchWrapper,
     interval,
@@ -66,5 +73,5 @@ export default function useFetchWithAutoRefresh(_name: string, fetchFn: () => Pr
     }
   };
 
-  return { refreshNow: fetchWrapper, isRefreshing: shallowReadonly(isRefreshing), updateInterval, isActive, start, stop };
+  return { refreshNow, isRefreshing: shallowReadonly(isRefreshing), updateInterval, isActive, start, stop };
 }

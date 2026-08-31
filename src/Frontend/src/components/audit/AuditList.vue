@@ -139,7 +139,7 @@ watch(autoRefreshValue, (newValue) => {
     <div class="header">
       <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" @manual-refresh="refreshNow" />
       <div class="row">
-        <FiltersPanel :query-in-progress="queryInProgress" />
+        <FiltersPanel />
       </div>
       <div class="row">
         <ResultsCount :displayed="messages.length" :total="totalCount" />
@@ -152,7 +152,9 @@ watch(autoRefreshValue, (newValue) => {
       <p>The ServiceControl instance might be too busy. Try again in an off-peak period, reduce the maximum number of results ("Show"), or narrow the date range.</p>
     </div>
     <div class="row results-table">
-      <LoadingSpinner v-if="firstLoad || isRefreshing" :overlay="isRefreshing && messages.length > 0" />
+      <!-- Only when there is nothing to show yet. A re-fetch over existing rows leaves them
+           visible and usable: the refresh button already signals the running query -->
+      <LoadingSpinner v-if="firstLoad || (isRefreshing && messages.length === 0)" />
       <template v-for="message in messages" :key="message.id">
         <AuditListItem :message="message" />
       </template>
