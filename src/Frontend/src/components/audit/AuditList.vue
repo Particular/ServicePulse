@@ -17,7 +17,7 @@ import PageBanner, { type BannerMessage } from "@/components/PageBanner.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 
 const store = useAuditStore();
-const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange } = storeToRefs(store);
+const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange, queryFailed } = storeToRefs(store);
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
@@ -147,6 +147,10 @@ watch(autoRefreshValue, (newValue) => {
       <PageBanner v-if="bannerMessage && isMassTransitConnected === false" :message="bannerMessage" :show-action="showBannerAction" @action="showWizard = true" />
     </div>
     <WizardDialog v-if="showWizard" title="Getting Started with Auditing" :pages="wizardPages" @close="showWizard = false" />
+    <div v-if="queryFailed && !queryInProgress" class="query-error" role="alert" data-testid="query-error">
+      <strong>The query failed or took too long and was stopped.</strong>
+      <p>The ServiceControl instance might be too busy. Try again in an off-peak period, reduce the maximum number of results ("Show"), or narrow the date range.</p>
+    </div>
     <div class="row results-table">
       <LoadingSpinner v-if="firstLoad || isRefreshing" :overlay="isRefreshing && messages.length > 0" />
       <template v-for="message in messages" :key="message.id">
@@ -167,6 +171,19 @@ watch(autoRefreshValue, (newValue) => {
   /* set padding/margin so that the sticky version is offset, but not the non-sticky version */
   padding-top: 0.5rem;
   margin-top: -0.5rem;
+}
+
+.query-error {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #f0c2c2;
+  border-left: 4px solid #ce4844;
+  border-radius: 4px;
+  background-color: #fdf7f7;
+}
+
+.query-error p {
+  margin: 0.25rem 0 0;
 }
 
 .results-table {
