@@ -27,6 +27,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
   const messages = ref<Message[]>([]);
   const selectedEndpointName = ref<string>("");
   const endpoints = ref<EndpointsView[]>([]);
+  const queryFailed = ref(false);
 
   async function loadEndpoints() {
     try {
@@ -49,9 +50,14 @@ export const useAuditStore = defineStore("AuditStore", () => {
       });
       totalCount.value = parseInt(response.headers.get("total-count") ?? "0");
       messages.value = data;
-    } catch (e) {
+      queryFailed.value = false;
+    } catch {
+      // A long-running query is terminated by ServiceControl after its configured query time limit
+      // and surfaces here as a failed response. Not rethrown: the callers are watchers, so a
+      // rethrow would only become an unhandled rejection instead of user feedback.
       messages.value = [];
-      throw e;
+      totalCount.value = 0;
+      queryFailed.value = true;
     }
   }
 
@@ -66,6 +72,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
     totalCount,
     endpoints,
     dateRange,
+    queryFailed,
   };
 });
 

@@ -314,6 +314,40 @@ describe("FEATURE: Audit Messages Query State", () => {
     });
   });
 
+  describe("RULE: A failed query tells the user what happened and what to try", () => {
+    test("EXAMPLE: The error banner is shown after a failed query", async () => {
+      const { store } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      store.queryFailed = true;
+      await nextTick();
+
+      expect(screen.getByTestId("query-error")).toBeInTheDocument();
+    });
+
+    test("EXAMPLE: The error banner is not shown while a retry is in flight", async () => {
+      const { store, isRefreshing } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      store.queryFailed = true;
+      isRefreshing.value = true;
+      await nextTick();
+
+      expect(screen.queryByTestId("query-error")).not.toBeInTheDocument();
+    });
+
+    test("EXAMPLE: The error banner is not shown when queries succeed", async () => {
+      const { verify } = await renderAuditList([createMessage()]);
+
+      await waitForFirstLoadToComplete();
+
+      verify.messagesAreVisible();
+      expect(screen.queryByTestId("query-error")).not.toBeInTheDocument();
+    });
+  });
+
   describe("RULE: A query-control change results in exactly one query", () => {
     test("EXAMPLE: Changing the filter text fires a single query", async () => {
       const { refreshNow, store } = await renderAuditList([createMessage()]);
