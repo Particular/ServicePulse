@@ -115,6 +115,7 @@ async function renderAuditList(messages: Message[] = []): Promise<RenderResult> 
     isActive: ref(false),
     start: vi.fn(),
     stop: vi.fn(),
+    nextRefreshAt: shallowReadonly(ref<number | null>(null)),
   });
 
   const router = createRouter({
