@@ -6,6 +6,7 @@ import PlatformHealthView from "@/views/PlatformHealthView.vue";
 import { usePlatformHealthStore } from "@/stores/PlatformHealthStore";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
+import { useCustomChecksStore } from "@/stores/CustomChecksStore";
 import type { PlatformModel } from "@/resources/PlatformModel";
 
 const currentReportedAt = new Date().toISOString();
@@ -40,8 +41,24 @@ describe("PlatformHealthView", () => {
     environmentAndVersionsStore.newVersions.newSPVersion.newspversionlink = "https://github.com/Particular/ServicePulse/releases/tag/2.10.2";
   });
 
-  test("requires the configuration download before enabling the support link", async () => {
+  test("requires the platform health download before enabling the support link and allows preview", async () => {
     const platformModelStore = usePlatformModelStore();
+    const customChecksStore = useCustomChecksStore();
+    customChecksStore.replaceFailedChecks([
+      {
+        id: "customchecks/audit-warning",
+        custom_check_id: "Audit Message Ingestion",
+        category: "ServiceControl.Audit Health",
+        status: "Fail" as never,
+        reported_at: currentReportedAt,
+        failure_reason: "Audit ingestion failed",
+        originating_endpoint: {
+          name: "Particular.ServiceControl.Audit",
+          host_id: "host-2",
+          host: "Host B",
+        },
+      },
+    ]);
     platformModelStore.model = {
       primary: {
         id: "primary",
@@ -70,10 +87,16 @@ describe("PlatformHealthView", () => {
     const supportLink = screen.getByRole("link", { name: /Then open the support case/i });
     expect(supportLink).toHaveAttribute("aria-disabled", "true");
 
-    await user.click(screen.getByRole("button", { name: /Download platform configuration/i }));
+    await user.click(screen.getByRole("button", { name: /Preview platform health/i }));
+
+    expect(screen.getByLabelText("Platform health JSON preview")).toHaveTextContent('"platformHealth"');
+    expect(screen.getByLabelText("Platform health JSON preview")).toHaveTextContent('"customChecks"');
+    expect(screen.getByLabelText("Platform health JSON preview")).toHaveTextContent('"Audit Message Ingestion"');
+
+    await user.click(screen.getByRole("button", { name: /Download platform health/i }));
 
     expect(downloadFileFromString).toHaveBeenCalledTimes(1);
-    expect(downloadFileFromString).toHaveBeenCalledWith(expect.stringContaining('"platformHealth"'), "application/json", "platform-configuration.json");
+    expect(downloadFileFromString).toHaveBeenCalledWith(expect.stringContaining('"platformHealth"'), "application/json", "platform-health.json");
     expect(supportLink).toHaveAttribute("aria-disabled", "false");
   });
 

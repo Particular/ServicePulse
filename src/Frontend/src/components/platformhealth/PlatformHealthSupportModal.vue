@@ -10,14 +10,19 @@ const props = defineProps<{
 
 const emit = defineEmits<{ close: [] }>();
 const hasDownloaded = ref(false);
+const showPreview = ref(false);
 
 function close() {
   emit("close");
 }
 
 function download() {
-  downloadFileFromString(props.downloadJson, "application/json", "platform-configuration.json");
+  downloadFileFromString(props.downloadJson, "application/json", "platform-health.json");
   hasDownloaded.value = true;
+}
+
+function togglePreview() {
+  showPreview.value = !showPreview.value;
 }
 
 function onKeydown(event: KeyboardEvent) {
@@ -47,15 +52,20 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="modal-body">
-          <p>First download the platform configuration. Then open the support case and attach the downloaded configuration file.</p>
+          <p>First download the platform health snapshot. Then open the support case and attach the downloaded file.</p>
           <ol>
-            <li>Download <code>platform-configuration.json</code>.</li>
+            <li>Download or preview <code>platform-health.json</code>.</li>
             <li>Open the support case.</li>
             <li>Attach the downloaded file when raising the case.</li>
           </ol>
+          <div v-if="showPreview" class="preview-panel">
+            <h4 class="preview-title">Preview</h4>
+            <pre class="preview-json" aria-label="Platform health JSON preview">{{ downloadJson }}</pre>
+          </div>
         </div>
         <div class="modal-footer modal-actions">
-          <ActionButton variant="primary" aria-label="Download platform configuration" @click="download">Download platform-configuration.json</ActionButton>
+          <ActionButton variant="primary" aria-label="Download platform health" @click="download">Download platform-health.json</ActionButton>
+          <ActionButton :aria-label="showPreview ? 'Hide platform health preview' : 'Preview platform health'" @click="togglePreview">{{ showPreview ? "Hide preview" : "Preview platform-health.json" }}</ActionButton>
           <a :href="supportCaseUrl" class="btn btn-default" :class="{ disabled: !hasDownloaded }" target="_blank" rel="noreferrer" :aria-disabled="!hasDownloaded" :tabindex="hasDownloaded ? 0 : -1">Then open the support case</a>
           <ActionButton aria-label="Close support dialog" @click="close">Close</ActionButton>
         </div>
@@ -85,6 +95,30 @@ onUnmounted(() => {
   gap: 0.75rem;
   flex-wrap: wrap;
   justify-content: flex-end;
+}
+
+.preview-panel {
+  margin-top: 1rem;
+  border: 1px solid #dfe7e8;
+  border-radius: 8px;
+  background: #f9fbfb;
+}
+
+.preview-title {
+  margin: 0;
+  padding: 0.75rem 1rem 0;
+  font-size: 14px;
+}
+
+.preview-json {
+  margin: 0;
+  padding: 0.75rem 1rem 1rem;
+  max-height: 280px;
+  overflow: auto;
+  background: transparent;
+  border: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .disabled {

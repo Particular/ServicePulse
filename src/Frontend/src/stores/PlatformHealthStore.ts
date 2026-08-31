@@ -134,6 +134,9 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
         generatedAt: new Date().toISOString(),
         supportCaseUrl,
         platformHealth: currentModel.value,
+        customChecks: {
+          failed: rawFailedChecks.value,
+        },
       },
       null,
       2

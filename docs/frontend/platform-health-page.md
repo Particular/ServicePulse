@@ -160,7 +160,9 @@ Verify these behaviors from the single startup scenario plus runtime switches:
 | Built-in platform checks hidden from Custom Checks UI but applied to Platform health | `setCustomCheckPreset("platform-only-primary")` or `setCustomCheckPreset("platform-only-audit")` |
 | Expanded row details with separate info and issue sections | trigger any row, then click the health badge |
 | Upgrade cue rendering | use instances whose versions differ from the known latest version in the scenario data |
-| Support-case modal download flow | click `Open support case`, download the JSON, then verify the support link becomes enabled |
+| Support-case modal preview and download flow | click `Open support case`, preview `platform-health.json`, then download it and verify the support link becomes enabled |
+
+The support export includes both the current Platform health payload and the current failed custom checks.
 
 ## Automated Tests
 
