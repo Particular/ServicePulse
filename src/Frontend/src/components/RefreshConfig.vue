@@ -54,7 +54,7 @@ async function refresh() {
     <div class="filter">
       <div class="filter-label">Auto-Refresh:</div>
       <div class="filter-component">
-        <ListFilterSelector :items="autoRefreshOptionsText.map((i) => i[1])" v-model="selectedRefresh" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" :disabled="props.queryInProgress" />
+        <ListFilterSelector :items="autoRefreshOptionsText.map((i) => i[1])" v-model="selectedRefresh" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" />
       </div>
     </div>
   </div>

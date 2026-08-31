@@ -139,7 +139,7 @@ watch(autoRefreshValue, (newValue) => {
     <div class="header">
       <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" @manual-refresh="refreshNow" />
       <div class="row">
-        <FiltersPanel :query-in-progress="queryInProgress" />
+        <FiltersPanel />
       </div>
       <div class="row">
         <ResultsCount :displayed="messages.length" :total="totalCount" />
