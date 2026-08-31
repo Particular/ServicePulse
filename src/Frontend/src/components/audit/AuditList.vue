@@ -7,6 +7,7 @@ import FiltersPanel from "@/components/audit/FiltersPanel.vue";
 import AuditListItem from "@/components/audit/AuditListItem.vue";
 import { computed, onBeforeMount, ref, watch } from "vue";
 import RefreshConfig from "../RefreshConfig.vue";
+import AutoRefreshIndicator from "../AutoRefreshIndicator.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import useFetchWithAutoRefresh from "@/composables/autoRefresh";
 import WizardDialog from "@/components/platformcapabilities/WizardDialog.vue";
@@ -21,7 +22,7 @@ const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName,
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
-const { refreshNow, isRefreshing, updateInterval, isActive, start, stop } = useFetchWithAutoRefresh("audit-list", store.refresh, 0);
+const { refreshNow, isRefreshing, updateInterval, isActive, start, stop, nextRefreshAt } = useFetchWithAutoRefresh("audit-list", store.refresh, 0);
 const firstLoad = ref(true);
 const queryInProgress = computed(() => firstLoad.value || isRefreshing.value);
 const showWizard = ref(false);
@@ -138,6 +139,7 @@ watch(autoRefreshValue, (newValue) => {
   <div>
     <div class="header">
       <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" @manual-refresh="refreshNow" />
+      <AutoRefreshIndicator :next-refresh-at="nextRefreshAt" :interval-ms="autoRefreshValue" :refreshing="isRefreshing" />
       <div class="row">
         <FiltersPanel />
       </div>
