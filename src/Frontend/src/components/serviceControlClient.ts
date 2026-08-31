@@ -36,9 +36,8 @@ class ServiceControlClient {
     }
   }
 
-  public async getRoot() {
-    const [, data] = await this.fetchTypedFromServiceControl<ServiceControlRootDocument>("");
-    return data;
+  public async getRoot(): Promise<[Response, ServiceControlRootDocument]> {
+    return await this.fetchTypedFromServiceControl<ServiceControlRootDocument>("");
   }
 
   public async getRemoteInstances() {

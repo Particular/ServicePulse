@@ -10,7 +10,7 @@ const getMonitoringRoot = vi.fn();
 vi.mock("@/components/serviceControlClient", () => ({
   default: {
     url: "http://localhost:33333/api/",
-    getRoot: () => getRoot(),
+    getRoot: (...args: unknown[]) => getRoot(...args),
     getRemoteInstances: (...args: unknown[]) => getRemoteInstances(...args),
   },
 }));
@@ -33,11 +33,7 @@ describe("PlatformModelStore", () => {
   });
 
   test("keeps monitoring in the shared model when remote error instances exist", async () => {
-    getRoot.mockResolvedValue({
-      name: "Particular.ServiceControl.CrossRegion",
-      platform_health_status: "healthy",
-      platform_health_version: "6.19.3",
-    });
+    getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl.CrossRegion", health: "healthy", version: "6.19.3" }));
     getRemoteInstances.mockResolvedValue([
       {
         api_uri: "http://Particular.ServiceControl.RegionA/api/",
@@ -61,11 +57,7 @@ describe("PlatformModelStore", () => {
   });
 
   test("prefers remote configuration host.instance_name over api hostname", async () => {
-    getRoot.mockResolvedValue({
-      name: "Particular.ServiceControl.Primary",
-      platform_health_status: "healthy",
-      platform_health_version: "6.19.3",
-    });
+    getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl.Primary", health: "healthy", version: "6.19.3" }));
     getRemoteInstances.mockResolvedValue([
       {
         api_uri: "http://localhost:33334/api/",
@@ -85,12 +77,8 @@ describe("PlatformModelStore", () => {
     expect(store.remotes[0].name).toBe("Particular.ServiceControl.Audit.Blue");
   });
 
-  test("uses primary root values directly when the request succeeds", async () => {
-    getRoot.mockResolvedValue({
-      name: "Particular.ServiceControl.Primary",
-      platform_health_status: "degraded",
-      platform_health_version: "6.18.1",
-    });
+  test("maps a reachable primary root to healthy with version from the response header", async () => {
+    getRoot.mockResolvedValue([{ headers: new Headers({ "X-Particular-Version": "6.19.3" }) }, { name: "Particular.ServiceControl.Primary" }] as never);
     getRemoteInstances.mockResolvedValue([]);
     getMonitoringRoot.mockResolvedValue(null);
 
@@ -98,16 +86,12 @@ describe("PlatformModelStore", () => {
     await store.refresh();
 
     expect(store.primary?.name).toBe("Particular.ServiceControl.Primary");
-    expect(store.primary?.health).toBe("degraded");
-    expect(store.primary?.version).toBe("6.18.1");
+    expect(store.primary?.health).toBe("healthy");
+    expect(store.primary?.version).toBe("6.19.3");
   });
 
   test("uses cached remote instance type when an unavailable remote no longer has configuration", async () => {
-    getRoot.mockResolvedValue({
-      name: "Particular.ServiceControl.Primary",
-      platform_health_status: "healthy",
-      platform_health_version: "6.19.3",
-    });
+    getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl.Primary", health: "healthy", version: "6.19.3" }));
     getRemoteInstances.mockResolvedValue([
       {
         api_uri: "http://localhost:33334/api/",
@@ -125,3 +109,7 @@ describe("PlatformModelStore", () => {
     expect(store.remotes[0].role).toBe("remote-error");
   });
 });
+
+function rootResponse({ name, health, version }: { name: string; health: "healthy" | "degraded" | "unavailable"; version: string }) {
+  return [{ headers: new Headers({ "X-Particular-Version": version }) }, { name, platform_health_status: health, platform_health_version: version }] as never;
+}

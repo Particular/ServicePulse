@@ -84,6 +84,11 @@ The architecture intentionally separates shared platform state from page-specifi
 - `src/Frontend/src/stores/PlatformHealthStore.ts`
   - page-specific severity, rows, upgrade cues, and details
 
+### Primary and Monitoring version sourcing
+
+- the primary root document exposes its version through the `X-Particular-Version` response header, so Platform health reads the primary version from that header; a successful primary root fetch maps to an `healthy` baseline (degraded/unavailable are then derived from built-in custom checks or a fetch failure)
+- the Monitoring root document exposes its version in a `version` field, so Platform health reads the monitoring version from that field
+
 ## Built-In Custom Checks
 
 Platform health consumes built-in platform custom checks as secondary signals even when those checks are hidden by default on the Custom Checks page.

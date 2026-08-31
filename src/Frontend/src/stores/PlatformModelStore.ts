@@ -38,12 +38,18 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
   };
 });
 
-async function getPrimaryRoot(): Promise<ServiceControlRootDocument | null> {
+async function getPrimaryRoot(): Promise<PrimaryRootResult | null> {
   try {
-    return await serviceControlClient.getRoot();
+    const [response, document] = await serviceControlClient.getRoot();
+    return { document, version: response.headers.get("X-Particular-Version") ?? "" };
   } catch {
     return null;
   }
+}
+
+interface PrimaryRootResult {
+  document: ServiceControlRootDocument;
+  version: string;
 }
 
 async function getRemotes(): Promise<RemoteInstance[]> {
@@ -69,7 +75,7 @@ async function getMonitoringRoot(): Promise<MonitoringRoot | null> {
   }
 }
 
-function mapPrimary(primaryRoot: ServiceControlRootDocument | null): PlatformInstance {
+function mapPrimary(primaryRoot: PrimaryRootResult | null): PlatformInstance {
   if (!primaryRoot) {
     return {
       id: "primary",
@@ -82,13 +88,15 @@ function mapPrimary(primaryRoot: ServiceControlRootDocument | null): PlatformIns
     };
   }
 
+  const { document, version } = primaryRoot;
+
   return {
     id: "primary",
-    name: primaryRoot.name,
+    name: document.name,
     kind: "error",
     role: "primary-error",
-    version: primaryRoot.platform_health_version,
-    health: primaryRoot.platform_health_status,
+    version: document.platform_health_version ?? version,
+    health: document.platform_health_status ?? "healthy",
     apiUrl: serviceControlClient.url ?? "",
   };
 }
@@ -132,7 +140,7 @@ function mapMonitoring(monitoringRoot: MonitoringRoot | null): PlatformInstance 
     name: "Particular.ServiceControl.Monitoring",
     kind: "monitoring",
     role: "monitoring",
-    version: monitoringRoot?.platform_health_version ?? "Unknown",
+    version: monitoringRoot?.platform_health_version ?? monitoringRoot?.version ?? "Unknown",
     health: monitoringRoot?.platform_health_status ?? "healthy",
     apiUrl: monitoringClient.url ?? "",
   };

@@ -11,6 +11,7 @@ export interface MetricsConnectionDetails {
 export interface MonitoringRoot {
   platform_health_status?: "healthy" | "degraded" | "unavailable";
   platform_health_version?: string;
+  version?: string;
 }
 
 class MonitoringClient {
