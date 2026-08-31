@@ -15,7 +15,7 @@ export const useEnvironmentAndVersionsStore = defineStore("EnvironmentAndVersion
     sc_version: "",
     minimum_supported_sc_version: "6.6.0",
     is_compatible_with_sc: true,
-    sp_version: window.defaultConfig && window.defaultConfig.version ? window.defaultConfig.version : "2.8.0",
+    sp_version: window.defaultConfig && window.defaultConfig.version ? window.defaultConfig.version : "2.10.2",
     supportsArchiveGroups: false,
     endpoints_error_url: "",
     known_endpoints_url: "",
