@@ -32,7 +32,7 @@ describe("PlatformModelStore", () => {
     window.__platformHealth = undefined;
   });
 
-  test("keeps monitoring in the shared model for multi-region", async () => {
+  test("keeps monitoring in the shared model when remote error instances exist", async () => {
     getRoot.mockResolvedValue({
       name: "Particular.ServiceControl.CrossRegion",
       platform_health_status: "healthy",
@@ -51,7 +51,6 @@ describe("PlatformModelStore", () => {
     const store = usePlatformModelStore();
     await store.refresh();
 
-    expect(store.isMultiRegion).toBe(true);
     expect(store.monitoring).not.toBeNull();
     expect(store.monitoring?.role).toBe("monitoring");
     expect(store.primary?.role).toBe("primary-error");
@@ -121,6 +120,5 @@ describe("PlatformModelStore", () => {
 
     expect(store.remotes[0].kind).toBe("error");
     expect(store.remotes[0].role).toBe("remote-error");
-    expect(store.isMultiRegion).toBe(true);
   });
 });

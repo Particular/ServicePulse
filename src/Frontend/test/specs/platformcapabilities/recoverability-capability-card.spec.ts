@@ -39,7 +39,7 @@ describe("FEATURE: Recoverability capability card", () => {
   });
 
   describe("RULE: Recoverability card shows capability-specific failure management guidance", () => {
-    test("EXAMPLE: Single-region setup shows a green FailedMessages indicator", async ({ driver }) => {
+    test("EXAMPLE: Connected primary shows a green FailedMessages indicator", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasNoAuditInstances);
@@ -64,7 +64,7 @@ describe("FEATURE: Recoverability capability card", () => {
       expect(failedMessagesIndicator?.querySelector(".light-success")).not.toBeNull();
     });
 
-    test("EXAMPLE: Multi-region setup shows a yellow FailedMessages indicator", async ({ driver }) => {
+    test("EXAMPLE: Remote error instances do not change the green FailedMessages indicator", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasRemoteErrorInstance);
@@ -84,7 +84,7 @@ describe("FEATURE: Recoverability capability card", () => {
 
       const failedMessagesIndicator = await recoverabilityIndicatorByLabel("FailedMessages");
       expect(failedMessagesIndicator).toBeInTheDocument();
-      expect(failedMessagesIndicator?.querySelector(".light-warning")).not.toBeNull();
+      expect(failedMessagesIndicator?.querySelector(".light-success")).not.toBeNull();
     });
 
     test("EXAMPLE: Degraded primary instance still shows available status while connected", async ({ driver }) => {

@@ -29,14 +29,14 @@ declare global {
   }
 }
 
-let state = withCustomChecks(createScenario("single-region-healthy"), "none");
+let state = withCustomChecks(createScenario("audit-remotes-healthy"), "none");
 
 export function installPlatformHealthDevControls() {
   window.__platformHealth = {
     getState: () => cloneState(state),
     getCustomChecks: () => state.customChecks.map((check) => structuredClone(check)),
     reset: () => {
-      state = withCustomChecks(createScenario("single-region-healthy"), "none");
+      state = withCustomChecks(createScenario("audit-remotes-healthy"), "none");
       return cloneState(state);
     },
     setScenario: (name) => {

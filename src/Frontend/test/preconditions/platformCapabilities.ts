@@ -81,7 +81,7 @@ export const hasAvailableAuditInstance =
 
 /** Precondition: Single audit instance that is unavailable */
 export const hasUnavailableAuditInstance = ({ driver }: SetupFactoryOptions) => {
-  const topology = createPlatformTopology("single-region-healthy");
+  const topology = createPlatformTopology("audit-remotes-healthy");
   topology.remotes[1].status = "unavailable";
   const [instance] = toRemoteInstances({ remotes: [topology.remotes[1]] });
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
@@ -91,7 +91,7 @@ export const hasUnavailableAuditInstance = ({ driver }: SetupFactoryOptions) => 
 
 /** Precondition: Multiple audit instances with mixed availability */
 export const hasPartiallyUnavailableAuditInstances = ({ driver }: SetupFactoryOptions) => {
-  const topology = createPlatformTopology("single-region-healthy");
+  const topology = createPlatformTopology("audit-remotes-healthy");
   topology.remotes[1].status = "unavailable";
   const remotes = toRemoteInstances({ remotes: topology.remotes });
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
@@ -101,7 +101,7 @@ export const hasPartiallyUnavailableAuditInstances = ({ driver }: SetupFactoryOp
 
 /** Precondition: Multiple audit instances all online */
 export const hasMultipleAvailableAuditInstances = ({ driver }: SetupFactoryOptions) => {
-  const remotes = toRemoteInstances({ remotes: createPlatformTopology("single-region-healthy").remotes });
+  const remotes = toRemoteInstances({ remotes: createPlatformTopology("audit-remotes-healthy").remotes });
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
     body: remotes,
   });
@@ -210,10 +210,10 @@ export const hasMultipleMonitoredEndpoints =
 // RECOVERABILITY CAPABILITY
 // =============================================================================
 
-/** Precondition: A remote error instance is configured, putting Recoverability into multi-region mode */
+/** Precondition: A remote error instance is configured */
 export const hasRemoteErrorInstance = ({ driver }: SetupFactoryOptions) => {
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
-    body: toRemoteInstances({ remotes: [createPlatformTopology("multi-region-healthy").remotes[0]] }),
+    body: toRemoteInstances({ remotes: [createPlatformTopology("remote-errors-healthy").remotes[0]] }),
   });
 };
 

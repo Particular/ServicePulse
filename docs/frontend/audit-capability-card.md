@@ -30,7 +30,7 @@ An audit instance that is degraded but still responding remains available for th
 
 Start from the shared frontend mocking workflow in `docs/frontend/testing-basics.md`, then select one of the audit scenarios below.
 
-For the shared meaning of single-region and multi-region instance topologies, use `docs/frontend/platform-health-page.md` as the canonical reference. This page documents only the auditing-specific layer on top.
+For the shared meaning of audit and remote error platform instances, use `docs/frontend/platform-health-page.md` as the canonical reference. This page documents only the auditing-specific layer on top.
 
 ### Available Audit Scenarios
 

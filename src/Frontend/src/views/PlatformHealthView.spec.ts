@@ -210,7 +210,7 @@ describe("PlatformHealthView", () => {
     expect(screen.getByRole("link", { name: "Particular.ServiceControl.Audit" })).toHaveAttribute("href", "http://localhost:33334/api/");
   });
 
-  test("renders monitoring when present even in multi-region", () => {
+  test("renders monitoring when present alongside remote error instances", () => {
     const platformModelStore = usePlatformModelStore();
     platformModelStore.model = {
       primary: {

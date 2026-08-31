@@ -5,7 +5,6 @@ import routeLinks from "@/router/routeLinks";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 
 const singleRegionTooltip = "Message failures can be managed from this ServicePulse instance.";
-const multiRegionTooltip = "Message failures are read only in multi-region mode, use the region specific ServicePulse to manage failures.";
 
 const ErrorDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.Unavailable]: "The ServiceControl instance is not responding.",
@@ -50,7 +49,7 @@ export function useErrorCapability(): CapabilityComposable {
       return [];
     }
 
-    return [createIndicator("FailedMessages", platformModelStore.isMultiRegion ? CapabilityStatus.PartiallyUnavailable : CapabilityStatus.Available, platformModelStore.isMultiRegion ? multiRegionTooltip : singleRegionTooltip)];
+    return [createIndicator("FailedMessages", CapabilityStatus.Available, singleRegionTooltip)];
   });
 
   // Loading state - error is loading if we haven't attempted connection yet

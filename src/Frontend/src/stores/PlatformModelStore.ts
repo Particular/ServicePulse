@@ -13,7 +13,6 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
   const monitoring = computed(() => model.value?.monitoring ?? null);
   const auditInstances = computed(() => remotes.value.filter((instance) => instance.kind === "audit"));
   const errorInstances = computed(() => remotes.value.filter((instance) => instance.kind === "error"));
-  const isMultiRegion = computed(() => model.value?.remotes.some((instance) => instance.role === "remote-error") ?? false);
 
   async function refresh() {
     const [primaryRoot, remotesResponse, monitoringResponse] = await Promise.all([getPrimaryRoot(), getRemotes(), getMonitoringRoot()]);
@@ -32,7 +31,6 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
     monitoring,
     auditInstances,
     errorInstances,
-    isMultiRegion,
     refresh,
   };
 });

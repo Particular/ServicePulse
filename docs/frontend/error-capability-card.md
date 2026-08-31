@@ -25,13 +25,13 @@ Unlike the Monitoring and Auditing cards, the Recoverability card has a simpler 
 
 Start from the shared frontend mocking workflow in `docs/frontend/testing-basics.md`, then select the recoverability scenario below.
 
-For the shared meaning of primary, remote-error, and multi-region topology states, use `docs/frontend/platform-health-page.md` as the canonical reference. This page documents only the recoverability-specific layer on top.
+For the shared meaning of primary and remote error instance states, use `docs/frontend/platform-health-page.md` as the canonical reference. This page documents only the recoverability-specific layer on top.
 
 ### Available Recoverability Scenarios
 
 | Scenario                   | Status    | Badge     | Button               | Description                                 | Indicators                         |
 |----------------------------|-----------|-----------|----------------------|---------------------------------------------|------------------------------------|
-| `recoverability-available` | Available | Available | View Failed Messages | "The ServiceControl instance is available." | `FailedMessages`: ⚠️ in multi-region, ✅ in single-region |
+| `recoverability-available` | Available | Available | View Failed Messages | "The ServiceControl instance is available." | `FailedMessages`: ✅ |
 
 ### Testing "Unavailable" State
 
@@ -66,8 +66,8 @@ npx vitest run test/specs/platformcapabilities/recoverability-capability-card.sp
 | Rule                              | Test Case                                                |
 |-----------------------------------|----------------------------------------------------------|
 | ServiceControl instance available | Shows "Available" status + "View Failed Messages" button |
-| Single-region management          | Shows a green `FailedMessages` indicator                 |
-| Multi-region management           | Shows a yellow `FailedMessages` indicator                |
+| Connected primary instance        | Shows a green `FailedMessages` indicator                 |
+| Remote error instances present    | Keeps the `FailedMessages` indicator green               |
 
 **Note:** The "Unavailable" state is not tested because when ServiceControl is unavailable, the entire dashboard is replaced with a connection error view, making the recoverability card inaccessible.
 
@@ -101,11 +101,6 @@ The recoverability card shows a single `FailedMessages` indicator whenever the p
 A degraded primary instance remains connected for this card. Platform health owns the degraded vs unavailable distinction at the instance level.
 
 - green when failures can be managed from this ServicePulse instance
-- yellow in multi-region mode, where failure management is read-only from the cross-region view
-
-Tooltip text for multi-region mode:
-
-`Message failures are read only in multi-region mode, use the region specific ServicePulse to manage failures.`
 
 Instance-level visibility for ServiceControl lives on the `Platform health` page instead of on the capability card.
 
@@ -127,4 +122,4 @@ Use `docs/frontend/testing-basics.md` for shared troubleshooting.
 Recoverability-specific checks:
 
 1. If the card disappears instead of showing `Unavailable`, confirm the scenario has crossed into full ServiceControl connection failure, which replaces the dashboard.
-2. If the `FailedMessages` indicator is wrong, inspect whether the active topology is single-region or has `remote-error` instances.
+2. If the `FailedMessages` indicator is wrong, inspect whether the primary instance is connected.

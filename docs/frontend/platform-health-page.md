@@ -110,7 +110,7 @@ After startup, use the browser console runtime helpers to switch topology, statu
 ```javascript
 window.__platformHealth.getState()
 window.__platformHealth.reset()
-window.__platformHealth.setScenario("single-region-healthy")
+window.__platformHealth.setScenario("audit-remotes-healthy")
 window.__platformHealth.setStatus("remote-0", "unavailable")
 ```
 
@@ -122,10 +122,10 @@ Switch topology at runtime with `window.__platformHealth.setScenario(...)`:
 
 | Scenario | Purpose |
 |----------|---------|
-| `single-region-healthy` | Primary and monitoring healthy, audit remotes healthy |
-| `single-region-danger` | Primary unavailable, audit remotes healthy, monitoring unavailable |
-| `multi-region-healthy` | Primary healthy with remote error instances and no monitoring |
-| `multi-region-danger` | One remote error instance unavailable |
+| `audit-remotes-healthy` | Primary and monitoring healthy, audit remotes healthy |
+| `audit-remotes-danger` | Primary healthy, audit remotes healthy, monitoring unavailable |
+| `remote-errors-healthy` | Primary healthy with remote error instances and no monitoring |
+| `remote-errors-danger` | One remote error instance unavailable |
 
 ### Custom Check Presets
 
@@ -146,10 +146,10 @@ Verify these behaviors from the single startup scenario plus runtime switches:
 
 | Behavior | How to exercise it |
 |----------|--------------------|
-| Healthy single-region table | `setScenario("single-region-healthy")` |
-| Warning state from degraded audit instance | `setScenario("single-region-healthy")` plus `setCustomCheckPreset("platform-only-audit")` |
-| Danger state from unavailable instances | `setScenario("single-region-danger")` or `setScenario("multi-region-danger")` |
-| Multi-region topology | `setScenario("multi-region-healthy")` |
+| Healthy audit-remote table | `setScenario("audit-remotes-healthy")` |
+| Warning state from degraded audit instance | `setScenario("audit-remotes-healthy")` plus `setCustomCheckPreset("platform-only-audit")` |
+| Danger state from unavailable instances | `setScenario("audit-remotes-danger")` or `setScenario("remote-errors-danger")` |
+| Remote error instances | `setScenario("remote-errors-healthy")` |
 | Built-in platform checks hidden from Custom Checks UI but applied to Platform health | `setCustomCheckPreset("platform-only-primary")` or `setCustomCheckPreset("platform-only-audit")` |
 | Expanded row details with `failure_reason` | trigger degraded/unavailable row, then click the health badge |
 | Upgrade cue rendering | use instances whose versions differ from the known latest version in the scenario data |
@@ -179,7 +179,7 @@ npx vitest run test/mocks/platform-health-state.spec.ts
 
 | Area | Covered behavior |
 |------|------------------|
-| Platform health store | warning/danger severity, multi-region danger, monitoring presence, version fallback, built-in custom-check health inference |
+| Platform health store | warning/danger severity, remote error instance danger, monitoring presence, version fallback, built-in custom-check health inference |
 | Platform health view | support download gating, known-version-only upgrade cue rendering, direct instance links, monitoring row rendering, expandable degraded rows |
 | Mock helpers | independent topology and custom-check switching |
 

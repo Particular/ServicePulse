@@ -28,7 +28,7 @@ describe("PlatformHealthStore", () => {
     customChecksStore.refresh = vi.fn(() => Promise.resolve());
   });
 
-  test("derives warning severity and single-region rows", async () => {
+  test("derives warning severity and audit-remote rows", async () => {
     const customChecksStore = useCustomChecksStore();
     customChecksStore.replaceFailedChecks([
       {
@@ -66,10 +66,10 @@ describe("PlatformHealthStore", () => {
     expect(store.supportDownloadJson).toContain('"platformHealth"');
   });
 
-  test("derives danger severity for multi-region degraded remote error", async () => {
+  test("derives danger severity for an unavailable remote error instance", async () => {
     const platformModelStore = usePlatformModelStore();
     platformModelStore.refresh = vi.fn(() => {
-      platformModelStore.model = multiRegionDangerModel;
+      platformModelStore.model = remoteErrorsDangerModel;
       return Promise.resolve();
     });
     const store = usePlatformHealthStore();
@@ -86,7 +86,7 @@ describe("PlatformHealthStore", () => {
     const platformModelStore = usePlatformModelStore();
     platformModelStore.refresh = vi.fn(() => {
       platformModelStore.model = {
-        ...multiRegionDangerModel,
+        ...remoteErrorsDangerModel,
         monitoring: {
           id: "monitoring",
           name: "Particular.ServiceControl.Monitoring",
@@ -114,7 +114,7 @@ describe("PlatformHealthStore", () => {
     environmentAndVersionsStore.newVersions.newSCVersion.newscversionlink = "";
     window.__platformHealth = {
       getState: () => ({
-        scenario: "single-region-healthy",
+        scenario: "audit-remotes-healthy",
         customCheckPreset: "none",
         primary: { name: "Particular.ServiceControl", version: "6.19.3", status: "healthy" },
         remotes: [
@@ -416,7 +416,7 @@ const singleRegionWarningModel: PlatformModel = {
   },
 };
 
-const multiRegionDangerModel: PlatformModel = {
+const remoteErrorsDangerModel: PlatformModel = {
   primary: {
     id: "primary",
     name: "Particular.ServiceControl.CrossRegion",

@@ -206,7 +206,7 @@ function formatRole(role: PlatformInstance["role"]) {
     case "remote-audit":
       return "Audit instance";
     case "remote-error":
-      return "Regional error instance";
+      return "Remote error instance";
     case "monitoring":
       return "Monitoring instance";
   }
@@ -287,7 +287,7 @@ function fallbackDetails(instance: PlatformInstance, model: PlatformModel) {
   }
 
   if (instance.role === "remote-error" && instance.health === "unavailable") {
-    return ["Regional error instance is unavailable."];
+    return ["Remote error instance is unavailable."];
   }
 
   if (instance.role === "remote-audit" && instance.health === "degraded") {

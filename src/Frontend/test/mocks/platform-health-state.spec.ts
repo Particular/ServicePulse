@@ -8,13 +8,13 @@ describe("platform-health-state", () => {
   });
 
   test("applies built-in and user custom check presets independently of topology scenario", () => {
-    window.__platformHealth?.setScenario("single-region-healthy");
+    window.__platformHealth?.setScenario("audit-remotes-healthy");
     window.__platformHealth?.setCustomCheckPreset("mixed-primary-and-user");
 
     const state = window.__platformHealth?.getState();
     const checks = getPlatformHealthCustomChecks();
 
-    expect(state?.scenario).toBe("single-region-healthy");
+    expect(state?.scenario).toBe("audit-remotes-healthy");
     expect(state?.customCheckPreset).toBe("mixed-primary-and-user");
     expect(checks).toHaveLength(2);
     expect(checks.some((check) => check.custom_check_id === "ServiceControl Primary Instance")).toBe(true);
@@ -29,7 +29,7 @@ describe("platform-health-state", () => {
   });
 
   test("supports a degraded primary platform custom check preset", () => {
-    window.__platformHealth?.setScenario("single-region-healthy");
+    window.__platformHealth?.setScenario("audit-remotes-healthy");
     window.__platformHealth?.setCustomCheckPreset("platform-only-primary-degraded");
 
     const state = window.__platformHealth?.getState();
@@ -41,8 +41,8 @@ describe("platform-health-state", () => {
     expect(checks[0].category).toBe("ServiceControl Health");
   });
 
-  test("keeps healthy single-region topology healthy until a related audit custom check is applied", () => {
-    window.__platformHealth?.setScenario("single-region-healthy");
+  test("keeps healthy audit remote topology healthy until a related audit custom check is applied", () => {
+    window.__platformHealth?.setScenario("audit-remotes-healthy");
 
     const state = window.__platformHealth?.getState();
 
