@@ -12,12 +12,13 @@ export interface AuditQuery {
 }
 
 class AuditClient {
-  public async getMessages(query: AuditQuery): Promise<[Response, Message[]]> {
+  public async getMessages(query: AuditQuery, signal?: AbortSignal): Promise<[Response, Message[]]> {
     const [fromDate, toDate] = query.dateRange ?? [];
     const from = fromDate?.toISOString() ?? "";
     const to = toDate?.toISOString() ?? "";
     return await serviceControlClient.fetchTypedFromServiceControl<Message[]>(
-      `messages2/?endpoint_name=${query.endpointName ?? ""}&from=${from}&to=${to}&q=${query.messageFilterString ?? ""}&page_size=${query.itemsPerPage ?? 100}&sort=${query.sort?.property ?? "time_sent"}&direction=${query.sort?.isAscending ? "asc" : "desc"}`
+      `messages2/?endpoint_name=${query.endpointName ?? ""}&from=${from}&to=${to}&q=${query.messageFilterString ?? ""}&page_size=${query.itemsPerPage ?? 100}&sort=${query.sort?.property ?? "time_sent"}&direction=${query.sort?.isAscending ? "asc" : "desc"}`,
+      signal
     );
   }
 
