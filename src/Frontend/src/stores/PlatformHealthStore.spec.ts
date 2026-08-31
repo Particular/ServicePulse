@@ -21,6 +21,9 @@ describe("PlatformHealthStore", () => {
     environmentAndVersionsStore.newVersions.newMVersion.newmversion = true;
     environmentAndVersionsStore.newVersions.newMVersion.newmversionnumber = "6.19.3";
     environmentAndVersionsStore.newVersions.newMVersion.newmversionlink = "https://github.com/Particular/ServiceControl/releases/tag/6.19.3";
+    environmentAndVersionsStore.newVersions.newSPVersion.newspversion = true;
+    environmentAndVersionsStore.newVersions.newSPVersion.newspversionnumber = "2.10.2";
+    environmentAndVersionsStore.newVersions.newSPVersion.newspversionlink = "https://github.com/Particular/ServicePulse/releases/tag/2.10.2";
 
     vi.spyOn(logger, "warn").mockImplementation(() => undefined);
 
@@ -56,10 +59,13 @@ describe("PlatformHealthStore", () => {
     await store.refresh();
 
     expect(store.severity).toBe("warning");
-    expect(store.rows).toHaveLength(4);
+    expect(store.rows).toHaveLength(5);
     expect(store.outdatedOnly).toBe(false);
     expect(store.rows[2].upgradeAvailable).toBe(true);
     expect(store.rows[2].latestVersion).toBe("6.19.3");
+    expect(store.rows[4].type).toBe("ServicePulse");
+    expect(store.rows[4].upgradeAvailable).toBe(true);
+    expect(store.rows[4].latestVersion).toBe("2.10.2");
     expect(store.issueSummary).toContain("1 issue detected");
     expect(store.issueSummary).toContain("degraded Audit instance");
     expect(store.issueSummary).not.toContain("unavailable Monitoring instance");
@@ -77,8 +83,8 @@ describe("PlatformHealthStore", () => {
     await store.refresh();
 
     expect(store.severity).toBe("danger");
-    expect(store.rows).toHaveLength(3);
-    expect(store.rows.every((row) => row.type === "Error instance" || row.type === "Monitoring instance")).toBe(true);
+    expect(store.rows).toHaveLength(4);
+    expect(store.rows.filter((row) => row.type !== "ServicePulse").every((row) => row.type === "Error instance" || row.type === "Monitoring instance")).toBe(true);
     expect(store.issueSummary).toContain("unavailable Error instance");
   });
 
@@ -436,6 +442,11 @@ const singleRegionWarningModel: PlatformModel = {
     health: "healthy",
     apiUrl: "http://localhost:33633/",
   },
+  servicePulse: {
+    name: "ServicePulse",
+    version: "2.8.0",
+    health: "healthy",
+  },
 };
 
 const remoteErrorsDangerModel: PlatformModel = {
@@ -469,4 +480,9 @@ const remoteErrorsDangerModel: PlatformModel = {
     },
   ],
   monitoring: null,
+  servicePulse: {
+    name: "ServicePulse",
+    version: "2.8.0",
+    health: "healthy",
+  },
 };

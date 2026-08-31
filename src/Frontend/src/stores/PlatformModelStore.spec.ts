@@ -51,6 +51,9 @@ describe("PlatformModelStore", () => {
     const store = usePlatformModelStore();
     await store.refresh();
 
+    expect(store.servicePulse).not.toBeNull();
+    expect(store.servicePulse?.name).toBe("ServicePulse");
+    expect(store.servicePulse?.health).toBe("healthy");
     expect(store.monitoring).not.toBeNull();
     expect(store.monitoring?.role).toBe("monitoring");
     expect(store.primary?.role).toBe("primary-error");

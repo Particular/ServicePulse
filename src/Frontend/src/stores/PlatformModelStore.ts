@@ -3,7 +3,7 @@ import { computed, ref } from "vue";
 import serviceControlClient, { type ServiceControlRootDocument } from "@/components/serviceControlClient";
 import monitoringClient, { type MonitoringRoot } from "@/components/monitoring/monitoringClient";
 import { RemoteInstanceType, type RemoteInstance } from "@/resources/RemoteInstance";
-import type { PlatformInstance, PlatformModel } from "@/resources/PlatformModel";
+import type { PlatformInstance, PlatformModel, ServicePulse } from "@/resources/PlatformModel";
 
 export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
   const model = ref<PlatformModel | null>(null);
@@ -11,6 +11,7 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
   const primary = computed(() => model.value?.primary ?? null);
   const remotes = computed(() => model.value?.remotes ?? []);
   const monitoring = computed(() => model.value?.monitoring ?? null);
+  const servicePulse = computed(() => model.value?.servicePulse ?? null);
   const auditInstances = computed(() => remotes.value.filter((instance) => instance.kind === "audit"));
   const errorInstances = computed(() => remotes.value.filter((instance) => instance.kind === "error"));
 
@@ -21,6 +22,7 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
       primary: mapPrimary(primaryRoot),
       remotes: mapRemotes(remotesResponse),
       monitoring: mapMonitoring(monitoringResponse),
+      servicePulse: mapServicePulse(),
     };
   }
 
@@ -29,6 +31,7 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
     primary,
     remotes,
     monitoring,
+    servicePulse,
     auditInstances,
     errorInstances,
     refresh,
@@ -132,6 +135,14 @@ function mapMonitoring(monitoringRoot: MonitoringRoot | null): PlatformInstance 
     version: monitoringRoot?.platform_health_version ?? "Unknown",
     health: monitoringRoot?.platform_health_status ?? "healthy",
     apiUrl: monitoringClient.url ?? "",
+  };
+}
+
+function mapServicePulse(): ServicePulse {
+  return {
+    name: "ServicePulse",
+    version: window.defaultConfig?.version ?? "Unknown",
+    health: "healthy",
   };
 }
 

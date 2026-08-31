@@ -27,15 +27,18 @@ The page renders one row per platform instance:
 - primary error instance
 - zero or more remote instances
 - monitoring instance when configured
+- ServicePulse
 
 Each row shows:
 
 - instance type
-- instance name, linked directly to that instance `apiUrl`
+- name
 - current version
 - health state
 - upgrade cue when a newer version is known
 - no upgrade cue when the page only knows that versions differ but does not know a newer target version
+
+Platform instances link their name directly to `apiUrl`. The `ServicePulse` row keeps the name as plain text.
 
 Rows for degraded or unavailable instances can expand to show details.
 
@@ -74,7 +77,7 @@ The architecture intentionally separates shared platform state from page-specifi
 - `src/Frontend/src/stores/PlatformModelStore.ts`
   - shared aggregation and normalization layer
 - `src/Frontend/src/resources/PlatformModel.ts`
-  - shared platform types including `PlatformInstance`
+  - shared platform types including backend platform instances and the frontend `ServicePulse` model
 - `src/Frontend/src/stores/PlatformHealthStore.ts`
   - page-specific severity, rows, upgrade cues, and details
 
@@ -181,7 +184,7 @@ npx vitest run test/mocks/platform-health-state.spec.ts
 | Area | Covered behavior |
 |------|------------------|
 | Platform health store | warning/danger severity, unavailable audit remotes, remote error instance danger, monitoring presence, version fallback, built-in custom-check health inference |
-| Platform health view | support download gating, known-version-only upgrade cue rendering, direct instance links, monitoring row rendering, expandable degraded rows |
+| Platform health view | support download gating, known-version-only upgrade cue rendering, direct instance links, plain-text ServicePulse row rendering, monitoring row rendering, expandable degraded rows |
 | Mock helpers | independent topology and custom-check switching |
 
 ## Key Source Files
@@ -195,6 +198,7 @@ npx vitest run test/mocks/platform-health-state.spec.ts
 | `src/Frontend/src/resources/PlatformHealth.ts` | Page-specific response/row types |
 | `src/Frontend/test/mocks/platform-health-state.ts` | Runtime mock topology and custom-check controls |
 | `src/Frontend/src/components/platformhealth/PlatformHealthMenuItem.vue` | Navigation severity and tooltip behavior |
+| `src/Frontend/src/components/PageFooter.vue` | Aggregate platform update status in the footer |
 
 ## Troubleshooting
 

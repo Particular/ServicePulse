@@ -4,7 +4,7 @@ import { isUpgradeAvailable } from "@/composables/serviceSemVer";
 import { getBuiltInPlatformCheck } from "@/components/customchecks/builtInPlatformChecks";
 import type { PlatformHealthResponse, PlatformHealthRow, PlatformHealthSeverity } from "@/resources/PlatformHealth";
 import type CustomCheck from "@/resources/CustomCheck";
-import type { PlatformInstance, PlatformModel } from "@/resources/PlatformModel";
+import type { PlatformInstance, PlatformModel, ServicePulse } from "@/resources/PlatformModel";
 import logger from "@/logger";
 import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsStore";
 import { useCustomChecksStore } from "@/stores/CustomChecksStore";
@@ -76,6 +76,8 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
     const latestServiceControlLink = environmentAndVersionsStore.newVersions.newSCVersion.newscversionlink || buildReleaseLink(latestServiceControlVersion);
     const latestMonitoringVersion = environmentAndVersionsStore.newVersions.newMVersion.newmversionnumber || firstKnownVersion(current.monitoring?.version, window.__platformHealth?.getState().monitoring?.version, latestServiceControlVersion);
     const latestMonitoringLink = environmentAndVersionsStore.newVersions.newMVersion.newmversionlink || buildReleaseLink(latestMonitoringVersion);
+    const latestServicePulseVersion = environmentAndVersionsStore.newVersions.newSPVersion.newspversionnumber;
+    const latestServicePulseLink = environmentAndVersionsStore.newVersions.newSPVersion.newspversionlink;
 
     const nextRows: PlatformHealthRow[] = [
       toRow(current.primary, latestServiceControlVersion, latestServiceControlLink, detailsForInstance(current.primary, current, platformChecks)),
@@ -85,6 +87,8 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
     if (current.monitoring) {
       nextRows.push(toRow(current.monitoring, latestMonitoringVersion, latestMonitoringLink, detailsForInstance(current.monitoring, current, platformChecks)));
     }
+
+    nextRows.push(toServicePulseRow(current.servicePulse, latestServicePulseVersion, latestServicePulseLink));
 
     return nextRows;
   });
@@ -178,16 +182,34 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
 function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: string, details: string[]): PlatformHealthRow {
   return {
     type: formatRowType(instance),
-    instanceName: instance.name,
+    name: instance.name,
     apiUrl: instance.apiUrl,
     version: instance.version,
     health: instance.health,
     note: formatRole(instance.role),
+    isLink: true,
     upgradeAvailable: hasUpgrade(instance.version, latestVersion),
     latestVersion,
     upgradeLink,
     isExpandable: details.length > 0,
     details,
+  };
+}
+
+function toServicePulseRow(servicePulse: ServicePulse, latestVersion: string, upgradeLink: string): PlatformHealthRow {
+  return {
+    type: "ServicePulse",
+    name: servicePulse.name,
+    apiUrl: "",
+    version: servicePulse.version,
+    health: servicePulse.health,
+    note: "ServicePulse",
+    isLink: false,
+    upgradeAvailable: hasUpgrade(servicePulse.version, latestVersion),
+    latestVersion,
+    upgradeLink,
+    isExpandable: false,
+    details: [],
   };
 }
 

@@ -50,8 +50,8 @@ export const serviceControlNoPlatformUpdatesNeeded: Release[] = [
 
 export const servicePulseNoPlatformUpdatesNeeded: Release[] = [
   {
-    tag: "1.37.0",
-    release: "https://github.com/Particular/ServicePulse/releases/tag/1.37.0",
+    tag: "2.10.2",
+    release: "https://github.com/Particular/ServicePulse/releases/tag/2.10.2",
     published: "2023-08-16T14:57:29Z",
   },
   {

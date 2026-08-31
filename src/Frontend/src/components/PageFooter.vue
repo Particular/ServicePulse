@@ -3,14 +3,12 @@ import { LicenseStatus } from "@/resources/LicenseInfo";
 import routeLinks from "@/router/routeLinks";
 import FAIcon from "@/components/FAIcon.vue";
 import { faArrowTurnUp, faPlus } from "@fortawesome/free-solid-svg-icons";
-import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
+import usePlatformHealthStoreAutoRefresh from "@/composables/usePlatformHealthStoreAutoRefresh";
 import { storeToRefs } from "pinia";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
 
-const { store: environmentAndVersionsStore } = useEnvironmentAndVersionsAutoRefresh();
-const newVersions = environmentAndVersionsStore.newVersions;
-const environment = environmentAndVersionsStore.environment;
+const { store: platformHealthStore } = usePlatformHealthStoreAutoRefresh();
 const licenseStore = useLicenseStore();
 const { licenseStatus, license } = licenseStore;
 const isIntegrated = window.defaultConfig.isIntegrated;
@@ -30,12 +28,12 @@ const { configuration } = storeToRefs(configurationStore);
           </span>
 
           <span v-if="isIntegrated"> Integrated ServicePulse </span>
-          <template v-else-if="environment.sp_version">
-            <span v-if="!newVersions.newSPVersion.newspversion"> ServicePulse v{{ environment.sp_version }} </span>
-            <span v-else>
-              ServicePulse v{{ environment.sp_version }} (<FAIcon v-if="newVersions.newSPVersion.newspversionnumber" class="footer-icon fake-link" :icon="faArrowTurnUp" />
-              <a :href="newVersions.newSPVersion.newspversionlink" target="_blank">v{{ newVersions.newSPVersion.newspversionnumber }} available</a>)
-            </span>
+          <template v-else>
+            <RouterLink v-if="platformHealthStore.outdatedOnly || platformHealthStore.rows.some((row) => row.upgradeAvailable)" :to="routeLinks.platformHealth">
+              <FAIcon class="footer-icon" :icon="faArrowTurnUp" />
+              Updates available
+            </RouterLink>
+            <span v-else>Platform up to date</span>
           </template>
         </div>
       </div>

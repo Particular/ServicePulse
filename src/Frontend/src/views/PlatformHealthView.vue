@@ -35,7 +35,7 @@ function shouldShowUpgradeCue(row: (typeof store.rows)[number]) {
 }
 
 function rowKey(row: (typeof store.rows)[number]) {
-  return `${row.type}-${row.instanceName}`;
+  return `${row.type}-${row.name}`;
 }
 
 function isExpandable(row: (typeof store.rows)[number]) {
@@ -74,7 +74,7 @@ function toggleRow(row: (typeof store.rows)[number]) {
               <thead>
                 <tr>
                   <th>Type</th>
-                  <th>Instance name</th>
+                  <th>Name</th>
                   <th>Version</th>
                   <th>Health</th>
                 </tr>
@@ -84,7 +84,8 @@ function toggleRow(row: (typeof store.rows)[number]) {
                   <tr>
                     <td class="type-cell">{{ row.type }}</td>
                     <td>
-                      <a class="instance-name" :href="row.apiUrl" target="_blank" rel="noopener noreferrer">{{ row.instanceName }}</a>
+                      <a v-if="row.isLink" class="instance-name" :href="row.apiUrl" target="_blank" rel="noopener noreferrer">{{ row.name }}</a>
+                      <span v-else class="instance-name">{{ row.name }}</span>
                       <div class="instance-note">{{ row.note }}</div>
                     </td>
                     <td>

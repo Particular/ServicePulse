@@ -75,6 +75,7 @@ export const setupComplete = (async () => {
 Run focused Vitest specs from `src/Frontend`:
 
 ```bash
+npx vitest run src/components/PageFooter.spec.ts
 npx vitest run test/specs/platformcapabilities/monitoring-capability-card.spec.ts
 npx vitest run test/specs/platformcapabilities/recoverability-capability-card.spec.ts
 npx vitest run src/views/PlatformHealthView.spec.ts
