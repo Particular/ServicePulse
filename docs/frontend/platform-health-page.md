@@ -57,6 +57,7 @@ Current severity rules:
 - `danger`
   - primary error instance unavailable
   - any remote error instance not healthy
+  - any audit instance unavailable
   - monitoring unavailable
 - `warning`
   - primary error instance degraded
@@ -123,7 +124,7 @@ Switch topology at runtime with `window.__platformHealth.setScenario(...)`:
 | Scenario | Purpose |
 |----------|---------|
 | `audit-remotes-healthy` | Primary and monitoring healthy, audit remotes healthy |
-| `audit-remotes-danger` | Primary healthy, audit remotes healthy, monitoring unavailable |
+| `audit-remotes-danger` | Primary healthy, both audit remotes unavailable, monitoring healthy |
 | `remote-errors-healthy` | Primary healthy with remote error instances and no monitoring |
 | `remote-errors-danger` | One remote error instance unavailable |
 
@@ -179,7 +180,7 @@ npx vitest run test/mocks/platform-health-state.spec.ts
 
 | Area | Covered behavior |
 |------|------------------|
-| Platform health store | warning/danger severity, remote error instance danger, monitoring presence, version fallback, built-in custom-check health inference |
+| Platform health store | warning/danger severity, unavailable audit remotes, remote error instance danger, monitoring presence, version fallback, built-in custom-check health inference |
 | Platform health view | support download gating, known-version-only upgrade cue rendering, direct instance links, monitoring row rendering, expandable degraded rows |
 | Mock helpers | independent topology and custom-check switching |
 

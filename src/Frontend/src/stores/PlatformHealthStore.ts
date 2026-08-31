@@ -51,6 +51,10 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
       return "danger";
     }
 
+    if (current.remotes.some((remote) => remote.kind === "audit" && remote.health === "unavailable")) {
+      return "danger";
+    }
+
     if (current.remotes.some((remote) => remote.kind === "audit" && remote.health === "degraded")) {
       return "warning";
     }
@@ -292,6 +296,10 @@ function fallbackDetails(instance: PlatformInstance, model: PlatformModel) {
 
   if (instance.role === "remote-audit" && instance.health === "degraded") {
     return ["Audit instance is degraded."];
+  }
+
+  if (instance.role === "remote-audit" && instance.health === "unavailable") {
+    return ["Audit instance is unavailable."];
   }
 
   if (instance.role === "primary-error") {

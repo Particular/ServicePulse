@@ -46,10 +46,10 @@ export function createPlatformTopology(name: PlatformTopologyScenarioName): Plat
         scenario: name,
         primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "healthy" },
         remotes: [
-          { id: "remote-0", name: "Particular.ServiceControl.Audit", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "healthy", instanceType: "audit" },
-          { id: "remote-1", name: "Particular.ServiceControl.Audit-Blue", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "healthy", instanceType: "audit" },
+          { id: "remote-0", name: "Particular.ServiceControl.Audit", apiUri: "http://Particular.ServiceControl.Audit/api/", version: "6.18.0", status: "unavailable", instanceType: "audit" },
+          { id: "remote-1", name: "Particular.ServiceControl.Audit-Blue", apiUri: "http://Particular.ServiceControl.Audit-Blue/api/", version: "6.17.0", status: "unavailable", instanceType: "audit" },
         ],
-        monitoring: { configured: true, version: latestPlatformVersion, status: "unavailable" },
+        monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
       };
     case "remote-errors-healthy":
       return {

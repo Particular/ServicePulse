@@ -82,6 +82,28 @@ describe("PlatformHealthStore", () => {
     expect(store.issueSummary).toContain("unavailable Error instance");
   });
 
+  test("derives danger severity for unavailable audit remotes", async () => {
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.refresh = vi.fn(() => {
+      platformModelStore.model = {
+        ...singleRegionWarningModel,
+        remotes: singleRegionWarningModel.remotes.map((remote) => ({
+          ...remote,
+          health: "unavailable",
+        })),
+      };
+      return Promise.resolve();
+    });
+    const store = usePlatformHealthStore();
+
+    await store.refresh();
+
+    expect(store.severity).toBe("danger");
+    expect(store.issueSummary).toContain("unavailable Audit instance");
+    expect(store.rows[1].details).toContain("Audit instance is unavailable.");
+    expect(store.rows[2].details).toContain("Audit instance is unavailable.");
+  });
+
   test("includes monitoring unavailability in the issue summary whenever monitoring is configured", async () => {
     const platformModelStore = usePlatformModelStore();
     platformModelStore.refresh = vi.fn(() => {
