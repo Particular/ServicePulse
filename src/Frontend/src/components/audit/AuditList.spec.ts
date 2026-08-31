@@ -5,6 +5,7 @@ import { createRouter, createMemoryHistory } from "vue-router";
 import { ref, shallowReadonly, nextTick, type Ref } from "vue";
 import { flushPromises } from "@vue/test-utils";
 import AuditList from "@/components/audit/AuditList.vue";
+import { useAuditStore } from "@/stores/AuditStore";
 import { type default as Message, MessageStatus } from "@/resources/Message";
 
 /**
@@ -47,6 +48,8 @@ interface QueryStateAssertions {
 interface RenderResult {
   verify: QueryStateAssertions;
   isRefreshing: Ref<boolean>;
+  refreshNow: ReturnType<typeof vi.fn>;
+  store: ReturnType<typeof useAuditStore>;
 }
 
 // ==================== DOM Query Helpers ====================
@@ -104,9 +107,10 @@ function createMessage(id = "msg-1"): Message {
 
 async function renderAuditList(messages: Message[] = []): Promise<RenderResult> {
   const isRefreshing = ref(false);
+  const refreshNow = vi.fn().mockResolvedValue(undefined);
 
   vi.mocked(useFetchWithAutoRefresh).mockReturnValue({
-    refreshNow: vi.fn().mockResolvedValue(undefined),
+    refreshNow,
     isRefreshing: shallowReadonly(isRefreshing),
     updateInterval: vi.fn(),
     isActive: ref(false),
@@ -176,7 +180,18 @@ async function renderAuditList(messages: Message[] = []): Promise<RenderResult> 
     },
   };
 
-  return { verify, isRefreshing };
+  return { verify, isRefreshing, refreshNow, store: useAuditStore(pinia) };
+}
+
+// A control change reaches the fetch via two async hops (controls watcher -> router.push -> route watcher),
+// so settle the microtask queue a few times before counting queries.
+async function waitForRouteDrivenQuery() {
+  await flushPromises();
+  await nextTick();
+  await flushPromises();
+  await nextTick();
+  await flushPromises();
+  await nextTick();
 }
 
 async function waitForFirstLoadToComplete() {
@@ -296,6 +311,32 @@ describe("FEATURE: Audit Messages Query State", () => {
       isRefreshing.value = false;
       await nextTick();
       verify.overlayIsNotVisible();
+    });
+  });
+
+  describe("RULE: A query-control change results in exactly one query", () => {
+    test("EXAMPLE: Changing the filter text fires a single query", async () => {
+      const { refreshNow, store } = await renderAuditList([createMessage()]);
+
+      await waitForFirstLoadToComplete();
+      const queriesAfterFirstLoad = refreshNow.mock.calls.length;
+
+      store.messageFilterString = "orders";
+      await waitForRouteDrivenQuery();
+
+      expect(refreshNow.mock.calls.length - queriesAfterFirstLoad).toBe(1);
+    });
+
+    test("EXAMPLE: Changing the endpoint fires a single query", async () => {
+      const { refreshNow, store } = await renderAuditList([createMessage()]);
+
+      await waitForFirstLoadToComplete();
+      const queriesAfterFirstLoad = refreshNow.mock.calls.length;
+
+      store.selectedEndpointName = "Sales.Endpoint";
+      await waitForRouteDrivenQuery();
+
+      expect(refreshNow.mock.calls.length - queriesAfterFirstLoad).toBe(1);
     });
   });
 });
