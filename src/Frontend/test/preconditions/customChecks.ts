@@ -34,13 +34,14 @@ export const hasCustomChecksEmpty = ({ driver }: SetupFactoryOptions) => {
 const generateGuid = () => {
   return crypto.randomUUID();
 };
+const currentReportedAt = new Date().toISOString();
 const customCheckTemplate = <CustomCheck>{
   id: "customchecks/6131fa95-9414-1898-9c83-c5b18587945b",
   custom_check_id: "SampleCustomeCheck",
   category: "SomeCategory",
   status: "Pass",
   failure_reason: "I don't know the reason",
-  reported_at: "2025-01-10T05:06:30.4074087Z",
+  reported_at: currentReportedAt,
   originating_endpoint: {
     name: "EndpointX",
     host_id: "ff605b55-6fbb-af56-5753-73c1ff73e601",

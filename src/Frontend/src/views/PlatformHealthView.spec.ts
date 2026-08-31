@@ -8,6 +8,8 @@ import { useEnvironmentAndVersionsStore } from "@/stores/EnvironmentAndVersionsS
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 import type { PlatformModel } from "@/resources/PlatformModel";
 
+const currentReportedAt = new Date().toISOString();
+
 const downloadFileFromString = vi.fn();
 
 vi.mock("@/composables/fileDownloadCreator", () => ({
@@ -144,30 +146,26 @@ describe("PlatformHealthView", () => {
       {
         type: "Error instance",
         name: "Particular.ServiceControl",
-        apiUrl: "http://localhost:33333/api/",
         version: "6.19.3",
         health: "healthy",
         note: "Primary error instance",
-        isLink: true,
         upgradeAvailable: false,
         latestVersion: "",
         upgradeLink: "",
-        isExpandable: false,
-        details: [],
+        infoDetails: ["API: http://localhost:33333/api/"],
+        healthDetails: [],
       },
       {
         type: "Audit instance",
         name: "Particular.ServiceControl.Audit",
-        apiUrl: "http://Particular.ServiceControl.Audit/api/",
         version: "6.18.0",
         health: "healthy",
         note: "Audit instance",
-        isLink: true,
         upgradeAvailable: false,
         latestVersion: "",
         upgradeLink: "",
-        isExpandable: false,
-        details: [],
+        infoDetails: ["API: http://Particular.ServiceControl.Audit/api/"],
+        healthDetails: [],
       },
     ]);
 
@@ -182,7 +180,7 @@ describe("PlatformHealthView", () => {
     rows.mockRestore();
   });
 
-  test("links each instance name to the instance api url and keeps ServicePulse as plain text", () => {
+  test("renders names as plain text and shows api urls in expanded details", async () => {
     const platformModelStore = usePlatformModelStore();
     platformModelStore.model = {
       primary: {
@@ -215,10 +213,12 @@ describe("PlatformHealthView", () => {
       },
     });
 
-    expect(screen.getByRole("link", { name: "Particular.ServiceControl" })).toHaveAttribute("href", "http://localhost:33333/api/");
-    expect(screen.getByRole("link", { name: "Particular.ServiceControl.Audit" })).toHaveAttribute("href", "http://localhost:33334/api/");
+    expect(screen.queryByRole("link", { name: "Particular.ServiceControl" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Particular.ServiceControl.Audit" })).not.toBeInTheDocument();
     expect(screen.getAllByText("ServicePulse").length).toBeGreaterThan(0);
-    expect(screen.queryByRole("link", { name: "ServicePulse" })).not.toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.click(screen.getAllByRole("button", { name: /Healthy/i })[0]);
+    expect(screen.getByText("API: http://localhost:33333/api/")).toBeInTheDocument();
   });
 
   test("renders monitoring when present alongside remote error instances", () => {
@@ -265,7 +265,7 @@ describe("PlatformHealthView", () => {
     expect(screen.getByText(/Particular.ServiceControl.Monitoring/i)).toBeInTheDocument();
   });
 
-  test("shows details when clicking a degraded health badge", async () => {
+  test("shows details when clicking a health badge", async () => {
     const store = usePlatformHealthStore();
     const platformModelStore = usePlatformModelStore();
     platformModelStore.model = {
@@ -297,30 +297,26 @@ describe("PlatformHealthView", () => {
       {
         type: "Error instance",
         name: "Particular.ServiceControl",
-        apiUrl: "http://localhost:33333/api/",
         version: "6.19.3",
         health: "healthy",
         note: "Primary error instance",
-        isLink: true,
         upgradeAvailable: false,
         latestVersion: "6.19.3",
         upgradeLink: "",
-        isExpandable: false,
-        details: [],
+        infoDetails: ["API: http://localhost:33333/api/"],
+        healthDetails: [],
       },
       {
         type: "Audit instance",
         name: "Particular.ServiceControl.Audit",
-        apiUrl: "http://localhost:33334/api/",
         version: "6.19.3",
         health: "degraded",
         note: "Audit instance",
-        isLink: true,
         upgradeAvailable: false,
         latestVersion: "6.19.3",
         upgradeLink: "",
-        isExpandable: true,
-        details: ["Audit Message Ingestion: Audit ingestion failed"],
+        infoDetails: ["API: http://localhost:33334/api/"],
+        healthDetails: ["Audit Message Ingestion: Audit ingestion failed", `Reported at: ${currentReportedAt}`],
       },
     ]);
 
@@ -333,12 +329,14 @@ describe("PlatformHealthView", () => {
     const user = userEvent.setup();
     await user.click(screen.getByRole("button", { name: "Degraded" }));
 
+    expect(screen.getByText("API: http://localhost:33334/api/")).toBeInTheDocument();
     expect(screen.getByText("Audit Message Ingestion: Audit ingestion failed")).toBeInTheDocument();
+    expect(screen.getByText(`Reported at: ${currentReportedAt}`)).toBeInTheDocument();
 
     rows.mockRestore();
   });
 
-  test("does not make healthy rows expandable", () => {
+  test("makes healthy rows expandable", async () => {
     const store = usePlatformHealthStore();
     const platformModelStore = usePlatformModelStore();
     platformModelStore.model = {
@@ -360,16 +358,14 @@ describe("PlatformHealthView", () => {
       {
         type: "Error instance",
         name: "Particular.ServiceControl",
-        apiUrl: "http://localhost:33333/api/",
         version: "6.19.3",
         health: "healthy",
         note: "Primary error instance",
-        isLink: true,
         upgradeAvailable: false,
         latestVersion: "6.19.3",
         upgradeLink: "",
-        isExpandable: false,
-        details: [],
+        infoDetails: ["API: http://localhost:33333/api/"],
+        healthDetails: [],
       },
     ]);
 
@@ -379,8 +375,9 @@ describe("PlatformHealthView", () => {
       },
     });
 
-    expect(screen.queryByRole("button", { name: "Healthy" })).not.toBeInTheDocument();
-    expect(screen.getByText("Healthy")).toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: /Healthy/i }));
+    expect(screen.getByText("API: http://localhost:33333/api/")).toBeInTheDocument();
 
     rows.mockRestore();
   });
@@ -411,5 +408,37 @@ describe("PlatformHealthView", () => {
     expect(screen.getByRole("columnheader", { name: "Name" })).toBeInTheDocument();
     expect(screen.getAllByText("ServicePulse").length).toBeGreaterThan(0);
     expect(screen.getByText(/v2.10.2 available/i)).toBeInTheDocument();
+  });
+
+  test("shows no problems detected when expanding ServicePulse", async () => {
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.model = {
+      primary: {
+        id: "primary",
+        name: "Particular.ServiceControl",
+        kind: "error",
+        role: "primary-error",
+        version: "6.19.3",
+        health: "healthy",
+        apiUrl: "http://localhost:33333/api/",
+      },
+      remotes: [],
+      monitoring: null,
+      servicePulse: { name: "ServicePulse", version: "2.8.0", health: "healthy" },
+    } satisfies PlatformModel;
+
+    render(PlatformHealthView, {
+      global: {
+        plugins: [],
+      },
+    });
+
+    const user = userEvent.setup();
+    const buttons = screen.getAllByRole("button", { name: /Healthy/i });
+    const servicePulseButton = buttons.find((button) => button.getAttribute("aria-controls") === "ServicePulse-ServicePulse-details");
+    expect(servicePulseButton).toBeDefined();
+    await user.click(servicePulseButton!);
+
+    expect(screen.getByText("No problems detected.")).toBeInTheDocument();
   });
 });

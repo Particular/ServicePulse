@@ -7,14 +7,12 @@ export type PlatformHealthResponse = PlatformModel;
 export interface PlatformHealthRow {
   type: string;
   name: string;
-  apiUrl: string;
   version: string;
   health: PlatformInstanceHealth;
   note: string;
-  isLink: boolean;
   upgradeAvailable: boolean;
   latestVersion: string;
   upgradeLink: string;
-  isExpandable: boolean;
-  details: string[];
+  infoDetails: string[];
+  healthDetails: string[];
 }

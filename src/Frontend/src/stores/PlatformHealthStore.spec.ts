@@ -9,6 +9,8 @@ import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 import type { PlatformModel } from "@/resources/PlatformModel";
 import logger from "@/logger";
 
+const currentReportedAt = new Date().toISOString();
+
 describe("PlatformHealthStore", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -39,7 +41,7 @@ describe("PlatformHealthStore", () => {
         custom_check_id: "Audit Message Ingestion",
         category: "ServiceControl.Audit Health",
         status: Status.Fail,
-        reported_at: "2025-01-10T05:06:30.4074087Z",
+        reported_at: currentReportedAt,
         failure_reason: "Audit ingestion failed",
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit-Blue",
@@ -63,9 +65,13 @@ describe("PlatformHealthStore", () => {
     expect(store.outdatedOnly).toBe(false);
     expect(store.rows[2].upgradeAvailable).toBe(true);
     expect(store.rows[2].latestVersion).toBe("6.19.3");
+    expect(store.rows[0].infoDetails[0]).toBe("API: http://localhost:33333/api/");
     expect(store.rows[4].type).toBe("ServicePulse");
     expect(store.rows[4].upgradeAvailable).toBe(true);
     expect(store.rows[4].latestVersion).toBe("2.10.2");
+    expect(store.rows[4].infoDetails).toEqual([]);
+    expect(store.rows[4].healthDetails).toEqual(["No problems detected."]);
+    expect(store.rows[2].healthDetails).toContain(`Reported at: ${currentReportedAt}`);
     expect(store.issueSummary).toContain("1 issue detected");
     expect(store.issueSummary).toContain("degraded Audit instance");
     expect(store.issueSummary).not.toContain("unavailable Monitoring instance");
@@ -106,8 +112,10 @@ describe("PlatformHealthStore", () => {
 
     expect(store.severity).toBe("danger");
     expect(store.issueSummary).toContain("unavailable Audit instance");
-    expect(store.rows[1].details).toContain("Audit instance is unavailable.");
-    expect(store.rows[2].details).toContain("Audit instance is unavailable.");
+    expect(store.rows[1].infoDetails).toContain("API: http://Particular.ServiceControl.Audit/api/");
+    expect(store.rows[1].healthDetails).toContain("Audit instance is unavailable.");
+    expect(store.rows[2].infoDetails).toContain("API: http://Particular.ServiceControl.Audit-Blue/api/");
+    expect(store.rows[2].healthDetails).toContain("Audit instance is unavailable.");
   });
 
   test("includes monitoring unavailability in the issue summary whenever monitoring is configured", async () => {
@@ -182,7 +190,7 @@ describe("PlatformHealthStore", () => {
         custom_check_id: "ServiceControl Primary Instance",
         category: "Health",
         status: Status.Fail,
-        reported_at: "2025-01-10T05:06:30.4074087Z",
+        reported_at: currentReportedAt,
         failure_reason: "Critical error detected",
         originating_endpoint: {
           name: "Particular.ServiceControl",
@@ -195,7 +203,7 @@ describe("PlatformHealthStore", () => {
         custom_check_id: "Audit Message Ingestion",
         category: "ServiceControl.Audit Health",
         status: Status.Fail,
-        reported_at: "2025-01-10T05:06:30.4074087Z",
+        reported_at: currentReportedAt,
         failure_reason: "Audit ingestion failed",
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit-Blue",
@@ -228,7 +236,7 @@ describe("PlatformHealthStore", () => {
         custom_check_id: "Error Message Ingestion Process",
         category: "ServiceControl Health",
         status: Status.Fail,
-        reported_at: "2025-01-10T05:06:30.4074087Z",
+        reported_at: currentReportedAt,
         failure_reason: "Error ingestion stopped",
         originating_endpoint: {
           name: "Particular.ServiceControl",
@@ -259,8 +267,10 @@ describe("PlatformHealthStore", () => {
 
     expect(store.payload?.primary.health).toBe("degraded");
     expect(store.severity).toBe("warning");
+    expect(store.rows[0].infoDetails).toContain("API: http://localhost:33333/api/");
     expect(store.issueSummary).toContain("primary Error instance degraded");
-    expect(store.rows[0].details).toContain("Error Message Ingestion Process: Error ingestion stopped");
+    expect(store.rows[0].healthDetails).toContain("Error Message Ingestion Process: Error ingestion stopped");
+    expect(store.rows[0].healthDetails).toContain(`Reported at: ${currentReportedAt}`);
   });
 
   test("does not degrade an audit instance when the built-in check belongs to another audit instance", async () => {
@@ -271,7 +281,7 @@ describe("PlatformHealthStore", () => {
         custom_check_id: "Audit Message Ingestion",
         category: "ServiceControl.Audit Health",
         status: Status.Fail,
-        reported_at: "2025-01-10T05:06:30.4074087Z",
+        reported_at: currentReportedAt,
         failure_reason: "Audit ingestion failed",
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit.Other",
@@ -308,7 +318,7 @@ describe("PlatformHealthStore", () => {
         custom_check_id: "Audit Message Ingestion",
         category: "ServiceControl.Audit Health",
         status: Status.Fail,
-        reported_at: "2025-01-10T05:06:30.4074087Z",
+        reported_at: currentReportedAt,
         failure_reason: "Audit ingestion failed",
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit-Blue",
@@ -385,7 +395,7 @@ describe("PlatformHealthStore", () => {
         custom_check_id: "Audit Message Ingestion",
         category: "ServiceControl.Audit Health",
         status: Status.Fail,
-        reported_at: "2025-01-10T05:06:30.4074087Z",
+        reported_at: currentReportedAt,
         failure_reason: "Audit ingestion failed",
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit-Blue",
@@ -399,7 +409,9 @@ describe("PlatformHealthStore", () => {
 
     expect(store.payload?.remotes[1].health).toBe("degraded");
     expect(store.severity).toBe("warning");
-    expect(store.rows[2].details).toContain("Audit Message Ingestion: Audit ingestion failed");
+    expect(store.rows[2].infoDetails).toContain("API: http://Particular.ServiceControl.Audit-Blue/api/");
+    expect(store.rows[2].healthDetails).toContain("Audit Message Ingestion: Audit ingestion failed");
+    expect(store.rows[2].healthDetails).toContain(`Reported at: ${currentReportedAt}`);
   });
 });
 

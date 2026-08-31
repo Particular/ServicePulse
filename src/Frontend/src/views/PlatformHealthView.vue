@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import LicenseNotExpired from "@/components/LicenseNotExpired.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import PlatformHealthSupportModal from "@/components/platformhealth/PlatformHealthSupportModal.vue";
 import usePlatformHealthStoreAutoRefresh from "@/composables/usePlatformHealthStoreAutoRefresh";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 import FAIcon from "@/components/FAIcon.vue";
-import { faArrowTurnUp } from "@fortawesome/free-solid-svg-icons";
+import { faArrowTurnUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
 const { store } = usePlatformHealthStoreAutoRefresh();
 useEnvironmentAndVersionsAutoRefresh();
@@ -38,19 +38,23 @@ function rowKey(row: (typeof store.rows)[number]) {
   return `${row.type}-${row.name}`;
 }
 
-function isExpandable(row: (typeof store.rows)[number]) {
-  return row.isExpandable && (row.health === "degraded" || row.health === "unavailable");
-}
-
 function isExpanded(row: (typeof store.rows)[number]) {
   return expandedRowKey.value === rowKey(row);
 }
 
-function toggleRow(row: (typeof store.rows)[number]) {
-  if (!isExpandable(row)) {
-    return;
-  }
+function chevronClass(row: (typeof store.rows)[number]) {
+  return {
+    expanded: isExpanded(row),
+  };
+}
 
+const healthLabel = computed(() => ({
+  healthy: "Healthy",
+  degraded: "Degraded",
+  unavailable: "Unavailable",
+}));
+
+function toggleRow(row: (typeof store.rows)[number]) {
   expandedRowKey.value = isExpanded(row) ? null : rowKey(row);
 }
 </script>
@@ -84,8 +88,7 @@ function toggleRow(row: (typeof store.rows)[number]) {
                   <tr>
                     <td class="type-cell">{{ row.type }}</td>
                     <td>
-                      <a v-if="row.isLink" class="instance-name" :href="row.apiUrl" target="_blank" rel="noopener noreferrer">{{ row.name }}</a>
-                      <span v-else class="instance-name">{{ row.name }}</span>
+                      <span class="instance-name">{{ row.name }}</span>
                       <div class="instance-note">{{ row.note }}</div>
                     </td>
                     <td>
@@ -96,16 +99,19 @@ function toggleRow(row: (typeof store.rows)[number]) {
                       </a>
                     </td>
                     <td>
-                      <button v-if="isExpandable(row)" type="button" class="health-badge health-badge-button" :class="row.health" :aria-expanded="isExpanded(row)" :aria-controls="`${rowKey(row)}-details`" @click="toggleRow(row)">
-                        {{ row.health.charAt(0).toUpperCase() + row.health.slice(1) }}
+                      <button type="button" class="health-badge health-badge-button" :class="row.health" :aria-expanded="isExpanded(row)" :aria-controls="`${rowKey(row)}-details`" @click="toggleRow(row)">
+                        <span>{{ healthLabel[row.health] }}</span>
+                        <FAIcon class="health-chevron" :class="chevronClass(row)" :icon="faChevronDown" />
                       </button>
-                      <span v-else class="health-badge" :class="row.health">{{ row.health.charAt(0).toUpperCase() + row.health.slice(1) }}</span>
                     </td>
                   </tr>
                   <tr v-if="isExpanded(row)" :id="`${rowKey(row)}-details`" class="details-row">
                     <td colspan="4" class="details-cell">
-                      <ul class="details-list">
-                        <li v-for="detail in row.details" :key="detail">{{ detail }}</li>
+                      <ul v-if="row.infoDetails.length > 0" class="details-list details-list-info">
+                        <li v-for="detail in row.infoDetails" :key="detail">{{ detail }}</li>
+                      </ul>
+                      <ul class="details-list details-list-status">
+                        <li v-for="detail in row.healthDetails" :key="detail">{{ detail }}</li>
                       </ul>
                     </td>
                   </tr>
@@ -204,6 +210,7 @@ tbody tr:last-child td {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.375rem;
   min-width: 104px;
   padding: 5px 10px;
   border-radius: 999px;
@@ -224,6 +231,15 @@ tbody tr:last-child td {
 .health-badge-button:focus-visible {
   outline: 2px solid var(--sp-blue);
   outline-offset: 2px;
+}
+
+.health-chevron {
+  font-size: 10px;
+  transition: transform 0.15s ease;
+}
+
+.health-chevron.expanded {
+  transform: rotate(180deg);
 }
 
 .health-badge.healthy {
@@ -253,6 +269,15 @@ tbody tr:last-child td {
   margin: 0;
   padding-left: 1.25rem;
   color: #4c5b5c;
+}
+
+.details-list-info {
+  color: #617071;
+  margin-bottom: 0.5rem;
+}
+
+.details-list-status {
+  color: #354243;
 }
 
 .footer-icon {

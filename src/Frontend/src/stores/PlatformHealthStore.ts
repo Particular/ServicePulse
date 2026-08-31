@@ -179,20 +179,20 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
   };
 });
 
-function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: string, details: string[]): PlatformHealthRow {
+function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: string, healthDetails: string[]): PlatformHealthRow {
+  const infoDetails = [`API: ${instance.apiUrl}`];
+
   return {
     type: formatRowType(instance),
     name: instance.name,
-    apiUrl: instance.apiUrl,
     version: instance.version,
     health: instance.health,
     note: formatRole(instance.role),
-    isLink: true,
     upgradeAvailable: hasUpgrade(instance.version, latestVersion),
     latestVersion,
     upgradeLink,
-    isExpandable: details.length > 0,
-    details,
+    infoDetails,
+    healthDetails,
   };
 }
 
@@ -200,16 +200,14 @@ function toServicePulseRow(servicePulse: ServicePulse, latestVersion: string, up
   return {
     type: "ServicePulse",
     name: servicePulse.name,
-    apiUrl: "",
     version: servicePulse.version,
     health: servicePulse.health,
     note: "ServicePulse",
-    isLink: false,
     upgradeAvailable: hasUpgrade(servicePulse.version, latestVersion),
     latestVersion,
     upgradeLink,
-    isExpandable: false,
-    details: [],
+    infoDetails: [],
+    healthDetails: ["No problems detected."],
   };
 }
 
@@ -281,7 +279,7 @@ function applyPlatformHealthChecks(model: PlatformModel, checks: CustomCheck[]) 
 
 function detailsForInstance(instance: PlatformInstance, model: PlatformModel, checks: CustomCheck[]) {
   const matchingPlatformChecks = checks.filter((check) => matchesInstance(check, instance));
-  const details = matchingPlatformChecks.map((check) => formatCustomCheckDetail(check));
+  const details = matchingPlatformChecks.flatMap((check) => formatCustomCheckDetails(check));
 
   if (details.length > 0) {
     return details;
@@ -303,8 +301,10 @@ function matchesInstance(check: CustomCheck, instance: PlatformInstance) {
   return sameInstanceName(check.originating_endpoint.name, instance.name);
 }
 
-function formatCustomCheckDetail(check: CustomCheck) {
-  return check.failure_reason ? `${check.custom_check_id}: ${check.failure_reason}` : check.custom_check_id;
+function formatCustomCheckDetails(check: CustomCheck) {
+  const summary = check.failure_reason ? `${check.custom_check_id}: ${check.failure_reason}` : check.custom_check_id;
+
+  return [summary, `Reported at: ${check.reported_at}`];
 }
 
 function fallbackDetails(instance: PlatformInstance, model: PlatformModel) {

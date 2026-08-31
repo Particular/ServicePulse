@@ -9,6 +9,8 @@ export type PlatformHealthCustomCheckPresetName = "none" | "user-only" | "platfo
 
 export type PlatformHealthMockStatus = Exclude<PlatformTopologyStatus, "degraded">;
 
+const currentReportedAt = new Date().toISOString();
+
 export interface PlatformHealthMockState extends PlatformTopology {
   customCheckPreset: PlatformHealthCustomCheckPresetName;
   customChecks: CustomCheck[];
@@ -132,6 +134,7 @@ function createCustomCheckPreset(name: PlatformHealthCustomCheckPresetName): Cus
           custom_check_id: "Endpoint dependency check",
           category: "User defined",
           status: Status.Fail,
+          reported_at: currentReportedAt,
           failure_reason: "Downstream dependency unavailable",
           originating_endpoint: { name: "Sales.Endpoint", host_id: crypto.randomUUID(), host: "sales-host" },
         }),
@@ -142,6 +145,7 @@ function createCustomCheckPreset(name: PlatformHealthCustomCheckPresetName): Cus
           custom_check_id: "ServiceControl Primary Instance",
           category: "Health",
           status: Status.Fail,
+          reported_at: currentReportedAt,
           failure_reason: "Critical error detected",
           originating_endpoint: { name: "Particular.ServiceControl", host_id: crypto.randomUUID(), host: "sc-host" },
         }),
@@ -152,6 +156,7 @@ function createCustomCheckPreset(name: PlatformHealthCustomCheckPresetName): Cus
           custom_check_id: "Error Message Ingestion Process",
           category: "ServiceControl Health",
           status: Status.Fail,
+          reported_at: currentReportedAt,
           failure_reason: "Error ingestion stopped",
           originating_endpoint: { name: "Particular.ServiceControl", host_id: crypto.randomUUID(), host: "sc-host" },
         }),
@@ -162,6 +167,7 @@ function createCustomCheckPreset(name: PlatformHealthCustomCheckPresetName): Cus
           custom_check_id: "Audit Message Ingestion",
           category: "ServiceControl.Audit Health",
           status: Status.Fail,
+          reported_at: currentReportedAt,
           failure_reason: "Audit ingestion failed",
           originating_endpoint: { name: "Particular.ServiceControl.Audit-Blue", host_id: crypto.randomUUID(), host: "audit-host" },
         }),

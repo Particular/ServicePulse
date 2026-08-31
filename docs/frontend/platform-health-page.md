@@ -38,14 +38,17 @@ Each row shows:
 - upgrade cue when a newer version is known
 - no upgrade cue when the page only knows that versions differ but does not know a newer target version
 
-Platform instances link their name directly to `apiUrl`. The `ServicePulse` row keeps the name as plain text.
+Rows are always expandable via the health badge. Expanded content separates informational details such as `API: <url>` from `healthDetails` such as unavailability or degradation messages. The `ServicePulse` row expands to a neutral `No problems detected.` detail.
 
-Rows for degraded or unavailable instances can expand to show details.
+Rows expand from the health badge to show details.
 
 Those details come from:
 
+- informational row context such as the instance API URL
 - matching built-in platform custom checks when available
 - fallback page-specific messages when no custom-check detail is available
+
+Built-in custom-check `healthDetails` can include both the failure summary and a `Reported at: <timestamp>` line.
 
 ## Severity Model
 
@@ -155,7 +158,7 @@ Verify these behaviors from the single startup scenario plus runtime switches:
 | Danger state from unavailable instances | `setScenario("audit-remotes-danger")` or `setScenario("remote-errors-danger")` |
 | Remote error instances | `setScenario("remote-errors-healthy")` |
 | Built-in platform checks hidden from Custom Checks UI but applied to Platform health | `setCustomCheckPreset("platform-only-primary")` or `setCustomCheckPreset("platform-only-audit")` |
-| Expanded row details with `failure_reason` | trigger degraded/unavailable row, then click the health badge |
+| Expanded row details with separate info and issue sections | trigger any row, then click the health badge |
 | Upgrade cue rendering | use instances whose versions differ from the known latest version in the scenario data |
 | Support-case modal download flow | click `Open support case`, download the JSON, then verify the support link becomes enabled |
 
@@ -184,7 +187,7 @@ npx vitest run test/mocks/platform-health-state.spec.ts
 | Area | Covered behavior |
 |------|------------------|
 | Platform health store | warning/danger severity, unavailable audit remotes, remote error instance danger, monitoring presence, version fallback, built-in custom-check health inference |
-| Platform health view | support download gating, known-version-only upgrade cue rendering, direct instance links, plain-text ServicePulse row rendering, monitoring row rendering, expandable degraded rows |
+| Platform health view | support download gating, known-version-only upgrade cue rendering, plain-text names, API-in-details rendering, monitoring row rendering, always-expandable health badges |
 | Mock helpers | independent topology and custom-check switching |
 
 ## Key Source Files
