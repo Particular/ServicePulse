@@ -104,9 +104,12 @@ function createMessage(id = "msg-1"): Message {
 
 // ==================== Component Renderer ====================
 
-async function renderAuditList(messages: Message[] = []): Promise<RenderResult> {
+async function renderAuditList(messages: Message[] = [], options: { neverCompleteFirstQuery?: boolean } = {}): Promise<RenderResult> {
   const isRefreshing = ref(false);
   const refreshNow = vi.fn().mockResolvedValue(undefined);
+  if (options.neverCompleteFirstQuery) {
+    refreshNow.mockImplementationOnce(() => new Promise(() => {}));
+  }
 
   vi.mocked(useFetchWithAutoRefresh).mockReturnValue({
     refreshNow,
@@ -358,6 +361,19 @@ describe("FEATURE: Audit Messages Query State", () => {
       await waitForRouteDrivenQuery();
 
       expect(refreshNow.mock.calls.length - queriesAfterFirstLoad).toBe(1);
+    });
+
+    test("EXAMPLE: Typing a search during the slow initial query still starts the new query", async () => {
+      const { refreshNow, store } = await renderAuditList([], { neverCompleteFirstQuery: true });
+
+      await waitForFirstLoadToComplete();
+      expect(refreshNow).toHaveBeenCalledTimes(1); // the initial query, still running
+
+      store.messageFilterString = "orders";
+      await waitForRouteDrivenQuery();
+
+      // The new query must not be swallowed just because the first one never finished
+      expect(refreshNow).toHaveBeenCalledTimes(2);
     });
 
     test("EXAMPLE: Changing the endpoint fires a single query", async () => {
