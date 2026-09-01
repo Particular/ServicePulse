@@ -149,8 +149,8 @@ export function useAuditingCapability(): CapabilityComposable {
   const auditIndicators = computed(() => {
     const indicators: StatusIndicator[] = [];
 
-    // Messages available indicator - show if at least one instance is available
-    if (hasAvailableAuditInstances(auditInstances.value)) {
+    // Messages available indicator - show if at least one instance is available and the probe answered
+    if (hasAvailableAuditInstances(auditInstances.value) && hasSuccessfulMessages.value !== null) {
       const messagesAvailable = isAllMessagesSupported.value && hasSuccessfulMessages.value;
 
       let messageTooltip: string;
