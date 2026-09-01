@@ -5,7 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import ResultsCount from "@/components/ResultsCount.vue";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
 import AuditListItem from "@/components/audit/AuditListItem.vue";
-import { computed, onBeforeMount, ref, watch } from "vue";
+import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from "vue";
 import RefreshConfig from "../RefreshConfig.vue";
 import AutoRefreshIndicator from "../AutoRefreshIndicator.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
@@ -71,6 +71,16 @@ onBeforeMount(() => {
       firstLoad.value = false;
     }
   }, 0);
+});
+
+onBeforeUnmount(() => {
+  // Leaving the view stops all of its activity: the auto-refresh poll is released and the
+  // in-flight query is aborted so it does not keep running (server-side included) in the background
+  stop();
+  store.cancelQuery();
+  // The rows belong to this visit: the next one may carry different query inputs, so it
+  // starts from a clean list (a refresh in place, by contrast, keeps the stale rows)
+  store.clearResults();
 });
 
 // The route is the single source of truth for the query: control changes only push to the router,
