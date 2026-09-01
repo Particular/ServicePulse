@@ -48,7 +48,9 @@ interface RenderResult {
   verify: QueryStateAssertions;
   isRefreshing: Ref<boolean>;
   refreshNow: ReturnType<typeof vi.fn>;
+  stop: ReturnType<typeof vi.fn>;
   store: ReturnType<typeof useAuditStore>;
+  unmount: () => void;
 }
 
 // ==================== DOM Query Helpers ====================
@@ -110,6 +112,7 @@ async function renderAuditList(messages: Message[] = [], options: { neverComplet
   if (options.neverCompleteFirstQuery) {
     refreshNow.mockImplementationOnce(() => new Promise(() => {}));
   }
+  const stop = vi.fn();
 
   vi.mocked(useFetchWithAutoRefresh).mockReturnValue({
     refreshNow,
@@ -117,7 +120,7 @@ async function renderAuditList(messages: Message[] = [], options: { neverComplet
     updateInterval: vi.fn(),
     isActive: ref(false),
     start: vi.fn(),
-    stop: vi.fn(),
+    stop,
     nextRefreshAt: shallowReadonly(ref<number | null>(null)),
   });
 
@@ -136,7 +139,7 @@ async function renderAuditList(messages: Message[] = [], options: { neverComplet
     },
   });
 
-  render(AuditList, {
+  const { unmount } = render(AuditList, {
     global: {
       plugins: [pinia, router],
       stubs: {
@@ -182,7 +185,7 @@ async function renderAuditList(messages: Message[] = [], options: { neverComplet
     },
   };
 
-  return { verify, isRefreshing, refreshNow, store: useAuditStore(pinia) };
+  return { verify, isRefreshing, refreshNow, stop, store: useAuditStore(pinia), unmount };
 }
 
 // A control change reaches the fetch via two async hops (controls watcher -> router.push -> route watcher),
@@ -386,6 +389,19 @@ describe("FEATURE: Audit Messages Query State", () => {
       await waitForRouteDrivenQuery();
 
       expect(refreshNow.mock.calls.length - queriesAfterFirstLoad).toBe(1);
+    });
+  });
+
+  describe("RULE: Leaving the view stops its activity", () => {
+    test("EXAMPLE: Unmounting aborts the in-flight query and releases the auto-refresh", async () => {
+      const { stop, store, unmount } = await renderAuditList([createMessage()], { neverCompleteFirstQuery: true });
+
+      await waitForFirstLoadToComplete();
+
+      unmount();
+
+      expect(store.cancelQuery).toHaveBeenCalled();
+      expect(stop).toHaveBeenCalled();
     });
   });
 });

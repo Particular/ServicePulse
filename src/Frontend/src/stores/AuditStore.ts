@@ -86,8 +86,17 @@ export const useAuditStore = defineStore("AuditStore", () => {
     }
   }
 
+  // Stops the in-flight query, e.g. when the view showing the results is left.
+  // The abort propagates through the ServiceControl API and terminates the
+  // database query, so a backgrounded view does not keep load on the server.
+  function cancelQuery() {
+    activeQuery?.abort();
+    activeQuery = null;
+  }
+
   return {
     refresh,
+    cancelQuery,
     loadEndpoints,
     sortBy: sortByInstances,
     messages,
