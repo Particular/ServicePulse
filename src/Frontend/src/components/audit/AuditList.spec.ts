@@ -21,8 +21,9 @@ import { type default as Message, MessageStatus } from "@/resources/Message";
 // ==================== Mock Setup ====================
 
 vi.mock("@/composables/autoRefresh");
+const auditingStatus = vi.hoisted(() => ({ value: "Available" }));
 vi.mock("@/components/platformcapabilities/capabilities/AuditingCapability", () => ({
-  useAuditingCapability: () => ({ status: { value: "Available" } }),
+  useAuditingCapability: () => ({ status: auditingStatus }),
 }));
 vi.mock("@/components/platformcapabilities/wizards/AuditingWizardPages", () => ({
   getAuditingWizardPages: () => [],
@@ -209,6 +210,7 @@ async function waitForFirstLoadToComplete() {
 describe("FEATURE: Audit Messages Query State", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    auditingStatus.value = "Available";
     localStorage.clear();
   });
 
@@ -307,6 +309,17 @@ describe("FEATURE: Audit Messages Query State", () => {
       await new Promise((r) => setTimeout(r, 400));
       verify.overlayIsNotVisible();
       verify.messagesAreVisible();
+    });
+  });
+
+  describe("RULE: Onboarding prompts render only after the capability probe has answered", () => {
+    test("EXAMPLE: The banner appears once a completed probe found no messages", async () => {
+      auditingStatus.value = "Endpoints Not Configured";
+      await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      expect(document.querySelector("page-banner-stub")).not.toBeNull();
     });
   });
 

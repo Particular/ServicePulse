@@ -18,6 +18,34 @@ describe("FEATURE: Successful-messages capability probe", () => {
     localStorage.clear();
   });
 
+  test("EXAMPLE: Before the first probe answers, the state is unknown, not 'no messages'", () => {
+    const store = usePlatformCapabilitiesStore();
+
+    expect(store.hasSuccessfulMessages).toBeNull();
+  });
+
+  test("EXAMPLE: A failed probe proves nothing — the state stays unknown and is retried", async () => {
+    auditClient.hasSuccessfulMessages.mockRejectedValue(new Error("boom"));
+    const store = usePlatformCapabilitiesStore();
+
+    await store.refresh();
+    expect(store.hasSuccessfulMessages).toBeNull();
+
+    auditClient.hasSuccessfulMessages.mockReset();
+    auditClient.hasSuccessfulMessages.mockResolvedValue(true);
+    await store.refresh();
+    expect(store.hasSuccessfulMessages).toBe(true);
+  });
+
+  test("EXAMPLE: A completed probe finding nothing reports false", async () => {
+    auditClient.hasSuccessfulMessages.mockResolvedValue(false);
+    const store = usePlatformCapabilitiesStore();
+
+    await store.refresh();
+
+    expect(store.hasSuccessfulMessages).toBe(false);
+  });
+
   test("EXAMPLE: A bounded window is probed before falling back to the full store", async () => {
     auditClient.hasSuccessfulMessages.mockResolvedValueOnce(false).mockResolvedValueOnce(true);
     const store = usePlatformCapabilitiesStore();
