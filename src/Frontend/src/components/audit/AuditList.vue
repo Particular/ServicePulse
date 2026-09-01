@@ -84,26 +84,36 @@ watch(
   }
 );
 
+function controlsQuery() {
+  const [fromDate, toDate] = dateRange.value;
+
+  return {
+    sortBy: sortBy.value.property,
+    sortDir: sortBy.value.isAscending ? "asc" : "desc",
+    filter: messageFilterString.value,
+    endpoint: selectedEndpointName.value,
+    from: fromDate?.toISOString() ?? "",
+    to: toDate?.toISOString() ?? "",
+    pageSize: itemsPerPage.value,
+  };
+}
+
+// The serialized controls state the route last applied (via setQuery) or that was last pushed.
+// The controls watcher only pushes when the controls actually moved away from this, which makes
+// it safe to react to changes at any time — including while the first (possibly very slow)
+// query is still running, so a user typing a search is never ignored.
+let lastAppliedControlsQuery = "";
+
 const watchHandle = watch([itemsPerPage, sortBy, messageFilterString, selectedEndpointName, dateRange], async () => {
-  if (firstLoad.value) {
+  const query = controlsQuery();
+  const serialized = JSON.stringify(query);
+
+  if (serialized === lastAppliedControlsQuery) {
     return;
   }
 
-  const [fromDate, toDate] = dateRange.value;
-  const from = fromDate?.toISOString() ?? "";
-  const to = toDate?.toISOString() ?? "";
-
-  await router.push({
-    query: {
-      sortBy: sortBy.value.property,
-      sortDir: sortBy.value.isAscending ? "asc" : "desc",
-      filter: messageFilterString.value,
-      endpoint: selectedEndpointName.value,
-      from,
-      to,
-      pageSize: itemsPerPage.value,
-    },
-  });
+  lastAppliedControlsQuery = serialized;
+  await router.push({ query });
 });
 
 function setQuery() {
@@ -119,6 +129,8 @@ function setQuery() {
   itemsPerPage.value = query.pageSize ? parseInt(query.pageSize as string) : 100;
   dateRange.value = query.from && query.to ? [new Date(query.from as string), new Date(query.to as string)] : [];
   selectedEndpointName.value = (query.endpoint ?? "") as string;
+
+  lastAppliedControlsQuery = JSON.stringify(controlsQuery());
 
   watchHandle.resume();
 }
