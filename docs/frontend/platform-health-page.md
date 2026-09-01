@@ -16,6 +16,7 @@ The page is frontend-first and mock-driven. It:
 
 - uses the shared platform model from `PlatformModelStore` as its source of truth for platform instances
 - derives page-specific row and details behavior in `PlatformHealthStore`
+- follows the shared topology rule in `docs/platform-topology.md`: primary and monitoring are direct API targets, while audit/remote rows come from ServiceControl remote configuration and are informational only
 - keeps topology and instance visibility on the page instead of duplicating per-instance widgets on capability cards
 - uses built-in platform custom checks as secondary health signals for page-specific health inference, including instance-mapped degraded states
 - refreshes custom checks together with platform instance data so hidden built-in signals are available even when the Custom Checks page has not been opened
@@ -39,6 +40,8 @@ Each row shows:
 - no upgrade cue when the page only knows that versions differ but does not know a newer target version
 
 Rows are always expandable via the health badge. Expanded content separates informational details such as `API: <url>` from `healthDetails` such as unavailability or degradation messages. The `ServicePulse` row expands to a neutral `No problems detected.` detail.
+
+See `docs/platform-topology.md` for the direct-access rule.
 
 Rows expand from the health badge to show details.
 
