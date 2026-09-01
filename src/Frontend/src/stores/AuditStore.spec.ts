@@ -87,6 +87,20 @@ describe("AuditStore refresh", () => {
     expect(store.queryFailed).toBe(false);
   });
 
+  test("cancelQuery aborts the query in flight without reporting a failure", async () => {
+    const store = useAuditStore();
+
+    let signal: AbortSignal | undefined;
+    fetchTypedFromServiceControl.mockImplementationOnce(abortablePendingFetch((s) => (signal = s)));
+
+    const inFlight = store.refresh();
+    store.cancelQuery();
+    await inFlight;
+
+    expect(signal?.aborted).toBe(true);
+    expect(store.queryFailed).toBe(false);
+  });
+
   test("a superseded query is not reported as a failure", async () => {
     const store = useAuditStore();
 
