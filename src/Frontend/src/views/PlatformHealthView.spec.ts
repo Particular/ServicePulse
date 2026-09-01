@@ -238,6 +238,7 @@ describe("PlatformHealthView", () => {
 
     expect(screen.queryByRole("link", { name: "Particular.ServiceControl" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Particular.ServiceControl.Audit" })).not.toBeInTheDocument();
+    expect(screen.getByText("Particular.ServiceControl")).toBeInTheDocument();
     expect(screen.getAllByText("ServicePulse").length).toBeGreaterThan(0);
     const user = userEvent.setup();
     await user.click(screen.getAllByRole("button", { name: /Healthy/i })[0]);
@@ -352,6 +353,8 @@ describe("PlatformHealthView", () => {
     const user = userEvent.setup();
     await user.click(screen.getByRole("button", { name: "Degraded" }));
 
+    expect(screen.getByText("Health issues")).toBeInTheDocument();
+    expect(screen.getByText("Information")).toBeInTheDocument();
     expect(screen.getByText("API: http://localhost:33334/api/")).toBeInTheDocument();
     expect(screen.getByText("Audit Message Ingestion: Audit ingestion failed")).toBeInTheDocument();
     expect(screen.getByText(`Reported at: ${currentReportedAt}`)).toBeInTheDocument();
@@ -433,6 +436,50 @@ describe("PlatformHealthView", () => {
     expect(screen.getByText(/v2.10.2 available/i)).toBeInTheDocument();
   });
 
+  test("renders health issues before information", async () => {
+    const store = usePlatformHealthStore();
+    const rows = vi.spyOn(store, "rows", "get").mockReturnValue([
+      {
+        type: "Error instance",
+        name: "Particular.ServiceControl",
+        version: "6.19.3",
+        health: "healthy",
+        note: "Primary error instance",
+        upgradeAvailable: false,
+        latestVersion: "6.19.3",
+        upgradeLink: "",
+        infoDetails: ["API: http://localhost:33333/api/"],
+        healthDetails: [],
+      },
+      {
+        type: "Audit instance",
+        name: "Particular.ServiceControl.Audit",
+        version: "6.19.3",
+        health: "degraded",
+        note: "Audit instance",
+        upgradeAvailable: false,
+        latestVersion: "6.19.3",
+        upgradeLink: "",
+        infoDetails: ["API: http://localhost:33334/api/"],
+        healthDetails: ["Audit Message Ingestion: Audit ingestion failed", `Reported at: ${currentReportedAt}`],
+      },
+    ]);
+
+    render(PlatformHealthView, {
+      global: {
+        plugins: [],
+      },
+    });
+
+    const user = userEvent.setup();
+    await user.click(screen.getAllByRole("button", { name: "Degraded" })[0]);
+
+    const detailsRow = screen.getByText("Health issues").closest("td");
+    expect(detailsRow).not.toBeNull();
+    expect(detailsRow!.textContent).toMatch(/Health issues.*Information/s);
+    rows.mockRestore();
+  });
+
   test("shows no problems detected when expanding ServicePulse", async () => {
     const platformModelStore = usePlatformModelStore();
     platformModelStore.model = {
@@ -463,5 +510,34 @@ describe("PlatformHealthView", () => {
     await user.click(servicePulseButton!);
 
     expect(screen.getByText("No problems detected.")).toBeInTheDocument();
+  });
+
+  test("shows the updated primary unavailable wording", async () => {
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.model = {
+      primary: {
+        id: "primary",
+        name: "Particular.ServiceControl",
+        kind: "error",
+        role: "primary-error",
+        version: "6.19.3",
+        health: "unavailable",
+        apiUrl: "http://localhost:33333/api/",
+      },
+      remotes: [],
+      monitoring: null,
+      servicePulse: { name: "ServicePulse", version: "2.8.0", health: "healthy" },
+    } satisfies PlatformModel;
+
+    render(PlatformHealthView, {
+      global: {
+        plugins: [],
+      },
+    });
+
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: /Unavailable/i }));
+
+    expect(screen.getByText("Primary error instance is unavailable. Remote instance status is also unavailable.")).toBeInTheDocument();
   });
 });

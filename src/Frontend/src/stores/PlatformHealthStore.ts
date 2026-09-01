@@ -329,7 +329,7 @@ function fallbackDetails(instance: PlatformInstance, model: PlatformModel) {
 
   if (instance.role === "primary-error") {
     if (instance.health === "unavailable") {
-      return ["Primary error instance is unavailable."];
+      return ["Primary error instance is unavailable. Remote instance status is also unavailable."];
     }
 
     if (instance.health === "degraded" && model.primary.health === "degraded") {

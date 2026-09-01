@@ -6,7 +6,7 @@ import PlatformHealthSupportModal from "@/components/platformhealth/PlatformHeal
 import usePlatformHealthStoreAutoRefresh from "@/composables/usePlatformHealthStoreAutoRefresh";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 import FAIcon from "@/components/FAIcon.vue";
-import { faArrowTurnUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faArrowTurnUp, faChevronDown, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 
 const { store } = usePlatformHealthStoreAutoRefresh();
 useEnvironmentAndVersionsAutoRefresh();
@@ -46,6 +46,37 @@ function chevronClass(row: (typeof store.rows)[number]) {
   return {
     expanded: isExpanded(row),
   };
+}
+
+function issueEntries(row: (typeof store.rows)[number]) {
+  if (row.type === "ServicePulse") {
+    return [];
+  }
+
+  const entries: Array<{ summary: string; reportedAt?: string }> = [];
+
+  for (let index = 0; index < row.healthDetails.length; index += 1) {
+    const detail = row.healthDetails[index];
+    if (detail.startsWith("Reported at:")) {
+      continue;
+    }
+
+    const nextDetail = row.healthDetails[index + 1];
+    entries.push({
+      summary: detail,
+      reportedAt: nextDetail?.startsWith("Reported at:") ? nextDetail.replace(/^Reported at:\s*/, "") : undefined,
+    });
+
+    if (nextDetail?.startsWith("Reported at:")) {
+      index += 1;
+    }
+  }
+
+  return entries;
+}
+
+function showsNoProblems(row: (typeof store.rows)[number]) {
+  return row.type === "ServicePulse" && row.healthDetails.length === 1 && row.healthDetails[0] === "No problems detected.";
 }
 
 const healthLabel = computed(() => ({
@@ -107,12 +138,33 @@ function toggleRow(row: (typeof store.rows)[number]) {
                   </tr>
                   <tr v-if="isExpanded(row)" :id="`${rowKey(row)}-details`" class="details-row">
                     <td colspan="4" class="details-cell">
-                      <ul v-if="row.infoDetails.length > 0" class="details-list details-list-info">
-                        <li v-for="detail in row.infoDetails" :key="detail">{{ detail }}</li>
-                      </ul>
-                      <ul class="details-list details-list-status">
-                        <li v-for="detail in row.healthDetails" :key="detail">{{ detail }}</li>
-                      </ul>
+                      <div class="details-stack">
+                        <section v-if="issueEntries(row).length > 0" class="details-card details-card-issues">
+                          <div class="details-card-header">
+                            <h3>Health issues</h3>
+                          </div>
+                          <div class="issue-list">
+                            <article v-for="issue in issueEntries(row)" :key="issue.summary + (issue.reportedAt ?? '')" class="issue-item">
+                              <FAIcon class="issue-icon" :icon="faTriangleExclamation" />
+                              <div class="issue-content">
+                                <div class="issue-summary">{{ issue.summary }}</div>
+                                <div v-if="issue.reportedAt" class="issue-meta">Reported at: {{ issue.reportedAt }}</div>
+                              </div>
+                            </article>
+                          </div>
+                        </section>
+
+                        <section class="details-card details-card-info">
+                          <div class="details-card-header">
+                            <h3>Information</h3>
+                          </div>
+                          <ul v-if="row.infoDetails.length > 0" class="details-list details-list-info">
+                            <li v-for="detail in row.infoDetails" :key="detail">{{ detail }}</li>
+                          </ul>
+                          <p v-else-if="showsNoProblems(row)" class="no-problems">No problems detected.</p>
+                          <p v-else class="no-problems no-problems-muted">No additional information.</p>
+                        </section>
+                      </div>
                     </td>
                   </tr>
                 </template>
@@ -189,13 +241,94 @@ tbody tr:last-child td {
 }
 
 .instance-name {
-  color: var(--sp-blue);
-  text-decoration: none;
+  color: #243435;
 }
 
-.instance-name:hover {
-  color: #007f98;
-  text-decoration: underline;
+.details-stack {
+  display: grid;
+  gap: 0.875rem;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.details-card {
+  border: 1px solid #dde5e5;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.details-card-issues {
+  border-left: 4px solid #b53a31;
+  background: #fffafa;
+}
+
+.details-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eef2f2;
+}
+
+.details-card-header h3 {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #4c5b5c;
+}
+
+.issue-list {
+  display: grid;
+  gap: 0.75rem;
+  padding: 14px 16px 16px;
+}
+
+.issue-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.issue-icon {
+  margin-top: 0.2rem;
+  color: #b53a31;
+  font-size: 14px;
+  flex: none;
+}
+
+.issue-content {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.issue-summary {
+  font-weight: 700;
+  color: #2c3839;
+}
+
+.issue-meta {
+  color: #73544d;
+  font-size: 12px;
+}
+
+.details-card-info .details-list,
+.details-card-info .no-problems {
+  margin: 0;
+  padding: 14px 16px 16px;
+}
+
+.details-card-info .details-list {
+  padding-left: 2rem;
+}
+
+.no-problems {
+  color: #4c5b5c;
+}
+
+.no-problems-muted {
+  color: #748081;
 }
 
 .type-cell {
