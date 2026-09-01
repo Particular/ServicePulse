@@ -6,7 +6,7 @@ For shared frontend mock and Vitest workflow, see `docs/frontend/testing-basics.
 
 This page is also the canonical reference for shared platform topology scenarios used across Platform health and the capability-card docs.
 
-For Custom Checks page behavior around built-in platform checks, see `docs/frontend/custom-checks-page.md`.
+For Custom Checks page behavior around internal platform checks, see `docs/frontend/custom-checks-page.md`.
 
 ## Overview
 
@@ -18,8 +18,8 @@ The page is frontend-first and mock-driven. It:
 - derives page-specific row and details behavior in `PlatformHealthStore`
 - follows the shared topology rule in `docs/platform-topology.md`: primary and monitoring are direct API targets, while audit/remote rows come from ServiceControl remote configuration and are informational only
 - keeps topology and instance visibility on the page instead of duplicating per-instance widgets on capability cards
-- uses built-in platform custom checks as secondary health signals for page-specific health inference, including instance-mapped degraded states
-- refreshes custom checks together with platform instance data so hidden built-in signals are available even when the Custom Checks page has not been opened
+- uses internal platform custom checks as secondary health signals for page-specific health inference, including instance-mapped degraded states
+- refreshes custom checks together with platform instance data so hidden internal signals are available even when the Custom Checks page has not been opened
 
 ## Page Behavior
 
@@ -48,7 +48,7 @@ Rows expand from the health badge to show details.
 Those details come from:
 
 - informational row context such as the instance API URL
-- matching built-in platform custom checks when available
+- matching internal platform custom checks when available
 - fallback page-specific messages when no custom-check detail is available
 
 Built-in custom-check `healthDetails` can include both the failure summary and a `Reported at: <timestamp>` line.
@@ -89,24 +89,24 @@ The architecture intentionally separates shared platform state from page-specifi
 
 ### Primary and Monitoring version sourcing
 
-- the primary root document exposes its version through the `X-Particular-Version` response header, so Platform health reads the primary version from that header; a successful primary root fetch maps to an `healthy` baseline (degraded/unavailable are then derived from built-in custom checks or a fetch failure)
+- the primary root document exposes its version through the `X-Particular-Version` response header, so Platform health reads the primary version from that header; a successful primary root fetch maps to an `healthy` baseline (degraded/unavailable are then derived from internal custom checks or a fetch failure)
 - the Monitoring root document exposes its version in a `version` field, so Platform health reads the monitoring version from that field
 
-## Built-In Custom Checks
+## Internal Custom Checks
 
-Platform health consumes built-in platform custom checks as secondary signals even when those checks are hidden by default on the Custom Checks page.
+Platform health consumes internal platform custom checks as secondary signals even when those checks are hidden by default on the Custom Checks page.
 
 On Platform health they are used to:
 
-- degrade or fail platform-health rows
+- degrade platform-health rows
 - populate expanded row details, including `failure_reason`
 
-For the shared built-in-check catalog and Custom Checks page behavior, see `docs/frontend/custom-checks-page.md`.
+For the shared internal-check behavior and Custom Checks page behavior, see `docs/frontend/custom-checks-page.md`.
 
 Platform health-specific rule:
 
-- when assigning a built-in degraded check to a specific instance, use `originating_endpoint.name` to match the emitting platform instance
-- built-in platform custom checks are loaded by `PlatformHealthStore` itself, not only as a side effect of visiting the Custom Checks page
+- when assigning an internal degraded check to a specific instance, use `originating_endpoint.name` to match the emitting platform instance
+- internal platform custom checks are loaded by `PlatformHealthStore` itself, not only as a side effect of visiting the Custom Checks page
 
 ## Manual Testing with Mock Scenarios
 
@@ -150,9 +150,9 @@ Switch custom-check state independently with `window.__platformHealth.setCustomC
 |--------|---------|
 | `none` | No custom checks |
 | `user-only` | Non-platform custom checks only |
-| `platform-only-primary` | Built-in primary critical-error signal |
-| `platform-only-primary-degraded` | Built-in primary degraded signal |
-| `platform-only-audit` | Built-in audit degraded signal targeted at a specific audit instance |
+| `platform-only-primary` | Internal primary critical-error signal |
+| `platform-only-primary-degraded` | Internal primary degraded signal |
+| `platform-only-audit` | Internal audit degraded signal targeted at a specific audit instance |
 | `mixed-primary-and-user` | Combined platform and user checks |
 
 ### Manual Checks
@@ -165,7 +165,7 @@ Verify these behaviors from the single startup scenario plus runtime switches:
 | Warning state from degraded audit instance | `setScenario("audit-remotes-healthy")` plus `setCustomCheckPreset("platform-only-audit")` |
 | Danger state from unavailable instances | `setScenario("audit-remotes-danger")` or `setScenario("remote-errors-danger")` |
 | Remote error instances | `setScenario("remote-errors-healthy")` |
-| Built-in platform checks hidden from Custom Checks UI but applied to Platform health | `setCustomCheckPreset("platform-only-primary")` or `setCustomCheckPreset("platform-only-audit")` |
+| Internal platform checks hidden from Custom Checks UI but applied to Platform health | `setCustomCheckPreset("platform-only-primary")` or `setCustomCheckPreset("platform-only-audit")` |
 | Expanded row details with separate info and issue sections | trigger any row, then click the health badge |
 | Upgrade cue rendering | use instances whose versions differ from the known latest version in the scenario data |
 | Support-case modal preview and download flow | click `Open support case`, preview `platform-health.json`, then download it and verify the support link becomes enabled |
@@ -178,7 +178,7 @@ The support export includes both the current Platform health payload and the cur
 
 | File | Type | Description |
 |------|------|-------------|
-| `src/Frontend/src/stores/PlatformHealthStore.spec.ts` | Component/unit | Platform health severity, row derivation, and built-in check inference |
+| `src/Frontend/src/stores/PlatformHealthStore.spec.ts` | Component/unit | Platform health severity, row derivation, and internal check inference |
 | `src/Frontend/src/views/PlatformHealthView.spec.ts` | Component | Page rendering, upgrade cues, row expansion, and support modal behavior |
 | `src/Frontend/test/mocks/platform-health-state.spec.ts` | Unit | Runtime mock helper behavior and custom-check preset switching |
 
@@ -196,7 +196,7 @@ npx vitest run test/mocks/platform-health-state.spec.ts
 
 | Area | Covered behavior |
 |------|------------------|
-| Platform health store | warning/danger severity, unavailable audit remotes, remote error instance danger, monitoring presence, version fallback, built-in custom-check health inference |
+| Platform health store | warning/danger severity, unavailable audit remotes, remote error instance danger, monitoring presence, version fallback, internal custom-check health inference |
 | Platform health view | support download gating, known-version-only upgrade cue rendering, plain-text names, API-in-details rendering, monitoring row rendering, always-expandable health badges |
 | Mock helpers | independent topology and custom-check switching |
 

@@ -147,6 +147,7 @@ function createCustomCheckPreset(name: PlatformHealthCustomCheckPresetName): Cus
           status: Status.Fail,
           reported_at: currentReportedAt,
           failure_reason: "Critical error detected",
+          internal: true,
           originating_endpoint: { name: "Particular.ServiceControl", host_id: crypto.randomUUID(), host: "sc-host" },
         }),
       ];
@@ -158,6 +159,7 @@ function createCustomCheckPreset(name: PlatformHealthCustomCheckPresetName): Cus
           status: Status.Fail,
           reported_at: currentReportedAt,
           failure_reason: "Error ingestion stopped",
+          internal: true,
           originating_endpoint: { name: "Particular.ServiceControl", host_id: crypto.randomUUID(), host: "sc-host" },
         }),
       ];
@@ -169,6 +171,7 @@ function createCustomCheckPreset(name: PlatformHealthCustomCheckPresetName): Cus
           status: Status.Fail,
           reported_at: currentReportedAt,
           failure_reason: "Audit ingestion failed",
+          internal: true,
           originating_endpoint: { name: "Particular.ServiceControl.Audit-Blue", host_id: crypto.randomUUID(), host: "audit-host" },
         }),
       ];

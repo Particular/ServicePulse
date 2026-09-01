@@ -48,7 +48,7 @@ describe("FEATURE: Failing custom checks", () => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(
         precondition.getCustomChecks([
-          precondition.createCustomCheck({ custom_check_id: "ServiceControl Primary Instance", category: "Health", status: Status.Fail, failure_reason: "Primary unavailable" }),
+          precondition.createCustomCheck({ custom_check_id: "ServiceControl Primary Instance", category: "Health", status: Status.Fail, failure_reason: "Primary unavailable", internal: true }),
           precondition.createCustomCheck({ custom_check_id: "SampleCustomeCheck 1", category: "Some Category 1", status: Status.Fail, failure_reason: "configured to fail on endpoint 1" }),
         ])
       );
@@ -69,7 +69,7 @@ describe("FEATURE: Failing custom checks", () => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(
         precondition.getCustomChecks([
-          precondition.createCustomCheck({ custom_check_id: "ServiceControl Primary Instance", category: "Health", status: Status.Fail, failure_reason: "Primary unavailable" }),
+          precondition.createCustomCheck({ custom_check_id: "ServiceControl Primary Instance", category: "Health", status: Status.Fail, failure_reason: "Primary unavailable", internal: true }),
           precondition.createCustomCheck({ custom_check_id: "SampleCustomeCheck 1", category: "Some Category 1", status: Status.Fail, failure_reason: "configured to fail on endpoint 1" }),
         ])
       );

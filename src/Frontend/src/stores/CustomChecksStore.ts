@@ -3,7 +3,6 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import { useCounter } from "@vueuse/core";
 import serviceControlClient from "@/components/serviceControlClient";
-import { isBuiltInPlatformCheck } from "@/components/customchecks/builtInPlatformChecks";
 
 export const useCustomChecksStore = defineStore("CustomChecksStore", () => {
   const prefix = "customchecks/";
@@ -15,7 +14,7 @@ export const useCustomChecksStore = defineStore("CustomChecksStore", () => {
 
   const { count, inc, dec } = useCounter(0);
   const skipRefresh = computed(() => count.value > 0);
-  const failedChecks = computed(() => (showPlatformCustomChecks.value ? rawFailedChecks.value : rawFailedChecks.value.filter((check) => !isBuiltInPlatformCheck(check))));
+  const failedChecks = computed(() => (showPlatformCustomChecks.value ? rawFailedChecks.value : rawFailedChecks.value.filter((check) => !check.internal)));
   const failingCount = computed(() => failedChecks.value.length);
 
   const refresh = async () => {

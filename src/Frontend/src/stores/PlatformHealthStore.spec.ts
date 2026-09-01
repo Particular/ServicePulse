@@ -43,6 +43,7 @@ describe("PlatformHealthStore", () => {
         status: Status.Fail,
         reported_at: currentReportedAt,
         failure_reason: "Audit ingestion failed",
+        internal: true,
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit-Blue",
           host_id: "host-2",
@@ -182,7 +183,7 @@ describe("PlatformHealthStore", () => {
     expect(store.outdatedOnly).toBe(true);
   });
 
-  test("applies hidden built-in platform custom checks to platform health only", async () => {
+  test("applies internal platform custom checks to platform health only", async () => {
     const customChecksStore = useCustomChecksStore();
     customChecksStore.replaceFailedChecks([
       {
@@ -192,6 +193,7 @@ describe("PlatformHealthStore", () => {
         status: Status.Fail,
         reported_at: currentReportedAt,
         failure_reason: "Critical error detected",
+        internal: true,
         originating_endpoint: {
           name: "Particular.ServiceControl",
           host_id: "host-1",
@@ -205,6 +207,7 @@ describe("PlatformHealthStore", () => {
         status: Status.Fail,
         reported_at: currentReportedAt,
         failure_reason: "Audit ingestion failed",
+        internal: true,
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit-Blue",
           host_id: "host-2",
@@ -222,13 +225,13 @@ describe("PlatformHealthStore", () => {
 
     await store.refresh();
 
-    expect(store.payload?.primary.health).toBe("unavailable");
+    expect(store.payload?.primary.health).toBe("degraded");
     expect(store.payload?.remotes[0].health).toBe("healthy");
     expect(store.payload?.remotes[1].health).toBe("degraded");
-    expect(store.severity).toBe("danger");
+    expect(store.severity).toBe("warning");
   });
 
-  test("maps built-in degraded primary custom checks to primary degraded", async () => {
+  test("maps internal degraded primary custom checks to primary degraded", async () => {
     const customChecksStore = useCustomChecksStore();
     customChecksStore.replaceFailedChecks([
       {
@@ -238,6 +241,7 @@ describe("PlatformHealthStore", () => {
         status: Status.Fail,
         reported_at: currentReportedAt,
         failure_reason: "Error ingestion stopped",
+        internal: true,
         originating_endpoint: {
           name: "Particular.ServiceControl",
           host_id: "host-1",
@@ -273,7 +277,7 @@ describe("PlatformHealthStore", () => {
     expect(store.rows[0].healthDetails).toContain(`Reported at: ${currentReportedAt}`);
   });
 
-  test("does not degrade an audit instance when the built-in check belongs to another audit instance", async () => {
+  test("does not degrade an audit instance when the internal check belongs to another audit instance", async () => {
     const customChecksStore = useCustomChecksStore();
     customChecksStore.replaceFailedChecks([
       {
@@ -283,6 +287,7 @@ describe("PlatformHealthStore", () => {
         status: Status.Fail,
         reported_at: currentReportedAt,
         failure_reason: "Audit ingestion failed",
+        internal: true,
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit.Other",
           host_id: "host-2",
@@ -320,6 +325,7 @@ describe("PlatformHealthStore", () => {
         status: Status.Fail,
         reported_at: currentReportedAt,
         failure_reason: "Audit ingestion failed",
+        internal: true,
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit-Blue",
           host_id: "host-2",
@@ -397,6 +403,7 @@ describe("PlatformHealthStore", () => {
         status: Status.Fail,
         reported_at: currentReportedAt,
         failure_reason: "Audit ingestion failed",
+        internal: true,
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit-Blue",
           host_id: "host-2",

@@ -47,6 +47,7 @@ const customCheckTemplate = <CustomCheck>{
     host_id: "ff605b55-6fbb-af56-5753-73c1ff73e601",
     host: "ABC",
   },
+  internal: false,
 };
 
 export const hasCustomChecks =

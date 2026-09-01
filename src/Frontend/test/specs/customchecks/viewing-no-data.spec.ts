@@ -40,6 +40,7 @@ describe("FEATURE: No data", () => {
             category: "Health",
             status: Status.Fail,
             failure_reason: "Critical error detected",
+            internal: true,
           }),
         ])
       );

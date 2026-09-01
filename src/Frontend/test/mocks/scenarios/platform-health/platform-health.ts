@@ -7,6 +7,8 @@ const { worker, driver, runScenario } = createScenario();
 
 export { worker };
 
+installPlatformHealthDevControls();
+
 export const setupComplete = (async () => {
   await runScenario(precondition.serviceControlWithMonitoring);
   await runScenario(() => {
@@ -42,7 +44,6 @@ export const setupComplete = (async () => {
     });
     return Promise.resolve();
   });
-  installPlatformHealthDevControls();
 })();
 
 function stateVersion() {

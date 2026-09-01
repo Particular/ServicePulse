@@ -7,7 +7,7 @@ describe("platform-health-state", () => {
     window.__platformHealth?.reset();
   });
 
-  test("applies built-in and user custom check presets independently of topology scenario", () => {
+  test("applies internal and user custom check presets independently of topology scenario", () => {
     window.__platformHealth?.setScenario("audit-remotes-healthy");
     window.__platformHealth?.setCustomCheckPreset("mixed-primary-and-user");
 
@@ -19,6 +19,8 @@ describe("platform-health-state", () => {
     expect(checks).toHaveLength(2);
     expect(checks.some((check) => check.custom_check_id === "ServiceControl Primary Instance")).toBe(true);
     expect(checks.some((check) => check.category === "User defined")).toBe(true);
+    expect(checks.some((check) => check.internal)).toBe(true);
+    expect(checks.some((check) => !check.internal)).toBe(true);
   });
 
   test("allows explicit custom checks to replace a preset", () => {
@@ -39,6 +41,7 @@ describe("platform-health-state", () => {
     expect(checks).toHaveLength(1);
     expect(checks[0].custom_check_id).toBe("Error Message Ingestion Process");
     expect(checks[0].category).toBe("ServiceControl Health");
+    expect(checks[0].internal).toBe(true);
   });
 
   test("keeps healthy audit remote topology healthy until a related audit custom check is applied", () => {
@@ -56,5 +59,6 @@ describe("platform-health-state", () => {
 
     expect(checks).toHaveLength(1);
     expect(checks[0].originating_endpoint.name).toBe("Particular.ServiceControl.Audit-Blue");
+    expect(checks[0].internal).toBe(true);
   });
 });

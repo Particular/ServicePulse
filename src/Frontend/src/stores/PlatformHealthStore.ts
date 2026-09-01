@@ -1,7 +1,6 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 import { isUpgradeAvailable } from "@/composables/serviceSemVer";
-import { getBuiltInPlatformCheck } from "@/components/customchecks/builtInPlatformChecks";
 import type { PlatformHealthResponse, PlatformHealthRow, PlatformHealthSeverity } from "@/resources/PlatformHealth";
 import type CustomCheck from "@/resources/CustomCheck";
 import type { PlatformInstance, PlatformModel, ServicePulse } from "@/resources/PlatformModel";
@@ -292,13 +291,8 @@ function detailsForInstance(instance: PlatformInstance, model: PlatformModel, ch
 }
 
 function matchesInstance(check: CustomCheck, instance: PlatformInstance) {
-  const platformCheck = getBuiltInPlatformCheck(check);
-  if (!platformCheck) {
+  if (!check.internal) {
     return false;
-  }
-
-  if (platformCheck.target === "transport") {
-    return instance.role === "remote-audit" && sameInstanceName(check.originating_endpoint.name, instance.name);
   }
 
   return sameInstanceName(check.originating_endpoint.name, instance.name);
@@ -341,20 +335,13 @@ function fallbackDetails(instance: PlatformInstance, model: PlatformModel) {
 }
 
 function applyPlatformCheckHealthToInstance(instance: PlatformInstance, checks: CustomCheck[]) {
-  const matchingPlatformChecks = checks
-    .filter((check) => matchesInstance(check, instance))
-    .map((check) => ({ check, platformCheck: getBuiltInPlatformCheck(check) }))
-    .filter((entry): entry is { check: CustomCheck; platformCheck: NonNullable<ReturnType<typeof getBuiltInPlatformCheck>> } => entry.platformCheck !== null);
+  const matchingPlatformChecks = checks.filter((check) => matchesInstance(check, instance));
 
-  if (matchingPlatformChecks.some(({ platformCheck }) => platformCheck.severity === "unavailable")) {
-    return { ...instance, health: "unavailable" as const };
-  }
-
-  if (instance.health === "healthy" && matchingPlatformChecks.some(({ platformCheck }) => platformCheck.severity === "degraded")) {
+  if (matchingPlatformChecks.length > 0 && instance.health === "healthy") {
     return { ...instance, health: "degraded" as const };
   }
 
-  if (instance.health === "degraded" && !matchingPlatformChecks.some(({ platformCheck }) => platformCheck.severity === "degraded")) {
+  if (instance.health === "degraded" && matchingPlatformChecks.length === 0) {
     return { ...instance, health: "healthy" as const };
   }
 

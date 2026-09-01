@@ -8,10 +8,10 @@ describe("CustomChecksStore", () => {
     setActivePinia(createPinia());
   });
 
-  test("hides built-in platform custom checks by default", () => {
+  test("hides internal platform custom checks by default", () => {
     const store = useCustomChecksStore();
 
-    store.replaceFailedChecks([createCheck("ServiceControl Primary Instance", "Health"), createCheck("SampleCustomeCheck 1", "Some Category 1")]);
+    store.replaceFailedChecks([createCheck("ServiceControl Primary Instance", "Health", true), createCheck("SampleCustomeCheck 1", "Some Category 1")]);
 
     expect(store.rawFailingCount).toBe(2);
     expect(store.failedChecks).toHaveLength(1);
@@ -19,10 +19,10 @@ describe("CustomChecksStore", () => {
     expect(store.failedChecks[0].custom_check_id).toBe("SampleCustomeCheck 1");
   });
 
-  test("shows built-in platform custom checks when toggled on", () => {
+  test("shows internal platform custom checks when toggled on", () => {
     const store = useCustomChecksStore();
 
-    store.replaceFailedChecks([createCheck("ServiceControl Primary Instance", "Health"), createCheck("SampleCustomeCheck 1", "Some Category 1")]);
+    store.replaceFailedChecks([createCheck("ServiceControl Primary Instance", "Health", true), createCheck("SampleCustomeCheck 1", "Some Category 1")]);
     store.showPlatformCustomChecks = true;
 
     expect(store.failedChecks).toHaveLength(2);
@@ -30,7 +30,7 @@ describe("CustomChecksStore", () => {
   });
 });
 
-function createCheck(custom_check_id: string, category: string) {
+function createCheck(custom_check_id: string, category: string, internal = false) {
   return {
     id: `customchecks/${custom_check_id}`,
     custom_check_id,
@@ -38,6 +38,7 @@ function createCheck(custom_check_id: string, category: string) {
     status: Status.Fail,
     reported_at: "2025-01-10T05:06:30.4074087Z",
     failure_reason: "Failure",
+    internal,
     originating_endpoint: {
       name: "EndpointX",
       host_id: "host-id",

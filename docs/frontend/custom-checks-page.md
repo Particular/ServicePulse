@@ -1,6 +1,6 @@
 # Custom Checks Page Testing Guide
 
-This document describes the frontend Custom Checks page behavior, with a focus on built-in platform custom checks and how they relate to other frontend views.
+This document describes the frontend Custom Checks page behavior, with a focus on internal platform custom checks and how they relate to other frontend views.
 
 For shared frontend mock and Vitest workflow, see `docs/frontend/testing-basics.md`.
 
@@ -8,37 +8,31 @@ For shared frontend mock and Vitest workflow, see `docs/frontend/testing-basics.
 
 The Custom Checks page shows failing custom checks reported to ServiceControl.
 
-Built-in platform custom checks are handled differently from user-defined custom checks:
+Internal platform custom checks are handled differently from user-defined custom checks:
 
 - they are hidden by default from the Custom Checks page
 - they are hidden by default from the Custom Checks dashboard tile and menu badge
 - operators can reveal them with `Show platform custom checks`
-- Platform health consumes those built-in checks as secondary platform signals
+- Platform health consumes those internal checks as secondary platform signals
 
-## Built-In Platform Custom Checks
+## Internal Platform Custom Checks
 
-The built-in platform custom check catalog is curated in:
+ServiceControl now marks internal custom checks with `internal: true`.
 
-- `src/Frontend/src/components/customchecks/builtInPlatformChecks.ts`
+The frontend uses that flag for two different purposes:
 
-The frontend uses that catalog for two different purposes:
+1. filtering internal platform checks out of the Custom Checks UI by default
+2. recognizing internal platform checks that Platform health can use as secondary instance signals
 
-1. filtering built-in platform checks out of the Custom Checks UI by default
-2. recognizing built-in platform checks that Platform health can use as secondary instance signals
-
-Recognition is based on:
-
-- `category + custom_check_id`
-
-This is intentional because ServiceControl can reuse the same `custom_check_id` across different categories.
+Older ServiceControl versions may omit the flag. In that case, the check is treated as non-internal.
 
 ## Page Behavior
 
 The Custom Checks page:
 
 - fetches failed custom checks from `customchecks?status=fail&page=<n>`
-- shows only non-platform custom checks by default
-- exposes `Show platform custom checks` to reveal built-in platform checks
+- shows only non-internal custom checks by default
+- exposes `Show platform custom checks` to reveal internal platform checks
 - keeps pagination tied to the visible filtered list
 
 Relevant frontend pieces:
@@ -49,7 +43,7 @@ Relevant frontend pieces:
 
 ## Platform Health Relationship
 
-Platform health uses built-in platform checks even when the Custom Checks page hides them.
+Platform health uses internal platform checks even when the Custom Checks page hides them.
 
 Platform health also refreshes those custom checks directly, so this behavior does not depend on visiting the Custom Checks page first.
 
@@ -57,9 +51,8 @@ That logic is documented in:
 
 - `docs/frontend/platform-health-page.md`
 
-When Platform health assigns a built-in degraded check to a specific platform instance, it uses:
+When Platform health assigns an internal custom check to a specific platform instance, it uses:
 
-- built-in recognition by `category + custom_check_id`
 - instance assignment by `originating_endpoint.name`
 
 The Custom Checks page itself does not perform that instance correlation. It only exposes the raw custom check data and the show/hide toggle.
@@ -68,7 +61,7 @@ The Custom Checks page itself does not perform that instance correlation. It onl
 
 Start from the shared frontend mocking workflow in `docs/frontend/testing-basics.md`.
 
-For built-in platform custom check behavior, the most useful mock setup is:
+For internal platform custom check behavior, the most useful mock setup is:
 
 - `VITE_MOCK_SCENARIO=platform-health npm run dev:mocks`
 
@@ -85,10 +78,10 @@ Then use:
 
 | Behavior | How to exercise it |
 |----------|--------------------|
-| Built-in platform checks hidden by default | Apply `platform-only-primary` or `platform-only-audit`, then open Custom Checks page |
-| Built-in platform checks shown when toggled on | Apply a platform-only preset, enable `Show platform custom checks` |
+| Internal platform checks hidden by default | Apply `platform-only-primary` or `platform-only-audit`, then open Custom Checks page |
+| Internal platform checks shown when toggled on | Apply a platform-only preset, enable `Show platform custom checks` |
 | User-defined checks visible by default | Apply `user-only` or `mixed-primary-and-user` |
-| Platform health reacts to hidden built-in checks | Apply `platform-only-primary-degraded` or `platform-only-audit`, then compare Platform health with Custom Checks page |
+| Platform health reacts to hidden internal checks | Apply `platform-only-primary-degraded` or `platform-only-audit`, then compare Platform health with Custom Checks page |
 
 ## Automated Tests
 
@@ -96,7 +89,7 @@ Then use:
 
 | File | Type | Description |
 |------|------|-------------|
-| `src/Frontend/src/stores/CustomChecksStore.spec.ts` | Unit | built-in check filtering and toggle behavior |
+| `src/Frontend/src/stores/CustomChecksStore.spec.ts` | Unit | internal check filtering and toggle behavior |
 
 ### Running Automated Tests
 
@@ -112,6 +105,6 @@ Use `docs/frontend/testing-basics.md` for shared troubleshooting.
 
 Custom Checks-specific checks:
 
-1. If a built-in platform check is visible unexpectedly, confirm `showPlatformCustomChecks` is off.
+1. If an internal platform check is visible unexpectedly, confirm `showPlatformCustomChecks` is off.
 2. If Platform health reacts to a check that the page is hiding, that is expected behavior.
-3. If a built-in check is classified incorrectly, inspect `category` and `custom_check_id` against `builtInPlatformChecks.ts`.
+3. If an internal check is classified incorrectly, inspect the `internal` flag in the ServiceControl response.
