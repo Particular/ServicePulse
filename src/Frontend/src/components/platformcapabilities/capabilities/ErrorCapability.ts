@@ -1,10 +1,9 @@
 import { computed } from "vue";
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
+import type { StatusIndicator } from "@/components/platformcapabilities/types";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
 import routeLinks from "@/router/routeLinks";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
-
-const singleRegionTooltip = "Message failures can be managed from this ServicePulse instance.";
 
 const ErrorDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.Unavailable]: "The ServiceControl instance is not responding.",
@@ -21,7 +20,7 @@ const ErrorHelpButtonUrl: CapabilityStatusToStringMap = {
 };
 
 export function useErrorCapability(): CapabilityComposable {
-  const { getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
+  const { getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus } = useCapabilityBase();
   const platformModelStore = usePlatformModelStore();
 
   // Check if instance is connected
@@ -44,13 +43,7 @@ export function useErrorCapability(): CapabilityComposable {
   // Determine help button URL based on status
   const errorHelpButtonUrl = computed(() => getHelpButtonUrlForStatus(errorStatus.value, ErrorHelpButtonUrl));
 
-  const errorIndicators = computed(() => {
-    if (!isConnected.value) {
-      return [];
-    }
-
-    return [createIndicator("FailedMessages", CapabilityStatus.Available, singleRegionTooltip)];
-  });
+  const errorIndicators = computed<StatusIndicator[]>(() => []);
 
   // Loading state - error is loading if we haven't attempted connection yet
   const isLoading = computed(() => platformModelStore.model === null);
