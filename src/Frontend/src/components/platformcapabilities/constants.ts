@@ -1,4 +1,5 @@
 export enum CapabilityStatus {
+  Unknown = "Checking", // The capability checks have not answered yet; nothing promotional should render
   Unavailable = "Unavailable", // Instance is configured but not responding or not available
   PartiallyUnavailable = "Degraded", // At least one but not all instances are unavailable
   Available = "Available", // Instance is available and responding

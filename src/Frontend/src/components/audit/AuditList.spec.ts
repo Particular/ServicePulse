@@ -21,8 +21,9 @@ import { type default as Message, MessageStatus } from "@/resources/Message";
 // ==================== Mock Setup ====================
 
 vi.mock("@/composables/autoRefresh");
+const auditingStatus = vi.hoisted(() => ({ value: "Available" }));
 vi.mock("@/components/platformcapabilities/capabilities/AuditingCapability", () => ({
-  useAuditingCapability: () => ({ status: { value: "Available" } }),
+  useAuditingCapability: () => ({ status: auditingStatus }),
 }));
 vi.mock("@/components/platformcapabilities/wizards/AuditingWizardPages", () => ({
   getAuditingWizardPages: () => [],
@@ -209,6 +210,7 @@ async function waitForFirstLoadToComplete() {
 describe("FEATURE: Audit Messages Query State", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    auditingStatus.value = "Available";
     localStorage.clear();
   });
 
@@ -317,6 +319,26 @@ describe("FEATURE: Audit Messages Query State", () => {
       isRefreshing.value = false;
       await nextTick();
       verify.overlayIsNotVisible();
+    });
+  });
+
+  describe("RULE: Onboarding prompts render only after the capability probe has answered", () => {
+    test("EXAMPLE: No banner while the successful-messages probe is still checking", async () => {
+      auditingStatus.value = "Checking";
+      await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      expect(document.querySelector("page-banner-stub")).toBeNull();
+    });
+
+    test("EXAMPLE: The banner appears once a completed probe found no messages", async () => {
+      auditingStatus.value = "Endpoints Not Configured";
+      await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      expect(document.querySelector("page-banner-stub")).not.toBeNull();
     });
   });
 
