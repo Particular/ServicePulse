@@ -19,6 +19,19 @@ Only the primary ServiceControl instance and Monitoring are treated as direct AP
 
 Audit remote rows are not assumed to be directly reachable even if they have an API URL.
 
+## Backend Remote Relay
+
+Primary ServiceControl does fan out to remotes when building `GET /api/configuration/remotes`.
+
+It calls each remote's `/api/configuration`, gathers the responses in parallel, and returns a transformed `RemoteConfiguration[]` payload with:
+
+- `api_uri`
+- `version`
+- `status`
+- `configuration`
+
+This is an enriched relay, not a raw pass-through.
+
 ## Shared Uses
 
 - `docs/frontend/platform-health-page.md`
