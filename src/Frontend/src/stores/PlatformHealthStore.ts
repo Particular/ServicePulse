@@ -341,10 +341,6 @@ function applyPlatformCheckHealthToInstance(instance: PlatformInstance, checks: 
     return { ...instance, health: "degraded" as const };
   }
 
-  if (instance.health === "degraded" && matchingPlatformChecks.length === 0) {
-    return { ...instance, health: "healthy" as const };
-  }
-
   return instance;
 }
 

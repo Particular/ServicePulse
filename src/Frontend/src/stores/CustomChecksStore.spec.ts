@@ -28,6 +28,16 @@ describe("CustomChecksStore", () => {
     expect(store.failedChecks).toHaveLength(2);
     expect(store.failingCount).toBe(2);
   });
+
+  test("keeps the server failing count even when internal checks are hidden", () => {
+    const store = useCustomChecksStore();
+
+    store.replaceFailedChecks([createCheck("ServiceControl Primary Instance", "Health", true), createCheck("SampleCustomeCheck 1", "Some Category 1")]);
+
+    expect(store.rawFailingCount).toBe(2);
+    expect(store.failingCount).toBe(1);
+    expect(store.failedChecks).toHaveLength(1);
+  });
 });
 
 function createCheck(custom_check_id: string, category: string, internal = false) {

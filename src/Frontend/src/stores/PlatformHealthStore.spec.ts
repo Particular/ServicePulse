@@ -353,6 +353,29 @@ describe("PlatformHealthStore", () => {
     expect(store.payload?.remotes[1].health).toBe("degraded");
   });
 
+  test("preserves a degraded instance when no internal check matches it", async () => {
+    const customChecksStore = useCustomChecksStore();
+    customChecksStore.replaceFailedChecks([]);
+
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.refresh = vi.fn(() => {
+      platformModelStore.model = {
+        ...singleRegionWarningModel,
+        primary: {
+          ...singleRegionWarningModel.primary,
+          health: "degraded",
+        },
+      };
+      return Promise.resolve();
+    });
+
+    const store = usePlatformHealthStore();
+
+    await store.refresh();
+
+    expect(store.payload?.primary.health).toBe("degraded");
+  });
+
   test("refreshes custom checks alongside the platform model and keeps rendering when custom checks fail", async () => {
     const customChecksStore = useCustomChecksStore();
     customChecksStore.refresh = vi.fn(() => Promise.reject(new Error("custom checks unavailable")));
