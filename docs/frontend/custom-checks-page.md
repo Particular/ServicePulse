@@ -12,7 +12,7 @@ Internal platform custom checks are handled differently from user-defined custom
 
 - they are hidden by default from the Custom Checks page
 - they are hidden by default from the Custom Checks dashboard tile and menu badge
-- operators can reveal them with `Show platform custom checks`
+- operators can reveal them with `Show platform custom checks` when internal checks are present
 - Platform health consumes those internal checks as secondary platform signals
 
 ## Internal Platform Custom Checks
@@ -32,7 +32,7 @@ The Custom Checks page:
 
 - fetches failed custom checks from `customchecks?status=fail&page=<n>`
 - shows only non-internal custom checks by default
-- exposes `Show platform custom checks` to reveal internal platform checks
+- exposes `Show platform custom checks` to reveal internal platform checks when any are present
 - keeps pagination tied to the visible filtered list
 
 Relevant frontend pieces:

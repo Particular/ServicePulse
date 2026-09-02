@@ -154,6 +154,7 @@ Switch custom-check state independently with `window.__platformHealth.setCustomC
 | `platform-only-primary-degraded` | Internal primary degraded signal |
 | `platform-only-audit` | Internal audit degraded signal targeted at a specific audit instance |
 | `mixed-primary-and-user` | Combined platform and user checks |
+| `Show platform custom checks` | Only appears when internal checks are present |
 
 ### Manual Checks
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import NoData from "@/components/NoData.vue";
 import CustomCheckView from "@/components/customchecks/CustomCheckView.vue";
 import { storeToRefs } from "pinia";
@@ -7,7 +8,8 @@ import useCustomChecksStoreAutoRefresh from "@/composables/useCustomChecksStoreA
 
 const { store } = useCustomChecksStoreAutoRefresh();
 
-const { pageNumber, failedChecks, rawFailingCount, showPlatformCustomChecks } = storeToRefs(store);
+const { pageNumber, failedChecks, rawFailingCount, rawFailedChecks, showPlatformCustomChecks } = storeToRefs(store);
+const hasInternalChecks = computed(() => rawFailedChecks.value.some((check) => check.internal));
 </script>
 
 <template>
@@ -15,7 +17,7 @@ const { pageNumber, failedChecks, rawFailingCount, showPlatformCustomChecks } = 
     <div class="row">
       <div class="col-sm-12 padded page-header-row">
         <h1>Custom checks</h1>
-        <label class="show-platform-toggle">
+        <label v-if="hasInternalChecks" class="show-platform-toggle">
           <input v-model="showPlatformCustomChecks" type="checkbox" aria-label="Show platform custom checks" />
           <span>Show platform custom checks</span>
         </label>
