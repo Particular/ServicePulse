@@ -76,6 +76,22 @@ function issueEntries(row: (typeof store.rows)[number]) {
   return entries;
 }
 
+function infoEntries(row: (typeof store.rows)[number]) {
+  return row.infoDetails.map((detail) => {
+    if (detail.startsWith("API: ")) {
+      return {
+        label: "API",
+        value: detail.substring("API: ".length),
+      };
+    }
+
+    return {
+      label: "Info",
+      value: detail,
+    };
+  });
+}
+
 function issueWarningLevel(row: (typeof store.rows)[number]) {
   switch (row.health) {
     case "degraded":
@@ -177,9 +193,14 @@ function toggleRow(row: (typeof store.rows)[number]) {
                           <div class="details-card-header">
                             <h3>Information</h3>
                           </div>
-                          <ul v-if="row.infoDetails.length > 0" class="details-list details-list-info">
-                            <li v-for="detail in row.infoDetails" :key="detail">{{ detail }}</li>
-                          </ul>
+                          <table v-if="row.infoDetails.length > 0" class="details-table details-table-info">
+                            <tbody>
+                              <tr v-for="entry in infoEntries(row)" :key="`${entry.label}-${entry.value}`">
+                                <td class="details-table-key">{{ entry.label }}</td>
+                                <td>{{ entry.value }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
                           <p v-else-if="showsNoProblems(row)" class="no-problems">No problems detected.</p>
                           <p v-else class="no-problems no-problems-muted">No additional information.</p>
                         </section>
@@ -348,14 +369,38 @@ tbody tr:last-child td {
   font-size: 12px;
 }
 
-.details-card-info .details-list,
+.details-card-info .details-table,
 .details-card-info .no-problems {
   margin: 0;
   padding: 14px 16px 16px;
 }
 
-.details-card-info .details-list {
-  padding-left: 2rem;
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.details-table td {
+  padding: 0.4rem 0;
+  vertical-align: top;
+  border-bottom: 1px solid #eef2f2;
+}
+
+.details-table tr:last-child td {
+  border-bottom: none;
+}
+
+.details-table-key {
+  width: 112px;
+  color: #4c5b5c;
+  font-weight: 500;
+  text-align: center;
+  padding-right: 1rem;
+}
+
+.details-table td {
+  color: #617071;
+  word-break: break-word;
 }
 
 .no-problems {
