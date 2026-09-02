@@ -31,7 +31,7 @@ describe("FEATURE: No data", () => {
       });
     });
 
-    test("EXAMPLE: Built-in platform custom checks are hidden by default but can be shown", async ({ driver }) => {
+    test("EXAMPLE: Internal platform custom checks are hidden by default but can be shown", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(
         precondition.getCustomChecks([

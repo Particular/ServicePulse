@@ -5,7 +5,7 @@ import { createCustomCheck } from "../preconditions/customChecks";
 import { clonePlatformTopology, createPlatformTopology, latestPlatformVersion, toRemoteInstances, type PlatformTopology, type PlatformTopologyScenarioName, type PlatformTopologyStatus, updatePlatformTopologyStatus } from "./platform-topology";
 
 export type PlatformHealthMockScenarioName = PlatformTopologyScenarioName;
-export type PlatformHealthCustomCheckPresetName = "none" | "user-only" | "platform-only-primary" | "platform-only-primary-degraded" | "platform-only-audit" | "mixed-primary-and-user";
+export type PlatformHealthCustomCheckPresetName = "none" | "user-only" | "platform-only-primary-degraded" | "platform-only-audit" | "mixed-primary-and-user";
 
 export type PlatformHealthMockStatus = Exclude<PlatformTopologyStatus, "degraded">;
 
@@ -139,18 +139,6 @@ function createCustomCheckPreset(name: PlatformHealthCustomCheckPresetName): Cus
           originating_endpoint: { name: "Sales.Endpoint", host_id: crypto.randomUUID(), host: "sales-host" },
         }),
       ];
-    case "platform-only-primary":
-      return [
-        createCustomCheck({
-          custom_check_id: "ServiceControl Primary Instance",
-          category: "Health",
-          status: Status.Fail,
-          reported_at: currentReportedAt,
-          failure_reason: "Critical error detected",
-          internal: true,
-          originating_endpoint: { name: "Particular.ServiceControl", host_id: crypto.randomUUID(), host: "sc-host" },
-        }),
-      ];
     case "platform-only-primary-degraded":
       return [
         createCustomCheck({
@@ -176,7 +164,7 @@ function createCustomCheckPreset(name: PlatformHealthCustomCheckPresetName): Cus
         }),
       ];
     case "mixed-primary-and-user":
-      return [...createCustomCheckPreset("platform-only-primary"), ...createCustomCheckPreset("user-only")];
+      return [...createCustomCheckPreset("platform-only-primary-degraded"), ...createCustomCheckPreset("user-only")];
     case "none":
     default:
       return [];

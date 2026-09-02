@@ -108,6 +108,27 @@ describe("PlatformModelStore", () => {
     expect(store.remotes[0].kind).toBe("error");
     expect(store.remotes[0].role).toBe("remote-error");
   });
+
+  test("skips remote discovery when the primary root is unavailable", async () => {
+    getRoot.mockRejectedValue(new Error("primary unavailable"));
+    getRemoteInstances.mockResolvedValue([
+      {
+        api_uri: "http://localhost:33334/api/",
+        version: "6.19.3",
+        status: "online",
+        configuration: { data_retention: { audit_retention_period: "7.00:00:00" } },
+      },
+    ]);
+    getMonitoringRoot.mockResolvedValue({ platform_health_status: "healthy", platform_health_version: "6.19.3" });
+
+    const store = usePlatformModelStore();
+    await store.refresh();
+
+    expect(getRemoteInstances).not.toHaveBeenCalled();
+    expect(store.primary?.health).toBe("unavailable");
+    expect(store.remotes).toHaveLength(0);
+    expect(store.monitoring?.health).toBe("healthy");
+  });
 });
 
 function rootResponse({ name, health, version }: { name: string; health: "healthy" | "degraded" | "unavailable"; version: string }) {

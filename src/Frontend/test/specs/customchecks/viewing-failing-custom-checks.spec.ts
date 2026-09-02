@@ -44,7 +44,7 @@ describe("FEATURE: Failing custom checks", () => {
       });
     });
 
-    test("EXAMPLE: Built-in platform custom checks are hidden from the page by default", async ({ driver }) => {
+    test("EXAMPLE: Internal platform custom checks are hidden from the page by default", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(
         precondition.getCustomChecks([
@@ -65,7 +65,7 @@ describe("FEATURE: Failing custom checks", () => {
       });
     });
 
-    test("EXAMPLE: Built-in platform custom checks are hidden from the dashboard count by default", async ({ driver }) => {
+    test("EXAMPLE: Internal platform custom checks are hidden from the dashboard count by default", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(
         precondition.getCustomChecks([

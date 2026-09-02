@@ -396,6 +396,20 @@ describe("PlatformHealthStore", () => {
     expect(logger.warn).toHaveBeenCalledWith("Unable to refresh custom checks for platform health", expect.any(Error));
   });
 
+  test("renders no remotes when the primary model refresh fails", async () => {
+    const customChecksStore = useCustomChecksStore();
+    customChecksStore.refresh = vi.fn(() => Promise.reject(new Error("custom checks unavailable")));
+
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.refresh = vi.fn(() => Promise.reject(new Error("primary unavailable")));
+
+    const store = usePlatformHealthStore();
+
+    await expect(store.refresh()).rejects.toThrow("primary unavailable");
+
+    expect(store.payload).toBeNull();
+  });
+
   test("recomputes payload-derived state when failed checks change after refresh", async () => {
     const customChecksStore = useCustomChecksStore();
     const platformModelStore = usePlatformModelStore();

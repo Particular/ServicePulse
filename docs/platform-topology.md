@@ -32,6 +32,8 @@ It calls each remote's `/api/configuration`, gathers the responses in parallel, 
 
 This is an enriched relay, not a raw pass-through.
 
+If the primary ServiceControl root is unavailable, ServicePulse does not attempt remote discovery for that refresh cycle.
+
 ## Shared Uses
 
 - `docs/frontend/platform-health-page.md`

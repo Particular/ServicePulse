@@ -69,7 +69,6 @@ Then use:
 
 - `window.__platformHealth.setCustomCheckPreset("none")`
 - `window.__platformHealth.setCustomCheckPreset("user-only")`
-- `window.__platformHealth.setCustomCheckPreset("platform-only-primary")`
 - `window.__platformHealth.setCustomCheckPreset("platform-only-primary-degraded")`
 - `window.__platformHealth.setCustomCheckPreset("platform-only-audit")`
 - `window.__platformHealth.setCustomCheckPreset("mixed-primary-and-user")`
@@ -78,7 +77,7 @@ Then use:
 
 | Behavior | How to exercise it |
 |----------|--------------------|
-| Internal platform checks hidden by default | Apply `platform-only-primary` or `platform-only-audit`, then open Custom Checks page |
+| Internal platform checks hidden by default | Apply `platform-only-primary-degraded` or `platform-only-audit`, then open Custom Checks page |
 | Internal platform checks shown when toggled on | Apply a platform-only preset, enable `Show platform custom checks` |
 | User-defined checks visible by default | Apply `user-only` or `mixed-primary-and-user` |
 | Platform health reacts to hidden internal checks | Apply `platform-only-primary-degraded` or `platform-only-audit`, then compare Platform health with Custom Checks page |

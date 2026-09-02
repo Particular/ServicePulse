@@ -16,7 +16,8 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
   const errorInstances = computed(() => remotes.value.filter((instance) => instance.kind === "error"));
 
   async function refresh() {
-    const [primaryRoot, remotesResponse, monitoringResponse] = await Promise.all([getPrimaryRoot(), getRemotes(), getMonitoringRoot()]);
+    const [primaryRoot, monitoringResponse] = await Promise.all([getPrimaryRoot(), getMonitoringRoot()]);
+    const remotesResponse = primaryRoot ? await getRemotes() : [];
 
     model.value = {
       primary: mapPrimary(primaryRoot),

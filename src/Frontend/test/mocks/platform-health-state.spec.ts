@@ -24,7 +24,7 @@ describe("platform-health-state", () => {
   });
 
   test("allows explicit custom checks to replace a preset", () => {
-    window.__platformHealth?.setCustomCheckPreset("platform-only-primary");
+    window.__platformHealth?.setCustomCheckPreset("platform-only-primary-degraded");
     window.__platformHealth?.setCustomChecks([]);
 
     expect(window.__platformHealth?.getCustomChecks()).toEqual([]);
@@ -60,5 +60,23 @@ describe("platform-health-state", () => {
     expect(checks).toHaveLength(1);
     expect(checks[0].originating_endpoint.name).toBe("Particular.ServiceControl.Audit-Blue");
     expect(checks[0].internal).toBe(true);
+  });
+
+  test("supports a primary unavailable scenario", () => {
+    window.__platformHealth?.setScenario("primary-unavailable");
+
+    const state = window.__platformHealth?.getState();
+
+    expect(state?.scenario).toBe("primary-unavailable");
+    expect(state?.primary.status).toBe("unavailable");
+    expect(state?.remotes).toHaveLength(0);
+  });
+
+  test("fails custom checks retrieval in the primary unavailable scenario", () => {
+    window.__platformHealth?.setScenario("primary-unavailable");
+
+    const checks = getPlatformHealthCustomChecks();
+
+    expect(checks).toHaveLength(0);
   });
 });

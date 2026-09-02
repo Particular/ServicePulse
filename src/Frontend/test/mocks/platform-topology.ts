@@ -2,7 +2,7 @@ import { RemoteInstanceStatus, RemoteInstanceType, type RemoteInstance } from "@
 
 export const latestPlatformVersion = "6.19.3";
 
-export type PlatformTopologyScenarioName = "audit-remotes-healthy" | "audit-remotes-danger" | "remote-errors-healthy" | "remote-errors-danger";
+export type PlatformTopologyScenarioName = "audit-remotes-healthy" | "audit-remotes-danger" | "remote-errors-healthy" | "remote-errors-danger" | "primary-unavailable";
 export type PlatformTopologyStatus = "healthy" | "degraded" | "unavailable";
 
 export interface PlatformTopologyRemote {
@@ -70,6 +70,13 @@ export function createPlatformTopology(name: PlatformTopologyScenarioName): Plat
           { id: "remote-1", name: "Particular.ServiceControl.RegionB", apiUri: "http://Particular.ServiceControl.RegionB/api/", version: latestPlatformVersion, status: "unavailable", instanceType: "error" },
         ],
         monitoring: null,
+      };
+    case "primary-unavailable":
+      return {
+        scenario: name,
+        primary: { name: "Particular.ServiceControl", version: latestPlatformVersion, status: "unavailable" },
+        remotes: [],
+        monitoring: { configured: true, version: latestPlatformVersion, status: "healthy" },
       };
   }
 }

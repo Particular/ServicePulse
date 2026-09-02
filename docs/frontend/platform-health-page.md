@@ -141,6 +141,7 @@ Switch topology at runtime with `window.__platformHealth.setScenario(...)`:
 | `audit-remotes-danger` | Primary healthy, both audit remotes unavailable, monitoring healthy |
 | `remote-errors-healthy` | Primary healthy with remote error instances and no monitoring |
 | `remote-errors-danger` | One remote error instance unavailable |
+| `primary-unavailable` | Primary root unavailable, no remotes discovered, monitoring healthy |
 
 ### Custom Check Presets
 
@@ -150,7 +151,6 @@ Switch custom-check state independently with `window.__platformHealth.setCustomC
 |--------|---------|
 | `none` | No custom checks |
 | `user-only` | Non-platform custom checks only |
-| `platform-only-primary` | Internal primary critical-error signal |
 | `platform-only-primary-degraded` | Internal primary degraded signal |
 | `platform-only-audit` | Internal audit degraded signal targeted at a specific audit instance |
 | `mixed-primary-and-user` | Combined platform and user checks |
@@ -165,7 +165,8 @@ Verify these behaviors from the single startup scenario plus runtime switches:
 | Warning state from degraded audit instance | `setScenario("audit-remotes-healthy")` plus `setCustomCheckPreset("platform-only-audit")` |
 | Danger state from unavailable instances | `setScenario("audit-remotes-danger")` or `setScenario("remote-errors-danger")` |
 | Remote error instances | `setScenario("remote-errors-healthy")` |
-| Internal platform checks hidden from Custom Checks UI but applied to Platform health | `setCustomCheckPreset("platform-only-primary")` or `setCustomCheckPreset("platform-only-audit")` |
+| Primary unavailable with no remotes | `setScenario("primary-unavailable")` |
+| Internal platform checks hidden from Custom Checks UI but applied to Platform health | `setCustomCheckPreset("platform-only-primary-degraded")` or `setCustomCheckPreset("platform-only-audit")` |
 | Expanded row details with separate info and issue sections | trigger any row, then click the health badge |
 | Upgrade cue rendering | use instances whose versions differ from the known latest version in the scenario data |
 | Support-case modal preview and download flow | click `Open support case`, preview `platform-health.json`, then download it and verify the support link becomes enabled |
@@ -230,3 +231,4 @@ Platform health-specific checks:
 1. Run the focused Platform health specs listed above.
 2. If a degraded row is missing or assigned to the wrong instance, inspect the check's `originating_endpoint.name` and the instance name carried in the platform model.
 3. If hidden platform checks are not affecting the page, inspect the `customchecks?status=fail` response instead of assuming the Custom Checks page must be visited first.
+4. If remotes are unexpectedly present after a primary outage, verify the `primary-unavailable` mock scenario is active and that remote discovery is skipped for that refresh.

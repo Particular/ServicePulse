@@ -7,6 +7,7 @@ import usePlatformHealthStoreAutoRefresh from "@/composables/usePlatformHealthSt
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 import FAIcon from "@/components/FAIcon.vue";
 import { faArrowTurnUp, faChevronDown, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { WarningLevel } from "@/components/WarningLevel";
 
 const { store } = usePlatformHealthStoreAutoRefresh();
 useEnvironmentAndVersionsAutoRefresh();
@@ -75,6 +76,24 @@ function issueEntries(row: (typeof store.rows)[number]) {
   return entries;
 }
 
+function issueWarningLevel(row: (typeof store.rows)[number]) {
+  switch (row.health) {
+    case "degraded":
+      return WarningLevel.Warning;
+    case "unavailable":
+      return WarningLevel.Danger;
+    default:
+      return WarningLevel.None;
+  }
+}
+
+function issuePanelClass(row: (typeof store.rows)[number]) {
+  return {
+    warning: row.health === "degraded",
+    danger: row.health === "unavailable",
+  };
+}
+
 function showsNoProblems(row: (typeof store.rows)[number]) {
   return row.type === "ServicePulse" && row.healthDetails.length === 1 && row.healthDetails[0] === "No problems detected.";
 }
@@ -139,13 +158,13 @@ function toggleRow(row: (typeof store.rows)[number]) {
                   <tr v-if="isExpanded(row)" :id="`${rowKey(row)}-details`" class="details-row">
                     <td colspan="4" class="details-cell">
                       <div class="details-stack">
-                        <section v-if="issueEntries(row).length > 0" class="details-card details-card-issues">
+                        <section v-if="issueEntries(row).length > 0" class="details-card details-card-issues" :class="issuePanelClass(row)">
                           <div class="details-card-header">
                             <h3>Health issues</h3>
                           </div>
                           <div class="issue-list">
                             <article v-for="issue in issueEntries(row)" :key="issue.summary + (issue.reportedAt ?? '')" class="issue-item">
-                              <FAIcon class="issue-icon" :icon="faTriangleExclamation" />
+                              <FAIcon class="issue-icon" :class="issueWarningLevel(row)" :icon="faTriangleExclamation" />
                               <div class="issue-content">
                                 <div class="issue-summary">{{ issue.summary }}</div>
                                 <div v-if="issue.reportedAt" class="issue-meta">Reported at: {{ issue.reportedAt }}</div>
@@ -258,6 +277,15 @@ tbody tr:last-child td {
 }
 
 .details-card-issues {
+  background: #fffafa;
+}
+
+.details-card-issues.warning {
+  border-left: 4px solid var(--bs-warning);
+  background: #fffdf2;
+}
+
+.details-card-issues.danger {
   border-left: 4px solid #b53a31;
   background: #fffafa;
 }
@@ -293,9 +321,16 @@ tbody tr:last-child td {
 
 .issue-icon {
   margin-top: 0.2rem;
-  color: #b53a31;
   font-size: 14px;
   flex: none;
+}
+
+.issue-icon.warning {
+  color: var(--bs-warning);
+}
+
+.issue-icon.danger {
+  color: #b53a31;
 }
 
 .issue-content {

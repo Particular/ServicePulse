@@ -12,7 +12,13 @@ installPlatformHealthDevControls();
 export const setupComplete = (async () => {
   await runScenario(precondition.serviceControlWithMonitoring);
   await runScenario(() => {
+    const primaryUnavailable = () => window.__platformHealth?.getState().scenario === "primary-unavailable";
+
     driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}`, "get", () => {
+      if (primaryUnavailable()) {
+        return Promise.resolve({ body: { detail: "Primary unavailable" }, status: 503 });
+      }
+
       const body = getPlatformHealthPrimaryRoot();
 
       return Promise.resolve({
@@ -21,8 +27,18 @@ export const setupComplete = (async () => {
         headers: { "X-Particular-Version": stateVersion() },
       });
     });
-    driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}configuration/remotes`, "get", () => Promise.resolve({ body: getPlatformHealthRemoteInstances() }));
+    driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}configuration/remotes`, "get", () => {
+      if (primaryUnavailable()) {
+        return Promise.resolve({ body: { detail: "Primary unavailable" }, status: 503 });
+      }
+
+      return Promise.resolve({ body: getPlatformHealthRemoteInstances() });
+    });
     driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}customchecks`, "get", (url) => {
+      if (primaryUnavailable()) {
+        return Promise.resolve({ body: { detail: "Primary unavailable" }, status: 503 });
+      }
+
       const status = url.searchParams.get("status");
       const body = getPlatformHealthCustomChecks();
 
