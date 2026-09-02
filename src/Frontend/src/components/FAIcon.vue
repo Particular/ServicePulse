@@ -13,6 +13,6 @@ withDefaults(
 </script>
 
 <template>
-  <FontAwesomeIcon v-if="title" :icon="icon" :size="size" v-tippy="title" />
-  <FontAwesomeIcon v-else :icon="icon" :size="size" />
+  <FontAwesomeIcon v-if="title" :icon="icon" :size="size" focusable="false" v-tippy="title" />
+  <FontAwesomeIcon v-else :icon="icon" :size="size" focusable="false" />
 </template>
