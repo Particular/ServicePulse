@@ -23,6 +23,15 @@ describe("FEATURE: Results count", () => {
     expect(screen.getByText("Showing 10 of 10 result(s) · took 320 ms")).toBeInTheDocument();
   });
 
+  test("EXAMPLE: When the query ran is shown relatively with the timestamp as tooltip", () => {
+    const completedAt = new Date(Date.now() - 3 * 60 * 1000).toISOString();
+    render(ResultsCount, { props: { displayed: 10, total: 10, durationMs: 320, completedAt } });
+
+    const ran = screen.getByTestId("ran-ago");
+    expect(ran.textContent).toContain("minutes ago");
+    expect(ran.getAttribute("title")).toContain("(UTC)");
+  });
+
   test("EXAMPLE: Zero results render plainly", () => {
     render(ResultsCount, { props: { displayed: 0, total: 0 } });
 

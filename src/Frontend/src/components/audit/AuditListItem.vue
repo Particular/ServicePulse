@@ -5,6 +5,7 @@ import { computed } from "vue";
 import { formatDotNetTimespan } from "@/composables/formatUtils";
 import { useRouter, RouterLink } from "vue-router";
 import MessageStatusIcon from "@/components/audit/MessageStatusIcon.vue";
+import AdaptiveTimestamp from "@/components/AdaptiveTimestamp.vue";
 
 const router = useRouter();
 
@@ -33,7 +34,7 @@ const link = computed(() => {
     </div>
     <div class="message-id">{{ props.message.message_id }}</div>
     <div class="message-type">{{ props.message.message_type }}</div>
-    <div class="time-sent"><span class="label-name">Time Sent:</span>{{ new Date(props.message.time_sent).toLocaleString() }}</div>
+    <div class="time-sent"><span class="label-name">Time Sent:</span><AdaptiveTimestamp :date-utc="props.message.time_sent" /></div>
     <div class="critical-time"><span class="label-name">Critical Time:</span>{{ formatDotNetTimespan(props.message.critical_time) }}</div>
     <div class="processing-time"><span class="label-name">Processing Time:</span>{{ formatDotNetTimespan(props.message.processing_time) }}</div>
     <div class="delivery-time"><span class="label-name">Delivery Time:</span>{{ formatDotNetTimespan(props.message.delivery_time) }}</div>

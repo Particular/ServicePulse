@@ -38,6 +38,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
   // of the query that produced the current results
   const queryStartedAt = ref<number | null>(null);
   const queryDurationMs = ref<number | null>(null);
+  const queryCompletedAt = ref<string | null>(null);
   const searchHistory = ref(loadSearchHistory());
   let activeQuery: AbortController | null = null;
 
@@ -90,6 +91,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
       messages.value = data;
       queryFailed.value = false;
       queryDurationMs.value = Math.round(performance.now() - started);
+      queryCompletedAt.value = new Date().toISOString();
     } catch {
       if (thisQuery.signal.aborted) {
         // Superseded by a newer query, or the view was left
@@ -139,6 +141,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
     queryFailed,
     queryStartedAt,
     queryDurationMs,
+    queryCompletedAt,
     searchHistory,
     clearSearchHistory: clearHistory,
   };
