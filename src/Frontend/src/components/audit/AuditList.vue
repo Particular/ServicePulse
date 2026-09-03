@@ -19,7 +19,7 @@ import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { loadDefaultRange, narrowingPresets, resolveTimeRange, type RangePreset } from "@/components/audit/timeRange";
 
 const store = useAuditStore();
-const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryStartedAt, queryDurationMs } = storeToRefs(store);
+const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryStartedAt, queryDurationMs, queryCompletedAt } = storeToRefs(store);
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
@@ -185,7 +185,7 @@ watch(autoRefreshValue, (newValue) => {
         </FiltersPanel>
       </div>
       <div class="row results-row">
-        <ResultsCount :displayed="messages.length" :total="totalCount" :duration-ms="queryDurationMs" />
+        <ResultsCount :displayed="messages.length" :total="totalCount" :duration-ms="queryDurationMs" :completed-at="queryCompletedAt" />
         <ResultsOptions />
       </div>
       <PageBanner v-if="bannerMessage && isMassTransitConnected === false" :message="bannerMessage" :show-action="showBannerAction" @action="showWizard = true" />
