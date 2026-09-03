@@ -31,6 +31,21 @@ describe("AuditStore refresh", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  test("the default time range bounds the very first query", async () => {
+    fetchTypedFromServiceControl.mockResolvedValue([responseWithTotalCount(0), []]);
+    const store = useAuditStore();
+
+    await store.refresh();
+
+    const url = fetchTypedFromServiceControl.mock.calls[0][0] as string;
+    const params = new URLSearchParams(url.split("?")[1]);
+    expect(store.timeRangeFrom).toBe("now-6h");
+    expect(params.get("from")).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(params.get("to")).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(new Date(params.get("to")!).getTime() - new Date(params.get("from")!).getTime()).toBe(6 * 3600 * 1000);
   });
 
   test("a successful query populates the messages and total count", async () => {
