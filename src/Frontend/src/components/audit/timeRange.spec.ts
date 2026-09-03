@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { parseTimePoint, resolveTimeRange, loadDefaultRange, saveDefaultRange, factoryDefaultRange } from "@/components/audit/timeRange";
+import { parseTimePoint, resolveTimeRange, loadDefaultRange, saveDefaultRange, factoryDefaultRange, narrowingPresets } from "@/components/audit/timeRange";
 
 const NOW = new Date("2026-09-01T10:30:45.000Z");
 const now = () => new Date(NOW);
@@ -136,5 +136,23 @@ describe("default range storage", () => {
   test("corrupt storage falls back to the factory default", () => {
     localStorage.setItem("audit.defaultTimeRange", "{nonsense");
     expect(loadDefaultRange()).toEqual(factoryDefaultRange);
+  });
+});
+
+describe("FEATURE: Narrowing suggestions after a timed-out query", () => {
+  test("EXAMPLE: An unbounded query gets the widest still-bounded presets", () => {
+    expect(narrowingPresets({ from: "", to: "" }, now).map((p) => p.label)).toEqual(["Last 7 days", "Last 24 hours"]);
+  });
+
+  test("EXAMPLE: Only presets strictly narrower than the failed range are offered", () => {
+    expect(narrowingPresets({ from: "now-6h", to: "now" }, now).map((p) => p.label)).toEqual(["Last hour", "Last 15 minutes"]);
+  });
+
+  test("EXAMPLE: A custom absolute range gets the presets inside its span", () => {
+    expect(narrowingPresets({ from: "2026-08-30 10:00Z", to: "2026-09-01 10:00Z" }, now).map((p) => p.label)).toEqual(["Last 24 hours", "Last 6 hours"]);
+  });
+
+  test("EXAMPLE: The narrowest preset has nowhere further to go", () => {
+    expect(narrowingPresets({ from: "now-15m", to: "now" }, now)).toEqual([]);
   });
 });

@@ -194,6 +194,23 @@ export const rangePresets: RangePreset[] = [
   { label: "This week", from: "now/w", to: "now" },
 ];
 
+// The one-click escape hatch for a timed-out query: the "last N" presets
+// strictly narrower than the range that just failed, widest first — a gentle
+// step down, not a cliff. An empty or invalid range has no bound at all, so
+// everything qualifies. At most two suggestions.
+export function narrowingPresets(range: TimeRangeText, now: () => Date = () => new Date()): RangePreset[] {
+  const resolved = resolveTimeRange(range, now);
+  const spanMs = resolved ? resolved.to.getTime() - resolved.from.getTime() : Infinity;
+  const spanOf = (preset: RangePreset) => {
+    const r = resolveTimeRange({ from: preset.from, to: preset.to }, now)!;
+    return r.to.getTime() - r.from.getTime();
+  };
+  return rangePresets
+    .filter((preset) => preset.to === "now" && !preset.from.includes("/") && spanOf(preset) < spanMs)
+    .slice(-2)
+    .reverse();
+}
+
 // The initial range when the URL doesn't carry one. Users can save their own
 // default (kept in this browser); the factory default bounds the first query
 // so opening the view never scans the whole store.

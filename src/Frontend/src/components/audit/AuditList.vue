@@ -16,7 +16,7 @@ import { useAuditingCapability } from "@/components/platformcapabilities/capabil
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import PageBanner, { type BannerMessage } from "@/components/PageBanner.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
-import { loadDefaultRange } from "@/components/audit/timeRange";
+import { loadDefaultRange, narrowingPresets, resolveTimeRange, type RangePreset } from "@/components/audit/timeRange";
 
 const store = useAuditStore();
 const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryStartedAt, queryDurationMs, queryCompletedAt } = storeToRefs(store);
@@ -60,6 +60,16 @@ const bannerMessage = computed<BannerMessage | null>(() => {
 });
 
 const showBannerAction = computed(() => auditStatus.value !== CapabilityStatus.Unavailable && auditStatus.value !== CapabilityStatus.PartiallyUnavailable);
+
+// Query cost grows with the time window, so a timed-out query's escape hatch
+// is a narrower one — offered as one click instead of prose alone
+const hasNoTimeFilter = computed(() => resolveTimeRange({ from: timeRangeFrom.value, to: timeRangeTo.value }) === null);
+const narrowOptions = computed(() => (queryFailed.value ? narrowingPresets({ from: timeRangeFrom.value, to: timeRangeTo.value }) : []));
+
+function applyNarrowing(preset: RangePreset) {
+  timeRangeFrom.value = preset.from;
+  timeRangeTo.value = preset.to;
+}
 
 onBeforeMount(() => {
   setQuery();
@@ -180,7 +190,11 @@ watch(autoRefreshValue, (newValue) => {
     <WizardDialog v-if="showWizard" title="Getting Started with Auditing" :pages="wizardPages" @close="showWizard = false" />
     <div v-if="queryFailed && !queryInProgress" class="query-error" role="alert" data-testid="query-error">
       <strong>The query failed or took too long and was stopped.</strong>
-      <p>The ServiceControl instance might be too busy. Try again in an off-peak period, reduce the maximum number of results ("Show"), or narrow the date range.</p>
+      <p v-if="hasNoTimeFilter">This query has no time filter, so it scans the whole audit store. Bounding it is the quickest fix — or try again in an off-peak period.</p>
+      <p v-else>Query cost grows with the size of the time window. Try a narrower range, add a search term or endpoint filter, or reduce the number of results ("Show").</p>
+      <div v-if="narrowOptions.length > 0" class="error-actions">
+        <button v-for="preset in narrowOptions" :key="preset.label" type="button" class="narrow-action" data-testid="narrow-range" @click="applyNarrowing(preset)">{{ preset.label }}</button>
+      </div>
     </div>
     <div class="row results-table">
       <LoadingSpinner v-if="firstLoad || isRefreshing" :overlay="isRefreshing && messages.length > 0" />
@@ -215,6 +229,27 @@ watch(autoRefreshValue, (newValue) => {
 
 .query-error p {
   margin: 0.25rem 0 0;
+}
+
+.error-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.narrow-action {
+  border: 1px solid #ce4844;
+  background: #fff;
+  color: #ce4844;
+  border-radius: 4px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.narrow-action:hover {
+  background: #ce4844;
+  color: #fff;
 }
 
 .results-row {
