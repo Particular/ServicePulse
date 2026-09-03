@@ -95,6 +95,14 @@ export function getPlatformHealthRemoteInstances(): RemoteInstance[] {
   return toRemoteInstances(state);
 }
 
+export function getPlatformHealthConfiguration() {
+  return {
+    host: {
+      instance_name: state.primary.name,
+    },
+  };
+}
+
 export function getPlatformHealthMonitoringRoot() {
   if (state.monitoring === null) {
     return null;

@@ -1,7 +1,7 @@
 import * as precondition from "../../../preconditions";
 import { ApiRoutes } from "@/composables/apiRoutes";
 import { createScenario } from "../scenario-helper";
-import { getPlatformHealthCustomChecks, getPlatformHealthMonitoringRoot, getPlatformHealthPrimaryRoot, getPlatformHealthRemoteInstances, installPlatformHealthDevControls } from "../../platform-health-state";
+import { getPlatformHealthConfiguration, getPlatformHealthCustomChecks, getPlatformHealthMonitoringRoot, getPlatformHealthPrimaryRoot, getPlatformHealthRemoteInstances, installPlatformHealthDevControls } from "../../platform-health-state";
 
 const { worker, driver, runScenario } = createScenario();
 
@@ -33,6 +33,13 @@ export const setupComplete = (async () => {
       }
 
       return Promise.resolve({ body: getPlatformHealthRemoteInstances() });
+    });
+    driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}configuration`, "get", () => {
+      if (primaryUnavailable()) {
+        return Promise.resolve({ body: { detail: "Primary unavailable" }, status: 503 });
+      }
+
+      return Promise.resolve({ body: getPlatformHealthConfiguration() });
     });
     driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}customchecks`, "get", (url) => {
       if (primaryUnavailable()) {

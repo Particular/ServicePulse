@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import serviceControlClient, { type ServiceControlRootDocument } from "@/components/serviceControlClient";
 import monitoringClient, { type MonitoringRoot } from "@/components/monitoring/monitoringClient";
 import { RemoteInstanceType, type RemoteInstance } from "@/resources/RemoteInstance";
+import type Configuration from "@/resources/Configuration";
 import type { PlatformInstance, PlatformModel, ServicePulse } from "@/resources/PlatformModel";
 
 export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
@@ -16,11 +17,11 @@ export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
   const errorInstances = computed(() => remotes.value.filter((instance) => instance.kind === "error"));
 
   async function refresh() {
-    const [primaryRoot, monitoringResponse] = await Promise.all([getPrimaryRoot(), getMonitoringRoot()]);
+    const [primaryRoot, monitoringResponse, configuration] = await Promise.all([getPrimaryRoot(), getMonitoringRoot(), getConfiguration()]);
     const remotesResponse = primaryRoot ? await getRemotes() : [];
 
     model.value = {
-      primary: mapPrimary(primaryRoot),
+      primary: mapPrimary(primaryRoot, configuration),
       remotes: mapRemotes(remotesResponse),
       monitoring: mapMonitoring(monitoringResponse),
       servicePulse: mapServicePulse(),
@@ -61,6 +62,15 @@ async function getRemotes(): Promise<RemoteInstance[]> {
   }
 }
 
+async function getConfiguration(): Promise<Configuration | null> {
+  try {
+    const response = await serviceControlClient.fetchFromServiceControl("configuration");
+    return (await response.json()) as Configuration;
+  } catch {
+    return null;
+  }
+}
+
 async function getMonitoringRoot(): Promise<MonitoringRoot | null> {
   if (!monitoringClient.isMonitoringEnabled) {
     return null;
@@ -76,11 +86,11 @@ async function getMonitoringRoot(): Promise<MonitoringRoot | null> {
   }
 }
 
-function mapPrimary(primaryRoot: PrimaryRootResult | null): PlatformInstance {
+function mapPrimary(primaryRoot: PrimaryRootResult | null, configuration: Configuration | null): PlatformInstance {
   if (!primaryRoot) {
     return {
       id: "primary",
-      name: "Particular.ServiceControl",
+      name: configuration?.host?.instance_name ?? "Particular.ServiceControl",
       kind: "error",
       role: "primary-error",
       version: "Unknown",
@@ -93,7 +103,7 @@ function mapPrimary(primaryRoot: PrimaryRootResult | null): PlatformInstance {
 
   return {
     id: "primary",
-    name: document.name,
+    name: configuration?.host?.instance_name ?? document.name,
     kind: "error",
     role: "primary-error",
     version: document.platform_health_version ?? version,

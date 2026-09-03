@@ -6,12 +6,14 @@ import { RemoteInstanceType } from "@/resources/RemoteInstance";
 const getRoot = vi.fn();
 const getRemoteInstances = vi.fn();
 const getMonitoringRoot = vi.fn();
+const getConfiguration = vi.fn();
 
 vi.mock("@/components/serviceControlClient", () => ({
   default: {
     url: "http://localhost:33333/api/",
     getRoot: (...args: unknown[]) => getRoot(...args),
     getRemoteInstances: (...args: unknown[]) => getRemoteInstances(...args),
+    fetchFromServiceControl: (...args: unknown[]) => getConfiguration(...args),
   },
 }));
 
@@ -29,6 +31,7 @@ describe("PlatformModelStore", () => {
     getRoot.mockReset();
     getRemoteInstances.mockReset();
     getMonitoringRoot.mockReset();
+    getConfiguration.mockReset();
     window.__platformHealth = undefined;
   });
 
@@ -88,6 +91,31 @@ describe("PlatformModelStore", () => {
     expect(store.primary?.name).toBe("Particular.ServiceControl.Primary");
     expect(store.primary?.health).toBe("healthy");
     expect(store.primary?.version).toBe("6.19.3");
+  });
+
+  test("uses host.instance_name from /api/configuration for the primary name", async () => {
+    getRoot.mockResolvedValue(rootResponse({ name: "ServiceControl", health: "healthy", version: "6.19.3" }));
+    getConfiguration.mockResolvedValue({ json: async () => ({ host: { instance_name: "booger" } }) } as never);
+    getRemoteInstances.mockResolvedValue([]);
+    getMonitoringRoot.mockResolvedValue(null);
+
+    const store = usePlatformModelStore();
+    await store.refresh();
+
+    expect(store.primary?.name).toBe("booger");
+    expect(store.primary?.health).toBe("healthy");
+  });
+
+  test("falls back to the root document name when configuration has no host.instance_name", async () => {
+    getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl.Primary", health: "healthy", version: "6.19.3" }));
+    getConfiguration.mockResolvedValue({ json: async () => ({ host: {} }) } as never);
+    getRemoteInstances.mockResolvedValue([]);
+    getMonitoringRoot.mockResolvedValue(null);
+
+    const store = usePlatformModelStore();
+    await store.refresh();
+
+    expect(store.primary?.name).toBe("Particular.ServiceControl.Primary");
   });
 
   test("uses cached remote instance type when an unavailable remote no longer has configuration", async () => {
