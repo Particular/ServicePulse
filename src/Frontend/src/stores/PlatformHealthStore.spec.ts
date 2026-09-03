@@ -49,11 +49,11 @@ describe("PlatformHealthStore", () => {
     expect(primaryRow.infoDetails).toContain("Error queue: error");
     expect(primaryRow.infoDetails).toContain("Error log queue: error.log");
     expect(primaryRow.infoDetails).toContain("Forward error messages: Yes");
-    expect(primaryRow.infoDetails).toContain("Error retention: 14.00:00:00");
+    expect(primaryRow.infoDetails).toContain("Error retention: 14 days");
 
     const auditRow = store.rows[1];
     expect(auditRow.infoDetails).toContain("API: http://Particular.ServiceControl.Audit/api/");
-    expect(auditRow.infoDetails).toContain("Audit retention: 7.00:00:00");
+    expect(auditRow.infoDetails).toContain("Audit retention: 7 days");
     expect(auditRow.infoDetails).not.toContain(expect.stringContaining("Transport"));
   });
 

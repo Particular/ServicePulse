@@ -201,11 +201,11 @@ function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: s
   }
 
   if (instance.errorRetentionPeriod) {
-    infoDetails.push(`Error retention: ${instance.errorRetentionPeriod}`);
+    infoDetails.push(`Error retention: ${formatTimeSpan(instance.errorRetentionPeriod)}`);
   }
 
   if (instance.auditRetentionPeriod) {
-    infoDetails.push(`Audit retention: ${instance.auditRetentionPeriod}`);
+    infoDetails.push(`Audit retention: ${formatTimeSpan(instance.auditRetentionPeriod)}`);
   }
 
   return {
@@ -374,4 +374,31 @@ function normalizeChecks(checks: CustomCheck[] | unknown) {
 
 function sameInstanceName(left: string, right: string) {
   return left.localeCompare(right, undefined, { sensitivity: "accent" }) === 0;
+}
+
+function formatTimeSpan(timeSpan: string): string {
+  const match = timeSpan.match(/^(?:(\d+)\.)?(\d{2}):(\d{2}):(\d{2})$/);
+  if (!match) {
+    return timeSpan;
+  }
+
+  const days = parseInt(match[1] ?? "0", 10);
+  const hours = parseInt(match[2], 10);
+  const minutes = parseInt(match[3], 10);
+
+  const parts: string[] = [];
+
+  if (days > 0) {
+    parts.push(`${days} ${days === 1 ? "day" : "days"}`);
+  }
+
+  if (hours > 0) {
+    parts.push(`${hours} ${hours === 1 ? "hour" : "hours"}`);
+  }
+
+  if (minutes > 0) {
+    parts.push(`${minutes} ${minutes === 1 ? "minute" : "minutes"}`);
+  }
+
+  return parts.length > 0 ? parts.join(", ") : "0 days";
 }
