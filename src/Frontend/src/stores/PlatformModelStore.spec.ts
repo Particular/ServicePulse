@@ -95,7 +95,7 @@ describe("PlatformModelStore", () => {
 
   test("uses host.instance_name from /api/configuration for the primary name", async () => {
     getRoot.mockResolvedValue(rootResponse({ name: "ServiceControl", health: "healthy", version: "6.19.3" }));
-    getConfiguration.mockResolvedValue({ json: async () => ({ host: { instance_name: "booger" } }) } as never);
+    getConfiguration.mockResolvedValue({ json: () => Promise.resolve({ host: { instance_name: "booger" } }) } as never);
     getRemoteInstances.mockResolvedValue([]);
     getMonitoringRoot.mockResolvedValue(null);
 
@@ -108,7 +108,7 @@ describe("PlatformModelStore", () => {
 
   test("falls back to the root document name when configuration has no host.instance_name", async () => {
     getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl.Primary", health: "healthy", version: "6.19.3" }));
-    getConfiguration.mockResolvedValue({ json: async () => ({ host: {} }) } as never);
+    getConfiguration.mockResolvedValue({ json: () => Promise.resolve({ host: {} }) } as never);
     getRemoteInstances.mockResolvedValue([]);
     getMonitoringRoot.mockResolvedValue(null);
 
@@ -140,7 +140,7 @@ describe("PlatformModelStore", () => {
   test("maps transport and retention fields from configuration and remotes", async () => {
     getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl", health: "healthy", version: "6.19.3" }));
     getConfiguration.mockResolvedValue({
-      json: async () => ({
+      json: () => Promise.resolve({
         host: { instance_name: "Particular.ServiceControl" },
         transport: {
           transport_type: "RabbitMQ.QuorumConventionalRouting",
