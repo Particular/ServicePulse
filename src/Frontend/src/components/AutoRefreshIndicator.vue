@@ -19,50 +19,77 @@ const fraction = computed(() => {
 });
 
 const secondsLeft = computed(() => (props.nextRefreshAt === null ? null : Math.max(0, Math.ceil((props.nextRefreshAt - now.value) / 1000))));
+
+// r=6.75 in a 16x16 viewBox (filling the box like a FontAwesome glyph does);
+// the arc depletes as the next refresh approaches
+const circumference = 2 * Math.PI * 6.75;
+const dashOffset = computed(() => (fraction.value === null ? 0 : circumference * (1 - fraction.value)));
+
+const label = computed(() => (props.refreshing ? "Waiting for query results…" : `Auto refresh in ${secondsLeft.value}s`));
 </script>
 
 <template>
-  <div
-    v-if="fraction !== null"
-    class="auto-refresh-indicator"
-    role="timer"
-    :aria-label="refreshing ? 'Waiting for query results' : `Auto refresh in ${secondsLeft} seconds`"
-    :title="refreshing ? 'Waiting for query results…' : `Auto refresh in ${secondsLeft}s`"
-    data-testid="auto-refresh-indicator"
-  >
-    <div v-if="refreshing" class="bar waiting" data-testid="auto-refresh-waiting" />
-    <div v-else class="bar" :style="{ width: `${fraction * 100}%` }" data-testid="auto-refresh-countdown" />
-  </div>
+  <span v-if="fraction !== null" class="auto-refresh-indicator" role="timer" :aria-label="label" :title="label" data-testid="auto-refresh-indicator" :data-state="refreshing ? 'waiting' : 'countdown'">
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <circle class="track" cx="8" cy="8" r="6.75" />
+      <circle v-if="!refreshing" class="progress" cx="8" cy="8" r="6.75" :stroke-dasharray="circumference" :stroke-dashoffset="dashOffset" data-testid="auto-refresh-countdown" />
+      <circle v-else class="waiting" cx="8" cy="8" r="6.75" :stroke-dasharray="`${circumference / 5} ${circumference / 5}`" data-testid="auto-refresh-waiting" />
+    </svg>
+  </span>
 </template>
 
 <style scoped>
 .auto-refresh-indicator {
-  width: 100%;
-  height: 3px;
-  margin-top: 0.25rem;
-  background-color: #e0e0e0;
-  border-radius: 2px;
-  overflow: hidden;
+  /* mirror FontAwesome's sizing so the ring occupies exactly the arrow icon's box */
+  display: inline-block;
+  line-height: 0;
+  vertical-align: -0.125em;
 }
 
-.bar {
-  height: 100%;
-  background-color: #00729c;
-  transition: width 250ms linear;
+svg {
+  width: 1em;
+  height: 1em;
 }
 
-.bar.waiting {
-  width: 100%;
-  animation: waiting-pulse 1.2s ease-in-out infinite;
+circle {
+  fill: none;
+  stroke-width: 2.4;
 }
 
-@keyframes waiting-pulse {
-  0%,
-  100% {
-    opacity: 0.35;
+.track {
+  stroke: #e3e3e3;
+}
+
+.progress {
+  stroke: #00729c;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 250ms linear;
+}
+
+.waiting {
+  stroke: #b0b0b0;
+  animation: ring-spin 1.6s linear infinite;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress {
+    transition: none;
   }
-  50% {
-    opacity: 0.9;
+
+  .waiting {
+    animation: none;
+  }
+}
+
+@keyframes ring-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>

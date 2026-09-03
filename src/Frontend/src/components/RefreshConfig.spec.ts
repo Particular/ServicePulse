@@ -19,7 +19,7 @@ import RefreshConfig from "@/components/RefreshConfig.vue";
 // a stub that diverges here hides exactly the bug this file exists to prevent.
 const ActionButtonStub = defineComponent({
   props: { loading: Boolean, disabled: Boolean, disableOnLoading: { type: Boolean, default: true } },
-  template: '<button :data-loading="String(loading)" :disabled="disabled || (loading && disableOnLoading)"><slot /></button>',
+  template: '<button :data-loading="String(loading)" :disabled="disabled || (loading && disableOnLoading)"><slot name="icon" /><slot /></button>',
 });
 
 const ListFilterSelectorStub = defineComponent({
@@ -52,8 +52,8 @@ function renderRefreshConfig(queryInProgress: boolean) {
     await rerender({ queryInProgress: value, modelValue: null });
   }
 
-  async function rerenderWith(props: { queryInProgress: boolean; queryStartedAt?: number | null }) {
-    await rerender({ ...props, modelValue: null });
+  async function rerenderWith(props: { queryInProgress: boolean; queryStartedAt?: number | null; nextRefreshAt?: number | null; modelValue?: number | null }) {
+    await rerender({ modelValue: null, ...props });
   }
 
   return {
@@ -106,6 +106,23 @@ describe("FEATURE: Refresh Controls Query State", () => {
       await rerenderWith({ queryInProgress: true, queryStartedAt: Date.now() - 2700 });
 
       expect(getButton().textContent).toMatch(/Cancel · \d+\.\ds/);
+    });
+
+    test("EXAMPLE: With auto-refresh armed, the countdown ring sits inside the button", async () => {
+      const { rerenderWith, getButton } = renderRefreshConfig(false);
+
+      await rerenderWith({ queryInProgress: false, nextRefreshAt: Date.now() + 3000, modelValue: 5000 });
+
+      expect(getButton().querySelector('[data-testid="auto-refresh-indicator"]')).not.toBeNull();
+      expect(getButton().textContent).toContain("Refresh");
+    });
+
+    test("EXAMPLE: Without auto-refresh there is no ring", async () => {
+      const { rerenderWith, getButton } = renderRefreshConfig(false);
+
+      await rerenderWith({ queryInProgress: false, nextRefreshAt: null, modelValue: null });
+
+      expect(getButton().querySelector('[data-testid="auto-refresh-indicator"]')).toBeNull();
     });
 
     test("EXAMPLE: Clicking during a query emits cancelQuery, not manualRefresh", async () => {
