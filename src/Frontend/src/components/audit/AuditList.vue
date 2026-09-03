@@ -20,7 +20,7 @@ import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { loadDefaultRange } from "@/components/audit/timeRange";
 
 const store = useAuditStore();
-const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed } = storeToRefs(store);
+const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryStartedAt, queryDurationMs } = storeToRefs(store);
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
@@ -165,13 +165,16 @@ watch(autoRefreshValue, (newValue) => {
 <template>
   <div>
     <div class="header">
-      <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" @manual-refresh="refreshNow" />
-      <AutoRefreshIndicator :next-refresh-at="nextRefreshAt" :interval-ms="autoRefreshValue" :refreshing="isRefreshing" />
       <div class="row">
-        <FiltersPanel />
+        <FiltersPanel>
+          <template #actions>
+            <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" :query-started-at="queryStartedAt" @manual-refresh="refreshNow" @cancel-query="store.cancelQuery" />
+            <AutoRefreshIndicator :next-refresh-at="nextRefreshAt" :interval-ms="autoRefreshValue" :refreshing="isRefreshing" />
+          </template>
+        </FiltersPanel>
       </div>
       <div class="row results-row">
-        <ResultsCount :displayed="messages.length" :total="totalCount" />
+        <ResultsCount :displayed="messages.length" :total="totalCount" :duration-ms="queryDurationMs" />
         <ResultsOptions />
       </div>
       <PageBanner v-if="bannerMessage && isMassTransitConnected === false" :message="bannerMessage" :show-action="showBannerAction" @action="showWizard = true" />

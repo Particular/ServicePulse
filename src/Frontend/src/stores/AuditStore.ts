@@ -33,6 +33,10 @@ export const useAuditStore = defineStore("AuditStore", () => {
   const selectedEndpointName = ref<string>("");
   const endpoints = ref<EndpointsView[]>([]);
   const queryFailed = ref(false);
+  // Epoch ms of the in-flight query's start (null when idle) and the duration
+  // of the query that produced the current results
+  const queryStartedAt = ref<number | null>(null);
+  const queryDurationMs = ref<number | null>(null);
   let activeQuery: AbortController | null = null;
 
   async function loadEndpoints() {
@@ -56,6 +60,9 @@ export const useAuditStore = defineStore("AuditStore", () => {
     const resolvedRange = resolveTimeRange({ from: timeRangeFrom.value, to: timeRangeTo.value });
     const dateRange: DateRange = resolvedRange ? [resolvedRange.from, resolvedRange.to] : [];
 
+    const started = performance.now();
+    queryStartedAt.value = Date.now();
+
     try {
       const [response, data] = await auditClient.getMessages(
         {
@@ -76,6 +83,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
       totalCount.value = parseInt(response.headers.get("total-count") ?? "0");
       messages.value = data;
       queryFailed.value = false;
+      queryDurationMs.value = Math.round(performance.now() - started);
     } catch {
       if (thisQuery.signal.aborted) {
         // Superseded by a newer query, or the view was left
@@ -91,6 +99,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
     } finally {
       if (activeQuery === thisQuery) {
         activeQuery = null;
+        queryStartedAt.value = null;
       }
     }
   }
@@ -101,6 +110,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
   function cancelQuery() {
     activeQuery?.abort();
     activeQuery = null;
+    queryStartedAt.value = null;
   }
 
   return {
@@ -117,6 +127,8 @@ export const useAuditStore = defineStore("AuditStore", () => {
     timeRangeFrom,
     timeRangeTo,
     queryFailed,
+    queryStartedAt,
+    queryDurationMs,
   };
 });
 

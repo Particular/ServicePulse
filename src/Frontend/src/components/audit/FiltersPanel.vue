@@ -34,6 +34,9 @@ const endpointNames = computed(() => {
         <SuperDatePicker />
       </div>
     </div>
+    <div class="filter actions">
+      <slot name="actions" />
+    </div>
   </div>
 </template>
 
@@ -53,6 +56,13 @@ const endpointNames = computed(() => {
   align-items: start;
   min-width: 0;
   max-width: 100%;
+}
+
+.filter.actions {
+  margin-left: auto;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
 }
 
 .filter-component {

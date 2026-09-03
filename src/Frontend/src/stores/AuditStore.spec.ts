@@ -102,6 +102,22 @@ describe("AuditStore refresh", () => {
     expect(store.queryFailed).toBe(false);
   });
 
+  test("timing state: startedAt while in flight, duration recorded on success", async () => {
+    const store = useAuditStore();
+
+    let resolveFetch!: (v: unknown) => void;
+    fetchTypedFromServiceControl.mockImplementationOnce(() => new Promise((r) => (resolveFetch = r)));
+
+    const inFlight = store.refresh();
+    expect(store.queryStartedAt).not.toBeNull();
+
+    resolveFetch([responseWithTotalCount(1), [message]]);
+    await inFlight;
+
+    expect(store.queryStartedAt).toBeNull();
+    expect(store.queryDurationMs).toBeGreaterThanOrEqual(0);
+  });
+
   test("cancelQuery aborts the query in flight without reporting a failure", async () => {
     const store = useAuditStore();
 
@@ -114,6 +130,7 @@ describe("AuditStore refresh", () => {
 
     expect(signal?.aborted).toBe(true);
     expect(store.queryFailed).toBe(false);
+    expect(store.queryStartedAt).toBeNull();
   });
 
   test("a superseded query is not reported as a failure", async () => {

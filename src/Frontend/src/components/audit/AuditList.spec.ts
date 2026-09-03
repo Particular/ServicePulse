@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/vue";
+import { fireEvent, render, screen, waitFor } from "@testing-library/vue";
 import { createTestingPinia } from "@pinia/testing";
 import { createRouter, createMemoryHistory } from "vue-router";
 import { ref, shallowReadonly, nextTick, type Ref } from "vue";
@@ -145,8 +145,12 @@ async function renderAuditList(messages: Message[] = [], options: { neverComplet
       plugins: [pinia, router],
       stubs: {
         AuditListItem: { template: '<div data-testid="message-item" />' },
-        RefreshConfig: { template: '<div data-testid="refresh-config" :data-query-in-progress="String(queryInProgress)" />', props: ["queryInProgress"] },
-        FiltersPanel: { template: '<div data-testid="filters-panel" :data-query-in-progress="String(queryInProgress)" />', props: ["queryInProgress"] },
+        RefreshConfig: {
+          template: `<div data-testid="refresh-config" :data-query-in-progress="String(queryInProgress)"><button data-testid="cancel-button" @click="$emit('cancel-query')"></button></div>`,
+          props: ["queryInProgress"],
+          emits: ["cancel-query", "manual-refresh"],
+        },
+        FiltersPanel: { template: '<div data-testid="filters-panel" :data-query-in-progress="String(queryInProgress)"><slot name="actions" /></div>', props: ["queryInProgress"] },
         ResultsCount: true,
         WizardDialog: true,
         PageBanner: true,
@@ -425,6 +429,18 @@ describe("FEATURE: Audit Messages Query State", () => {
       expect(store.timeRangeFrom).toBe("now-24h");
       expect(store.timeRangeTo).toBe("now");
       expect(refreshNow).toHaveBeenCalled();
+    });
+  });
+
+  describe("RULE: The refresh button cancels the running query", () => {
+    test("EXAMPLE: The cancel action aborts via the store", async () => {
+      const { store } = await renderAuditList([], { neverCompleteFirstQuery: true });
+
+      await waitForFirstLoadToComplete();
+
+      await fireEvent.click(screen.getByTestId("cancel-button"));
+
+      expect(store.cancelQuery).toHaveBeenCalled();
     });
   });
 
