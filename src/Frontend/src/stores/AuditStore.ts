@@ -69,6 +69,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
       );
 
       if (activeQuery !== thisQuery) {
+        // a newer query took over the view state while this one was in flight
         return;
       }
 
@@ -77,7 +78,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
       queryFailed.value = false;
     } catch {
       if (thisQuery.signal.aborted) {
-        // Superseded by a newer query, which owns the view state from here on
+        // Superseded by a newer query, or the view was left
         return;
       }
 
