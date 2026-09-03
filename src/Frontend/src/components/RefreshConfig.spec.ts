@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { afterEach, describe, test, expect, vi } from "vitest";
 import { render } from "@testing-library/vue";
 import { defineComponent } from "vue";
 import RefreshConfig from "@/components/RefreshConfig.vue";
@@ -19,7 +19,7 @@ import RefreshConfig from "@/components/RefreshConfig.vue";
 // a stub that diverges here hides exactly the bug this file exists to prevent.
 const ActionButtonStub = defineComponent({
   props: { loading: Boolean, disabled: Boolean, disableOnLoading: { type: Boolean, default: true } },
-  template: '<button :data-loading="String(loading)" :disabled="disabled || (loading && disableOnLoading)"><slot /></button>',
+  template: '<button :data-loading="String(loading)" :disabled="disabled || (loading && disableOnLoading)"><slot name="icon" /><slot /></button>',
 });
 
 const ListFilterSelectorStub = defineComponent({
@@ -52,8 +52,8 @@ function renderRefreshConfig(queryInProgress: boolean) {
     await rerender({ queryInProgress: value, modelValue: null });
   }
 
-  async function rerenderWith(props: { queryInProgress: boolean; queryStartedAt?: number | null }) {
-    await rerender({ ...props, modelValue: null });
+  async function rerenderWith(props: { queryInProgress: boolean; queryStartedAt?: number | null; nextRefreshAt?: number | null; modelValue?: number | null }) {
+    await rerender({ modelValue: null, ...props });
   }
 
   return {
@@ -106,6 +106,58 @@ describe("FEATURE: Refresh Controls Query State", () => {
       await rerenderWith({ queryInProgress: true, queryStartedAt: Date.now() - 2700 });
 
       expect(getButton().textContent).toMatch(/Cancel · \d+\.\ds/);
+    });
+
+    test("EXAMPLE: With auto-refresh armed, the countdown ring sits inside the button", async () => {
+      const { rerenderWith, getButton } = renderRefreshConfig(false);
+
+      await rerenderWith({ queryInProgress: false, nextRefreshAt: Date.now() + 3000, modelValue: 5000 });
+
+      expect(getButton().querySelector('[data-testid="auto-refresh-indicator"]')).not.toBeNull();
+      expect(getButton().textContent).toContain("Refresh");
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    test("EXAMPLE: The countdown reaches assistive tech as text describing the button, while the ring itself is decorative", async () => {
+      // Frozen clock: the component's own 250 ms ticker and the test see the same "now"
+      vi.useFakeTimers();
+      const { rerenderWith, getButton } = renderRefreshConfig(false);
+
+      await rerenderWith({ queryInProgress: false, nextRefreshAt: Date.now() + 3000, modelValue: 5000 });
+      await vi.advanceTimersByTimeAsync(0);
+
+      const button = getButton();
+      // The ring is a visual: a screen reader must neither read SVG nor a label that changes every second as the button's name
+      expect(button.querySelector('[data-testid="auto-refresh-indicator"]')).toHaveAttribute("aria-hidden", "true");
+      expect(button).toHaveAccessibleName("Refresh");
+      // The countdown is available as plain text that describes the button
+      const timer = document.getElementById(button.getAttribute("aria-describedby")!);
+      expect(timer).toHaveAttribute("role", "timer");
+      expect(timer!.textContent).toMatch(/^Next auto refresh in \d+ seconds$/);
+
+      await rerenderWith({ queryInProgress: false, nextRefreshAt: Date.now() + 800, modelValue: 5000 });
+      await vi.advanceTimersByTimeAsync(0);
+      expect(document.getElementById(button.getAttribute("aria-describedby")!)!.textContent).toBe("Next auto refresh in 1 second");
+    });
+
+    test("EXAMPLE: Without auto-refresh there is no countdown text either", async () => {
+      const { rerenderWith, getButton } = renderRefreshConfig(false);
+
+      await rerenderWith({ queryInProgress: false, nextRefreshAt: null, modelValue: null });
+
+      expect(getButton()).not.toHaveAttribute("aria-describedby");
+      expect(document.querySelector('[role="timer"]')).toBeNull();
+    });
+
+    test("EXAMPLE: Without auto-refresh there is no ring", async () => {
+      const { rerenderWith, getButton } = renderRefreshConfig(false);
+
+      await rerenderWith({ queryInProgress: false, nextRefreshAt: null, modelValue: null });
+
+      expect(getButton().querySelector('[data-testid="auto-refresh-indicator"]')).toBeNull();
     });
 
     test("EXAMPLE: Clicking during a query emits cancelQuery, not manualRefresh", async () => {

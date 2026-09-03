@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, useId, watch } from "vue";
 import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
 import ActionButton from "@/components/ActionButton.vue";
+import AutoRefreshIndicator from "@/components/AutoRefreshIndicator.vue";
 import { faRefresh, faXmark } from "@fortawesome/free-solid-svg-icons";
 
-const props = defineProps<{ queryInProgress: boolean; queryStartedAt?: number | null }>();
+const props = defineProps<{ queryInProgress: boolean; queryStartedAt?: number | null; nextRefreshAt?: number | null }>();
 const model = defineModel<number | null>({ required: true });
 const emit = defineEmits<{ (e: "manualRefresh"): Promise<void>; (e: "cancelQuery"): void }>();
 const autoRefreshOptionsText: [number, string][] = [
@@ -43,16 +44,20 @@ watch(selectedRefresh, (newValue) => {
     }
   }
 });
-/* elapsed timer while a query runs */
+// While auto-refresh is armed and no query runs, the countdown ring takes the
+// place of the refresh arrow inside the button
+const ringActive = computed(() => !props.queryInProgress && props.nextRefreshAt != null && model.value != null);
+
+/* clock: 100 ms while a query runs (elapsed time shows tenths), 250 ms for the countdown */
 const now = ref(Date.now());
 let ticker: number | undefined;
 watch(
-  () => props.queryInProgress,
-  (running) => {
+  () => (props.queryInProgress ? 100 : ringActive.value ? 250 : null),
+  (intervalMs) => {
     window.clearInterval(ticker);
-    if (running) {
+    if (intervalMs !== null) {
       now.value = Date.now();
-      ticker = window.setInterval(() => (now.value = Date.now()), 100);
+      ticker = window.setInterval(() => (now.value = Date.now()), intervalMs);
     }
   },
   { immediate: true }
@@ -63,6 +68,11 @@ const elapsedLabel = computed(() => {
   if (!props.queryInProgress || !props.queryStartedAt) return null;
   return `${Math.max(0, (now.value - props.queryStartedAt) / 1000).toFixed(1)}s`;
 });
+
+// The ring is visual only; the countdown reaches assistive tech as text that describes
+// the button (a timer is not announced on every tick, but is read along with the button)
+const countdownId = useId();
+const secondsLeft = computed(() => (props.nextRefreshAt == null ? 0 : Math.max(0, Math.ceil((props.nextRefreshAt - now.value) / 1000))));
 
 async function refreshOrCancel() {
   if (props.queryInProgress) {
@@ -75,12 +85,16 @@ async function refreshOrCancel() {
 
 <template>
   <div class="refresh-config">
-    <ActionButton size="sm" :icon="props.queryInProgress ? faXmark : faRefresh" :loading="props.queryInProgress" :disable-on-loading="false" @click="refreshOrCancel">
+    <ActionButton size="sm" :icon="props.queryInProgress ? faXmark : ringActive ? undefined : faRefresh" :loading="props.queryInProgress" :disable-on-loading="false" :aria-describedby="ringActive ? countdownId : undefined" @click="refreshOrCancel">
+      <template v-if="ringActive && !props.queryInProgress" #icon>
+        <AutoRefreshIndicator class="ring" :next-refresh-at="props.nextRefreshAt ?? null" :interval-ms="model" :refreshing="false" />
+      </template>
       <template v-if="props.queryInProgress"
         >Cancel<template v-if="elapsedLabel"> · {{ elapsedLabel }}</template></template
       >
       <template v-else>Refresh</template>
     </ActionButton>
+    <span v-if="ringActive" :id="countdownId" class="visually-hidden" role="timer">Next auto refresh in {{ secondsLeft }} {{ secondsLeft === 1 ? "second" : "seconds" }}</span>
     <div class="filter">
       <div class="filter-label">Auto-Refresh:</div>
       <div class="filter-component">
@@ -104,5 +118,10 @@ async function refreshOrCancel() {
 
 .filter-label {
   font-weight: bold;
+}
+
+.ring {
+  /* the icon slot is a flex child; only the FA icon's own margin needs matching */
+  margin-right: 0.25rem;
 }
 </style>
