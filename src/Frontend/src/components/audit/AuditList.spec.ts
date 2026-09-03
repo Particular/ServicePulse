@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/vue";
+import { fireEvent, render, screen, waitFor } from "@testing-library/vue";
 import { createTestingPinia } from "@pinia/testing";
 import { createRouter, createMemoryHistory } from "vue-router";
 import { ref, shallowReadonly, nextTick, type Ref } from "vue";
@@ -209,6 +209,7 @@ async function waitForFirstLoadToComplete() {
 describe("FEATURE: Audit Messages Query State", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   describe("RULE: A spinner is shown during the initial page load", () => {
@@ -333,6 +334,45 @@ describe("FEATURE: Audit Messages Query State", () => {
       expect(screen.queryByTestId("query-error")).not.toBeInTheDocument();
     });
 
+    test("EXAMPLE: A failed query offers one-click narrower ranges", async () => {
+      const { store } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      // default range is now-6h -> now; the two next-narrower presets apply
+      store.queryFailed = true;
+      await nextTick();
+
+      expect(screen.getAllByTestId("narrow-range").map((b) => b.textContent)).toEqual(["Last hour", "Last 15 minutes"]);
+    });
+
+    test("EXAMPLE: Clicking a narrowing action applies that range", async () => {
+      const { store } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      store.queryFailed = true;
+      await nextTick();
+      await fireEvent.click(screen.getByText("Last hour"));
+
+      expect(store.timeRangeFrom).toBe("now-1h");
+      expect(store.timeRangeTo).toBe("now");
+    });
+
+    test("EXAMPLE: A failed query without a time filter says the scan was unbounded", async () => {
+      const { store } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      store.timeRangeFrom = "";
+      store.timeRangeTo = "";
+      store.queryFailed = true;
+      await nextTick();
+
+      expect(screen.getByText(/no time filter/)).toBeInTheDocument();
+      expect(screen.getAllByTestId("narrow-range").map((b) => b.textContent)).toEqual(["Last 7 days", "Last 24 hours"]);
+    });
+
     test("EXAMPLE: The error banner is not shown when queries succeed", async () => {
       const { verify } = await renderAuditList([createMessage()]);
 
@@ -379,6 +419,19 @@ describe("FEATURE: Audit Messages Query State", () => {
       await waitForRouteDrivenQuery();
 
       expect(refreshNow.mock.calls.length - queriesAfterFirstLoad).toBe(1);
+    });
+  });
+
+  describe("RULE: The saved default range drives the first query", () => {
+    test("EXAMPLE: Opening the view without URL params applies the browser's saved default", async () => {
+      localStorage.setItem("audit.defaultTimeRange", JSON.stringify({ from: "now-24h", to: "now" }));
+
+      const { store, refreshNow } = await renderAuditList([]);
+      await waitForFirstLoadToComplete();
+
+      expect(store.timeRangeFrom).toBe("now-24h");
+      expect(store.timeRangeTo).toBe("now");
+      expect(refreshNow).toHaveBeenCalled();
     });
   });
 
