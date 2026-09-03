@@ -47,7 +47,7 @@ Rows expand from the health badge to show details.
 
 Those details come from:
 
-- informational row context such as the instance API URL
+- informational row context: API URL, transport type, error/audit queue names, forward error messages setting, and error/audit retention periods (when available from instance configuration)
 - matching internal platform custom checks when available
 - fallback page-specific messages when no custom-check detail is available
 
@@ -198,7 +198,7 @@ npx vitest run test/mocks/platform-health-state.spec.ts
 
 | Area | Covered behavior |
 |------|------------------|
-| Platform health store | warning/danger severity, unavailable audit remotes, remote error instance danger, monitoring presence, version fallback, internal custom-check health inference |
+| Platform health store | warning/danger severity, unavailable audit remotes, remote error instance danger, monitoring presence, version fallback, internal custom-check health inference, transport and retention details in infoDetails |
 | Platform health view | support download gating, known-version-only upgrade cue rendering, plain-text names, API-in-details rendering, monitoring row rendering, always-expandable health badges |
 | Mock helpers | independent topology and custom-check switching |
 
