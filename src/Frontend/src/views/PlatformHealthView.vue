@@ -197,7 +197,7 @@ function toggleRow(row: (typeof store.rows)[number]) {
                           <table v-if="row.infoDetails.length > 0" class="details-table details-table-info">
                             <tbody>
                               <tr v-for="entry in infoEntries(row)" :key="`${entry.label}-${entry.value}`">
-                                <td class="details-table-key">{{ entry.label }}:</td>
+                                <td class="details-table-key">{{ entry.label }}</td>
                                 <td>{{ entry.value }}</td>
                               </tr>
                             </tbody>
@@ -398,7 +398,7 @@ tbody tr:last-child td {
 .details-table td.details-table-key {
   width: 224px;
   color: #4c5b5c;
-  font-weight: 500;
+  font-weight: 700;
   text-align: left;
   padding-left: 16px;
   padding-right: 1rem;
