@@ -140,18 +140,19 @@ describe("PlatformModelStore", () => {
   test("maps transport and retention fields from configuration and remotes", async () => {
     getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl", health: "healthy", version: "6.19.3" }));
     getConfiguration.mockResolvedValue({
-      json: () => Promise.resolve({
-        host: { instance_name: "Particular.ServiceControl" },
-        transport: {
-          transport_type: "RabbitMQ.QuorumConventionalRouting",
-          error_log_queue: "error.log",
-          error_queue: "error",
-          forward_error_messages: true,
-        },
-        data_retention: {
-          error_retention_period: "14.00:00:00",
-        },
-      }),
+      json: () =>
+        Promise.resolve({
+          host: { instance_name: "Particular.ServiceControl" },
+          transport: {
+            transport_type: "RabbitMQ.QuorumConventionalRouting",
+            error_log_queue: "error.log",
+            error_queue: "error",
+            forward_error_messages: true,
+          },
+          data_retention: {
+            error_retention_period: "14.00:00:00",
+          },
+        }),
     } as never);
     getRemoteInstances.mockResolvedValue([
       {
