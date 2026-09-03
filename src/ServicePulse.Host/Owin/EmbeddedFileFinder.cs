@@ -14,14 +14,22 @@
         {
             var lastModified = new FileInfo(Assembly.Location).LastWriteTime;
 
-            var resource = Assembly.GetManifestResourceStream(filePath);
-            if (resource != null)
+            // The embedded resource names are derived from file paths at build time, so their
+            // directory separator is that of the OS the build ran on. Look the file up under
+            // both separators so the frontend is served regardless of where it was built.
+            var candidates = new[] { filePath, filePath.Replace('\\', '/') };
+
+            foreach (var candidate in candidates)
             {
-                return new EmbeddedResourceFileInfo(Assembly, filePath, string.Empty, lastModified);
+                var resource = Assembly.GetManifestResourceStream(candidate);
+                if (resource != null)
+                {
+                    return new EmbeddedResourceFileInfo(Assembly, candidate, string.Empty, lastModified);
+                }
             }
 
             var matchingKey = Assembly.GetManifestResourceNames()
-                .FirstOrDefault(name => string.Compare(filePath, name, StringComparison.OrdinalIgnoreCase) == 0);
+                .FirstOrDefault(name => candidates.Any(candidate => string.Compare(candidate, name, StringComparison.OrdinalIgnoreCase) == 0));
             if (matchingKey != null)
             {
                 return new EmbeddedResourceFileInfo(Assembly, matchingKey, string.Empty, lastModified);
