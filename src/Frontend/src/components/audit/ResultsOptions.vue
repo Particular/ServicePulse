@@ -3,7 +3,9 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { FieldNames, useAuditStore } from "@/stores/AuditStore";
 import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
+import { useTimestampZone } from "@/composables/timestampZone";
 
+const { zone, toggle } = useTimestampZone();
 const store = useAuditStore();
 const { sortBy, itemsPerPage } = storeToRefs(store);
 
@@ -61,6 +63,10 @@ function findKeyByValue(searchValue: string) {
       <span class="option-label">Sort:</span>
       <ListFilterSelector :items="sortByItems" v-model="selectedSortByItem" item-name="result" :can-clear="false" :show-clear="false" :show-filter="false" />
     </div>
+    <div class="option">
+      <span class="option-label">Times:</span>
+      <button type="button" class="zone-toggle" data-testid="zone-toggle" :title="`Switch to ${zone === 'local' ? 'UTC' : 'local'} times`" @click="toggle">{{ zone === "local" ? "local" : "UTC" }}</button>
+    </div>
   </div>
 </template>
 
@@ -80,5 +86,17 @@ function findKeyByValue(searchValue: string) {
 
 .option-label {
   font-weight: bold;
+}
+
+.zone-toggle {
+  border: 0;
+  background: none;
+  color: #00729c;
+  cursor: pointer;
+  padding: 0.1rem 0.25rem;
+}
+
+.zone-toggle:hover {
+  text-decoration: underline;
 }
 </style>

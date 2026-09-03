@@ -19,7 +19,7 @@ import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { loadDefaultRange, narrowingPresets, resolveTimeRange, type RangePreset } from "@/components/audit/timeRange";
 
 const store = useAuditStore();
-const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryDurationMs } = storeToRefs(store);
+const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryDurationMs, queryCompletedAt } = storeToRefs(store);
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
@@ -202,7 +202,7 @@ watch(autoRefreshValue, (newValue) => {
       </div>
       <div class="row results-row">
         <div class="results-summary">
-          <ResultsCount :displayed="messages.length" :total="totalCount" :duration-ms="queryDurationMs" />
+          <ResultsCount :displayed="messages.length" :total="totalCount" :duration-ms="queryDurationMs" :completed-at="queryCompletedAt" />
           <span v-if="slowQuery && queryInProgress" class="slow-query" role="status" data-testid="slow-query-hint">Still running · a narrower time range makes the query lighter.</span>
         </div>
         <ResultsOptions />

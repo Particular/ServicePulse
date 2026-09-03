@@ -174,6 +174,17 @@ describe("AuditStore refresh", () => {
     expect(store.queryDurationMs).toBeNull();
   });
 
+  test("clearResults forgets when the results were fetched", async () => {
+    const store = useAuditStore();
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [message]]);
+    await store.refresh();
+    expect(store.queryCompletedAt).not.toBeNull();
+
+    store.clearResults();
+
+    expect(store.queryCompletedAt).toBeNull();
+  });
+
   test("a superseded query is not reported as a failure", async () => {
     const store = useAuditStore();
 
