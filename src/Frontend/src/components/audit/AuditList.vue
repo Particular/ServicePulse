@@ -5,8 +5,9 @@ import { useRoute, useRouter } from "vue-router";
 import ResultsCount from "@/components/ResultsCount.vue";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
 import AuditListItem from "@/components/audit/AuditListItem.vue";
-import { computed, onBeforeMount, ref, watch } from "vue";
+import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from "vue";
 import RefreshConfig from "../RefreshConfig.vue";
+import AutoRefreshIndicator from "../AutoRefreshIndicator.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import useFetchWithAutoRefresh from "@/composables/autoRefresh";
 import WizardDialog from "@/components/platformcapabilities/WizardDialog.vue";
@@ -17,11 +18,11 @@ import PageBanner, { type BannerMessage } from "@/components/PageBanner.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 
 const store = useAuditStore();
-const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange } = storeToRefs(store);
+const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange, queryFailed } = storeToRefs(store);
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
-const { refreshNow, isRefreshing, updateInterval, isActive, start, stop } = useFetchWithAutoRefresh("audit-list", store.refresh, 0);
+const { refreshNow, isRefreshing, updateInterval, isActive, start, stop, nextRefreshAt } = useFetchWithAutoRefresh("audit-list", store.refresh, 0);
 const firstLoad = ref(true);
 const queryInProgress = computed(() => firstLoad.value || isRefreshing.value);
 const showWizard = ref(false);
@@ -72,6 +73,13 @@ onBeforeMount(() => {
   }, 0);
 });
 
+onBeforeUnmount(() => {
+  // Leaving the view stops all of its activity: the auto-refresh poll is released and the
+  // in-flight query is aborted so it does not keep running (server-side included) in the background
+  stop();
+  store.cancelQuery();
+});
+
 // The route is the single source of truth for the query: control changes only push to the router,
 // and only a route change triggers a fetch. Having the fetch in both watchers (and the route in the
 // controls watcher) made a single control change fire the same query up to three times.
@@ -83,26 +91,36 @@ watch(
   }
 );
 
+function controlsQuery() {
+  const [fromDate, toDate] = dateRange.value;
+
+  return {
+    sortBy: sortBy.value.property,
+    sortDir: sortBy.value.isAscending ? "asc" : "desc",
+    filter: messageFilterString.value,
+    endpoint: selectedEndpointName.value,
+    from: fromDate?.toISOString() ?? "",
+    to: toDate?.toISOString() ?? "",
+    pageSize: itemsPerPage.value,
+  };
+}
+
+// The serialized controls state the route last applied (via setQuery) or that was last pushed.
+// The controls watcher only pushes when the controls actually moved away from this, which makes
+// it safe to react to changes at any time — including while the first (possibly very slow)
+// query is still running, so a user typing a search is never ignored.
+let lastAppliedControlsQuery = "";
+
 const watchHandle = watch([itemsPerPage, sortBy, messageFilterString, selectedEndpointName, dateRange], async () => {
-  if (firstLoad.value) {
+  const query = controlsQuery();
+  const serialized = JSON.stringify(query);
+
+  if (serialized === lastAppliedControlsQuery) {
     return;
   }
 
-  const [fromDate, toDate] = dateRange.value;
-  const from = fromDate?.toISOString() ?? "";
-  const to = toDate?.toISOString() ?? "";
-
-  await router.push({
-    query: {
-      sortBy: sortBy.value.property,
-      sortDir: sortBy.value.isAscending ? "asc" : "desc",
-      filter: messageFilterString.value,
-      endpoint: selectedEndpointName.value,
-      from,
-      to,
-      pageSize: itemsPerPage.value,
-    },
-  });
+  lastAppliedControlsQuery = serialized;
+  await router.push({ query });
 });
 
 function setQuery() {
@@ -118,6 +136,8 @@ function setQuery() {
   itemsPerPage.value = query.pageSize ? parseInt(query.pageSize as string) : 100;
   dateRange.value = query.from && query.to ? [new Date(query.from as string), new Date(query.to as string)] : [];
   selectedEndpointName.value = (query.endpoint ?? "") as string;
+
+  lastAppliedControlsQuery = JSON.stringify(controlsQuery());
 
   watchHandle.resume();
 }
@@ -138,8 +158,9 @@ watch(autoRefreshValue, (newValue) => {
   <div>
     <div class="header">
       <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" @manual-refresh="refreshNow" />
+      <AutoRefreshIndicator :next-refresh-at="nextRefreshAt" :interval-ms="autoRefreshValue" :refreshing="isRefreshing" />
       <div class="row">
-        <FiltersPanel :query-in-progress="queryInProgress" />
+        <FiltersPanel />
       </div>
       <div class="row">
         <ResultsCount :displayed="messages.length" :total="totalCount" />
@@ -147,6 +168,10 @@ watch(autoRefreshValue, (newValue) => {
       <PageBanner v-if="bannerMessage && isMassTransitConnected === false" :message="bannerMessage" :show-action="showBannerAction" @action="showWizard = true" />
     </div>
     <WizardDialog v-if="showWizard" title="Getting Started with Auditing" :pages="wizardPages" @close="showWizard = false" />
+    <div v-if="queryFailed && !queryInProgress" class="query-error" role="alert" data-testid="query-error">
+      <strong>The query failed or took too long and was stopped.</strong>
+      <p>The ServiceControl instance might be too busy. Try again in an off-peak period, reduce the maximum number of results ("Show"), or narrow the date range.</p>
+    </div>
     <div class="row results-table">
       <LoadingSpinner v-if="firstLoad || isRefreshing" :overlay="isRefreshing && messages.length > 0" />
       <template v-for="message in messages" :key="message.id">
@@ -167,6 +192,19 @@ watch(autoRefreshValue, (newValue) => {
   /* set padding/margin so that the sticky version is offset, but not the non-sticky version */
   padding-top: 0.5rem;
   margin-top: -0.5rem;
+}
+
+.query-error {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #f0c2c2;
+  border-left: 4px solid #ce4844;
+  border-radius: 4px;
+  background-color: #fdf7f7;
+}
+
+.query-error p {
+  margin: 0.25rem 0 0;
 }
 
 .results-table {

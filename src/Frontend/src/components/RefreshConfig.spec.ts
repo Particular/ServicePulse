@@ -66,8 +66,8 @@ function renderRefreshConfig(queryInProgress: boolean) {
 // ==================== Tests ====================
 
 describe("FEATURE: Refresh Controls Query State", () => {
-  describe("RULE: Refresh controls are disabled while a query is in progress", () => {
-    test("EXAMPLE: Refresh controls reflect queryInProgress changes", async () => {
+  describe("RULE: Only the refresh action locks while a query is in progress", () => {
+    test("EXAMPLE: The refresh button loads and disables, the auto-refresh selector stays usable", async () => {
       const { setQueryInProgress, verify } = renderRefreshConfig(false);
 
       verify.refreshButtonIsNotLoading();
@@ -78,7 +78,8 @@ describe("FEATURE: Refresh Controls Query State", () => {
 
       verify.refreshButtonIsLoading();
       verify.refreshButtonIsDisabled();
-      verify.autoRefreshSelectorIsDisabled();
+      // The selector must stay usable so auto-refresh can be turned off during a slow query
+      verify.autoRefreshSelectorIsEnabled();
 
       await setQueryInProgress(false);
 

@@ -1,22 +1,47 @@
-import { watch, ref, shallowReadonly, type WatchStopHandle } from "vue";
+import { watch, ref, computed, shallowReadonly, type Ref, type WatchStopHandle } from "vue";
 import { useCounter, useDocumentVisibility, useTimeoutPoll } from "@vueuse/core";
 
 export default function useFetchWithAutoRefresh(_name: string, fetchFn: () => Promise<void>, intervalMs: number) {
   let watchStop: WatchStopHandle | null = null;
   const { count, inc, dec, reset } = useCounter(0);
   const interval = ref(intervalMs);
-  const isRefreshing = ref(false);
-  const fetchWrapper = async () => {
-    if (isRefreshing.value) {
-      return;
-    }
-    isRefreshing.value = true;
+  const inflight = ref(0);
+  const refreshPending = ref(false);
+  const isRefreshing = computed(() => inflight.value > 0);
+  // When auto-refresh is active, the moment (epoch ms) the next poll tick is due; null while inactive
+  const nextRefreshAt = ref<number | null>(null);
+
+  const run = async () => {
+    inflight.value++;
     try {
       await fetchFn();
     } finally {
-      isRefreshing.value = false;
+      inflight.value--;
+    }
+
+    if (inflight.value === 0 && refreshPending.value) {
+      // A poll tick landed while this fetch was running: the results were awaited, now honor the tick
+      refreshPending.value = false;
+      await run();
     }
   };
+
+  // Poll path: a tick that lands while a fetch is already running must not cancel it —
+  // it marks a refresh as pending, which runs as soon as the current fetch completes
+  const fetchWrapper = async () => {
+    if (inflight.value > 0) {
+      refreshPending.value = true;
+    } else {
+      await run();
+    }
+
+    if (isActive.value) {
+      nextRefreshAt.value = Date.now() + interval.value;
+    }
+  };
+
+  // User path: never dropped — the fetchFn is expected to supersede its own in-flight work
+  const refreshNow = run;
   const { isActive, pause, resume } = useTimeoutPoll(
     fetchWrapper,
     interval,
@@ -24,6 +49,11 @@ export default function useFetchWithAutoRefresh(_name: string, fetchFn: () => Pr
   );
 
   const visibility = useDocumentVisibility();
+
+  const pausePolling = () => {
+    pause();
+    nextRefreshAt.value = null;
+  };
 
   const start = async () => {
     inc();
@@ -35,7 +65,7 @@ export default function useFetchWithAutoRefresh(_name: string, fetchFn: () => Pr
         }
 
         if (current === "hidden" && previous === "visible") {
-          pause();
+          pausePolling();
         }
       });
     } else {
@@ -47,7 +77,7 @@ export default function useFetchWithAutoRefresh(_name: string, fetchFn: () => Pr
   const stop = () => {
     dec();
     if (count.value <= 0) {
-      pause();
+      pausePolling();
       watchStop?.();
       watchStop = null;
       reset();
@@ -66,5 +96,5 @@ export default function useFetchWithAutoRefresh(_name: string, fetchFn: () => Pr
     }
   };
 
-  return { refreshNow: fetchWrapper, isRefreshing: shallowReadonly(isRefreshing), updateInterval, isActive, start, stop };
+  return { refreshNow, isRefreshing: isRefreshing as Readonly<Ref<boolean>>, updateInterval, isActive, start, stop, nextRefreshAt: shallowReadonly(nextRefreshAt) };
 }
