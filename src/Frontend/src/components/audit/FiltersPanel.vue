@@ -5,6 +5,7 @@ import { useAuditStore } from "@/stores/AuditStore";
 import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
 import { computed } from "vue";
 import SuperDatePicker from "@/components/audit/SuperDatePicker.vue";
+import SearchHistory from "@/components/audit/SearchHistory.vue";
 
 const store = useAuditStore();
 const { messageFilterString, selectedEndpointName, endpoints } = storeToRefs(store);
@@ -19,7 +20,7 @@ const endpointNames = computed(() => {
       <div class="filter-label"></div>
       <div class="filter-component text-search-container">
         <FilterInput v-model="messageFilterString" placeholder="Search messages..." aria-label="Search messages" />
-        <div class="note">Check the <a href="https://docs.particular.net/servicepulse/all-messages#filtering-options">documentation</a> to see the available filtering options</div>
+        <div class="note">Check the <a href="https://docs.particular.net/servicepulse/all-messages#filtering-options">documentation</a> to see the available filtering options · <SearchHistory /></div>
       </div>
     </div>
     <div class="filter">

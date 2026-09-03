@@ -7,6 +7,7 @@ import type { DateRange } from "@/types/date";
 import serviceControlClient from "@/components/serviceControlClient";
 import auditClient from "@/components/audit/auditClient";
 import { loadDefaultRange, resolveTimeRange } from "@/components/audit/timeRange";
+import { clearSearchHistory, loadSearchHistory, recordSearch } from "@/components/audit/searchHistory";
 
 export enum FieldNames {
   TimeSent = "time_sent",
@@ -37,6 +38,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
   // of the query that produced the current results
   const queryStartedAt = ref<number | null>(null);
   const queryDurationMs = ref<number | null>(null);
+  const searchHistory = ref(loadSearchHistory());
   let activeQuery: AbortController | null = null;
 
   async function loadEndpoints() {
@@ -62,6 +64,10 @@ export const useAuditStore = defineStore("AuditStore", () => {
 
     const started = performance.now();
     queryStartedAt.value = Date.now();
+
+    if (messageFilterString.value.trim() !== "" || selectedEndpointName.value.trim() !== "") {
+      searchHistory.value = recordSearch(messageFilterString.value, selectedEndpointName.value, { from: timeRangeFrom.value, to: timeRangeTo.value });
+    }
 
     try {
       const [response, data] = await auditClient.getMessages(
@@ -107,6 +113,10 @@ export const useAuditStore = defineStore("AuditStore", () => {
   // Stops the in-flight query, e.g. when the view showing the results is left.
   // The abort propagates through the ServiceControl API and terminates the
   // database query, so a backgrounded view does not keep load on the server.
+  function clearHistory() {
+    searchHistory.value = clearSearchHistory();
+  }
+
   function cancelQuery() {
     activeQuery?.abort();
     activeQuery = null;
@@ -129,6 +139,8 @@ export const useAuditStore = defineStore("AuditStore", () => {
     queryFailed,
     queryStartedAt,
     queryDurationMs,
+    searchHistory,
+    clearSearchHistory: clearHistory,
   };
 });
 

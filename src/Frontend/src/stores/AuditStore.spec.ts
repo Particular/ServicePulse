@@ -118,6 +118,21 @@ describe("AuditStore refresh", () => {
     expect(store.queryDurationMs).toBeGreaterThanOrEqual(0);
   });
 
+  test("a query with search text or endpoint is recorded in the search history", async () => {
+    fetchTypedFromServiceControl.mockResolvedValue([responseWithTotalCount(0), []]);
+    const store = useAuditStore();
+
+    await store.refresh(); // no search, no endpoint: nothing recorded
+    expect(store.searchHistory).toHaveLength(0);
+
+    store.messageFilterString = "orders";
+    await store.refresh();
+    await store.refresh(); // repeat does not duplicate
+
+    expect(store.searchHistory).toHaveLength(1);
+    expect(store.searchHistory[0]).toMatchObject({ search: "orders", endpoint: "" });
+  });
+
   test("cancelQuery aborts the query in flight without reporting a failure", async () => {
     const store = useAuditStore();
 
