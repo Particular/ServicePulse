@@ -2,7 +2,7 @@
 import { LicenseStatus } from "@/resources/LicenseInfo";
 import routeLinks from "@/router/routeLinks";
 import FAIcon from "@/components/FAIcon.vue";
-import { faArrowTurnUp, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faArrowTurnUp, faCircleCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 import usePlatformHealthStoreAutoRefresh from "@/composables/usePlatformHealthStoreAutoRefresh";
 import { storeToRefs } from "pinia";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
@@ -33,7 +33,7 @@ const { configuration } = storeToRefs(configurationStore);
               <FAIcon class="footer-icon" :icon="faArrowTurnUp" />
               Updates available
             </RouterLink>
-            <span v-else>Platform up to date</span>
+            <span v-else><FAIcon class="footer-icon" :icon="faCircleCheck" /> Platform up to date</span>
           </template>
         </div>
       </div>
