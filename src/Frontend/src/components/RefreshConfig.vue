@@ -2,9 +2,10 @@
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
 import ActionButton from "@/components/ActionButton.vue";
+import AutoRefreshIndicator from "@/components/AutoRefreshIndicator.vue";
 import { faRefresh, faXmark } from "@fortawesome/free-solid-svg-icons";
 
-const props = defineProps<{ queryInProgress: boolean; queryStartedAt?: number | null }>();
+const props = defineProps<{ queryInProgress: boolean; queryStartedAt?: number | null; nextRefreshAt?: number | null }>();
 const model = defineModel<number | null>({ required: true });
 const emit = defineEmits<{ (e: "manualRefresh"): Promise<void>; (e: "cancelQuery"): void }>();
 const autoRefreshOptionsText: [number, string][] = [
@@ -64,6 +65,10 @@ const elapsedLabel = computed(() => {
   return `${Math.max(0, (now.value - props.queryStartedAt) / 1000).toFixed(1)}s`;
 });
 
+// While auto-refresh is armed and no query runs, the countdown ring takes the
+// place of the refresh arrow inside the button
+const ringActive = computed(() => !props.queryInProgress && props.nextRefreshAt != null && model.value != null);
+
 async function refreshOrCancel() {
   if (props.queryInProgress) {
     emit("cancelQuery");
@@ -75,7 +80,10 @@ async function refreshOrCancel() {
 
 <template>
   <div class="refresh-config">
-    <ActionButton size="sm" :icon="props.queryInProgress ? faXmark : faRefresh" :loading="props.queryInProgress" :disable-on-loading="false" @click="refreshOrCancel">
+    <ActionButton size="sm" :icon="props.queryInProgress ? faXmark : ringActive ? undefined : faRefresh" :loading="props.queryInProgress" :disable-on-loading="false" @click="refreshOrCancel">
+      <template v-if="ringActive && !props.queryInProgress" #icon>
+        <AutoRefreshIndicator class="ring" :next-refresh-at="props.nextRefreshAt ?? null" :interval-ms="model" :refreshing="false" />
+      </template>
       <template v-if="props.queryInProgress"
         >Cancel<template v-if="elapsedLabel"> · {{ elapsedLabel }}</template></template
       >
@@ -104,5 +112,10 @@ async function refreshOrCancel() {
 
 .filter-label {
   font-weight: bold;
+}
+
+.ring {
+  /* the icon slot is a flex child; only the FA icon's own margin needs matching */
+  margin-right: 0.25rem;
 }
 </style>

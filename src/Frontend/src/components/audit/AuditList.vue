@@ -8,7 +8,6 @@ import ResultsOptions from "@/components/audit/ResultsOptions.vue";
 import AuditListItem from "@/components/audit/AuditListItem.vue";
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from "vue";
 import RefreshConfig from "../RefreshConfig.vue";
-import AutoRefreshIndicator from "../AutoRefreshIndicator.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import useFetchWithAutoRefresh from "@/composables/autoRefresh";
 import WizardDialog from "@/components/platformcapabilities/WizardDialog.vue";
@@ -168,8 +167,7 @@ watch(autoRefreshValue, (newValue) => {
       <div class="row">
         <FiltersPanel>
           <template #actions>
-            <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" :query-started-at="queryStartedAt" @manual-refresh="refreshNow" @cancel-query="store.cancelQuery" />
-            <AutoRefreshIndicator :next-refresh-at="nextRefreshAt" :interval-ms="autoRefreshValue" :refreshing="isRefreshing" />
+            <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" :query-started-at="queryStartedAt" :next-refresh-at="nextRefreshAt" @manual-refresh="refreshNow" @cancel-query="store.cancelQuery" />
           </template>
         </FiltersPanel>
       </div>

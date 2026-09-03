@@ -54,7 +54,9 @@ const sizeClasses = {
     :aria-label="props.ariaLabel"
     v-tippy="props.tooltip"
   >
-    <FAIcon v-if="props.icon && props.iconPosition === 'left' && !props.loading" :icon="props.icon" class="icon-left" />
+    <slot v-if="!props.loading" name="icon">
+      <FAIcon v-if="props.icon && props.iconPosition === 'left'" :icon="props.icon" class="icon-left" />
+    </slot>
     <FAIcon v-if="props.loading" class="rotate" :icon="faRefresh" />
     <span v-if="$slots.default" class="button-text">
       <slot />
