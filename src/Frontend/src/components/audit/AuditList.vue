@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
 import ResultsCount from "@/components/ResultsCount.vue";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
+import ResultsOptions from "@/components/audit/ResultsOptions.vue";
 import AuditListItem from "@/components/audit/AuditListItem.vue";
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from "vue";
 import RefreshConfig from "../RefreshConfig.vue";
@@ -169,8 +170,9 @@ watch(autoRefreshValue, (newValue) => {
       <div class="row">
         <FiltersPanel />
       </div>
-      <div class="row">
+      <div class="row results-row">
         <ResultsCount :displayed="messages.length" :total="totalCount" />
+        <ResultsOptions />
       </div>
       <PageBanner v-if="bannerMessage && isMassTransitConnected === false" :message="bannerMessage" :show-action="showBannerAction" @action="showWizard = true" />
     </div>
@@ -212,6 +214,21 @@ watch(autoRefreshValue, (newValue) => {
 
 .query-error p {
   margin: 0.25rem 0 0;
+}
+
+.results-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ResultsCount's root uses the bootstrap .col class (flex-grow: 1), which would
+   push the options onto their own line; in this row both sides size to content */
+.results-row > * {
+  flex: 0 1 auto;
+  width: auto;
 }
 
 .results-table {
