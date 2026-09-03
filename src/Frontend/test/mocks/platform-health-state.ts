@@ -100,6 +100,15 @@ export function getPlatformHealthConfiguration() {
     host: {
       instance_name: state.primary.name,
     },
+    transport: {
+      transport_type: "LearningTransport",
+      error_log_queue: "error.log",
+      error_queue: "error",
+      forward_error_messages: false,
+    },
+    data_retention: {
+      error_retention_period: "15.00:00:00",
+    },
   };
 }
 

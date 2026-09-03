@@ -33,6 +33,43 @@ describe("PlatformHealthStore", () => {
     customChecksStore.refresh = vi.fn(() => Promise.resolve());
   });
 
+  test("includes transport and retention details in infoDetails when present", async () => {
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.refresh = vi.fn(() => {
+      platformModelStore.model = primaryWithTransportModel;
+      return Promise.resolve();
+    });
+    const store = usePlatformHealthStore();
+
+    await store.refresh();
+
+    const primaryRow = store.rows[0];
+    expect(primaryRow.infoDetails).toContain("API: http://localhost:33333/api/");
+    expect(primaryRow.infoDetails).toContain("Transport: RabbitMQ.QuorumConventionalRouting");
+    expect(primaryRow.infoDetails).toContain("Error queue: error");
+    expect(primaryRow.infoDetails).toContain("Error log queue: error.log");
+    expect(primaryRow.infoDetails).toContain("Forward error messages: Yes");
+    expect(primaryRow.infoDetails).toContain("Error retention: 14.00:00:00");
+
+    const auditRow = store.rows[1];
+    expect(auditRow.infoDetails).toContain("API: http://Particular.ServiceControl.Audit/api/");
+    expect(auditRow.infoDetails).toContain("Audit retention: 7.00:00:00");
+    expect(auditRow.infoDetails).not.toContain(expect.stringContaining("Transport"));
+  });
+
+  test("omits transport and retention from infoDetails when not present", async () => {
+    const platformModelStore = usePlatformModelStore();
+    platformModelStore.refresh = vi.fn(() => {
+      platformModelStore.model = singleRegionWarningModel;
+      return Promise.resolve();
+    });
+    const store = usePlatformHealthStore();
+
+    await store.refresh();
+
+    expect(store.rows[0].infoDetails).toEqual(["API: http://localhost:33333/api/"]);
+  });
+
   test("derives warning severity and audit-remote rows", async () => {
     const customChecksStore = useCustomChecksStore();
     customChecksStore.replaceFailedChecks([
@@ -458,6 +495,41 @@ describe("PlatformHealthStore", () => {
     expect(store.rows[2].healthDetails).toContain(`Reported at: ${currentReportedAt}`);
   });
 });
+
+const primaryWithTransportModel: PlatformModel = {
+  primary: {
+    id: "primary",
+    name: "Particular.ServiceControl",
+    kind: "error",
+    role: "primary-error",
+    version: "6.19.3",
+    health: "healthy",
+    apiUrl: "http://localhost:33333/api/",
+    transportType: "RabbitMQ.QuorumConventionalRouting",
+    errorQueue: "error",
+    errorLogQueue: "error.log",
+    forwardErrorMessages: true,
+    errorRetentionPeriod: "14.00:00:00",
+  },
+  remotes: [
+    {
+      id: "remote-0",
+      name: "Particular.ServiceControl.Audit",
+      kind: "audit",
+      role: "remote-audit",
+      version: "6.19.3",
+      health: "healthy",
+      apiUrl: "http://Particular.ServiceControl.Audit/api/",
+      auditRetentionPeriod: "7.00:00:00",
+    },
+  ],
+  monitoring: null,
+  servicePulse: {
+    name: "ServicePulse",
+    version: "2.8.0",
+    health: "healthy",
+  },
+};
 
 const singleRegionWarningModel: PlatformModel = {
   primary: {

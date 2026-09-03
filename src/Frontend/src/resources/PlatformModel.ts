@@ -16,6 +16,12 @@ export interface PlatformInstance {
   version: string;
   health: PlatformInstanceHealth;
   apiUrl: string;
+  transportType?: string;
+  errorLogQueue?: string;
+  errorQueue?: string;
+  forwardErrorMessages?: boolean;
+  errorRetentionPeriod?: string;
+  auditRetentionPeriod?: string;
 }
 
 export interface PlatformModel {

@@ -137,6 +137,48 @@ describe("PlatformModelStore", () => {
     expect(store.remotes[0].role).toBe("remote-error");
   });
 
+  test("maps transport and retention fields from configuration and remotes", async () => {
+    getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl", health: "healthy", version: "6.19.3" }));
+    getConfiguration.mockResolvedValue({
+      json: async () => ({
+        host: { instance_name: "Particular.ServiceControl" },
+        transport: {
+          transport_type: "RabbitMQ.QuorumConventionalRouting",
+          error_log_queue: "error.log",
+          error_queue: "error",
+          forward_error_messages: true,
+        },
+        data_retention: {
+          error_retention_period: "14.00:00:00",
+        },
+      }),
+    } as never);
+    getRemoteInstances.mockResolvedValue([
+      {
+        api_uri: "http://localhost:33334/api/",
+        version: "6.19.3",
+        status: "online",
+        configuration: {
+          host: { instance_name: "Particular.ServiceControl.Audit" },
+          data_retention: { audit_retention_period: "7.00:00:00" },
+        },
+      },
+    ]);
+    getMonitoringRoot.mockResolvedValue(null);
+
+    const store = usePlatformModelStore();
+    await store.refresh();
+
+    expect(store.primary?.transportType).toBe("RabbitMQ.QuorumConventionalRouting");
+    expect(store.primary?.errorQueue).toBe("error");
+    expect(store.primary?.errorLogQueue).toBe("error.log");
+    expect(store.primary?.forwardErrorMessages).toBe(true);
+    expect(store.primary?.errorRetentionPeriod).toBe("14.00:00:00");
+
+    expect(store.remotes[0].auditRetentionPeriod).toBe("7.00:00:00");
+    expect(store.remotes[0].errorRetentionPeriod).toBeUndefined();
+  });
+
   test("skips remote discovery when the primary root is unavailable", async () => {
     getRoot.mockRejectedValue(new Error("primary unavailable"));
     getRemoteInstances.mockResolvedValue([

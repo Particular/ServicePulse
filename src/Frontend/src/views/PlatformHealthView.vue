@@ -78,10 +78,11 @@ function issueEntries(row: (typeof store.rows)[number]) {
 
 function infoEntries(row: (typeof store.rows)[number]) {
   return row.infoDetails.map((detail) => {
-    if (detail.startsWith("API: ")) {
+    const colonIndex = detail.indexOf(": ");
+    if (colonIndex > 0) {
       return {
-        label: "API",
-        value: detail.substring("API: ".length),
+        label: detail.substring(0, colonIndex),
+        value: detail.substring(colonIndex + 2),
       };
     }
 
@@ -196,7 +197,7 @@ function toggleRow(row: (typeof store.rows)[number]) {
                           <table v-if="row.infoDetails.length > 0" class="details-table details-table-info">
                             <tbody>
                               <tr v-for="entry in infoEntries(row)" :key="`${entry.label}-${entry.value}`">
-                                <td class="details-table-key">{{ entry.label }}</td>
+                                <td class="details-table-key">{{ entry.label }}:</td>
                                 <td>{{ entry.value }}</td>
                               </tr>
                             </tbody>
@@ -369,7 +370,11 @@ tbody tr:last-child td {
   font-size: 12px;
 }
 
-.details-card-info .details-table,
+.details-card-info .details-table {
+  margin: 0;
+  padding: 14px 0 16px;
+}
+
 .details-card-info .no-problems {
   margin: 0;
   padding: 14px 16px 16px;
@@ -381,7 +386,7 @@ tbody tr:last-child td {
 }
 
 .details-table td {
-  padding: 0.4rem 0;
+  padding: 0.4rem 16px 0.4rem 0;
   vertical-align: top;
   border-bottom: 1px solid #eef2f2;
 }
@@ -390,11 +395,12 @@ tbody tr:last-child td {
   border-bottom: none;
 }
 
-.details-table-key {
-  width: 112px;
+.details-table td.details-table-key {
+  width: 224px;
   color: #4c5b5c;
   font-weight: 500;
-  text-align: center;
+  text-align: left;
+  padding-left: 16px;
   padding-right: 1rem;
 }
 

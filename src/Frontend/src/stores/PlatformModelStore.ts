@@ -109,6 +109,11 @@ function mapPrimary(primaryRoot: PrimaryRootResult | null, configuration: Config
     version: document.platform_health_version ?? version,
     health: document.platform_health_status ?? "healthy",
     apiUrl: serviceControlClient.url ?? "",
+    transportType: configuration?.transport?.transport_type,
+    errorLogQueue: configuration?.transport?.error_log_queue,
+    errorQueue: configuration?.transport?.error_queue,
+    forwardErrorMessages: configuration?.transport?.forward_error_messages,
+    errorRetentionPeriod: configuration?.data_retention?.error_retention_period,
   };
 }
 
@@ -125,6 +130,8 @@ function mapRemotes(remotes: RemoteInstance[]): PlatformInstance[] {
       version: remote.version,
       health: remote.platform_health_status ?? (remote.status === "online" ? "healthy" : "unavailable"),
       apiUrl: remote.api_uri,
+      errorRetentionPeriod: remote.configuration?.data_retention?.error_retention_period,
+      auditRetentionPeriod: remote.configuration?.data_retention?.audit_retention_period,
     };
   });
 }

@@ -184,6 +184,30 @@ export const usePlatformHealthStore = defineStore("PlatformHealthStore", () => {
 function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: string, healthDetails: string[]): PlatformHealthRow {
   const infoDetails = [`API: ${instance.apiUrl}`];
 
+  if (instance.transportType) {
+    infoDetails.push(`Transport: ${instance.transportType}`);
+  }
+
+  if (instance.errorQueue) {
+    infoDetails.push(`Error queue: ${instance.errorQueue}`);
+  }
+
+  if (instance.errorLogQueue) {
+    infoDetails.push(`Error log queue: ${instance.errorLogQueue}`);
+  }
+
+  if (instance.forwardErrorMessages !== undefined) {
+    infoDetails.push(`Forward error messages: ${instance.forwardErrorMessages ? "Yes" : "No"}`);
+  }
+
+  if (instance.errorRetentionPeriod) {
+    infoDetails.push(`Error retention: ${instance.errorRetentionPeriod}`);
+  }
+
+  if (instance.auditRetentionPeriod) {
+    infoDetails.push(`Audit retention: ${instance.auditRetentionPeriod}`);
+  }
+
   return {
     type: formatRowType(instance),
     name: instance.name,

@@ -242,7 +242,7 @@ describe("PlatformHealthView", () => {
     expect(screen.getAllByText("ServicePulse").length).toBeGreaterThan(0);
     const user = userEvent.setup();
     await user.click(screen.getAllByRole("button", { name: /Healthy/i })[0]);
-    expect(screen.getByText("API")).toBeInTheDocument();
+    expect(screen.getByText("API:")).toBeInTheDocument();
     expect(screen.getByText("http://localhost:33333/api/")).toBeInTheDocument();
   });
 
@@ -356,7 +356,7 @@ describe("PlatformHealthView", () => {
 
     expect(screen.getByText("Health issues")).toBeInTheDocument();
     expect(screen.getByText("Information")).toBeInTheDocument();
-    expect(screen.getAllByText("API").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("API:").length).toBeGreaterThan(0);
     expect(screen.getByText("http://localhost:33334/api/")).toBeInTheDocument();
     expect(screen.getByText("Audit Message Ingestion: Audit ingestion failed")).toBeInTheDocument();
     expect(screen.getByText(`Reported at: ${currentReportedAt}`)).toBeInTheDocument();
@@ -405,7 +405,7 @@ describe("PlatformHealthView", () => {
 
     const user = userEvent.setup();
     await user.click(screen.getByRole("button", { name: /Healthy/i }));
-    expect(screen.getByText("API")).toBeInTheDocument();
+    expect(screen.getByText("API:")).toBeInTheDocument();
     expect(screen.getByText("http://localhost:33333/api/")).toBeInTheDocument();
 
     rows.mockRestore();
