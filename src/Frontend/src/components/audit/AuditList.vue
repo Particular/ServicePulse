@@ -16,9 +16,10 @@ import { useAuditingCapability } from "@/components/platformcapabilities/capabil
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import PageBanner, { type BannerMessage } from "@/components/PageBanner.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
+import { loadDefaultRange } from "@/components/audit/timeRange";
 
 const store = useAuditStore();
-const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange, queryFailed } = storeToRefs(store);
+const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed } = storeToRefs(store);
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
@@ -92,15 +93,13 @@ watch(
 );
 
 function controlsQuery() {
-  const [fromDate, toDate] = dateRange.value;
-
   return {
     sortBy: sortBy.value.property,
     sortDir: sortBy.value.isAscending ? "asc" : "desc",
     filter: messageFilterString.value,
     endpoint: selectedEndpointName.value,
-    from: fromDate?.toISOString() ?? "",
-    to: toDate?.toISOString() ?? "",
+    from: timeRangeFrom.value.trim(),
+    to: timeRangeTo.value.trim(),
     pageSize: itemsPerPage.value,
   };
 }
@@ -111,7 +110,7 @@ function controlsQuery() {
 // query is still running, so a user typing a search is never ignored.
 let lastAppliedControlsQuery = "";
 
-const watchHandle = watch([itemsPerPage, sortBy, messageFilterString, selectedEndpointName, dateRange], async () => {
+const watchHandle = watch([itemsPerPage, sortBy, messageFilterString, selectedEndpointName, timeRangeFrom, timeRangeTo], async () => {
   const query = controlsQuery();
   const serialized = JSON.stringify(query);
 
@@ -134,7 +133,15 @@ function setQuery() {
       ? { isAscending: query.sortDir === "asc", property: query.sortBy as string }
       : (sortBy.value = { isAscending: false, property: FieldNames.TimeSent });
   itemsPerPage.value = query.pageSize ? parseInt(query.pageSize as string) : 100;
-  dateRange.value = query.from && query.to ? [new Date(query.from as string), new Date(query.to as string)] : [];
+  if (query.from !== undefined || query.to !== undefined) {
+    timeRangeFrom.value = (query.from as string) ?? "";
+    timeRangeTo.value = (query.to as string) ?? "";
+  } else {
+    // No range in the URL: the user's saved default (factory: last 6 hours)
+    const defaultRange = loadDefaultRange();
+    timeRangeFrom.value = defaultRange.from;
+    timeRangeTo.value = defaultRange.to;
+  }
   selectedEndpointName.value = (query.endpoint ?? "") as string;
 
   lastAppliedControlsQuery = JSON.stringify(controlsQuery());

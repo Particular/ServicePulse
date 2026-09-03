@@ -4,10 +4,10 @@ import { storeToRefs } from "pinia";
 import { FieldNames, useAuditStore } from "@/stores/AuditStore";
 import ListFilterSelector from "@/components/audit/ListFilterSelector.vue";
 import { computed } from "vue";
-import DatePickerRange from "@/components/audit/DatePickerRange.vue";
+import SuperDatePicker from "@/components/audit/SuperDatePicker.vue";
 
 const store = useAuditStore();
-const { sortBy, messageFilterString, selectedEndpointName, endpoints, itemsPerPage, dateRange } = storeToRefs(store);
+const { sortBy, messageFilterString, selectedEndpointName, endpoints, itemsPerPage } = storeToRefs(store);
 const endpointNames = computed(() => {
   return [...new Set(endpoints.value.map((endpoint) => endpoint.name))].sort();
 });
@@ -70,9 +70,9 @@ function findKeyByValue(searchValue: string) {
       </div>
     </div>
     <div class="filter">
-      <div class="filter-label">Dates:</div>
+      <div class="filter-label">Sent:</div>
       <div class="filter-component">
-        <DatePickerRange v-model="dateRange" />
+        <SuperDatePicker />
       </div>
     </div>
     <div class="filter">
@@ -104,6 +104,12 @@ function findKeyByValue(searchValue: string) {
 .filter {
   display: flex;
   align-items: start;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.filter-component {
+  min-width: 0;
 }
 
 .filter:last-child {
@@ -117,7 +123,7 @@ function findKeyByValue(searchValue: string) {
 }
 
 .text-search-container {
-  width: 25rem;
+  width: min(25rem, 100%);
 }
 .note {
   font-size: 0.875em;

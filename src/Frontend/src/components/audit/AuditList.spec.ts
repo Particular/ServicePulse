@@ -209,6 +209,7 @@ async function waitForFirstLoadToComplete() {
 describe("FEATURE: Audit Messages Query State", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   describe("RULE: A spinner is shown during the initial page load", () => {
@@ -389,6 +390,19 @@ describe("FEATURE: Audit Messages Query State", () => {
       await waitForRouteDrivenQuery();
 
       expect(refreshNow.mock.calls.length - queriesAfterFirstLoad).toBe(1);
+    });
+  });
+
+  describe("RULE: The saved default range drives the first query", () => {
+    test("EXAMPLE: Opening the view without URL params applies the browser's saved default", async () => {
+      localStorage.setItem("audit.defaultTimeRange", JSON.stringify({ from: "now-24h", to: "now" }));
+
+      const { store, refreshNow } = await renderAuditList([]);
+      await waitForFirstLoadToComplete();
+
+      expect(store.timeRangeFrom).toBe("now-24h");
+      expect(store.timeRangeTo).toBe("now");
+      expect(refreshNow).toHaveBeenCalled();
     });
   });
 
