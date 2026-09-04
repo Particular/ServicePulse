@@ -17,9 +17,11 @@ import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import PageBanner, { type BannerMessage } from "@/components/PageBanner.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { loadDefaultRange, narrowingPresets, resolveTimeRange, type RangePreset } from "@/components/audit/timeRange";
+import { describeIncompleteReason } from "@/components/incompleteResults";
 
 const store = useAuditStore();
-const { messages, newMessageIds, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryStartedAt, queryDurationMs, queryCompletedAt } = storeToRefs(store);
+const { messages, newMessageIds, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryTimedOut, incompleteInstances, queryStartedAt, queryDurationMs, queryCompletedAt } =
+  storeToRefs(store);
 const newRowIds = computed(() => new Set(newMessageIds.value));
 const route = useRoute();
 const router = useRouter();
@@ -71,6 +73,9 @@ function applyNarrowing(preset: RangePreset) {
   timeRangeFrom.value = preset.from;
   timeRangeTo.value = preset.to;
 }
+
+// "audit-2 (timed out), audit-3 (unreachable)" — why the current page is partial
+const incompleteSummary = computed(() => incompleteInstances.value.map((instance) => `${instance.instanceId} (${describeIncompleteReason(instance.reason)})`).join(", "));
 
 onBeforeMount(() => {
   setQuery();
@@ -186,20 +191,22 @@ watch(autoRefreshValue, (newValue) => {
         </FiltersPanel>
       </div>
       <div class="row results-row">
-        <ResultsCount :displayed="messages.length" :total="totalCount" :duration-ms="queryDurationMs" :completed-at="queryCompletedAt" />
+        <ResultsCount :displayed="messages.length" :total="totalCount" :incomplete="incompleteInstances.length > 0" :duration-ms="queryDurationMs" :completed-at="queryCompletedAt" />
         <ResultsOptions />
       </div>
       <PageBanner v-if="bannerMessage && isMassTransitConnected === false" :message="bannerMessage" :show-action="showBannerAction" @action="showWizard = true" />
     </div>
     <WizardDialog v-if="showWizard" title="Getting Started with Auditing" :pages="wizardPages" @close="showWizard = false" />
     <div v-if="queryFailed && !queryInProgress" class="query-error" role="alert" data-testid="query-error">
-      <strong>The query failed or took too long and was stopped.</strong>
+      <strong v-if="queryTimedOut">The query exceeded the ServiceControl query time limit and was stopped.</strong>
+      <strong v-else>The query failed or took too long and was stopped.</strong>
       <p v-if="hasNoTimeFilter">This query has no time filter, so it scans the whole audit store. Bounding it is the quickest fix — or try again in an off-peak period.</p>
       <p v-else>Query cost grows with the size of the time window. Try a narrower range, add a search term or endpoint filter, or reduce the number of results ("Show").</p>
       <div v-if="narrowOptions.length > 0" class="error-actions">
         <button v-for="preset in narrowOptions" :key="preset.label" type="button" class="narrow-action" data-testid="narrow-range" @click="applyNarrowing(preset)">{{ preset.label }}</button>
       </div>
     </div>
+    <div v-if="incompleteInstances.length > 0 && !queryInProgress" class="query-incomplete" role="status" data-testid="query-incomplete"><strong>Partial results.</strong> No data from {{ incompleteSummary }}.</div>
     <div class="row results-table">
       <!-- Only when there is nothing to show yet. A re-fetch over existing rows leaves them
            visible and usable: the refresh button already signals the running query -->
@@ -235,6 +242,15 @@ watch(autoRefreshValue, (newValue) => {
 
 .query-error p {
   margin: 0.25rem 0 0;
+}
+
+.query-incomplete {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid #f0e0b6;
+  border-left: 4px solid #f0ad4e;
+  border-radius: 4px;
+  background-color: #fdf9ef;
 }
 
 .error-actions {
