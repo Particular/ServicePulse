@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { FieldNames, useAuditStore } from "@/stores/AuditStore";
 import { storeToRefs } from "pinia";
-import { useRoute, useRouter } from "vue-router";
+import { RouterLink, useRoute, useRouter } from "vue-router";
+import routeLinks from "@/router/routeLinks";
 import ResultsCount from "@/components/ResultsCount.vue";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
 import ResultsOptions from "@/components/audit/ResultsOptions.vue";
@@ -17,9 +18,10 @@ import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import PageBanner, { type BannerMessage } from "@/components/PageBanner.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { loadDefaultRange, narrowingPresets, resolveTimeRange, type RangePreset } from "@/components/audit/timeRange";
+import { describeIncompleteReason, describeInstance } from "@/components/incompleteResults";
 
 const store = useAuditStore();
-const { messages, newMessageIds, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryDurationMs, queryCompletedAt } = storeToRefs(store);
+const { messages, newMessageIds, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryTimedOut, incompleteInstances, queryDurationMs, queryCompletedAt } = storeToRefs(store);
 const newRowIds = computed(() => new Set(newMessageIds.value));
 const route = useRoute();
 const router = useRouter();
@@ -86,6 +88,17 @@ function applyNarrowing(preset: RangePreset) {
   timeRangeFrom.value = preset.from;
   timeRangeTo.value = preset.to;
 }
+
+// "audit-2:44444 (timed out), audit-3:44444 (unreachable)" — why the current page is partial.
+// The id is the instance's base64 API URL; readers get host and port, the URL on hover.
+// A slow instance is helped by a lighter query; the other reasons are about the instance itself
+const anyInstanceTimedOut = computed(() => incompleteInstances.value.some((instance) => instance.reason === "timeout"));
+const incompleteSummary = computed(() =>
+  incompleteInstances.value.map((instance) => {
+    const { label, apiUrl } = describeInstance(instance.instanceId);
+    return { key: instance.instanceId, label, apiUrl, reason: describeIncompleteReason(instance.reason) };
+  })
+);
 
 onBeforeMount(() => {
   setQuery();
@@ -203,7 +216,7 @@ watch(autoRefreshValue, (newValue) => {
       </div>
       <div class="row results-row">
         <div class="results-summary">
-          <ResultsCount :displayed="messages.length" :total="totalCount" :duration-ms="queryDurationMs" :completed-at="queryCompletedAt" />
+          <ResultsCount :displayed="messages.length" :total="totalCount" :incomplete="incompleteInstances.length > 0" :duration-ms="queryDurationMs" :completed-at="queryCompletedAt" />
           <span v-if="slowQuery && queryInProgress" class="slow-query" role="status" data-testid="slow-query-hint">Still running · a narrower time range makes the query lighter.</span>
         </div>
         <ResultsOptions />
@@ -212,12 +225,24 @@ watch(autoRefreshValue, (newValue) => {
     </div>
     <WizardDialog v-if="showWizard" title="Getting Started with Auditing" :pages="wizardPages" @close="showWizard = false" />
     <div v-if="queryFailed && !queryInProgress" class="query-error" role="alert" data-testid="query-error">
-      <strong>The query failed or took too long and was stopped.</strong>
+      <strong v-if="queryTimedOut">The query exceeded the ServiceControl query time limit and was stopped.</strong>
+      <strong v-else>The query failed or took too long and was stopped.</strong>
       <p v-if="hasNoTimeFilter">This query has no time filter, so it scans the whole audit store. Bounding it is the quickest fix — or try again in an off-peak period.</p>
       <p v-else>Query cost grows with the size of the time window. Try a narrower range, add a search term or endpoint filter, or reduce the number of results ("Show").</p>
       <div v-if="narrowOptions.length > 0" class="error-actions">
         <button v-for="preset in narrowOptions" :key="preset.label" type="button" class="narrow-action" data-testid="narrow-range" @click="applyNarrowing(preset)">{{ preset.label }}</button>
       </div>
+    </div>
+    <div v-if="incompleteInstances.length > 0 && !queryInProgress" class="query-incomplete" role="status" data-testid="query-incomplete">
+      <strong>Partial results.</strong> No data from
+      <template v-for="(instance, index) in incompleteSummary" :key="instance.key"
+        ><template v-if="index > 0">, </template><span :title="instance.apiUrl ?? undefined">{{ instance.label }} ({{ instance.reason }})</span></template
+      >.
+      <p class="help">
+        The rows below come from the instances that did answer. Try again in a moment; if it keeps happening, <RouterLink :to="routeLinks.platformHealth">check the health of those instances</RouterLink>.<template v-if="anyInstanceTimedOut">
+          A narrower time range makes the query lighter for a slow instance.</template
+        >
+      </p>
     </div>
     <div class="row results-table">
       <!-- Only when there is nothing to show yet. A re-fetch over existing rows leaves them
@@ -254,6 +279,21 @@ watch(autoRefreshValue, (newValue) => {
 
 .query-error p {
   margin: 0.25rem 0 0;
+}
+
+.query-incomplete {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid #f0e0b6;
+  border-left: 4px solid #f0ad4e;
+  border-radius: 4px;
+  background-color: #fdf9ef;
+}
+
+.query-incomplete .help {
+  margin: 0.25rem 0 0;
+  font-size: 0.875em;
+  color: #6b6b6b;
 }
 
 .error-actions {
