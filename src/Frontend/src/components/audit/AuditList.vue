@@ -72,16 +72,18 @@ onBeforeMount(() => {
   }, 0);
 });
 
+// The route is the single source of truth for the query: control changes only push to the router,
+// and only a route change triggers a fetch. Having the fetch in both watchers (and the route in the
+// controls watcher) made a single control change fire the same query up to three times.
 watch(
-  () => router.currentRoute.value.query,
+  () => route.query,
   async () => {
     setQuery();
     await refreshNow();
-  },
-  { deep: true }
+  }
 );
 
-const watchHandle = watch([() => route.query, itemsPerPage, sortBy, messageFilterString, selectedEndpointName, dateRange], async () => {
+const watchHandle = watch([itemsPerPage, sortBy, messageFilterString, selectedEndpointName, dateRange], async () => {
   if (firstLoad.value) {
     return;
   }
@@ -101,8 +103,6 @@ const watchHandle = watch([() => route.query, itemsPerPage, sortBy, messageFilte
       pageSize: itemsPerPage.value,
     },
   });
-
-  await refreshNow();
 });
 
 function setQuery() {
