@@ -12,9 +12,10 @@ vi.mock("@/components/serviceControlClient", () => ({
 }));
 
 import { useAuditStore } from "@/stores/AuditStore";
+import { HttpError } from "@/utils/HttpError";
 
-function responseWithTotalCount(count: number): Response {
-  return { headers: new Headers({ "total-count": count.toString() }) } as Response;
+function responseWithTotalCount(count: number, extraHeaders: Record<string, string> = {}): Response {
+  return { headers: new Headers({ "total-count": count.toString(), ...extraHeaders }) } as Response;
 }
 
 function abortablePendingFetch(onSignal?: (signal: AbortSignal | undefined) => void) {
@@ -57,6 +58,35 @@ describe("AuditStore refresh", () => {
     expect(store.messages).toEqual([message]);
     expect(store.totalCount).toBe(1);
     expect(store.queryFailed).toBe(false);
+  });
+
+  test("a partial response surfaces the instances whose data is missing", async () => {
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1, { "X-Particular-Incomplete-Results": "audit-2:timeout, audit-3:unavailable" }), [message]]);
+    const store = useAuditStore();
+
+    await store.refresh();
+
+    expect(store.queryFailed).toBe(false);
+    expect(store.incompleteInstances).toEqual([
+      { instanceId: "audit-2", reason: "timeout" },
+      { instanceId: "audit-3", reason: "unavailable" },
+    ]);
+
+    // The next complete response clears the warning
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [message]]);
+    await store.refresh();
+    expect(store.incompleteInstances).toEqual([]);
+  });
+
+  test("a 504 is flagged as the server's query time limit", async () => {
+    fetchTypedFromServiceControl.mockRejectedValue(new HttpError(504, "Gateway Timeout"));
+    const store = useAuditStore();
+
+    await store.refresh();
+
+    expect(store.queryFailed).toBe(true);
+    expect(store.queryTimedOut).toBe(true);
+    expect(store.incompleteInstances).toEqual([]);
   });
 
   test("a failed query flags the failure instead of throwing", async () => {

@@ -10,6 +10,12 @@ describe("FEATURE: Results count", () => {
     expect(screen.getByText(expected)).toBeInTheDocument();
   });
 
+  test("EXAMPLE: A partial result presents its total as a floor", () => {
+    render(ResultsCount, { props: { displayed: 3, total: 87421337, incomplete: true } });
+
+    expect(screen.getByText(`Showing 3 of at least ${(87421337).toLocaleString()} result(s)`)).toBeInTheDocument();
+  });
+
   test("EXAMPLE: The query duration is shown when known", () => {
     render(ResultsCount, { props: { displayed: 100, total: 500, durationMs: 2700 } });
 

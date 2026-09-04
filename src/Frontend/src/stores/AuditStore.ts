@@ -8,6 +8,8 @@ import serviceControlClient from "@/components/serviceControlClient";
 import auditClient from "@/components/audit/auditClient";
 import { loadDefaultRange, resolveTimeRange } from "@/components/audit/timeRange";
 import { clearSearchHistory, loadSearchHistory, recordSearch } from "@/components/audit/searchHistory";
+import { incompleteResultsHeader, parseIncompleteResults, type IncompleteInstance } from "@/components/incompleteResults";
+import { HttpError } from "@/utils/HttpError";
 
 export enum FieldNames {
   TimeSent = "time_sent",
@@ -34,6 +36,10 @@ export const useAuditStore = defineStore("AuditStore", () => {
   const selectedEndpointName = ref<string>("");
   const endpoints = ref<EndpointsView[]>([]);
   const queryFailed = ref(false);
+  // The failure was the server's query time limit (a 504), not a generic error
+  const queryTimedOut = ref(false);
+  // Instances whose data the current results are missing (partial 200 response)
+  const incompleteInstances = ref<IncompleteInstance[]>([]);
   // Epoch ms of the in-flight query's start (null when idle) and the duration
   // of the query that produced the current results
   const queryStartedAt = ref<number | null>(null);
@@ -89,21 +95,25 @@ export const useAuditStore = defineStore("AuditStore", () => {
 
       totalCount.value = parseInt(response.headers.get("total-count") ?? "0");
       messages.value = data;
+      incompleteInstances.value = parseIncompleteResults(response.headers.get(incompleteResultsHeader));
       queryFailed.value = false;
+      queryTimedOut.value = false;
       queryDurationMs.value = Math.round(performance.now() - started);
       queryCompletedAt.value = new Date().toISOString();
-    } catch {
+    } catch (error) {
       if (thisQuery.signal.aborted) {
         // Superseded by a newer query, or the view was left
         return;
       }
 
       // A long-running query is terminated by ServiceControl after its configured query time limit
-      // and surfaces here as a failed response. Not rethrown: the callers are watchers, so a
-      // rethrow would only become an unhandled rejection instead of user feedback.
+      // and surfaces here as a 504. Not rethrown: the callers are watchers, so a rethrow would
+      // only become an unhandled rejection instead of user feedback.
       messages.value = [];
       totalCount.value = 0;
+      incompleteInstances.value = [];
       queryFailed.value = true;
+      queryTimedOut.value = error instanceof HttpError && error.status === 504;
     } finally {
       if (activeQuery === thisQuery) {
         activeQuery = null;
@@ -139,6 +149,8 @@ export const useAuditStore = defineStore("AuditStore", () => {
     timeRangeFrom,
     timeRangeTo,
     queryFailed,
+    queryTimedOut,
+    incompleteInstances,
     queryStartedAt,
     queryDurationMs,
     queryCompletedAt,
