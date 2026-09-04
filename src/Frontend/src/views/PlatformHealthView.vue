@@ -476,8 +476,8 @@ tbody tr:last-child td {
   color: #b53a31;
 }
 
-.details-row td {
-  padding-top: 0;
+.details-row > td {
+  padding-top: 1rem;
 }
 
 .details-cell {
