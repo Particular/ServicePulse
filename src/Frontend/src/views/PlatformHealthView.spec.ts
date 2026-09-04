@@ -483,7 +483,7 @@ describe("PlatformHealthView", () => {
     rows.mockRestore();
   });
 
-  test("shows no problems detected when expanding ServicePulse", async () => {
+  test("shows no additional information when expanding ServicePulse", async () => {
     const platformModelStore = usePlatformModelStore();
     platformModelStore.model = {
       primary: {
@@ -512,7 +512,7 @@ describe("PlatformHealthView", () => {
     expect(servicePulseButton).toBeDefined();
     await user.click(servicePulseButton!);
 
-    expect(screen.getByText("No problems detected.")).toBeInTheDocument();
+    expect(screen.getByText("No additional information.")).toBeInTheDocument();
   });
 
   test("shows the updated primary unavailable wording", async () => {

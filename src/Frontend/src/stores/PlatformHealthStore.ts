@@ -233,7 +233,7 @@ function toServicePulseRow(servicePulse: ServicePulse, latestVersion: string, up
     latestVersion,
     upgradeLink,
     infoDetails: [],
-    healthDetails: ["No problems detected."],
+    healthDetails: [],
   };
 }
 

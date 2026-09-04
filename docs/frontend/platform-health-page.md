@@ -39,7 +39,7 @@ Each row shows:
 - upgrade cue when a newer version is known
 - no upgrade cue when the page only knows that versions differ but does not know a newer target version
 
-Rows are always expandable via the health badge. Expanded content separates informational details such as `API: <url>` from `healthDetails` such as unavailability or degradation messages. The `ServicePulse` row expands to a neutral `No problems detected.` detail.
+Rows are always expandable via the health badge. Expanded content separates informational details such as `API: <url>` from `healthDetails` such as unavailability or degradation messages.
 
 See `docs/platform-topology.md` for the direct-access rule.
 

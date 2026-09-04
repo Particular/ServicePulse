@@ -108,7 +108,7 @@ describe("PlatformHealthStore", () => {
     expect(store.rows[4].upgradeAvailable).toBe(true);
     expect(store.rows[4].latestVersion).toBe("2.10.2");
     expect(store.rows[4].infoDetails).toEqual([]);
-    expect(store.rows[4].healthDetails).toEqual(["No problems detected."]);
+    expect(store.rows[4].healthDetails).toEqual([]);
     expect(store.rows[2].healthDetails).toContain(`Reported at: ${currentReportedAt}`);
     expect(store.issueSummary).toContain("1 issue detected");
     expect(store.issueSummary).toContain("degraded Audit instance");

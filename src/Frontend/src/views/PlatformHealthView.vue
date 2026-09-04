@@ -111,10 +111,6 @@ function issuePanelClass(row: (typeof store.rows)[number]) {
   };
 }
 
-function showsNoProblems(row: (typeof store.rows)[number]) {
-  return row.type === "ServicePulse" && row.healthDetails.length === 1 && row.healthDetails[0] === "No problems detected.";
-}
-
 const healthLabel = computed(() => ({
   healthy: "Healthy",
   degraded: "Degraded",
@@ -202,7 +198,6 @@ function toggleRow(row: (typeof store.rows)[number]) {
                               </tr>
                             </tbody>
                           </table>
-                          <p v-else-if="showsNoProblems(row)" class="no-problems">No problems detected.</p>
                           <p v-else class="no-problems no-problems-muted">No additional information.</p>
                         </section>
                       </div>
