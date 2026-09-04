@@ -57,6 +57,18 @@ describe("FEATURE: Age-adaptive timestamps", () => {
     expect(relative).toContain("2 weeks ago");
   });
 
+  test("EXAMPLE: The part prop renders only one half, for split layouts", () => {
+    cleanup();
+    render(AdaptiveTimestamp, { props: { dateUtc: new Date("2026-09-03T13:00:00").toISOString(), part: "relative" } });
+    expect(screen.queryByTestId("adaptive-absolute")).not.toBeInTheDocument();
+    expect(screen.getByTestId("adaptive-relative").textContent).toBe("2 hours ago");
+
+    cleanup();
+    render(AdaptiveTimestamp, { props: { dateUtc: new Date("2026-09-03T13:00:00").toISOString(), part: "absolute" } });
+    expect(screen.queryByTestId("adaptive-relative")).not.toBeInTheDocument();
+    expect(screen.getByTestId("adaptive-absolute")).toBeInTheDocument();
+  });
+
   test("EXAMPLE: In UTC mode the wall-clock time is UTC", () => {
     const { zone } = useTimestampZone();
     zone.value = "utc";

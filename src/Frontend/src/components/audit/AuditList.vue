@@ -272,5 +272,20 @@ watch(autoRefreshValue, (newValue) => {
   margin-bottom: 5rem;
   background-color: #ffffff;
   position: relative;
+  /* One column definition for all rows (rows join it via subgrid). Data
+     columns never shrink below their widest value in the list (no wrapping)
+     but share surplus width equally, so they stretch across the row instead
+     of piling up on the right on wide screens. Deliberately NOT a size
+     container: combining container-type with content-sized tracks froze
+     Chrome's layout. */
+  display: grid;
+  grid-template-columns: 1.8em minmax(0, 1fr) minmax(max-content, 1fr) minmax(max-content, 1fr) minmax(max-content, 1fr) minmax(max-content, 1fr) max-content;
+  column-gap: 0.375rem;
+  align-content: start;
+}
+
+/* Non-row children (the first-load spinner) span the full width */
+.results-table > :not(.item) {
+  grid-column: 1 / -1;
 }
 </style>
