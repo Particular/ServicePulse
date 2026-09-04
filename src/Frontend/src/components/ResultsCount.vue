@@ -5,6 +5,8 @@ import { useDateFormatter } from "@/composables/dateFormatter";
 const props = defineProps<{
   displayed: number;
   total: number;
+  // The total only covers the instances that answered (partial scatter-gather result)
+  incomplete?: boolean;
   durationMs?: number | null;
   completedAt?: string | null;
 }>();
@@ -34,7 +36,7 @@ const formattedDuration = computed(() => {
 <template>
   <div class="col format-showing-results">
     <div>
-      Showing {{ formattedDisplayed }} of {{ formattedTotal }} result(s)<template v-if="formattedDuration"> · took {{ formattedDuration }}</template
+      Showing {{ formattedDisplayed }} of {{ incomplete ? "at least " : "" }}{{ formattedTotal }} result(s)<template v-if="formattedDuration"> · took {{ formattedDuration }}</template
       ><template v-if="ranAgo">
         · ran <span :title="ranTooltip" data-testid="ran-ago">{{ ranAgo }}</span></template
       >

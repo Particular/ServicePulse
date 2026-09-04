@@ -419,6 +419,51 @@ describe("FEATURE: Audit Messages Query State", () => {
     });
   });
 
+  describe("RULE: Partial results name the instances whose data is missing", () => {
+    test("EXAMPLE: The warning lists each missing instance with its reason", async () => {
+      const { store } = await renderAuditList([createMessage()]);
+
+      await waitForFirstLoadToComplete();
+
+      store.incompleteInstances = [
+        { instanceId: "audit-2", reason: "timeout" },
+        { instanceId: "audit-3", reason: "unavailable" },
+      ];
+      await nextTick();
+
+      const warning = screen.getByTestId("query-incomplete");
+      expect(warning.textContent).toContain("audit-2 (timed out)");
+      expect(warning.textContent).toContain("audit-3 (unreachable)");
+      // the partial data itself stays on screen
+      expect(screen.queryAllByTestId("message-item").length).toBeGreaterThan(0);
+    });
+
+    test("EXAMPLE: No warning while a retry is in flight or when results are complete", async () => {
+      const { store, isRefreshing } = await renderAuditList([createMessage()]);
+
+      await waitForFirstLoadToComplete();
+      expect(screen.queryByTestId("query-incomplete")).not.toBeInTheDocument();
+
+      store.incompleteInstances = [{ instanceId: "audit-2", reason: "timeout" }];
+      isRefreshing.value = true;
+      await nextTick();
+
+      expect(screen.queryByTestId("query-incomplete")).not.toBeInTheDocument();
+    });
+
+    test("EXAMPLE: A query stopped by the server's time limit says so", async () => {
+      const { store } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      store.queryFailed = true;
+      store.queryTimedOut = true;
+      await nextTick();
+
+      expect(screen.getByTestId("query-error").textContent).toContain("exceeded the ServiceControl query time limit");
+    });
+  });
+
   describe("RULE: A query-control change results in exactly one query", () => {
     test("EXAMPLE: Changing the filter text fires a single query", async () => {
       const { refreshNow, store } = await renderAuditList([createMessage()]);
