@@ -15,9 +15,11 @@ import RefreshConfig from "@/components/RefreshConfig.vue";
 
 // ==================== Stubs ====================
 
+// Mirrors ActionButton's real disabled semantics (loading disables unless opted out) —
+// a stub that diverges here hides exactly the bug this file exists to prevent.
 const ActionButtonStub = defineComponent({
-  props: { loading: Boolean, disabled: Boolean },
-  template: '<button :data-loading="String(loading)" :disabled="disabled"><slot /></button>',
+  props: { loading: Boolean, disabled: Boolean, disableOnLoading: { type: Boolean, default: true } },
+  template: '<button :data-loading="String(loading)" :disabled="disabled || (loading && disableOnLoading)"><slot name="icon" /><slot /></button>',
 });
 
 const ListFilterSelectorStub = defineComponent({
@@ -28,7 +30,7 @@ const ListFilterSelectorStub = defineComponent({
 // ==================== DSL ====================
 
 function renderRefreshConfig(queryInProgress: boolean) {
-  const { rerender } = render(RefreshConfig, {
+  const { rerender, emitted } = render(RefreshConfig, {
     props: { queryInProgress, modelValue: null },
     global: {
       stubs: {
@@ -50,8 +52,15 @@ function renderRefreshConfig(queryInProgress: boolean) {
     await rerender({ queryInProgress: value, modelValue: null });
   }
 
+  async function rerenderWith(props: { queryInProgress: boolean; queryStartedAt?: number | null; nextRefreshAt?: number | null; modelValue?: number | null }) {
+    await rerender({ modelValue: null, ...props });
+  }
+
   return {
     setQueryInProgress,
+    rerenderWith,
+    getButton,
+    emitted,
     verify: {
       refreshButtonIsLoading: () => expect(getButton().dataset.loading).toBe("true"),
       refreshButtonIsNotLoading: () => expect(getButton().dataset.loading).toBe("false"),
@@ -66,18 +75,21 @@ function renderRefreshConfig(queryInProgress: boolean) {
 // ==================== Tests ====================
 
 describe("FEATURE: Refresh Controls Query State", () => {
-  describe("RULE: Only the refresh action locks while a query is in progress", () => {
-    test("EXAMPLE: The refresh button loads and disables, the auto-refresh selector stays usable", async () => {
-      const { setQueryInProgress, verify } = renderRefreshConfig(false);
+  describe("RULE: The refresh button becomes a cancel button while a query runs", () => {
+    test("EXAMPLE: Idle shows Refresh; in-flight shows an enabled Cancel; everything stays usable", async () => {
+      const { setQueryInProgress, verify, getButton } = renderRefreshConfig(false);
 
       verify.refreshButtonIsNotLoading();
       verify.refreshButtonIsEnabled();
       verify.autoRefreshSelectorIsEnabled();
+      expect(getButton().textContent).toContain("Refresh");
 
       await setQueryInProgress(true);
 
       verify.refreshButtonIsLoading();
-      verify.refreshButtonIsDisabled();
+      // The button must stay enabled: it is now the escape hatch for a slow query
+      verify.refreshButtonIsEnabled();
+      expect(getButton().textContent).toContain("Cancel");
       // The selector must stay usable so auto-refresh can be turned off during a slow query
       verify.autoRefreshSelectorIsEnabled();
 
@@ -85,7 +97,53 @@ describe("FEATURE: Refresh Controls Query State", () => {
 
       verify.refreshButtonIsNotLoading();
       verify.refreshButtonIsEnabled();
-      verify.autoRefreshSelectorIsEnabled();
+      expect(getButton().textContent).toContain("Refresh");
+    });
+
+    test("EXAMPLE: The cancel button shows the elapsed query time", async () => {
+      const { rerenderWith, getButton } = renderRefreshConfig(false);
+
+      await rerenderWith({ queryInProgress: true, queryStartedAt: Date.now() - 2700 });
+
+      expect(getButton().textContent).toMatch(/Cancel · \d+\.\ds/);
+    });
+
+    test("EXAMPLE: With auto-refresh armed, the countdown ring sits inside the button", async () => {
+      const { rerenderWith, getButton } = renderRefreshConfig(false);
+
+      await rerenderWith({ queryInProgress: false, nextRefreshAt: Date.now() + 3000, modelValue: 5000 });
+
+      expect(getButton().querySelector('[data-testid="auto-refresh-indicator"]')).not.toBeNull();
+      expect(getButton().textContent).toContain("Refresh");
+    });
+
+    test("EXAMPLE: Without auto-refresh there is no ring", async () => {
+      const { rerenderWith, getButton } = renderRefreshConfig(false);
+
+      await rerenderWith({ queryInProgress: false, nextRefreshAt: null, modelValue: null });
+
+      expect(getButton().querySelector('[data-testid="auto-refresh-indicator"]')).toBeNull();
+    });
+
+    test("EXAMPLE: Clicking during a query emits cancelQuery, not manualRefresh", async () => {
+      const { setQueryInProgress, getButton, emitted } = renderRefreshConfig(false);
+
+      await setQueryInProgress(true);
+      getButton().click();
+      await Promise.resolve();
+
+      expect(emitted().cancelQuery).toBeTruthy();
+      expect(emitted().manualRefresh).toBeFalsy();
+    });
+
+    test("EXAMPLE: Clicking while idle emits manualRefresh", async () => {
+      const { getButton, emitted } = renderRefreshConfig(false);
+
+      getButton().click();
+      await Promise.resolve();
+
+      expect(emitted().manualRefresh).toBeTruthy();
+      expect(emitted().cancelQuery).toBeFalsy();
     });
   });
 });

@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/vue";
+import { fireEvent, render, screen, waitFor } from "@testing-library/vue";
 import { createTestingPinia } from "@pinia/testing";
 import { createRouter, createMemoryHistory } from "vue-router";
 import { ref, shallowReadonly, nextTick, type Ref } from "vue";
@@ -21,8 +21,9 @@ import { type default as Message, MessageStatus } from "@/resources/Message";
 // ==================== Mock Setup ====================
 
 vi.mock("@/composables/autoRefresh");
+const auditingStatus = vi.hoisted(() => ({ value: "Available" }));
 vi.mock("@/components/platformcapabilities/capabilities/AuditingCapability", () => ({
-  useAuditingCapability: () => ({ status: { value: "Available" } }),
+  useAuditingCapability: () => ({ status: auditingStatus }),
 }));
 vi.mock("@/components/platformcapabilities/wizards/AuditingWizardPages", () => ({
   getAuditingWizardPages: () => [],
@@ -144,8 +145,12 @@ async function renderAuditList(messages: Message[] = [], options: { neverComplet
       plugins: [pinia, router],
       stubs: {
         AuditListItem: { template: '<div data-testid="message-item" />' },
-        RefreshConfig: { template: '<div data-testid="refresh-config" :data-query-in-progress="String(queryInProgress)" />', props: ["queryInProgress"] },
-        FiltersPanel: { template: '<div data-testid="filters-panel" :data-query-in-progress="String(queryInProgress)" />', props: ["queryInProgress"] },
+        RefreshConfig: {
+          template: `<div data-testid="refresh-config" :data-query-in-progress="String(queryInProgress)"><button data-testid="cancel-button" @click="$emit('cancel-query')"></button></div>`,
+          props: ["queryInProgress"],
+          emits: ["cancel-query", "manual-refresh"],
+        },
+        FiltersPanel: { template: '<div data-testid="filters-panel" :data-query-in-progress="String(queryInProgress)"><slot name="actions" /></div>', props: ["queryInProgress"] },
         ResultsCount: true,
         WizardDialog: true,
         PageBanner: true,
@@ -209,6 +214,8 @@ async function waitForFirstLoadToComplete() {
 describe("FEATURE: Audit Messages Query State", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    auditingStatus.value = "Available";
+    localStorage.clear();
   });
 
   describe("RULE: A spinner is shown during the initial page load", () => {
@@ -319,6 +326,26 @@ describe("FEATURE: Audit Messages Query State", () => {
     });
   });
 
+  describe("RULE: Onboarding prompts render only after the capability probe has answered", () => {
+    test("EXAMPLE: No banner while the successful-messages probe is still checking", async () => {
+      auditingStatus.value = "Checking";
+      await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      expect(document.querySelector("page-banner-stub")).toBeNull();
+    });
+
+    test("EXAMPLE: The banner appears once a completed probe found no messages", async () => {
+      auditingStatus.value = "Endpoints Not Configured";
+      await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      expect(document.querySelector("page-banner-stub")).not.toBeNull();
+    });
+  });
+
   describe("RULE: A failed query tells the user what happened and what to try", () => {
     test("EXAMPLE: The error banner is shown after a failed query", async () => {
       const { store } = await renderAuditList([]);
@@ -341,6 +368,45 @@ describe("FEATURE: Audit Messages Query State", () => {
       await nextTick();
 
       expect(screen.queryByTestId("query-error")).not.toBeInTheDocument();
+    });
+
+    test("EXAMPLE: A failed query offers one-click narrower ranges", async () => {
+      const { store } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      // default range is now-6h -> now; the two next-narrower presets apply
+      store.queryFailed = true;
+      await nextTick();
+
+      expect(screen.getAllByTestId("narrow-range").map((b) => b.textContent)).toEqual(["Last hour", "Last 15 minutes"]);
+    });
+
+    test("EXAMPLE: Clicking a narrowing action applies that range", async () => {
+      const { store } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      store.queryFailed = true;
+      await nextTick();
+      await fireEvent.click(screen.getByText("Last hour"));
+
+      expect(store.timeRangeFrom).toBe("now-1h");
+      expect(store.timeRangeTo).toBe("now");
+    });
+
+    test("EXAMPLE: A failed query without a time filter says the scan was unbounded", async () => {
+      const { store } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      store.timeRangeFrom = "";
+      store.timeRangeTo = "";
+      store.queryFailed = true;
+      await nextTick();
+
+      expect(screen.getByText(/no time filter/)).toBeInTheDocument();
+      expect(screen.getAllByTestId("narrow-range").map((b) => b.textContent)).toEqual(["Last 7 days", "Last 24 hours"]);
     });
 
     test("EXAMPLE: The error banner is not shown when queries succeed", async () => {
@@ -389,6 +455,31 @@ describe("FEATURE: Audit Messages Query State", () => {
       await waitForRouteDrivenQuery();
 
       expect(refreshNow.mock.calls.length - queriesAfterFirstLoad).toBe(1);
+    });
+  });
+
+  describe("RULE: The saved default range drives the first query", () => {
+    test("EXAMPLE: Opening the view without URL params applies the browser's saved default", async () => {
+      localStorage.setItem("audit.defaultTimeRange", JSON.stringify({ from: "now-24h", to: "now" }));
+
+      const { store, refreshNow } = await renderAuditList([]);
+      await waitForFirstLoadToComplete();
+
+      expect(store.timeRangeFrom).toBe("now-24h");
+      expect(store.timeRangeTo).toBe("now");
+      expect(refreshNow).toHaveBeenCalled();
+    });
+  });
+
+  describe("RULE: The refresh button cancels the running query", () => {
+    test("EXAMPLE: The cancel action aborts via the store", async () => {
+      const { store } = await renderAuditList([], { neverCompleteFirstQuery: true });
+
+      await waitForFirstLoadToComplete();
+
+      await fireEvent.click(screen.getByTestId("cancel-button"));
+
+      expect(store.cancelQuery).toHaveBeenCalled();
     });
   });
 

@@ -6,6 +6,8 @@ import type { EndpointsView } from "@/resources/EndpointView";
 import type { DateRange } from "@/types/date";
 import serviceControlClient from "@/components/serviceControlClient";
 import auditClient from "@/components/audit/auditClient";
+import { loadDefaultRange, resolveTimeRange } from "@/components/audit/timeRange";
+import { clearSearchHistory, loadSearchHistory, recordSearch } from "@/components/audit/searchHistory";
 
 export enum FieldNames {
   TimeSent = "time_sent",
@@ -20,7 +22,11 @@ export const useAuditStore = defineStore("AuditStore", () => {
     isAscending: false,
   });
 
-  const dateRange = ref<DateRange>([]);
+  // Text expressions (relative like "now-6h" or absolute RFC 3339); resolved to
+  // instants on every refresh so live ranges slide with auto-refresh
+  const initialRange = loadDefaultRange();
+  const timeRangeFrom = ref(initialRange.from);
+  const timeRangeTo = ref(initialRange.to);
   const messageFilterString = ref("");
   const itemsPerPage = ref(100);
   const totalCount = ref(0);
@@ -28,6 +34,12 @@ export const useAuditStore = defineStore("AuditStore", () => {
   const selectedEndpointName = ref<string>("");
   const endpoints = ref<EndpointsView[]>([]);
   const queryFailed = ref(false);
+  // Epoch ms of the in-flight query's start (null when idle) and the duration
+  // of the query that produced the current results
+  const queryStartedAt = ref<number | null>(null);
+  const queryDurationMs = ref<number | null>(null);
+  const queryCompletedAt = ref<string | null>(null);
+  const searchHistory = ref(loadSearchHistory());
   let activeQuery: AbortController | null = null;
 
   async function loadEndpoints() {
@@ -48,11 +60,21 @@ export const useAuditStore = defineStore("AuditStore", () => {
     const thisQuery = new AbortController();
     activeQuery = thisQuery;
 
+    const resolvedRange = resolveTimeRange({ from: timeRangeFrom.value, to: timeRangeTo.value });
+    const dateRange: DateRange = resolvedRange ? [resolvedRange.from, resolvedRange.to] : [];
+
+    const started = performance.now();
+    queryStartedAt.value = Date.now();
+
+    if (messageFilterString.value.trim() !== "" || selectedEndpointName.value.trim() !== "") {
+      searchHistory.value = recordSearch(messageFilterString.value, selectedEndpointName.value, { from: timeRangeFrom.value, to: timeRangeTo.value });
+    }
+
     try {
       const [response, data] = await auditClient.getMessages(
         {
           endpointName: selectedEndpointName.value,
-          dateRange: dateRange.value,
+          dateRange,
           messageFilterString: messageFilterString.value,
           itemsPerPage: itemsPerPage.value,
           sort: sortByInstances.value,
@@ -61,15 +83,18 @@ export const useAuditStore = defineStore("AuditStore", () => {
       );
 
       if (activeQuery !== thisQuery) {
+        // a newer query took over the view state while this one was in flight
         return;
       }
 
       totalCount.value = parseInt(response.headers.get("total-count") ?? "0");
       messages.value = data;
       queryFailed.value = false;
+      queryDurationMs.value = Math.round(performance.now() - started);
+      queryCompletedAt.value = new Date().toISOString();
     } catch {
       if (thisQuery.signal.aborted) {
-        // Superseded by a newer query, which owns the view state from here on
+        // Superseded by a newer query, or the view was left
         return;
       }
 
@@ -82,6 +107,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
     } finally {
       if (activeQuery === thisQuery) {
         activeQuery = null;
+        queryStartedAt.value = null;
       }
     }
   }
@@ -89,9 +115,14 @@ export const useAuditStore = defineStore("AuditStore", () => {
   // Stops the in-flight query, e.g. when the view showing the results is left.
   // The abort propagates through the ServiceControl API and terminates the
   // database query, so a backgrounded view does not keep load on the server.
+  function clearHistory() {
+    searchHistory.value = clearSearchHistory();
+  }
+
   function cancelQuery() {
     activeQuery?.abort();
     activeQuery = null;
+    queryStartedAt.value = null;
   }
 
   return {
@@ -105,8 +136,14 @@ export const useAuditStore = defineStore("AuditStore", () => {
     itemsPerPage,
     totalCount,
     endpoints,
-    dateRange,
+    timeRangeFrom,
+    timeRangeTo,
     queryFailed,
+    queryStartedAt,
+    queryDurationMs,
+    queryCompletedAt,
+    searchHistory,
+    clearSearchHistory: clearHistory,
   };
 });
 

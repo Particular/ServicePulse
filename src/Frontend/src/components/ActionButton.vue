@@ -12,6 +12,9 @@ interface Props {
   iconPosition?: "left" | "right";
   disabled?: boolean;
   loading?: boolean;
+  /** Loading normally disables the button; opt out for buttons that stay
+   *  actionable while work runs (e.g. a cancel button). */
+  disableOnLoading?: boolean;
   tooltip?: string;
   ariaLabel?: string;
   type?: "button" | "submit" | "reset";
@@ -23,6 +26,7 @@ const props = withDefaults(defineProps<Props>(), {
   iconPosition: "left",
   disabled: false,
   loading: false,
+  disableOnLoading: true,
   type: "button",
 });
 
@@ -44,13 +48,15 @@ const sizeClasses = {
 <template>
   <button
     class="btn"
-    :class="[variantClasses[props.variant], sizeClasses[props.size], { disabled: props.disabled || props.loading }]"
-    :disabled="props.disabled || props.loading"
+    :class="[variantClasses[props.variant], sizeClasses[props.size], { disabled: props.disabled || (props.loading && props.disableOnLoading) }]"
+    :disabled="props.disabled || (props.loading && props.disableOnLoading)"
     :type="props.type"
     :aria-label="props.ariaLabel"
     v-tippy="props.tooltip"
   >
-    <FAIcon v-if="props.icon && props.iconPosition === 'left' && !props.loading" :icon="props.icon" class="icon-left" />
+    <slot v-if="!props.loading" name="icon">
+      <FAIcon v-if="props.icon && props.iconPosition === 'left'" :icon="props.icon" class="icon-left" />
+    </slot>
     <FAIcon v-if="props.loading" class="rotate" :icon="faRefresh" />
     <span v-if="$slots.default" class="button-text">
       <slot />

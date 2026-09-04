@@ -5,6 +5,7 @@ import { computed } from "vue";
 import { formatDotNetTimespan } from "@/composables/formatUtils";
 import { useRouter, RouterLink } from "vue-router";
 import MessageStatusIcon from "@/components/audit/MessageStatusIcon.vue";
+import AdaptiveTimestamp from "@/components/AdaptiveTimestamp.vue";
 
 const router = useRouter();
 
@@ -33,7 +34,8 @@ const link = computed(() => {
     </div>
     <div class="message-id">{{ props.message.message_id }}</div>
     <div class="message-type">{{ props.message.message_type }}</div>
-    <div class="time-sent"><span class="label-name">Time Sent:</span>{{ new Date(props.message.time_sent).toLocaleString() }}</div>
+    <div class="time-sent"><span class="label-name">Time Sent:</span><AdaptiveTimestamp :date-utc="props.message.time_sent" part="absolute" /></div>
+    <div class="age"><AdaptiveTimestamp :date-utc="props.message.time_sent" part="relative" /></div>
     <div class="critical-time"><span class="label-name">Critical Time:</span>{{ formatDotNetTimespan(props.message.critical_time) }}</div>
     <div class="processing-time"><span class="label-name">Processing Time:</span>{{ formatDotNetTimespan(props.message.processing_time) }}</div>
     <div class="delivery-time"><span class="label-name">Delivery Time:</span>{{ formatDotNetTimespan(props.message.delivery_time) }}</div>
@@ -48,12 +50,17 @@ const link = computed(() => {
   border: 1px solid #ffffff;
   border-bottom: 1px solid #eee;
   display: grid;
-  grid-template-columns: 1.8em 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  /* The columns are defined once on the list and shared via subgrid, so every
+     value lines up across rows and a long value in one row cannot shift the
+     columns of another. The message type owns the top line; all data — id,
+     metrics and sent time with its age — sits on the bottom line. */
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  grid-template-rows: auto auto;
   gap: 0.375rem;
   grid-template-areas:
-    "status message-type message-type message-type time-sent"
-    "status message-id processing-time critical-time delivery-time";
+    "status message-type message-type message-type message-type message-type message-type"
+    "status message-id processing-time critical-time delivery-time time-sent age";
 }
 .item:not(:first-child) {
   border-top-color: #eee;
@@ -74,6 +81,32 @@ const link = computed(() => {
 }
 .time-sent {
   grid-area: time-sent;
+}
+
+/* The ages right-align in their own column so every "ago" ends at the same
+   edge across rows */
+.age {
+  grid-area: age;
+  text-align: right;
+}
+
+/* All data cells share the bottom line; when one wraps taller, the rest stay
+   bottom aligned with it */
+.message-id,
+.processing-time,
+.critical-time,
+.delivery-time,
+.time-sent,
+.age {
+  align-self: end;
+}
+
+/* When width gets tight the age column is the first thing to go — the absolute
+   timestamp carries the information, the age is a convenience */
+@media (max-width: 62rem) {
+  .age {
+    display: none;
+  }
 }
 .message-type {
   grid-area: message-type;

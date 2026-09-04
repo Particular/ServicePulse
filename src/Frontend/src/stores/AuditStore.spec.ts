@@ -31,6 +31,21 @@ describe("AuditStore refresh", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  test("the default time range bounds the very first query", async () => {
+    fetchTypedFromServiceControl.mockResolvedValue([responseWithTotalCount(0), []]);
+    const store = useAuditStore();
+
+    await store.refresh();
+
+    const url = fetchTypedFromServiceControl.mock.calls[0][0] as string;
+    const params = new URLSearchParams(url.split("?")[1]);
+    expect(store.timeRangeFrom).toBe("now-6h");
+    expect(params.get("from")).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(params.get("to")).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(new Date(params.get("to")!).getTime() - new Date(params.get("from")!).getTime()).toBe(6 * 3600 * 1000);
   });
 
   test("a successful query populates the messages and total count", async () => {
@@ -87,6 +102,37 @@ describe("AuditStore refresh", () => {
     expect(store.queryFailed).toBe(false);
   });
 
+  test("timing state: startedAt while in flight, duration recorded on success", async () => {
+    const store = useAuditStore();
+
+    let resolveFetch!: (v: unknown) => void;
+    fetchTypedFromServiceControl.mockImplementationOnce(() => new Promise((r) => (resolveFetch = r)));
+
+    const inFlight = store.refresh();
+    expect(store.queryStartedAt).not.toBeNull();
+
+    resolveFetch([responseWithTotalCount(1), [message]]);
+    await inFlight;
+
+    expect(store.queryStartedAt).toBeNull();
+    expect(store.queryDurationMs).toBeGreaterThanOrEqual(0);
+  });
+
+  test("a query with search text or endpoint is recorded in the search history", async () => {
+    fetchTypedFromServiceControl.mockResolvedValue([responseWithTotalCount(0), []]);
+    const store = useAuditStore();
+
+    await store.refresh(); // no search, no endpoint: nothing recorded
+    expect(store.searchHistory).toHaveLength(0);
+
+    store.messageFilterString = "orders";
+    await store.refresh();
+    await store.refresh(); // repeat does not duplicate
+
+    expect(store.searchHistory).toHaveLength(1);
+    expect(store.searchHistory[0]).toMatchObject({ search: "orders", endpoint: "" });
+  });
+
   test("cancelQuery aborts the query in flight without reporting a failure", async () => {
     const store = useAuditStore();
 
@@ -99,6 +145,7 @@ describe("AuditStore refresh", () => {
 
     expect(signal?.aborted).toBe(true);
     expect(store.queryFailed).toBe(false);
+    expect(store.queryStartedAt).toBeNull();
   });
 
   test("a superseded query is not reported as a failure", async () => {

@@ -4,10 +4,10 @@ import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
 import ResultsCount from "@/components/ResultsCount.vue";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
+import ResultsOptions from "@/components/audit/ResultsOptions.vue";
 import AuditListItem from "@/components/audit/AuditListItem.vue";
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from "vue";
 import RefreshConfig from "../RefreshConfig.vue";
-import AutoRefreshIndicator from "../AutoRefreshIndicator.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import useFetchWithAutoRefresh from "@/composables/autoRefresh";
 import WizardDialog from "@/components/platformcapabilities/WizardDialog.vue";
@@ -16,9 +16,10 @@ import { useAuditingCapability } from "@/components/platformcapabilities/capabil
 import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import PageBanner, { type BannerMessage } from "@/components/PageBanner.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
+import { loadDefaultRange, narrowingPresets, resolveTimeRange, type RangePreset } from "@/components/audit/timeRange";
 
 const store = useAuditStore();
-const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, dateRange, queryFailed } = storeToRefs(store);
+const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryStartedAt, queryDurationMs, queryCompletedAt } = storeToRefs(store);
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
@@ -60,6 +61,16 @@ const bannerMessage = computed<BannerMessage | null>(() => {
 
 const showBannerAction = computed(() => auditStatus.value !== CapabilityStatus.Unavailable && auditStatus.value !== CapabilityStatus.PartiallyUnavailable);
 
+// Query cost grows with the time window, so a timed-out query's escape hatch
+// is a narrower one — offered as one click instead of prose alone
+const hasNoTimeFilter = computed(() => resolveTimeRange({ from: timeRangeFrom.value, to: timeRangeTo.value }) === null);
+const narrowOptions = computed(() => (queryFailed.value ? narrowingPresets({ from: timeRangeFrom.value, to: timeRangeTo.value }) : []));
+
+function applyNarrowing(preset: RangePreset) {
+  timeRangeFrom.value = preset.from;
+  timeRangeTo.value = preset.to;
+}
+
 onBeforeMount(() => {
   setQuery();
 
@@ -92,15 +103,13 @@ watch(
 );
 
 function controlsQuery() {
-  const [fromDate, toDate] = dateRange.value;
-
   return {
     sortBy: sortBy.value.property,
     sortDir: sortBy.value.isAscending ? "asc" : "desc",
     filter: messageFilterString.value,
     endpoint: selectedEndpointName.value,
-    from: fromDate?.toISOString() ?? "",
-    to: toDate?.toISOString() ?? "",
+    from: timeRangeFrom.value.trim(),
+    to: timeRangeTo.value.trim(),
     pageSize: itemsPerPage.value,
   };
 }
@@ -111,7 +120,7 @@ function controlsQuery() {
 // query is still running, so a user typing a search is never ignored.
 let lastAppliedControlsQuery = "";
 
-const watchHandle = watch([itemsPerPage, sortBy, messageFilterString, selectedEndpointName, dateRange], async () => {
+const watchHandle = watch([itemsPerPage, sortBy, messageFilterString, selectedEndpointName, timeRangeFrom, timeRangeTo], async () => {
   const query = controlsQuery();
   const serialized = JSON.stringify(query);
 
@@ -134,7 +143,15 @@ function setQuery() {
       ? { isAscending: query.sortDir === "asc", property: query.sortBy as string }
       : (sortBy.value = { isAscending: false, property: FieldNames.TimeSent });
   itemsPerPage.value = query.pageSize ? parseInt(query.pageSize as string) : 100;
-  dateRange.value = query.from && query.to ? [new Date(query.from as string), new Date(query.to as string)] : [];
+  if (query.from !== undefined || query.to !== undefined) {
+    timeRangeFrom.value = (query.from as string) ?? "";
+    timeRangeTo.value = (query.to as string) ?? "";
+  } else {
+    // No range in the URL: the user's saved default (factory: last 6 hours)
+    const defaultRange = loadDefaultRange();
+    timeRangeFrom.value = defaultRange.from;
+    timeRangeTo.value = defaultRange.to;
+  }
   selectedEndpointName.value = (query.endpoint ?? "") as string;
 
   lastAppliedControlsQuery = JSON.stringify(controlsQuery());
@@ -157,20 +174,27 @@ watch(autoRefreshValue, (newValue) => {
 <template>
   <div>
     <div class="header">
-      <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" @manual-refresh="refreshNow" />
-      <AutoRefreshIndicator :next-refresh-at="nextRefreshAt" :interval-ms="autoRefreshValue" :refreshing="isRefreshing" />
       <div class="row">
-        <FiltersPanel />
+        <FiltersPanel>
+          <template #actions>
+            <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" :query-started-at="queryStartedAt" :next-refresh-at="nextRefreshAt" @manual-refresh="refreshNow" @cancel-query="store.cancelQuery" />
+          </template>
+        </FiltersPanel>
       </div>
-      <div class="row">
-        <ResultsCount :displayed="messages.length" :total="totalCount" />
+      <div class="row results-row">
+        <ResultsCount :displayed="messages.length" :total="totalCount" :duration-ms="queryDurationMs" :completed-at="queryCompletedAt" />
+        <ResultsOptions />
       </div>
       <PageBanner v-if="bannerMessage && isMassTransitConnected === false" :message="bannerMessage" :show-action="showBannerAction" @action="showWizard = true" />
     </div>
     <WizardDialog v-if="showWizard" title="Getting Started with Auditing" :pages="wizardPages" @close="showWizard = false" />
     <div v-if="queryFailed && !queryInProgress" class="query-error" role="alert" data-testid="query-error">
       <strong>The query failed or took too long and was stopped.</strong>
-      <p>The ServiceControl instance might be too busy. Try again in an off-peak period, reduce the maximum number of results ("Show"), or narrow the date range.</p>
+      <p v-if="hasNoTimeFilter">This query has no time filter, so it scans the whole audit store. Bounding it is the quickest fix — or try again in an off-peak period.</p>
+      <p v-else>Query cost grows with the size of the time window. Try a narrower range, add a search term or endpoint filter, or reduce the number of results ("Show").</p>
+      <div v-if="narrowOptions.length > 0" class="error-actions">
+        <button v-for="preset in narrowOptions" :key="preset.label" type="button" class="narrow-action" data-testid="narrow-range" @click="applyNarrowing(preset)">{{ preset.label }}</button>
+      </div>
     </div>
     <div class="row results-table">
       <LoadingSpinner v-if="firstLoad || isRefreshing" :overlay="isRefreshing && messages.length > 0" />
@@ -207,10 +231,61 @@ watch(autoRefreshValue, (newValue) => {
   margin: 0.25rem 0 0;
 }
 
+.error-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.narrow-action {
+  border: 1px solid #ce4844;
+  background: #fff;
+  color: #ce4844;
+  border-radius: 4px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.narrow-action:hover {
+  background: #ce4844;
+  color: #fff;
+}
+
+.results-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ResultsCount's root uses the bootstrap .col class (flex-grow: 1), which would
+   push the options onto their own line; in this row both sides size to content */
+.results-row > * {
+  flex: 0 1 auto;
+  width: auto;
+}
+
 .results-table {
   margin-top: 1rem;
   margin-bottom: 5rem;
   background-color: #ffffff;
   position: relative;
+  /* One column definition for all rows (rows join it via subgrid). Data
+     columns never shrink below their widest value in the list (no wrapping)
+     but share surplus width equally, so they stretch across the row instead
+     of piling up on the right on wide screens. Deliberately NOT a size
+     container: combining container-type with content-sized tracks froze
+     Chrome's layout. */
+  display: grid;
+  grid-template-columns: 1.8em minmax(0, 1fr) minmax(max-content, 1fr) minmax(max-content, 1fr) minmax(max-content, 1fr) minmax(max-content, 1fr) max-content;
+  column-gap: 0.375rem;
+  align-content: start;
+}
+
+/* Non-row children (the first-load spinner) span the full width */
+.results-table > :not(.item) {
+  grid-column: 1 / -1;
 }
 </style>

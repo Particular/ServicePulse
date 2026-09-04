@@ -133,12 +133,23 @@ export function useAuditingCapability(): CapabilityComposable {
       return CapabilityStatus.PartiallyUnavailable;
     }
 
-    // 4. Check if the 'All Messages' feature is not supported OR there are no successful messages
-    if (!isAllMessagesSupported.value || !hasSuccessfulMessages.value) {
+    // 4. Check if the 'All Messages' feature is not supported
+    if (!isAllMessagesSupported.value) {
       return CapabilityStatus.EndpointsNotConfigured;
     }
 
-    // 5. Audit instance is available and there are successful audit messages
+    // 5. The successful-messages probe hasn't answered yet: the onboarding prompt must not
+    //    render on an assumption, only after a completed probe found nothing
+    if (hasSuccessfulMessages.value === null) {
+      return CapabilityStatus.Unknown;
+    }
+
+    // 6. A completed probe found no successful messages
+    if (!hasSuccessfulMessages.value) {
+      return CapabilityStatus.EndpointsNotConfigured;
+    }
+
+    // 7. Audit instance is available and there are successful audit messages
     return CapabilityStatus.Available;
   });
 
@@ -166,8 +177,8 @@ export function useAuditingCapability(): CapabilityComposable {
       });
     }
 
-    // Messages available indicator - show if at least one instance is available
-    if (hasAvailableAuditInstances(auditInstances.value)) {
+    // Messages available indicator - show if at least one instance is available and the probe answered
+    if (hasAvailableAuditInstances(auditInstances.value) && hasSuccessfulMessages.value !== null) {
       const messagesAvailable = isAllMessagesSupported.value && hasSuccessfulMessages.value;
 
       let messageTooltip: string;
@@ -186,7 +197,7 @@ export function useAuditingCapability(): CapabilityComposable {
   });
 
   // Loading state - true if remote instances haven't been loaded yet
-  const isLoading = computed(() => remoteInstances.value === null || remoteInstances.value === undefined);
+  const isLoading = computed(() => remoteInstances.value === null || remoteInstances.value === undefined || auditStatus.value === CapabilityStatus.Unknown);
 
   return {
     status: auditStatus,
