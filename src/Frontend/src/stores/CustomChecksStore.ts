@@ -8,11 +8,14 @@ export const useCustomChecksStore = defineStore("CustomChecksStore", () => {
   const prefix = "customchecks/";
 
   const pageNumber = ref(1);
-  const failingCount = ref(0);
-  const failedChecks = ref<CustomCheck[]>([]);
+  const rawFailingCount = ref(0);
+  const rawFailedChecks = ref<CustomCheck[]>([]);
+  const showPlatformCustomChecks = ref(false);
 
   const { count, inc, dec } = useCounter(0);
   const skipRefresh = computed(() => count.value > 0);
+  const failedChecks = computed(() => (showPlatformCustomChecks.value ? rawFailedChecks.value : rawFailedChecks.value.filter((check) => !check.internal)));
+  const failingCount = computed(() => failedChecks.value.length);
 
   const refresh = async () => {
     if (skipRefresh.value) {
@@ -20,23 +23,28 @@ export const useCustomChecksStore = defineStore("CustomChecksStore", () => {
     }
     try {
       const [response, data] = await serviceControlClient.fetchTypedFromServiceControl<CustomCheck[]>(`customchecks?status=fail&page=${pageNumber.value}`);
-      failedChecks.value = data;
-      failingCount.value = parseInt(response.headers.get("Total-Count") ?? "0");
+      rawFailedChecks.value = data;
+      rawFailingCount.value = parseInt(response.headers.get("Total-Count") ?? "0");
     } catch (e) {
-      failedChecks.value = [];
-      failingCount.value = 0;
+      rawFailedChecks.value = [];
+      rawFailingCount.value = 0;
       throw e;
     }
   };
 
   watch(pageNumber, () => refresh());
 
+  function replaceFailedChecks(checks: CustomCheck[]) {
+    rawFailedChecks.value = checks;
+    rawFailingCount.value = checks.length;
+  }
+
   async function dismissCustomCheck(id: string) {
     try {
       inc();
       // NOTE: If it takes more than the refresh interval for ServiceControl to delete the check it will reappear
-      failedChecks.value = failedChecks.value.filter((x) => x.id !== id);
-      failingCount.value--;
+      rawFailedChecks.value = rawFailedChecks.value.filter((x) => x.id !== id);
+      rawFailingCount.value--;
 
       // HINT: This is required to handle the difference between ServiceControl 4 and 5
       const guid = id.toLocaleLowerCase().startsWith(prefix) ? id.substring(prefix.length) : id;
@@ -48,10 +56,14 @@ export const useCustomChecksStore = defineStore("CustomChecksStore", () => {
 
   return {
     refresh,
+    replaceFailedChecks,
     dismissCustomCheck,
     pageNumber,
     failingCount,
     failedChecks,
+    rawFailingCount,
+    rawFailedChecks,
+    showPlatformCustomChecks,
   };
 });
 

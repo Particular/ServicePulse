@@ -2,161 +2,56 @@ import type Release from "@/resources/Release";
 
 export const serviceControlNoPlatformUpdatesNeeded: Release[] = [
   {
-    tag: "5.0.4",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/5.0.4",
-    published: "2024-01-23T09:56:56Z",
+    tag: "6.19.3",
+    release: "https://github.com/Particular/ServiceControl/releases/tag/6.19.3",
+    published: "2026-08-25T03:57:15Z",
   },
   {
-    tag: "4.33.2",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.33.2",
-    published: "2024-01-23T15:47:12Z",
+    tag: "6.19.2",
+    release: "https://github.com/Particular/ServiceControl/releases/tag/6.19.2",
+    published: "2026-08-19T23:24:34Z",
   },
   {
-    tag: "5.0.3",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/5.0.3",
-    published: "2023-12-19T23:44:11Z",
+    tag: "6.19.1",
+    release: "https://github.com/Particular/ServiceControl/releases/tag/6.19.1",
+    published: "2026-08-12T18:44:08Z",
   },
   {
-    tag: "5.0.2",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/5.0.2",
-    published: "2023-12-19T13:31:02Z",
+    tag: "6.19.0",
+    release: "https://github.com/Particular/ServiceControl/releases/tag/6.19.0",
+    published: "2026-08-07T06:35:30Z",
   },
   {
-    tag: "5.0.1",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/5.0.1",
-    published: "2023-12-08T10:33:57Z",
+    tag: "6.18.3",
+    release: "https://github.com/Particular/ServiceControl/releases/tag/6.18.3",
+    published: "2026-07-30T14:35:49Z",
   },
   {
-    tag: "4.33.1",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.33.1",
-    published: "2023-12-08T10:00:43Z",
+    tag: "6.18.2",
+    release: "https://github.com/Particular/ServiceControl/releases/tag/6.18.2",
+    published: "2026-07-14T19:41:34Z",
   },
   {
-    tag: "5.0.0",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/5.0.0",
-    published: "2023-12-01T20:15:16Z",
+    tag: "6.18.1",
+    release: "https://github.com/Particular/ServiceControl/releases/tag/6.18.1",
+    published: "2026-07-10T07:52:09Z",
   },
   {
-    tag: "4.33.0",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.33.0",
-    published: "2023-11-20T20:07:51Z",
+    tag: "6.18.0",
+    release: "https://github.com/Particular/ServiceControl/releases/tag/6.18.0",
+    published: "2026-07-07T16:19:05Z",
   },
   {
-    tag: "4.32.4",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.32.4",
-    published: "2023-11-15T10:06:55Z",
-  },
-  {
-    tag: "4.32.3",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.32.3",
-    published: "2023-11-06T11:33:37Z",
-  },
-  {
-    tag: "4.32.2",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.32.2",
-    published: "2023-07-21T16:50:47Z",
-  },
-  {
-    tag: "4.32.1",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.32.1",
-    published: "2023-07-05T07:00:57Z",
-  },
-  {
-    tag: "4.32.0",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.32.0",
-    published: "2023-06-22T19:11:16Z",
-  },
-  {
-    tag: "4.31.0",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.31.0",
-    published: "2023-06-07T01:38:57Z",
-  },
-  {
-    tag: "4.30.1",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.30.1",
-    published: "2023-05-29T09:26:53Z",
-  },
-  {
-    tag: "4.30.0",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.30.0",
-    published: "2023-04-14T12:46:46Z",
-  },
-  {
-    tag: "4.29.3",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.29.3",
-    published: "2023-03-07T04:52:45Z",
-  },
-  {
-    tag: "4.29.1",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.29.1",
-    published: "2023-02-24T22:58:52Z",
-  },
-  {
-    tag: "4.29.0",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.29.0",
-    published: "2023-02-23T01:08:20Z",
-  },
-  {
-    tag: "4.28.4",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.28.4",
-    published: "2023-02-10T18:38:48Z",
-  },
-  {
-    tag: "4.28.3",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.28.3",
-    published: "2023-02-03T06:32:00Z",
-  },
-  {
-    tag: "4.27.7",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.27.7",
-    published: "2023-02-02T09:36:05Z",
-  },
-  {
-    tag: "4.27.6",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.27.6",
-    published: "2023-01-18T19:22:00Z",
-  },
-  {
-    tag: "4.27.4",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.27.4",
-    published: "2022-12-21T18:23:30Z",
-  },
-  {
-    tag: "4.26.0",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.26.0",
-    published: "2022-11-08T15:15:42Z",
-  },
-  {
-    tag: "4.25.2",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.25.2",
-    published: "2022-09-07T23:55:39Z",
-  },
-  {
-    tag: "4.25.1",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.25.1",
-    published: "2022-09-06T04:56:05Z",
-  },
-  {
-    tag: "4.23.0",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.23.0",
-    published: "2022-08-05T20:51:49Z",
-  },
-  {
-    tag: "4.22.0",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.22.0",
-    published: "2022-06-15T09:24:56Z",
-  },
-  {
-    tag: "4.21.8",
-    release: "https://github.com/Particular/ServiceControl/releases/tag/4.21.8",
-    published: "2022-03-03T12:33:24Z",
+    tag: "6.17.0",
+    release: "https://github.com/Particular/ServiceControl/releases/tag/6.17.0",
+    published: "2026-06-23T05:13:55Z",
   },
 ];
 
 export const servicePulseNoPlatformUpdatesNeeded: Release[] = [
   {
-    tag: "1.37.0",
-    release: "https://github.com/Particular/ServicePulse/releases/tag/1.37.0",
+    tag: "2.10.2",
+    release: "https://github.com/Particular/ServicePulse/releases/tag/2.10.2",
     published: "2023-08-16T14:57:29Z",
   },
   {

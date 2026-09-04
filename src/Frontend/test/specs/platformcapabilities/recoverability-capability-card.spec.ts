@@ -2,7 +2,7 @@ import { test, describe } from "../../drivers/vitest/driver";
 import { expect } from "vitest";
 import * as precondition from "../../preconditions";
 import { waitFor } from "@testing-library/vue";
-import { recoverabilityCapabilityCard, recoverabilityStatusBadge, recoverabilityActionButton, recoverabilityStatusIndicators, isRecoverabilityCardAvailable, recoverabilityIndicatorByLabel } from "./questions/recoverabilityCapabilityCard";
+import { recoverabilityCapabilityCard, recoverabilityStatusBadge, recoverabilityActionButton, isRecoverabilityCardAvailable } from "./questions/recoverabilityCapabilityCard";
 
 // NOTE: The Recoverability card has two states: Available and Unavailable.
 // However, the Unavailable state cannot be tested because when ServiceControl
@@ -38,28 +38,24 @@ describe("FEATURE: Recoverability capability card", () => {
     });
   });
 
-  describe("RULE: Status indicators should show instance status", () => {
-    test("EXAMPLE: Shows 'Instance' indicator", async ({ driver }) => {
-      // Arrange
+  describe("RULE: Degraded primary instance still shows available status while connected", () => {
+    test("EXAMPLE: Degraded primary instance still shows available status while connected", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasServiceControlPrimaryDegraded);
 
-      // Act
       await driver.goTo("/");
 
-      // Assert
       await waitFor(async () => {
         const card = await recoverabilityCapabilityCard();
         expect(card).toBeInTheDocument();
       });
 
       await waitFor(async () => {
-        const indicators = await recoverabilityStatusIndicators();
-        expect(indicators).not.toBeNull();
-        expect(indicators!.length).toBeGreaterThanOrEqual(1);
+        expect(await isRecoverabilityCardAvailable()).toBe(true);
       });
 
-      const instanceIndicator = await recoverabilityIndicatorByLabel("Instance");
-      expect(instanceIndicator).toBeInTheDocument();
+      const statusBadge = await recoverabilityStatusBadge();
+      expect(statusBadge?.textContent).toMatch(/Available/i);
     });
   });
 });

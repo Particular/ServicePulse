@@ -1,12 +1,30 @@
 import { type default as CustomCheck, Status } from "@/resources/CustomCheck";
 import type { SetupFactoryOptions } from "../driver";
 import { createDateWithDayOffset } from "@/composables/formatter";
-const emptyContent = JSON.stringify([]);
+
+export function createCustomCheck(overrides: Partial<CustomCheck>): CustomCheck {
+  const newGuid = crypto.randomUUID();
+  const { originating_endpoint, ...rest } = overrides;
+  const baseCheck = {
+    ...customCheckTemplate,
+    id: `customchecks/${newGuid}`,
+    ...rest,
+  };
+
+  return {
+    ...baseCheck,
+    originating_endpoint: {
+      ...customCheckTemplate.originating_endpoint,
+      host_id: newGuid,
+      ...originating_endpoint,
+    },
+  };
+}
 
 export const hasCustomChecksEmpty = ({ driver }: SetupFactoryOptions) => {
   const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
   driver.mockEndpoint(`${serviceControlInstanceUrl}customchecks`, {
-    body: emptyContent,
+    body: [],
     headers: {
       "Total-Count": "0", //count of failing custom checks
     },
@@ -16,18 +34,20 @@ export const hasCustomChecksEmpty = ({ driver }: SetupFactoryOptions) => {
 const generateGuid = () => {
   return crypto.randomUUID();
 };
+const currentReportedAt = new Date().toISOString();
 const customCheckTemplate = <CustomCheck>{
   id: "customchecks/6131fa95-9414-1898-9c83-c5b18587945b",
   custom_check_id: "SampleCustomeCheck",
   category: "SomeCategory",
   status: "Pass",
   failure_reason: "I don't know the reason",
-  reported_at: "2025-01-10T05:06:30.4074087Z",
+  reported_at: currentReportedAt,
   originating_endpoint: {
     name: "EndpointX",
     host_id: "ff605b55-6fbb-af56-5753-73c1ff73e601",
     host: "ABC",
   },
+  internal: false,
 };
 
 export const hasCustomChecks =
@@ -60,8 +80,7 @@ export const generateCustomChecksData = (failingCount: number, passingCount: num
     const customCategory = `Some Category ${index}`;
     const customeCheckId = `SampleCustomeCheck ${index}`;
 
-    return {
-      ...customCheckTemplate,
+    return createCustomCheck({
       id: `customchecks/${newGuid}`, // New GUID for ID
       category: customCategory,
       custom_check_id: customeCheckId,
@@ -73,7 +92,7 @@ export const generateCustomChecksData = (failingCount: number, passingCount: num
         host_id: newGuid, // New GUID for host_id
         host: originatingHost, // Host name based on index
       },
-    };
+    });
   });
   return customChecks;
 };

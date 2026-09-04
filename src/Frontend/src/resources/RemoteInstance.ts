@@ -3,7 +3,12 @@ export interface RemoteInstanceDataRetention {
   error_retention_period?: string;
 }
 
+export interface RemoteInstanceHostConfiguration {
+  instance_name?: string;
+}
+
 export interface RemoteInstanceConfiguration {
+  host?: RemoteInstanceHostConfiguration;
   data_retention?: RemoteInstanceDataRetention;
 }
 
@@ -18,6 +23,8 @@ export interface RemoteInstance {
   version: string;
   status: RemoteInstanceStatus;
   configuration?: RemoteInstanceConfiguration;
+  platform_health_status?: "healthy" | "degraded" | "unavailable";
+  platform_health_id?: string;
   /** Cached instance type - determined when the instance was last online */
   cachedInstanceType?: RemoteInstanceType;
 }

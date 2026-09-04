@@ -12,6 +12,7 @@ import DashboardMenuItem from "@/components/dashboard/DashboardMenuItem.vue";
 import FeedbackButton from "@/components/FeedbackButton.vue";
 import ThroughputMenuItem from "@/views/throughputreport/ThroughputMenuItem.vue";
 import AuditMenuItem from "./audit/AuditMenuItem.vue";
+import PlatformHealthMenuItem from "@/components/platformhealth/PlatformHealthMenuItem.vue";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import UserProfileMenuItem from "@/components/UserProfileMenuItem.vue";
 import { useAuthStore } from "@/stores/AuthStore";
@@ -40,6 +41,7 @@ const menuItems = computed(() => {
     ...(canCall(ApiRoutes.viewFailedMessages) ? [FailedMessagesMenuItem] : []),
     ...(canCall(ApiRoutes.viewCustomChecks) ? [CustomChecksMenuItem] : []),
     ...(canCall(ApiRoutes.viewEventLog) ? [EventsMenuItem] : []),
+    PlatformHealthMenuItem,
     ...(canCall(ApiRoutes.viewThroughput) ? [ThroughputMenuItem] : []),
     ConfigurationMenuItem,
     FeedbackButton,

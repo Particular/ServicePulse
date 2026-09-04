@@ -2,6 +2,7 @@ import { type RemoteInstance, RemoteInstanceStatus, RemoteInstanceType } from "@
 import { type default as Message, MessageStatus } from "@/resources/Message";
 import type { Endpoint } from "@/resources/MonitoringEndpoint";
 import { monitoredEndpointTemplate } from "../mocks/monitored-endpoint-template";
+import { createPlatformTopology, toRemoteInstances } from "../mocks/platform-topology";
 import type { SetupFactoryOptions } from "../driver";
 import * as precondition from ".";
 
@@ -80,7 +81,9 @@ export const hasAvailableAuditInstance =
 
 /** Precondition: Single audit instance that is unavailable */
 export const hasUnavailableAuditInstance = ({ driver }: SetupFactoryOptions) => {
-  const instance = createAuditInstance({ status: RemoteInstanceStatus.Unavailable });
+  const topology = createPlatformTopology("audit-remotes-healthy");
+  topology.remotes[1].status = "unavailable";
+  const [instance] = toRemoteInstances({ remotes: [topology.remotes[1]] });
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
     body: [instance],
   });
@@ -88,19 +91,19 @@ export const hasUnavailableAuditInstance = ({ driver }: SetupFactoryOptions) => 
 
 /** Precondition: Multiple audit instances with mixed availability */
 export const hasPartiallyUnavailableAuditInstances = ({ driver }: SetupFactoryOptions) => {
-  const onlineInstance = createAuditInstance({ apiUri: "http://localhost:33334/api/" });
-  const offlineInstance = createAuditInstance({ apiUri: "http://localhost:33336/api/", status: RemoteInstanceStatus.Unavailable });
+  const topology = createPlatformTopology("audit-remotes-healthy");
+  topology.remotes[1].status = "unavailable";
+  const remotes = toRemoteInstances({ remotes: topology.remotes });
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
-    body: [onlineInstance, offlineInstance],
+    body: remotes,
   });
 };
 
 /** Precondition: Multiple audit instances all online */
 export const hasMultipleAvailableAuditInstances = ({ driver }: SetupFactoryOptions) => {
-  const instance1 = createAuditInstance({ apiUri: "http://localhost:33334/api/" });
-  const instance2 = createAuditInstance({ apiUri: "http://localhost:33336/api/" });
+  const remotes = toRemoteInstances({ remotes: createPlatformTopology("audit-remotes-healthy").remotes });
   driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
-    body: [instance1, instance2],
+    body: remotes,
   });
 };
 
@@ -175,6 +178,20 @@ export const hasMonitoringUnavailable = ({ driver }: SetupFactoryOptions) => {
   });
 };
 
+/** Precondition: Monitoring instance reports degraded platform health but still responds */
+export const hasMonitoringDegraded = ({ driver }: SetupFactoryOptions) => {
+  const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+  driver.mockEndpoint(monitoringInstanceUrl, {
+    body: {
+      platform_health_status: "degraded",
+      platform_health_version: "6.19.3",
+    },
+  });
+  driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints`, {
+    body: [],
+  });
+};
+
 /** Precondition: Multiple monitored endpoints */
 export const hasMultipleMonitoredEndpoints =
   (count: number = 3) =>
@@ -192,6 +209,28 @@ export const hasMultipleMonitoredEndpoints =
 // =============================================================================
 // RECOVERABILITY CAPABILITY
 // =============================================================================
+
+/** Precondition: A remote error instance is configured */
+export const hasRemoteErrorInstance = ({ driver }: SetupFactoryOptions) => {
+  driver.mockEndpoint(`${window.defaultConfig.service_control_url}configuration/remotes`, {
+    body: toRemoteInstances({ remotes: [createPlatformTopology("remote-errors-healthy").remotes[0]] }),
+  });
+};
+
+/** Precondition: Primary instance reports degraded platform health but still responds */
+export const hasServiceControlPrimaryDegraded = ({ driver }: SetupFactoryOptions) => {
+  awaitServiceControlRootOverride(driver, {
+    name: "Particular.ServiceControl",
+    platform_health_status: "degraded",
+    platform_health_version: "6.19.3",
+  });
+};
+
+function awaitServiceControlRootOverride(driver: SetupFactoryOptions["driver"], body: Record<string, unknown>) {
+  driver.mockEndpoint(`${window.defaultConfig.service_control_url}`, {
+    body,
+  });
+}
 
 /** Precondition: ServiceControl instance is unavailable */
 export const hasServiceControlUnavailable = ({ driver }: SetupFactoryOptions) => {

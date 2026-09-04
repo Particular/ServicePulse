@@ -50,8 +50,8 @@ describe("FEATURE: Monitoring capability card", () => {
     });
   });
 
-  describe("RULE: When monitoring instance is available but no endpoints are sending data, show 'Endpoints Not Configured' status", () => {
-    test("EXAMPLE: Monitoring instance available but no monitored endpoints shows not configured status", async ({ driver }) => {
+  describe("RULE: When monitoring instance is available but no endpoints are sending data, keep the card available and show the warning on the metrics indicator", () => {
+    test("EXAMPLE: Monitoring instance available but no monitored endpoints still shows available status", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasMonitoringWithNoEndpoints);
@@ -66,12 +66,43 @@ describe("FEATURE: Monitoring capability card", () => {
       });
 
       await waitFor(async () => {
-        expect(await isMonitoringCardNotConfigured()).toBe(true);
+        expect(await isMonitoringCardAvailable()).toBe(true);
       });
+
+      const statusBadge = await monitoringStatusBadge();
+      expect(statusBadge).toBeInTheDocument();
+      expect(statusBadge?.textContent).toMatch(/Available/i);
 
       const actionButton = await monitoringActionButton();
       expect(actionButton).toBeInTheDocument();
-      expect(actionButton?.textContent).toMatch(/Learn More/i);
+      expect(actionButton?.textContent).toMatch(/View Metrics/i);
+
+      const metricsIndicator = await monitoringIndicatorByLabel("Metrics");
+      expect(metricsIndicator).toBeInTheDocument();
+    });
+  });
+
+  describe("RULE: When monitoring instance is degraded but still responding, keep the card available", () => {
+    test("EXAMPLE: Degraded monitoring instance still shows available status and metrics indicator behavior", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasMonitoringDegraded);
+
+      await driver.goTo("/");
+
+      await waitFor(async () => {
+        const card = await monitoringCapabilityCard();
+        expect(card).toBeInTheDocument();
+      });
+
+      await waitFor(async () => {
+        expect(await isMonitoringCardAvailable()).toBe(true);
+      });
+
+      const statusBadge = await monitoringStatusBadge();
+      expect(statusBadge?.textContent).toMatch(/Available/i);
+
+      const metricsIndicator = await monitoringIndicatorByLabel("Metrics");
+      expect(metricsIndicator).toBeInTheDocument();
     });
   });
 
@@ -154,8 +185,8 @@ describe("FEATURE: Monitoring capability card", () => {
     });
   });
 
-  describe("RULE: Status indicators should show instance and metrics status", () => {
-    test("EXAMPLE: Available monitoring instance shows instance indicator", async ({ driver }) => {
+  describe("RULE: Status indicators should show capability-specific status", () => {
+    test("EXAMPLE: Available monitoring instance with endpoints shows metrics indicator", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasMonitoringWithEndpoints());
@@ -175,8 +206,8 @@ describe("FEATURE: Monitoring capability card", () => {
         expect(indicators!.length).toBeGreaterThanOrEqual(1);
       });
 
-      const instanceIndicator = await monitoringIndicatorByLabel("Instance");
-      expect(instanceIndicator).toBeInTheDocument();
+      const metricsIndicator = await monitoringIndicatorByLabel("Metrics");
+      expect(metricsIndicator).toBeInTheDocument();
     });
 
     test("EXAMPLE: Available monitoring instance with endpoints shows metrics indicator", async ({ driver }) => {

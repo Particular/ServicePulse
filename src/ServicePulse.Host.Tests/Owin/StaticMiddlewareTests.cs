@@ -129,8 +129,8 @@
                 }
             };
             await middleware.Invoke(context);
-            const long sizeOfFileOnDisk = 239; // this is the /app/js/app.constants.js file
-            Assert.That(context.Response.ContentLength, Is.EqualTo(sizeOfFileOnDisk));
+            var pathToConfig = Path.Combine(TestContext.CurrentContext.TestDirectory, "app", "js", "app.constants.js");
+            Assert.That(context.Response.ContentLength, Is.EqualTo(new FileInfo(pathToConfig).Length));
             Assert.That(context.Response.ContentType, Is.EqualTo("application/javascript"));
         }
 

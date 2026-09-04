@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import FAIcon from "@/components/FAIcon.vue";
 import { faCircle, faExternalLink, faTimes } from "@fortawesome/free-solid-svg-icons";
 import type { StatusIndicator, WizardPage } from "@/components/platformcapabilities/types";
 import { Capability, CapabilityStatus } from "@/components/platformcapabilities/constants";
 import WizardDialog from "./WizardDialog.vue";
+import routeLinks from "@/router/routeLinks";
 
 const router = useRouter();
 
@@ -74,17 +75,20 @@ function handleButtonClick() {
           </div>
         </div>
         <div class="title-row-actions">
-          <span
-            v-if="props.status !== CapabilityStatus.EndpointsNotConfigured && props.status !== CapabilityStatus.InstanceNotConfigured"
+          <component
+            :is="props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured ? 'span' : RouterLink"
+            v-if="!props.isLoading"
+            :to="props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured ? undefined : routeLinks.platformHealth"
             class="status-badge"
             :class="{
               'status-available': props.status === CapabilityStatus.Available,
               'status-unavailable': props.status === CapabilityStatus.Unavailable,
               'status-partially-unavailable': props.status === CapabilityStatus.PartiallyUnavailable,
+              'status-not-configured': props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured,
             }"
           >
-            {{ props.status }}
-          </span>
+            {{ props.status === CapabilityStatus.EndpointsNotConfigured || props.status === CapabilityStatus.InstanceNotConfigured ? "Not configured" : props.status }}
+          </component>
           <button v-if="allowDismiss" class="hide-card-btn" @click="emit('hide')" v-tippy="'Hide this card'">
             <FAIcon :icon="faTimes" />
           </button>
@@ -235,6 +239,8 @@ function handleButtonClick() {
 }
 
 .status-badge {
+  display: inline-flex;
+  align-items: center;
   white-space: nowrap;
   padding: 4px 12px;
   border-radius: 12px;
@@ -242,6 +248,7 @@ function handleButtonClick() {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-decoration: none;
 }
 
 .status-available {
@@ -257,6 +264,11 @@ function handleButtonClick() {
 .status-partially-unavailable {
   background-color: #fff3cd;
   color: #856404;
+}
+
+.status-not-configured {
+  background-color: #e9ecef;
+  color: #495057;
 }
 
 .capability-footer {

@@ -8,6 +8,7 @@ export default interface CustomCheck {
   reported_at: string;
   failure_reason: string;
   originating_endpoint: EndpointDetails;
+  internal?: boolean;
 }
 
 export enum Status {

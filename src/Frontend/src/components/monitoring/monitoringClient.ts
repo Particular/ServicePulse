@@ -8,6 +8,12 @@ export interface MetricsConnectionDetails {
   Interval?: string;
 }
 
+export interface MonitoringRoot {
+  platform_health_status?: "healthy" | "degraded" | "unavailable";
+  platform_health_version?: string;
+  version?: string;
+}
+
 class MonitoringClient {
   private _url: string | undefined | null = null;
 
@@ -34,6 +40,15 @@ class MonitoringClient {
     } catch {
       return { Metrics: null, errors: ["Could not retrieve the monitoring connection"] };
     }
+  }
+
+  public async getMonitoringRoot() {
+    if (this.isMonitoringDisabled) {
+      return null;
+    }
+
+    const [, root] = await this.fetchTypedFromMonitoring<MonitoringRoot>("");
+    return root ?? null;
   }
 
   public async getMonitoringVersion() {
@@ -126,11 +141,11 @@ class MonitoringClient {
   private getUrl() {
     const searchParams = new URLSearchParams(window.location.search);
     const mu = searchParams.get("mu");
-    const existingMu = window.localStorage.getItem("mu");
+    const existingMu = safeStorageGet("mu");
 
     if (mu) {
       if (mu !== existingMu) {
-        window.localStorage.setItem("mu", mu);
+        safeStorageSet("mu", mu);
       }
       return mu;
     } else if (existingMu) {
@@ -140,6 +155,22 @@ class MonitoringClient {
     }
 
     return undefined;
+  }
+}
+
+function safeStorageGet(key: string) {
+  try {
+    return window.localStorage?.getItem(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function safeStorageSet(key: string, value: string) {
+  try {
+    window.localStorage?.setItem(key, value);
+  } catch {
+    // ignore storage access errors
   }
 }
 
