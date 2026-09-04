@@ -3,7 +3,9 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useDateFormatter } from "@/composables/dateFormatter";
 import { useTimestampZone } from "@/composables/timestampZone";
 
-const props = defineProps<{ dateUtc: string }>();
+// part: render only one half — lets a layout place the absolute time and the
+// age in separate (grid) cells while both keep the dual-zone tooltip
+const props = defineProps<{ dateUtc: string; part?: "absolute" | "relative" }>();
 
 const { formatAdaptiveDate, formatCoarseRelative, formatDateTooltip } = useDateFormatter();
 const { zone } = useTimestampZone();
@@ -23,8 +25,8 @@ const tooltip = computed(() => formatDateTooltip(props.dateUtc));
 
 <template>
   <span class="adaptive-timestamp" :title="tooltip">
-    <span data-testid="adaptive-absolute">{{ absolute }}</span>
-    <span class="relative" data-testid="adaptive-relative"> · {{ relative }}</span>
+    <span v-if="props.part !== 'relative'" data-testid="adaptive-absolute">{{ absolute }}</span>
+    <span v-if="props.part !== 'absolute'" class="relative" data-testid="adaptive-relative">{{ props.part === "relative" ? "" : " · " }}{{ relative }}</span>
   </span>
 </template>
 

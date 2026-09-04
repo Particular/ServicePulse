@@ -313,5 +313,30 @@ watch(autoRefreshValue, (newValue) => {
   margin-bottom: 5rem;
   background-color: #ffffff;
   position: relative;
+  /* The results list is a grid that places nothing itself: it only declares the six
+     columns, and every row (AuditListItem) joins them with `subgrid`. Declaring them here,
+     once, is what keeps rows aligned: a column is measured across ALL rows, which a row
+     laying out its own columns cannot do.
+
+       1.8em                       status icon
+       minmax(0, 1fr)              message id: the one value allowed to shrink and break,
+                                   so a long id never pushes the values off the row
+       minmax(max-content, 1fr)    each value column, read as: never narrower than its
+                                   widest value in the list (so nothing wraps), and once
+                                   every column has that, share the leftover width equally
+                                   (so the columns spread out on a wide screen instead of
+                                   huddling on the left)
+
+     Deliberately NOT a size container: combining container-type with content-sized
+     tracks froze Chrome's layout. */
+  display: grid;
+  grid-template-columns: 1.8em minmax(0, 1fr) repeat(4, minmax(max-content, 1fr));
+  column-gap: 0.375rem;
+  align-content: start;
+}
+
+/* Non-row children (the first-load spinner) span the full width */
+.results-table > :not(.item) {
+  grid-column: 1 / -1;
 }
 </style>
