@@ -22,7 +22,7 @@
   "dependencies": {
     "@codemirror/lang-json": "6.0.2",
     "@codemirror/lang-xml": "6.1.0",
-    "@codemirror/legacy-modes": "6.5.3",
+    "@codemirror/legacy-modes": "6.5.4",
     "@dagrejs/dagre": "3.0.0",
     "@fortawesome/fontawesome-svg-core": "7.2.0",
     "@fortawesome/free-brands-svg-icons": "7.2.0",
@@ -43,7 +43,7 @@
     "oidc-client-ts": "3.5.0",
     "pinia": "3.0.4",
     "vue": "3.5.35",
-    "vue-codemirror6": "1.5.2",
+    "vue-codemirror6": "1.6.2",
     "vue-router": "5.1.0",
     "vue-tippy": "6.7.1",
     "vue-toastification": "2.0.0-rc.5",
