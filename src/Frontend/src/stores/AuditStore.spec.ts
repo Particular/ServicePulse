@@ -234,6 +234,22 @@ describe("AuditStore refresh", () => {
     expect(store.queryCompletedAt).toBeNull();
   });
 
+  test("clearResults resets the new-row baseline, so the next result marks nothing new", async () => {
+    const store = useAuditStore();
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [{ id: "msg-1" }]]);
+    await store.refresh();
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(2), [{ id: "msg-2" }, { id: "msg-1" }]]);
+    await store.refresh();
+    expect(store.newMessageIds).toEqual(["msg-2"]);
+
+    store.clearResults();
+    expect(store.newMessageIds).toEqual([]);
+
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(3), [{ id: "msg-3" }, { id: "msg-2" }, { id: "msg-1" }]]);
+    await store.refresh();
+    expect(store.newMessageIds).toEqual([]);
+  });
+
   test("a superseded query is not reported as a failure", async () => {
     const store = useAuditStore();
 

@@ -157,6 +157,8 @@ export const useAuditStore = defineStore("AuditStore", () => {
     queryFailed.value = false;
     queryDurationMs.value = null;
     queryCompletedAt.value = null;
+    newMessageIds.value = [];
+    previousResultsQueryKey = null;
   }
 
   return {
