@@ -133,6 +133,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
     totalCount.value = 0;
     queryFailed.value = false;
     queryDurationMs.value = null;
+    queryCompletedAt.value = null;
   }
 
   return {
