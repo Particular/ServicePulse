@@ -30,20 +30,21 @@ function compactPair(from: string, to: string) {
 
 const noSeconds = (formatted: string) => formatted.replace(/:\d{2}(Z?)$/, "$1");
 
-const echo = computed(() => {
-  if (bothEmpty.value) return { ok: true, text: "no time filter — the whole audit retention window", title: "" };
+// Feedback only when the draft cannot be applied; a valid draft speaks for itself
+const problem = computed(() => {
+  if (bothEmpty.value) return null;
   const fromError = fromText.value.trim() !== "" && fromParse.value.error;
   const toError = toText.value.trim() !== "" && toParse.value.error;
-  if (fromError || toError) return { ok: false, text: `✗ ${fromError || toError}`, title: "" };
-  const resolved = resolveTimeRange({ from: fromText.value, to: toText.value });
-  if (!resolved) return { ok: false, text: "✗ both bounds are needed (or clear both for no filter)", title: "" };
-  const utc = compactPair(noSeconds(formatUtc(resolved.from).replace("T", " ")), noSeconds(formatUtc(resolved.to).replace("T", " ")));
-  const local = compactPair(noSeconds(formatLocal(resolved.from)), noSeconds(formatLocal(resolved.to)));
-  return {
-    ok: true,
-    text: `UTC ${utc} · local ${local}${resolved.live ? " · live" : ""}`,
-    title: `${formatUtc(resolved.from)} → ${formatUtc(resolved.to)} · local ${formatLocal(resolved.from)} → ${formatLocal(resolved.to)}`,
-  };
+  if (fromError || toError) return `✗ ${fromError || toError}`;
+  if (!resolveTimeRange({ from: fromText.value, to: toText.value })) return "✗ both bounds are needed (or clear both for no filter)";
+  return null;
+});
+
+// Hovering the chip shows the applied window resolved in both UTC and local time
+const chipTitle = computed(() => {
+  const resolved = resolveTimeRange({ from: timeRangeFrom.value, to: timeRangeTo.value });
+  if (!resolved) return "";
+  return `${formatUtc(resolved.from)} → ${formatUtc(resolved.to)} · local ${formatLocal(resolved.from)} → ${formatLocal(resolved.to)}`;
 });
 
 // The collapsed chip: a range is read far more often than it is edited, so the
@@ -142,7 +143,7 @@ function resetDefault() {
 
 <template>
   <div class="super-date-picker" ref="root" @keydown="onKeydown">
-    <button type="button" class="btn btn-dropdown dropdown-toggle sp-btn-menu chip" :aria-expanded="open" aria-label="Time range" :title="echo.title" @click="toggleOpen">
+    <button type="button" class="btn btn-dropdown dropdown-toggle sp-btn-menu chip" :aria-expanded="open" aria-label="Time range" :title="chipTitle" @click="toggleOpen">
       {{ chipLabel }}
     </button>
 
@@ -165,7 +166,7 @@ function resetDefault() {
           <input v-model="toText" class="bound" :class="{ invalid: toText.trim() !== '' && toParse.error }" spellcheck="false" autocomplete="off" aria-label="Time range end" placeholder="now" @keydown.enter="apply" @paste="onPaste" />
           <button type="button" class="go" :disabled="!isValid || !isDirty" @click="apply">Apply</button>
         </div>
-        <div class="echo" :class="{ bad: !echo.ok }" :title="echo.title">{{ echo.text }}</div>
+        <div v-if="problem" class="echo bad" role="alert">{{ problem }}</div>
       </div>
 
       <div class="quick">
@@ -266,18 +267,13 @@ function resetDefault() {
   cursor: default;
 }
 
-.echo {
+.echo.bad {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.72rem;
   line-height: 1.35;
-  color: #6b6b6b;
-  margin-top: 0.3rem;
-  min-height: 1em;
-  overflow-wrap: break-word;
-}
-
-.echo.bad {
   color: #ce4844;
+  margin-top: 0.3rem;
+  overflow-wrap: break-word;
 }
 
 .quick {

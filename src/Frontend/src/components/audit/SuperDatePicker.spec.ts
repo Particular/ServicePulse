@@ -57,6 +57,14 @@ describe("FEATURE: Super date picker", () => {
     expect(document.querySelector(".echo.bad")!.textContent).toContain("RFC 3339");
   });
 
+  test("EXAMPLE: A valid range shows no diagnostics line, only an invalid one gets feedback", async () => {
+    renderPicker();
+
+    await openPicker();
+
+    expect(document.querySelector(".echo")).toBeNull();
+  });
+
   test("EXAMPLE: Pasting an ISO 8601 interval fills both bounds", async () => {
     renderPicker();
 
