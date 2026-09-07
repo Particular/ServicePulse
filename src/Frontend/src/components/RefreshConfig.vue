@@ -64,11 +64,6 @@ watch(
 );
 onBeforeUnmount(() => window.clearInterval(ticker));
 
-const elapsedLabel = computed(() => {
-  if (!props.queryInProgress || !props.queryStartedAt) return null;
-  return `${Math.max(0, (now.value - props.queryStartedAt) / 1000).toFixed(1)}s`;
-});
-
 // The ring is visual only; the countdown reaches assistive tech as text that describes
 // the button (a timer is not announced on every tick, but is read along with the button)
 const countdownId = useId();
@@ -85,13 +80,19 @@ async function refreshOrCancel() {
 
 <template>
   <div class="refresh-config">
-    <ActionButton size="sm" :icon="props.queryInProgress ? faXmark : ringActive ? undefined : faRefresh" :loading="props.queryInProgress" :disable-on-loading="false" :aria-describedby="ringActive ? countdownId : undefined" @click="refreshOrCancel">
+    <ActionButton
+      size="sm"
+      style="width: 7rem"
+      :icon="props.queryInProgress ? faXmark : ringActive ? undefined : faRefresh"
+      :loading="props.queryInProgress"
+      :disable-on-loading="false"
+      :aria-describedby="ringActive ? countdownId : undefined"
+      @click="refreshOrCancel"
+    >
       <template v-if="ringActive && !props.queryInProgress" #icon>
         <AutoRefreshIndicator class="ring" :next-refresh-at="props.nextRefreshAt ?? null" :interval-ms="model" :refreshing="false" />
       </template>
-      <template v-if="props.queryInProgress"
-        >Cancel<template v-if="elapsedLabel"> · {{ elapsedLabel }}</template></template
-      >
+      <template v-if="props.queryInProgress">Cancel</template>
       <template v-else>Refresh</template>
     </ActionButton>
     <span v-if="ringActive" :id="countdownId" class="visually-hidden" role="timer">Next auto refresh in {{ secondsLeft }} {{ secondsLeft === 1 ? "second" : "seconds" }}</span>
