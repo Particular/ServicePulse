@@ -101,6 +101,21 @@ describe("AuditStore refresh", () => {
     expect(store.queryFailed).toBe(false);
   });
 
+  test("clearResults forgets the current results and any failure", async () => {
+    const store = useAuditStore();
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [message]]);
+    await store.refresh();
+    fetchTypedFromServiceControl.mockRejectedValueOnce(new Error("Internal Server Error"));
+    await store.refresh();
+    expect(store.queryFailed).toBe(true);
+
+    store.clearResults();
+
+    expect(store.messages).toEqual([]);
+    expect(store.totalCount).toBe(0);
+    expect(store.queryFailed).toBe(false);
+  });
+
   test("a superseded query is not reported as a failure", async () => {
     const store = useAuditStore();
 

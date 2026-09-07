@@ -94,9 +94,19 @@ export const useAuditStore = defineStore("AuditStore", () => {
     activeQuery = null;
   }
 
+  // Forgets the current results. The view calls this when it is left: a refresh in place
+  // keeps stale rows on purpose, but re-entering the view may come with different query
+  // inputs, so it must start from a clean list rather than the previous one under a spinner.
+  function clearResults() {
+    messages.value = [];
+    totalCount.value = 0;
+    queryFailed.value = false;
+  }
+
   return {
     refresh,
     cancelQuery,
+    clearResults,
     loadEndpoints,
     sortBy: sortByInstances,
     messages,

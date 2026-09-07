@@ -393,5 +393,17 @@ describe("FEATURE: Audit Messages Query State", () => {
       expect(store.cancelQuery).toHaveBeenCalled();
       expect(stop).toHaveBeenCalled();
     });
+
+    test("EXAMPLE: Unmounting clears the results, so re-entering the view starts from a clean list", async () => {
+      // A refresh-in-place keeps stale rows on purpose; coming back to the view is not that:
+      // the query inputs may differ, so the previous rows must not be shown under the spinner
+      const { store, unmount } = await renderAuditList([createMessage()]);
+
+      await waitForFirstLoadToComplete();
+
+      unmount();
+
+      expect(store.clearResults).toHaveBeenCalled();
+    });
   });
 });

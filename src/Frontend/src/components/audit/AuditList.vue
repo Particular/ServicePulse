@@ -78,6 +78,9 @@ onBeforeUnmount(() => {
   // in-flight query is aborted so it does not keep running (server-side included) in the background
   stop();
   store.cancelQuery();
+  // The rows belong to this visit: the next one may carry different query inputs, so it
+  // starts from a clean list (a refresh in place, by contrast, keeps the stale rows)
+  store.clearResults();
 });
 
 // The route is the single source of truth for the query: control changes only push to the router,
