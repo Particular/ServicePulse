@@ -28,8 +28,11 @@ const dashOffset = computed(() => (fraction.value === null ? 0 : circumference *
 const label = computed(() => (props.refreshing ? "Waiting for query results…" : `Auto refresh in ${secondsLeft.value}s`));
 </script>
 
+<!-- Purely visual: hidden from assistive tech. The host exposes the countdown as text
+     (see RefreshConfig), so a screen reader never gets an SVG or a label that changes
+     every second as the name of the button this ring sits in. -->
 <template>
-  <span v-if="fraction !== null" class="auto-refresh-indicator" role="timer" :aria-label="label" :title="label" data-testid="auto-refresh-indicator" :data-state="refreshing ? 'waiting' : 'countdown'">
+  <span v-if="fraction !== null" class="auto-refresh-indicator" aria-hidden="true" :title="label" data-testid="auto-refresh-indicator" :data-state="refreshing ? 'waiting' : 'countdown'">
     <svg viewBox="0 0 16 16" aria-hidden="true">
       <circle class="track" cx="8" cy="8" r="6.75" />
       <circle v-if="!refreshing" class="progress" cx="8" cy="8" r="6.75" :stroke-dasharray="circumference" :stroke-dashoffset="dashOffset" data-testid="auto-refresh-countdown" />

@@ -117,6 +117,33 @@ describe("FEATURE: Refresh Controls Query State", () => {
       expect(getButton().textContent).toContain("Refresh");
     });
 
+    test("EXAMPLE: The countdown reaches assistive tech as text describing the button, while the ring itself is decorative", async () => {
+      const { rerenderWith, getButton } = renderRefreshConfig(false);
+
+      await rerenderWith({ queryInProgress: false, nextRefreshAt: Date.now() + 3000, modelValue: 5000 });
+
+      const button = getButton();
+      // The ring is a visual: a screen reader must neither read SVG nor a label that changes every second as the button's name
+      expect(button.querySelector('[data-testid="auto-refresh-indicator"]')).toHaveAttribute("aria-hidden", "true");
+      expect(button).toHaveAccessibleName("Refresh");
+      // The countdown is available as plain text that describes the button
+      const timer = document.getElementById(button.getAttribute("aria-describedby")!);
+      expect(timer).toHaveAttribute("role", "timer");
+      expect(timer!.textContent).toMatch(/^Next auto refresh in \d+ seconds$/);
+
+      await rerenderWith({ queryInProgress: false, nextRefreshAt: Date.now() + 800, modelValue: 5000 });
+      expect(document.getElementById(button.getAttribute("aria-describedby")!)!.textContent).toBe("Next auto refresh in 1 second");
+    });
+
+    test("EXAMPLE: Without auto-refresh there is no countdown text either", async () => {
+      const { rerenderWith, getButton } = renderRefreshConfig(false);
+
+      await rerenderWith({ queryInProgress: false, nextRefreshAt: null, modelValue: null });
+
+      expect(getButton()).not.toHaveAttribute("aria-describedby");
+      expect(document.querySelector('[role="timer"]')).toBeNull();
+    });
+
     test("EXAMPLE: Without auto-refresh there is no ring", async () => {
       const { rerenderWith, getButton } = renderRefreshConfig(false);
 
