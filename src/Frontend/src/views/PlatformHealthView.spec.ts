@@ -86,6 +86,9 @@ describe("PlatformHealthView", () => {
 
     const supportLink = screen.getByRole("link", { name: /Then open the support case/i });
     expect(supportLink).toHaveAttribute("aria-disabled", "true");
+    // Disabled link must not expose a navigation target (the bug was that :href
+    // was always bound, so a click still opened the support URL).
+    expect(supportLink).not.toHaveAttribute("href");
 
     await user.click(screen.getByRole("button", { name: /Preview platform health/i }));
 
@@ -98,6 +101,8 @@ describe("PlatformHealthView", () => {
     expect(downloadFileFromString).toHaveBeenCalledTimes(1);
     expect(downloadFileFromString).toHaveBeenCalledWith(expect.stringContaining('"platformHealth"'), "application/json", "platform-health.json");
     expect(supportLink).toHaveAttribute("aria-disabled", "false");
+    // Once downloaded the link becomes a real navigation target.
+    expect(supportLink).toHaveAttribute("href");
   });
 
   test("shows an inline upgrade cue for an outdated instance version", () => {
