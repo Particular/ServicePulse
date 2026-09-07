@@ -1,15 +1,51 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, useTemplateRef } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from "vue";
 import { storeToRefs } from "pinia";
 import { useAuditStore } from "@/stores/AuditStore";
 import type { SearchHistoryEntry } from "@/components/audit/searchHistory";
 import TimeSince from "@/components/TimeSince.vue";
 
+// Wraps the search field (default slot) and floats the recent searches below it while
+// the field has focus, the way a browser's address bar does. Entries carry the whole
+// query (text, endpoint, time range), so they are listed with all of it.
+
 const store = useAuditStore();
 const { searchHistory, messageFilterString, selectedEndpointName, timeRangeFrom, timeRangeTo } = storeToRefs(store);
 
 const open = ref(false);
+// What is being typed right now (the store value trails it by the input's debounce)
+const typed = ref("");
 const root = useTemplateRef<HTMLElement>("root");
+
+const matching = computed(() => {
+  const needle = typed.value.trim().toLowerCase();
+  if (needle === "") return searchHistory.value;
+  return searchHistory.value.filter((entry) => entry.search.toLowerCase().includes(needle) || entry.endpoint.toLowerCase().includes(needle));
+});
+const visible = computed(() => open.value && matching.value.length > 0);
+
+function isSearchField(target: EventTarget | null): target is HTMLInputElement {
+  return target instanceof HTMLInputElement;
+}
+
+function onFocusIn(event: FocusEvent) {
+  if (isSearchField(event.target)) {
+    typed.value = event.target.value;
+    open.value = true;
+  }
+}
+
+function onClick(event: MouseEvent) {
+  // Re-opens after Escape without having to leave and re-enter the field
+  if (isSearchField(event.target)) open.value = true;
+}
+
+function onInput(event: Event) {
+  if (isSearchField(event.target)) {
+    typed.value = event.target.value;
+    open.value = true;
+  }
+}
 
 function rerun(entry: SearchHistoryEntry) {
   messageFilterString.value = entry.search;
@@ -20,6 +56,7 @@ function rerun(entry: SearchHistoryEntry) {
     timeRangeFrom.value = entry.from;
     timeRangeTo.value = entry.to;
   }
+  typed.value = entry.search;
   open.value = false;
 }
 
@@ -40,25 +77,23 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", onOutsidePoint
 </script>
 
 <template>
-  <div class="search-history" ref="root" @keydown="onKeydown">
-    <button type="button" class="trigger" :aria-expanded="open" aria-label="Search history" @click="open = !open">History ▾</button>
+  <div class="search-history" ref="root" @focusin="onFocusIn" @click="onClick" @input="onInput" @keydown="onKeydown">
+    <slot />
 
-    <div v-if="open" class="pop">
-      <template v-if="searchHistory.length > 0">
-        <button v-for="entry in searchHistory" :key="`${entry.search}|${entry.endpoint}|${entry.from}|${entry.to}`" type="button" class="entry" :title="'Run this search again'" @click="rerun(entry)">
-          <span class="what">
-            <span v-if="entry.search" class="term">{{ entry.search }}</span>
-            <span v-else class="term muted">(no search text)</span>
-            <span v-if="entry.endpoint" class="endpoint">@ {{ entry.endpoint }}</span>
-            <span v-if="rangeLabel(entry)" class="range">{{ rangeLabel(entry) }}</span>
-          </span>
-          <span class="when"><TimeSince :date-utc="entry.at" /></span>
-        </button>
-        <div class="foot">
-          <button type="button" class="clear" @click="store.clearSearchHistory()">Clear history</button>
-        </div>
-      </template>
-      <div v-else class="empty">No searches yet — queries with search text or an endpoint appear here.</div>
+    <div v-if="visible" class="pop" role="listbox" aria-label="Recent searches">
+      <div class="head">Recent searches</div>
+      <button v-for="entry in matching" :key="`${entry.search}|${entry.endpoint}|${entry.from}|${entry.to}`" type="button" role="option" class="entry" title="Run this search again" @click="rerun(entry)">
+        <span class="what">
+          <span v-if="entry.search" class="term">{{ entry.search }}</span>
+          <span v-else class="term muted">(no search text)</span>
+          <span v-if="entry.endpoint" class="endpoint">@ {{ entry.endpoint }}</span>
+          <span v-if="rangeLabel(entry)" class="range">{{ rangeLabel(entry) }}</span>
+        </span>
+        <span class="when"><TimeSince :date-utc="entry.at" /></span>
+      </button>
+      <div class="foot">
+        <button type="button" class="clear" @click="store.clearSearchHistory()">Clear history</button>
+      </div>
     </div>
   </div>
 </template>
@@ -66,20 +101,6 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", onOutsidePoint
 <style scoped>
 .search-history {
   position: relative;
-  display: inline-block;
-}
-
-.trigger {
-  border: 0;
-  background: none;
-  color: #00729c;
-  cursor: pointer;
-  font-size: 0.875em;
-  padding: 0.1rem 0.25rem;
-}
-
-.trigger:hover {
-  text-decoration: underline;
 }
 
 .pop {
@@ -87,12 +108,21 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", onOutsidePoint
   top: calc(100% + 4px);
   left: 0;
   z-index: 200;
-  width: min(420px, 92vw);
+  width: 100%;
+  min-width: min(420px, 92vw);
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 6px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   padding: 0.4rem;
+}
+
+.head {
+  color: #777;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.15rem 0.5rem 0.3rem;
 }
 
 .entry {
@@ -109,7 +139,8 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", onOutsidePoint
   cursor: pointer;
 }
 
-.entry:hover {
+.entry:hover,
+.entry:focus-visible {
   background: #e6f2f6;
 }
 
@@ -169,11 +200,5 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", onOutsidePoint
 
 .clear:hover {
   color: #ce4844;
-}
-
-.empty {
-  color: #777;
-  font-size: 0.82rem;
-  padding: 0.5rem;
 }
 </style>
