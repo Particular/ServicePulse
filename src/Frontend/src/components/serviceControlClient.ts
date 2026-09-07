@@ -1,10 +1,17 @@
 import { authFetch } from "@/composables/useAuthenticatedFetch";
+import type RootUrls from "@/resources/RootUrls";
+import type { RemoteInstance } from "@/resources/RemoteInstance";
 import { HttpError } from "@/utils/HttpError";
 
 export interface ServiceControlInstanceConnection {
   settings: { [key: string]: object };
   errors: string[];
 }
+
+export type ServiceControlRootDocument = RootUrls & {
+  platform_health_status: "healthy" | "degraded" | "unavailable";
+  platform_health_version: string;
+};
 
 class ServiceControlClient {
   private _url: string | undefined = undefined;
@@ -27,6 +34,15 @@ class ServiceControlClient {
     } catch {
       return { errors: [`Error reaching ServiceControl at ${this.url} connection`] } as ServiceControlInstanceConnection;
     }
+  }
+
+  public async getRoot(): Promise<[Response, ServiceControlRootDocument]> {
+    return await this.fetchTypedFromServiceControl<ServiceControlRootDocument>("");
+  }
+
+  public async getRemoteInstances() {
+    const [, data] = await this.fetchTypedFromServiceControl<RemoteInstance[]>("configuration/remotes");
+    return data;
   }
 
   public fetchTypedFromServiceControl<T>(suffix: string, signal?: AbortSignal): Promise<[Response, T]> {
@@ -135,11 +151,11 @@ class ServiceControlClient {
 
     const searchParams = new URLSearchParams(window.location.search);
     const scu = searchParams.get("scu");
-    const existingScu = window.localStorage.getItem("scu");
+    const existingScu = safeStorageGet("scu");
 
     if (scu) {
       if (scu !== existingScu) {
-        window.localStorage.setItem("scu", scu);
+        safeStorageSet("scu", scu);
       }
       return scu;
     } else if (existingScu) {
@@ -149,6 +165,22 @@ class ServiceControlClient {
     }
 
     return undefined;
+  }
+}
+
+function safeStorageGet(key: string) {
+  try {
+    return window.localStorage?.getItem(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function safeStorageSet(key: string, value: string) {
+  try {
+    window.localStorage?.setItem(key, value);
+  } catch {
+    // ignore storage access errors
   }
 }
 

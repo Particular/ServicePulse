@@ -26,7 +26,7 @@ describe("FEATURE: Session Storage Behavior", () => {
       expect(sessionToken).toBe(defaultMockUser.access_token);
 
       // Verify token is NOT in localStorage (would be shared across tabs)
-      const localToken = localStorage.getItem("auth_token");
+      const localToken = globalThis.localStorage?.getItem("auth_token") ?? null;
       expect(localToken).toBeNull();
     });
   });

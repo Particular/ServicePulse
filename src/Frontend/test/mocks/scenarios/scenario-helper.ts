@@ -8,7 +8,7 @@ import { setupWorker, type SetupWorker } from "msw/browser";
 import type { Driver, SetupFactoryOptions } from "../../driver";
 import { makeMockEndpoint, makeMockEndpointDynamic } from "../../mock-endpoint";
 
-type SetupFactory = ({ driver }: SetupFactoryOptions) => Promise<unknown>;
+type SetupFactory = ({ driver }: SetupFactoryOptions) => unknown | Promise<unknown>;
 
 export interface ScenarioSetup {
   worker: SetupWorker;

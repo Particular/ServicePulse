@@ -2,6 +2,7 @@ import type QueueAddress from "@/resources/QueueAddress";
 import type Redirect from "@/resources/Redirect";
 import type { RemoteInstance } from "@/resources/RemoteInstance";
 import type Message from "@/resources/Message";
+import type { LicensedEndpointDetails } from "@/resources/LicenseDetails";
 import type { SetupFactoryOptions } from "../driver";
 
 export const knownQueuesDefaultHandler = ({ driver }: SetupFactoryOptions) => {
@@ -33,3 +34,16 @@ export const hasMessages =
       })
     );
   };
+
+export const licenseDetailsDefaultHandler = ({ driver }: SetupFactoryOptions) => {
+  driver.mockEndpoint(`${window.defaultConfig.service_control_url}license/details`, {
+    body: <LicensedEndpointDetails>{
+      products: [],
+      endpoints: [],
+      infrastructure_queues: [],
+      excluded_queues: [],
+      service_end_date: "2026-12-31T00:00:00Z",
+      valid_id: true,
+    },
+  });
+};

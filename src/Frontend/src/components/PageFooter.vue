@@ -1,35 +1,17 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import { LicenseStatus } from "@/resources/LicenseInfo";
 import routeLinks from "@/router/routeLinks";
 import FAIcon from "@/components/FAIcon.vue";
-import { faArrowTurnUp, faPlus } from "@fortawesome/free-solid-svg-icons";
-import useConnectionsAndStatsAutoRefresh from "@/composables/useConnectionsAndStatsAutoRefresh";
-import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
-import serviceControlClient from "@/components/serviceControlClient";
+import { faArrowTurnUp, faCircleCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
+import usePlatformHealthStoreAutoRefresh from "@/composables/usePlatformHealthStoreAutoRefresh";
 import { storeToRefs } from "pinia";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
-import monitoringClient from "./monitoring/monitoringClient";
 
-const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
-const connectionState = connectionStore.connectionState;
-const monitoringConnectionState = connectionStore.monitoringConnectionState;
-const { store: environmentAndVersionsStore } = useEnvironmentAndVersionsAutoRefresh();
-const newVersions = environmentAndVersionsStore.newVersions;
-const environment = environmentAndVersionsStore.environment;
+const { store: platformHealthStore } = usePlatformHealthStoreAutoRefresh();
 const licenseStore = useLicenseStore();
 const { licenseStatus, license } = licenseStore;
-const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
 const isIntegrated = window.defaultConfig.isIntegrated;
-
-const scAddressTooltip = computed(() => {
-  return `ServiceControl URL ${serviceControlClient.url}`;
-});
-
-const scMonitoringAddressTooltip = computed(() => {
-  return `Monitoring URL ${monitoringClient.url}`;
-});
 
 const configurationStore = useConfigurationStore();
 const { configuration } = storeToRefs(configurationStore);
@@ -46,40 +28,12 @@ const { configuration } = storeToRefs(configurationStore);
           </span>
 
           <span v-if="isIntegrated"> Integrated ServicePulse </span>
-          <template v-else-if="environment.sp_version">
-            <span v-if="!newVersions.newSPVersion.newspversion"> ServicePulse v{{ environment.sp_version }} </span>
-            <span v-else>
-              ServicePulse v{{ environment.sp_version }} (<FAIcon v-if="newVersions.newSPVersion.newspversionnumber" class="footer-icon fake-link" :icon="faArrowTurnUp" />
-              <a :href="newVersions.newSPVersion.newspversionlink" target="_blank">v{{ newVersions.newSPVersion.newspversionnumber }} available</a>)
-            </span>
-          </template>
-          <span :title="scAddressTooltip">
-            Service Control:
-            <span class="connected-status" v-if="connectionState.connected && !connectionState.connecting">
-              <div class="fa pa-connection-success"></div>
-              <span v-if="!environment.sc_version">Connected</span>
-              <span v-if="environment.sc_version" class="versionnumber">v{{ environment.sc_version }}</span>
-              <span v-if="newVersions.newSCVersion.newscversion" class="newscversion"
-                >(<FAIcon class="footer-icon fake-link" :icon="faArrowTurnUp" /> <a :href="newVersions.newSCVersion.newscversionlink" target="_blank">v{{ newVersions.newSCVersion.newscversionnumber }} available</a>)</span
-              >
-            </span>
-            <span v-if="!connectionState.connected && !connectionState.connecting" class="connection-failed"> <i class="fa pa-connection-failed"></i> Not connected </span>
-            <span v-if="connectionState.connecting" class="connection-establishing"> <i class="fa pa-connection-establishing"></i> Connecting </span>
-          </span>
-
-          <template v-if="isMonitoringEnabled">
-            <span class="monitoring-connected" :title="scMonitoringAddressTooltip">
-              SC Monitoring:
-              <span class="connected-status" v-if="monitoringConnectionState.connected && !monitoringConnectionState.connecting">
-                <div class="fa pa-connection-success"></div>
-                <span v-if="environment.monitoring_version"> v{{ environment.monitoring_version }}</span>
-                <span v-if="newVersions.newMVersion.newmversion"
-                  >(<FAIcon class="footer-icon fake-link" :icon="faArrowTurnUp" /> <a :href="newVersions.newMVersion.newmversionlink" target="_blank">v{{ newVersions.newMVersion.newmversionnumber }} available</a>)</span
-                >
-              </span>
-              <span v-if="!monitoringConnectionState.connected && !monitoringConnectionState.connecting" class="connection-failed"> <i class="fa pa-connection-failed"></i> Not connected </span>
-              <span v-if="monitoringConnectionState.connecting" class="connection-establishing"> <i class="fa pa-connection-establishing"></i> Connecting </span>
-            </span>
+          <template v-else>
+            <RouterLink v-if="platformHealthStore.outdatedOnly || platformHealthStore.rows.some((row) => row.upgradeAvailable)" :to="routeLinks.platformHealth">
+              <FAIcon class="footer-icon" :icon="faArrowTurnUp" />
+              Updates available
+            </RouterLink>
+            <span v-else><FAIcon class="footer-icon" :icon="faCircleCheck" /> Platform up to date</span>
           </template>
         </div>
       </div>

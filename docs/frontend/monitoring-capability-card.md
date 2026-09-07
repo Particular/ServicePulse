@@ -2,64 +2,41 @@
 
 This document describes the monitoring capability card component, its various states, and how to test them both manually and automatically.
 
+For shared frontend mock and Vitest workflow, see `docs/frontend/testing-basics.md`.
+
 ## Overview
 
 The Monitoring Capability Card displays on the ServicePulse dashboard and shows the status of the monitoring feature. The card's status depends on:
 
 1. Whether the monitoring instance is configured in ServicePulse
 2. Whether the monitoring instance is available (responding)
-3. Whether endpoints are sending throughput data (monitoring plugin enabled)
+3. Capability-specific metrics readiness shown by the `Metrics` indicator
 
 ## Card States
 
-| Status                   | Condition                                         | Badge       | Action Button |
-|--------------------------|---------------------------------------------------|-------------|---------------|
-| Instance Not Configured  | Monitoring URL not configured in ServicePulse     | -           | Get Started   |
-| Unavailable              | Monitoring instance configured but not responding | Unavailable | Learn More    |
-| Endpoints Not Configured | Instance available but no endpoints sending data  | -           | Learn More    |
-| Available                | Instance available with endpoints sending data    | Available   | View Metrics  |
+| Status                  | Condition                                         | Badge          | Action Button |
+|-------------------------|---------------------------------------------------|----------------|---------------|
+| Instance Not Configured | Monitoring URL not configured in ServicePulse     | Not configured | Get Started   |
+| Unavailable             | Monitoring instance configured but not responding | Unavailable    | Learn More    |
+| Available               | Monitoring instance configured and responding     | Available      | View Metrics  |
+
+The `Metrics` indicator carries the capability-specific readiness state. If no endpoints are sending throughput data, the card stays `Available` while the indicator is yellow.
+
+A degraded monitoring instance still counts as connected for this card. Only `unavailable` drives the card into the unavailable state.
 
 ## Manual Testing with Mock Scenarios
 
-### Prerequisites
+Start from the shared frontend mocking workflow in `docs/frontend/testing-basics.md`, then select one of the monitoring scenarios below.
 
-```bash
-cd src/Frontend
-npm install
-```
+For the shared meaning of instance topology and availability states, use `docs/frontend/platform-health-page.md` as the canonical reference. This page documents only the monitoring-specific layer on top.
 
-### Running the Dev Server with Mocks
+### Available Monitoring Scenarios
 
-```bash
-npm run dev:mocks
-```
-
-This starts the dev server at `http://localhost:5173` with MSW (Mock Service Worker) intercepting API calls.
-
-### Switching Between Scenarios
-
-Set the `VITE_MOCK_SCENARIO` environment variable before running the dev server:
-
-```bash
-# Linux/macOS
-VITE_MOCK_SCENARIO=monitoring-available npm run dev:mocks
-
-# Windows CMD
-set VITE_MOCK_SCENARIO=monitoring-available && npm run dev:mocks
-
-# Windows PowerShell
-$env:VITE_MOCK_SCENARIO="monitoring-available"; npm run dev:mocks
-```
-
-Open the browser console to see available scenarios.
-
-#### Available Monitoring Scenarios
-
-| Scenario                  | Status                   | Badge       | Button       | Description                                                                                                       | Indicators               |
-|---------------------------|--------------------------|-------------|--------------|-------------------------------------------------------------------------------------------------------------------|--------------------------|
-| `monitoring-available`    | Available                | Available   | View Metrics | "The ServiceControl Monitoring instance is available and endpoints have been configured to send throughput data." | Instance: ✅, Metrics: ✅  |
-| `monitoring-unavailable`  | Unavailable              | Unavailable | Learn More   | "The ServiceControl Monitoring instance is configured but not responding..."                                      | Instance: ❌              |
-| `monitoring-no-endpoints` | Endpoints Not Configured | -           | Learn More   | "The ServiceControl Monitoring instance is connected but no endpoints are sending throughput data..."             | Instance: ✅, Metrics: ⚠️ |
+| Scenario                  | Status      | Badge       | Button       | Description                                                                                                       | Indicators  |
+|---------------------------|-------------|-------------|--------------|-------------------------------------------------------------------------------------------------------------------|-------------|
+| `monitoring-available`    | Available   | Available   | View Metrics | "The ServiceControl Monitoring instance is available. Use the Metrics indicator to see whether endpoints are sending throughput data." | Metrics: ✅ |
+| `monitoring-unavailable`  | Unavailable | Unavailable | Learn More   | "The ServiceControl Monitoring instance is configured but not responding..."                                      | None        |
+| `monitoring-no-endpoints` | Available   | Available   | View Metrics | "The ServiceControl Monitoring instance is available. Use the Metrics indicator to see whether endpoints are sending throughput data." | Metrics: ⚠️ |
 
 **Indicator Legend:** ✅ = Available/Success, ❌ = Unavailable/Error, ⚠️ = Warning/Not Configured
 
@@ -78,53 +55,6 @@ window.defaultConfig = {
 };
 ```
 
-### Adding New Scenarios
-
-1. Add a scenario precondition to `src/Frontend/test/preconditions/platformCapabilities.ts`:
-
-```typescript
-export const scenarioMyScenario = async ({ driver }: SetupFactoryOptions) => {
-  await driver.setUp(precondition.serviceControlWithMonitoring);
-  // Add scenario-specific preconditions here
-};
-```
-
-1. Create a new file in `src/Frontend/test/mocks/scenarios/` (e.g., `my-scenario.ts`):
-
-```typescript
-import { setupWorker } from "msw/browser";
-import { Driver } from "../../driver";
-import { makeMockEndpoint, makeMockEndpointDynamic } from "../../mock-endpoint";
-import * as precondition from "../../preconditions";
-
-export const worker = setupWorker();
-const mockEndpoint = makeMockEndpoint({ mockServer: worker });
-const mockEndpointDynamic = makeMockEndpointDynamic({ mockServer: worker });
-
-const makeDriver = (): Driver => ({
-  goTo() { throw new Error("Not implemented"); },
-  mockEndpoint,
-  mockEndpointDynamic,
-  setUp(factory) { return factory({ driver: this }); },
-  disposeApp() { throw new Error("Not implemented"); },
-});
-
-const driver = makeDriver();
-
-export const setupComplete = (async () => {
-  await driver.setUp(precondition.scenarioMyScenario);
-})();
-```
-
-1. Register it in `src/Frontend/test/mocks/scenarios/index.ts`:
-
-```typescript
-const scenarios: Record<string, () => Promise<ScenarioModule>> = {
-  // ... existing scenarios
-  "my-scenario": () => import("./my-scenario"),
-};
-```
-
 ## Automated Tests
 
 ### Test Files
@@ -135,28 +65,24 @@ const scenarios: Record<string, () => Promise<ScenarioModule>> = {
 
 ### Running Automated Tests
 
-From the `src/Frontend` directory:
+Use the shared commands in `docs/frontend/testing-basics.md`, then run this monitoring-specific spec:
 
 ```bash
-# Run all monitoring capability tests
 npx vitest run test/specs/platformcapabilities/monitoring-capability-card.spec.ts
-
-# Run all platform capability tests
-npx vitest run test/specs/platformcapabilities/
 ```
 
 ### Test Coverage
 
 #### Application Tests (`monitoring-capability-card.spec.ts`)
 
-| Rule                                      | Test Case                                            |
-|-------------------------------------------|------------------------------------------------------|
-| Available with endpoints sending data     | Shows "Available" status + "View Metrics" button     |
-| Available but no endpoints sending data   | Shows "Endpoints Not Configured" status              |
-| Instance configured but not responding    | Shows "Unavailable" status                           |
-| Monitoring not configured in ServicePulse | Shows "Get Started" button                           |
-| Instance indicator                        | Shows "Instance" label when monitoring is configured |
-| Metrics indicator                         | Shows "Metrics" label when instance is connected     |
+| Rule                                      | Test Case                                                      |
+|-------------------------------------------|----------------------------------------------------------------|
+| Available with endpoints sending data     | Shows "Available" status + "View Metrics" button             |
+| Available but no endpoints sending data   | Keeps card available and shows a warning `Metrics` indicator   |
+| Degraded but responding instance          | Keeps card available and still shows `Metrics` behavior        |
+| Instance configured but not responding    | Shows "Unavailable" status                                   |
+| Monitoring not configured in ServicePulse | Shows "Get Started" button                                   |
+| Shared card signals                       | Shows only the `Metrics` indicator when connected              |
 
 ## Key Source Files
 
@@ -164,16 +90,16 @@ npx vitest run test/specs/platformcapabilities/
 |-----------------------------------------------------------------------------------------|-------------------------------------|
 | `src/Frontend/src/components/platformcapabilities/capabilities/MonitoringCapability.ts` | Main composable for monitoring card |
 | `src/Frontend/src/components/monitoring/monitoringClient.ts`                            | Monitoring API client               |
+| `src/Frontend/src/stores/PlatformModelStore.ts`                                         | Shared platform model for monitoring state |
 | `src/Frontend/test/preconditions/platformCapabilities.ts`                               | Test preconditions and fixtures     |
 | `src/Frontend/test/mocks/scenarios/`                                                    | Manual testing scenarios            |
 
 ## How Monitoring Status is Determined
 
-The monitoring status is determined by checking three conditions in order:
+The monitoring status is determined by checking two conditions in order:
 
 1. **Is monitoring configured?** - Checks if `monitoring_urls` contains a valid URL (not "!" or empty)
 2. **Is the instance responding?** - Checks if the connection to the monitoring instance succeeds
-3. **Are endpoints sending data?** - Checks if any monitored endpoints exist
 
 ```typescript
 // Simplified status determination logic
@@ -183,26 +109,26 @@ if (!isMonitoringEnabled) {
 if (!connectionSuccessful) {
   return CapabilityStatus.Unavailable;
 }
-if (!hasMonitoredEndpoints) {
-  return CapabilityStatus.EndpointsNotConfigured;
-}
 return CapabilityStatus.Available;
 ```
 
+## Status Indicators
+
+The monitoring card no longer renders a separate instance widget.
+
+It shows a single `Metrics` indicator only when the monitoring instance is configured and connected:
+
+- green when monitored endpoints exist
+- yellow when no endpoints are sending throughput data yet
+
+Instance-level monitoring visibility lives on the `Platform health` page.
+
 ## Troubleshooting
 
-### Scenario not loading
+Use `docs/frontend/testing-basics.md` for shared troubleshooting.
 
-1. Check the browser console for errors
-2. Verify the scenario name matches exactly (case-sensitive)
-3. Ensure MSW is enabled (look for "[MSW] Mocking enabled" in console)
+Monitoring-specific checks:
 
-### Tests failing
-
-1. Run `npm run type-check` to verify TypeScript compilation
-2. Check if preconditions are properly set up
-3. Use `--reporter=verbose` for detailed test output:
-
-   ```bash
-   npx vitest run test/specs/platformcapabilities/ --reporter=verbose
-   ```
+1. If the badge is wrong, verify whether the scenario is changing instance connectivity or only endpoint throughput presence.
+2. If the `Metrics` indicator is wrong, inspect the `monitored-endpoints` response for the active scenario.
+3. The `Instance Not Configured` case is a config-driven manual case, not a standard mock scenario.

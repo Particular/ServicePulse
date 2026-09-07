@@ -2,6 +2,10 @@ import { describe, expect, test } from "vitest";
 import routeLinks from "./routeLinks";
 
 describe("routeLinks", () => {
+  test("platform health link is stable", () => {
+    expect(routeLinks.platformHealth).toBe("/platform-health");
+  });
+
   test.each([
     ["id\\with\\backslash", "id%5Cwith%5Cbackslash"],
     ["id/with/slash", "id%2Fwith%2Fslash"],

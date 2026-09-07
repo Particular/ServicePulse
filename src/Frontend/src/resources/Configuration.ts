@@ -30,6 +30,7 @@ interface DataRetention {
   error_retention_period: string;
 }
 interface Host {
+  instance_name?: string;
   service_name: string;
   raven_db_path: string;
   logging: Logging;

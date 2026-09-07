@@ -92,4 +92,7 @@ export const serviceControlWithMonitoring = async ({ driver }: SetupFactoryOptio
 
   //default handler for /api/messages2
   await driver.setUp(precondition.hasMessages());
+
+  //default handler for /api/license/details
+  await driver.setUp(precondition.licenseDetailsDefaultHandler);
 };

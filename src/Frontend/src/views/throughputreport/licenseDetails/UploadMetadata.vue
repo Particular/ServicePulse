@@ -2,6 +2,7 @@
 import ActionButton from "@/components/ActionButton.vue";
 import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore";
 import { computed, ref } from "vue";
+import logger from "@/logger";
 
 const licenseDetailsStore = useLicenseDetailsStore();
 
@@ -21,8 +22,7 @@ async function handleSubmit() {
   try {
     await licenseDetailsStore.uploadEndpointMetadata(file.value);
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(e);
+    logger.error(e);
     uploadError.value = true;
   } finally {
     saving.value = false;

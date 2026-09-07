@@ -115,6 +115,7 @@ const monitoringLinks = (root: string) => {
 
 const routeLinks = {
   dashboard: "/dashboard",
+  platformHealth: "/platform-health",
   heartbeats: heartbeatLinks("/heartbeats"),
   monitoring: monitoringLinks("/monitoring"),
   failedMessage: failedMessagesLinks("/failed-messages"),

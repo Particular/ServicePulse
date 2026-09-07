@@ -4,10 +4,10 @@ import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import useIsAllMessagesSupported, { minimumSCVersionForAllMessages } from "@/components/audit/isAllMessagesSupported";
 import { storeToRefs } from "pinia";
 import { type CapabilityComposable, type CapabilityStatusToStringMap, useCapabilityBase } from "./BaseCapability";
-import useRemoteInstancesAutoRefresh from "@/composables/useRemoteInstancesAutoRefresh";
 import usePlatformCapabilitiesRefresh from "@/composables/usePlatformCapabilitiesRefresh";
 import { RemoteInstanceStatus, RemoteInstanceType, type RemoteInstance } from "@/resources/RemoteInstance";
 import routeLinks from "@/router/routeLinks";
+import { usePlatformModelStore } from "@/stores/PlatformModelStore";
 
 /**
  * Checks if a remote instance is an audit instance using the cached instance type
@@ -32,7 +32,7 @@ const AuditingDescriptions: CapabilityStatusToStringMap = {
   [CapabilityStatus.InstanceNotConfigured]: "A ServiceControl Audit instance has not been configured. Click 'Get Started' to learn more about setting up auditing.",
   [CapabilityStatus.Unavailable]: "All ServiceControl Audit instances are configured but not responding. Click 'Learn More' for troubleshooting steps.",
   [CapabilityStatus.PartiallyUnavailable]: "Some ServiceControl Audit instances are not responding.",
-  [CapabilityStatus.Available]: "All ServiceControl Audit instances are available and endpoints have been configured to send audit messages.",
+  [CapabilityStatus.Available]: "All ServiceControl Audit instances are available.",
 };
 
 const AuditingHelpButtonText: CapabilityStatusToStringMap = {
@@ -50,8 +50,6 @@ const AuditingHelpButtonUrl: CapabilityStatusToStringMap = {
 };
 
 enum AuditingIndicatorTooltip {
-  InstanceAvailable = "The Audit instance is configured and available",
-  InstanceUnavailable = "The Audit instance is configured but not responding",
   MessagesAvailable = "Endpoints have been configured to send audit messages",
   MessagesUnavailable = "No successful messages have been processed yet or auditing is not enabled for any endpoints",
   AllMessagesNotSupported = `The 'All Messages' feature requires ServiceControl ${minimumSCVersionForAllMessages} or higher`,
@@ -99,14 +97,15 @@ export function hasPartiallyUnavailableAuditInstances(instances: RemoteInstance[
 
 export function useAuditingCapability(): CapabilityComposable {
   const { getDescriptionForStatus, getHelpButtonTextForStatus, getHelpButtonUrlForStatus, createIndicator } = useCapabilityBase();
-
-  // This gives us the list of remote instances configured in ServiceControl.
-  // Uses auto-refresh to periodically check status (every 5 seconds)
-  const { store: remoteInstancesStore } = useRemoteInstancesAutoRefresh();
-  const { remoteInstances } = storeToRefs(remoteInstancesStore);
-
-  // Filter to only include audit instances (those with audit_retention_period in configuration)
-  const auditInstances = computed(() => filterAuditInstances(remoteInstances.value));
+  const platformModelStore = usePlatformModelStore();
+  const auditInstances = computed(() =>
+    platformModelStore.auditInstances.map((instance) => ({
+      api_uri: instance.apiUrl,
+      version: instance.version,
+      status: instance.health === "unavailable" ? RemoteInstanceStatus.Unavailable : RemoteInstanceStatus.Online,
+      cachedInstanceType: RemoteInstanceType.Audit,
+    }))
+  );
 
   // This gives us the hasSuccessfulMessages flag which indicates if any successful messages exist.
   // Uses auto-refresh (minimal) to periodically check for at least 1 successful message (every 5 seconds)
@@ -133,12 +132,7 @@ export function useAuditingCapability(): CapabilityComposable {
       return CapabilityStatus.PartiallyUnavailable;
     }
 
-    // 4. Check if the 'All Messages' feature is not supported OR there are no successful messages
-    if (!isAllMessagesSupported.value || !hasSuccessfulMessages.value) {
-      return CapabilityStatus.EndpointsNotConfigured;
-    }
-
-    // 5. Audit instance is available and there are successful audit messages
+    // 4. All configured audit instances are available.
     return CapabilityStatus.Available;
   });
 
@@ -154,17 +148,6 @@ export function useAuditingCapability(): CapabilityComposable {
   // Determine indicators
   const auditIndicators = computed(() => {
     const indicators: StatusIndicator[] = [];
-
-    // Add an indicator for each remote audit instance
-    if (auditInstances.value.length > 0) {
-      auditInstances.value.forEach((instance, index) => {
-        const isAvailable = instance.status === RemoteInstanceStatus.Online;
-        const label = auditInstances.value.length > 1 ? `Instance ${index + 1}` : "Instance";
-        const tooltip = isAvailable ? AuditingIndicatorTooltip.InstanceAvailable : AuditingIndicatorTooltip.InstanceUnavailable;
-
-        indicators.push(createIndicator(label, isAvailable ? CapabilityStatus.Available : CapabilityStatus.Unavailable, tooltip, instance.api_uri, instance.version));
-      });
-    }
 
     // Messages available indicator - show if at least one instance is available
     if (hasAvailableAuditInstances(auditInstances.value)) {
@@ -186,7 +169,7 @@ export function useAuditingCapability(): CapabilityComposable {
   });
 
   // Loading state - true if remote instances haven't been loaded yet
-  const isLoading = computed(() => remoteInstances.value === null || remoteInstances.value === undefined);
+  const isLoading = computed(() => platformModelStore.model === null);
 
   return {
     status: auditStatus,

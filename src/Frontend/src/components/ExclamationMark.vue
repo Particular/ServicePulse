@@ -1,4 +1,5 @@
 ﻿<script setup lang="ts">
+import { computed } from "vue";
 import { WarningLevel } from "@/components/WarningLevel";
 import FAIcon from "@/components/FAIcon.vue";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
@@ -9,17 +10,31 @@ const props = withDefaults(
   }>(),
   { type: WarningLevel.None }
 );
+
+const iconClass = computed(() => {
+  switch (props.type) {
+    case WarningLevel.Danger:
+      return "danger";
+    case WarningLevel.Warning:
+      return "warning";
+    case WarningLevel.Info:
+      return "info";
+    default:
+      return "warning";
+  }
+});
 </script>
 
 <template>
   <template v-if="props.type !== WarningLevel.None">
-    <FAIcon :icon="faExclamationTriangle" :class="props.type === WarningLevel.Danger ? 'danger' : 'warning'" />
+    <FAIcon :icon="faExclamationTriangle" :class="iconClass" />
   </template>
 </template>
 
 <style scoped>
 .danger,
-.warning {
+.warning,
+.info {
   margin: 0 2px;
 }
 
@@ -31,5 +46,10 @@ const props = withDefaults(
 
 .warning {
   color: var(--bs-warning);
+}
+
+.info {
+  color: #8fa2a8;
+  background: linear-gradient(white, white) center/20% 72% no-repeat;
 }
 </style>

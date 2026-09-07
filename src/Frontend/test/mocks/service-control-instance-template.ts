@@ -17,6 +17,8 @@ export const serviceControlMainInstance = <RootUrls>{
   license_status: LicenseStatus.Valid,
   license_details: "http://localhost:33333/api/license",
   name: "ServiceControl",
+  platform_health_status: "healthy",
+  platform_health_version: "5.0.0-alpha.2",
   sagas_url: "http://localhost:33333/api/sagas",
   event_log_items: "http://localhost:33333/api/eventlogitems",
   archived_groups_url: "http://localhost:33333/api/errors/groups/{classifier?}",
@@ -26,4 +28,6 @@ export const serviceControlMainInstance = <RootUrls>{
 export const monitoredInstanceTemplate = <ServiceControlMonitoringInstance>{
   instanceType: "monitoring",
   version: "5.0.0-alpha.2",
+  platform_health_status: "healthy",
+  platform_health_version: "5.0.0-alpha.2",
 };

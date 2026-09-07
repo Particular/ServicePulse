@@ -44,3 +44,7 @@ export async function customChecksDismissButtonList() {
   const dismissButtonList = await screen.findAllByRole("button", { name: "custom-check-dismiss" });
   return dismissButtonList;
 }
+
+export function showPlatformCustomChecksToggle() {
+  return screen.getByRole("checkbox", { name: /Show platform custom checks/i });
+}

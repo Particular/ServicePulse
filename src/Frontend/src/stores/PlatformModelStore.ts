@@ -1,0 +1,188 @@
+import { acceptHMRUpdate, defineStore } from "pinia";
+import { computed, ref } from "vue";
+import serviceControlClient, { type ServiceControlRootDocument } from "@/components/serviceControlClient";
+import monitoringClient, { type MonitoringRoot } from "@/components/monitoring/monitoringClient";
+import { RemoteInstanceType, type RemoteInstance } from "@/resources/RemoteInstance";
+import type Configuration from "@/resources/Configuration";
+import type { PlatformInstance, PlatformModel, ServicePulse } from "@/resources/PlatformModel";
+
+export const usePlatformModelStore = defineStore("PlatformModelStore", () => {
+  const model = ref<PlatformModel | null>(null);
+
+  const primary = computed(() => model.value?.primary ?? null);
+  const remotes = computed(() => model.value?.remotes ?? []);
+  const monitoring = computed(() => model.value?.monitoring ?? null);
+  const servicePulse = computed(() => model.value?.servicePulse ?? null);
+  const auditInstances = computed(() => remotes.value.filter((instance) => instance.kind === "audit"));
+  const errorInstances = computed(() => remotes.value.filter((instance) => instance.kind === "error"));
+
+  async function refresh() {
+    const [primaryRoot, monitoringResponse, configuration] = await Promise.all([getPrimaryRoot(), getMonitoringRoot(), getConfiguration()]);
+    const remotesResponse = primaryRoot ? await getRemotes() : [];
+
+    model.value = {
+      primary: mapPrimary(primaryRoot, configuration),
+      remotes: mapRemotes(remotesResponse),
+      monitoring: mapMonitoring(monitoringResponse),
+      servicePulse: mapServicePulse(),
+    };
+  }
+
+  return {
+    model,
+    primary,
+    remotes,
+    monitoring,
+    servicePulse,
+    auditInstances,
+    errorInstances,
+    refresh,
+  };
+});
+
+async function getPrimaryRoot(): Promise<PrimaryRootResult | null> {
+  try {
+    const [response, document] = await serviceControlClient.getRoot();
+    return { document, version: response.headers.get("X-Particular-Version") ?? "" };
+  } catch {
+    return null;
+  }
+}
+
+interface PrimaryRootResult {
+  document: ServiceControlRootDocument;
+  version: string;
+}
+
+async function getRemotes(): Promise<RemoteInstance[]> {
+  try {
+    return await serviceControlClient.getRemoteInstances();
+  } catch {
+    return [];
+  }
+}
+
+async function getConfiguration(): Promise<Configuration | null> {
+  try {
+    const response = await serviceControlClient.fetchFromServiceControl("configuration");
+    return (await response.json()) as Configuration;
+  } catch {
+    return null;
+  }
+}
+
+async function getMonitoringRoot(): Promise<MonitoringRoot | null> {
+  if (!monitoringClient.isMonitoringEnabled) {
+    return null;
+  }
+
+  try {
+    return await monitoringClient.getMonitoringRoot();
+  } catch {
+    return {
+      platform_health_status: "unavailable",
+      platform_health_version: "Unknown",
+    };
+  }
+}
+
+function mapPrimary(primaryRoot: PrimaryRootResult | null, configuration: Configuration | null): PlatformInstance {
+  if (!primaryRoot) {
+    return {
+      id: "primary",
+      name: configuration?.host?.instance_name ?? "Particular.ServiceControl",
+      kind: "error",
+      role: "primary-error",
+      version: "Unknown",
+      health: "unavailable",
+      apiUrl: serviceControlClient.url ?? "",
+    };
+  }
+
+  const { document, version } = primaryRoot;
+
+  return {
+    id: "primary",
+    name: configuration?.host?.instance_name ?? document.name,
+    kind: "error",
+    role: "primary-error",
+    version: document.platform_health_version ?? version,
+    health: document.platform_health_status ?? "healthy",
+    apiUrl: serviceControlClient.url ?? "",
+    transportType: configuration?.transport?.transport_type,
+    errorLogQueue: configuration?.transport?.error_log_queue,
+    errorQueue: configuration?.transport?.error_queue,
+    forwardErrorMessages: configuration?.transport?.forward_error_messages,
+    errorRetentionPeriod: configuration?.data_retention?.error_retention_period,
+  };
+}
+
+function mapRemotes(remotes: RemoteInstance[]): PlatformInstance[] {
+  return remotes.map((remote, index) => {
+    const isError = isRemoteErrorInstance(remote);
+    const kind = isError ? "error" : "audit";
+
+    return {
+      id: remote.platform_health_id ?? `remote-${index}`,
+      name: remote.configuration?.host?.instance_name ?? extractInstanceName(remote.api_uri),
+      kind,
+      role: isError ? "remote-error" : "remote-audit",
+      version: remote.version,
+      health: remote.platform_health_status ?? (remote.status === "online" ? "healthy" : "unavailable"),
+      apiUrl: remote.api_uri,
+      errorRetentionPeriod: remote.configuration?.data_retention?.error_retention_period,
+      auditRetentionPeriod: remote.configuration?.data_retention?.audit_retention_period,
+    };
+  });
+}
+
+function isRemoteErrorInstance(remote: RemoteInstance) {
+  if (remote.cachedInstanceType === RemoteInstanceType.Error) {
+    return true;
+  }
+
+  if (remote.cachedInstanceType === RemoteInstanceType.Audit) {
+    return false;
+  }
+
+  return remote.configuration?.data_retention?.error_retention_period !== undefined;
+}
+
+function mapMonitoring(monitoringRoot: MonitoringRoot | null): PlatformInstance | null {
+  if (!monitoringClient.isMonitoringEnabled || monitoringRoot === null) {
+    return null;
+  }
+
+  return {
+    id: "monitoring",
+    name: "Particular.ServiceControl.Monitoring",
+    kind: "monitoring",
+    role: "monitoring",
+    version: monitoringRoot?.platform_health_version ?? monitoringRoot?.version ?? "Unknown",
+    health: monitoringRoot?.platform_health_status ?? "healthy",
+    apiUrl: monitoringClient.url ?? "",
+  };
+}
+
+function mapServicePulse(): ServicePulse {
+  return {
+    name: "ServicePulse",
+    version: window.defaultConfig?.version ?? "Unknown",
+    health: "healthy",
+  };
+}
+
+function extractInstanceName(apiUri: string) {
+  try {
+    const uri = new URL(apiUri);
+    return uri.hostname;
+  } catch {
+    return apiUri;
+  }
+}
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(usePlatformModelStore, import.meta.hot));
+}
+
+export type PlatformModelStore = ReturnType<typeof usePlatformModelStore>;

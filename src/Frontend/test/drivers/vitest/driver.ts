@@ -86,8 +86,8 @@ const test = testVitest.extend<{ driver: Driver }>({
     mockServer.resetHandlers();
     //Make JSDOM create a fresh document per each test run
     jsdom.reconfigure({ url: "http://localhost:3000/" });
-    localStorage.clear();
-    sessionStorage.clear();
+    globalThis.localStorage?.clear?.();
+    globalThis.sessionStorage?.clear?.();
     deleteAllCookies();
   },
 });

@@ -12,6 +12,26 @@ const INTEGRITY_CHECKSUM = '4db4a41e972cec1b64cc569c66952d82'
 const IS_MOCKED_RESPONSE = Symbol('isMockedResponse')
 const activeClientIds = new Set()
 
+function sleep(duration) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, duration)
+  })
+}
+
+async function waitForClientActivation(clientId, timeout = 500) {
+  const startedAt = Date.now()
+
+  while (Date.now() - startedAt < timeout) {
+    if (activeClientIds.has(clientId)) {
+      return true
+    }
+
+    await sleep(10)
+  }
+
+  return activeClientIds.has(clientId)
+}
+
 addEventListener('install', function () {
   self.skipWaiting()
 })
@@ -122,6 +142,10 @@ addEventListener('fetch', function (event) {
  * @param {number} requestInterceptedAt
  */
 async function handleRequest(event, requestId, requestInterceptedAt) {
+  if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+    return fetch(event.request)
+  }
+
   const client = await resolveMainClient(event)
   const requestCloneForEvents = event.request.clone()
   const response = await getResponse(
@@ -244,11 +268,17 @@ async function getResponse(event, client, requestId, requestInterceptedAt) {
   }
 
   // Bypass initial page load requests (i.e. static assets).
-  // The absence of the immediate/parent client in the map of the active clients
-  // means that MSW hasn't dispatched the "MOCK_ACTIVATE" event yet
-  // and is not ready to handle requests.
+  // For XHR/fetch requests, wait briefly for the reloaded page to re-activate mocking
+  // so startup API calls do not leak to the real network during reload races.
   if (!activeClientIds.has(client.id)) {
-    return passthrough()
+    if (event.request.destination) {
+      return passthrough()
+    }
+
+    const activated = await waitForClientActivation(client.id)
+    if (!activated) {
+      return passthrough()
+    }
   }
 
   // Notify the client that a request has been intercepted.

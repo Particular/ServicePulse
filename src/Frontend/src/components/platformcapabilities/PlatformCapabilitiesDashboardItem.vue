@@ -11,9 +11,11 @@ import { getMonitoringWizardPages } from "@/components/platformcapabilities/wiza
 import { usePlatformCapabilitiesStore } from "@/stores/PlatformCapabilitiesStore";
 import FAIcon from "@/components/FAIcon.vue";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import usePlatformModelAutoRefresh from "@/composables/usePlatformModelAutoRefresh";
 
 const platformCapabilitiesStore = usePlatformCapabilitiesStore();
 const { visibility } = storeToRefs(platformCapabilitiesStore);
+usePlatformModelAutoRefresh();
 
 const auditing = useAuditingCapability();
 const monitoring = useMonitoringCapability();
