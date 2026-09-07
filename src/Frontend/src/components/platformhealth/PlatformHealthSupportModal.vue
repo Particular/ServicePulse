@@ -66,7 +66,18 @@ onUnmounted(() => {
         <div class="modal-footer modal-actions">
           <ActionButton variant="primary" aria-label="Download platform health" @click="download">Download platform-health.json</ActionButton>
           <ActionButton :aria-label="showPreview ? 'Hide platform health preview' : 'Preview platform health'" @click="togglePreview">{{ showPreview ? "Hide preview" : "Preview platform-health.json" }}</ActionButton>
-          <a :href="supportCaseUrl" class="btn btn-default" :class="{ disabled: !hasDownloaded }" target="_blank" rel="noreferrer" :aria-disabled="!hasDownloaded" :tabindex="hasDownloaded ? 0 : -1">Then open the support case</a>
+          <a
+            :href="hasDownloaded ? supportCaseUrl : undefined"
+            role="link"
+            class="btn btn-default"
+            :class="{ disabled: !hasDownloaded }"
+            target="_blank"
+            rel="noreferrer"
+            :aria-disabled="!hasDownloaded"
+            :tabindex="hasDownloaded ? 0 : -1"
+            @click="!hasDownloaded && $event.preventDefault()"
+            >Then open the support case</a
+          >
           <ActionButton aria-label="Close support dialog" @click="close">Close</ActionButton>
         </div>
       </div>
