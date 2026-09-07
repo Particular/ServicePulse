@@ -433,6 +433,20 @@ describe("FEATURE: Audit Messages Query State", () => {
       expect(screen.queryAllByTestId("message-item").length).toBeGreaterThan(0);
     });
 
+    test("EXAMPLE: A ServiceControl instance id is shown as host and port, with the API URL on hover", async () => {
+      const { store } = await renderAuditList([createMessage()]);
+
+      await waitForFirstLoadToComplete();
+
+      store.incompleteInstances = [{ instanceId: "aHR0cDovL2xvY2FsaG9zdDo0NDQ0NC9hcGkv", reason: "timeout" }];
+      await nextTick();
+
+      const warning = screen.getByTestId("query-incomplete");
+      expect(warning.textContent).toContain("localhost:44444 (timed out)");
+      expect(warning.textContent).not.toContain("aHR0");
+      expect(warning.querySelector('[title="http://localhost:44444/api/"]')).not.toBeNull();
+    });
+
     test("EXAMPLE: No warning while a retry is in flight or when results are complete", async () => {
       const { store, isRefreshing } = await renderAuditList([createMessage()]);
 

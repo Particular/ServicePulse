@@ -43,3 +43,32 @@ export function describeIncompleteReason(reason: IncompleteReason): string {
       return "returned an error";
   }
 }
+
+// ServiceControl identifies an instance by its API URL, lower-cased and base64 encoded with the
+// URL-safe alphabet ('-' for '+', '_' for '/', '.' for '=': InstanceIdGenerator.FromApiUrl).
+// Returns the URL, or null when the id is not one of those.
+export function decodeInstanceId(instanceId: string): string | null {
+  if (instanceId === "") return null;
+  try {
+    const binary = atob(instanceId.replace(/-/g, "+").replace(/_/g, "/").replace(/\./g, "="));
+    const decoded = new TextDecoder("utf-8", { fatal: true }).decode(Uint8Array.from(binary, (c) => c.charCodeAt(0)));
+    const url = new URL(decoded);
+    return url.protocol === "http:" || url.protocol === "https:" ? decoded : null;
+  } catch {
+    return null;
+  }
+}
+
+export interface InstanceDescription {
+  // What a reader needs to tell instances apart: host and port (default port omitted)
+  label: string;
+  // The full API URL for a tooltip, when the id decoded to one
+  apiUrl: string | null;
+}
+
+export function describeInstance(instanceId: string): InstanceDescription {
+  const apiUrl = decodeInstanceId(instanceId);
+  if (apiUrl === null) return { label: instanceId, apiUrl: null };
+  // URL.host already omits the port when it is the scheme's default
+  return { label: new URL(apiUrl).host, apiUrl };
+}

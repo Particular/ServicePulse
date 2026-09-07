@@ -17,7 +17,7 @@ import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import PageBanner, { type BannerMessage } from "@/components/PageBanner.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { loadDefaultRange, narrowingPresets, resolveTimeRange, type RangePreset } from "@/components/audit/timeRange";
-import { describeIncompleteReason } from "@/components/incompleteResults";
+import { describeIncompleteReason, describeInstance } from "@/components/incompleteResults";
 
 const store = useAuditStore();
 const { messages, newMessageIds, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryTimedOut, incompleteInstances, queryStartedAt, queryDurationMs, queryCompletedAt } =
@@ -74,8 +74,14 @@ function applyNarrowing(preset: RangePreset) {
   timeRangeTo.value = preset.to;
 }
 
-// "audit-2 (timed out), audit-3 (unreachable)" — why the current page is partial
-const incompleteSummary = computed(() => incompleteInstances.value.map((instance) => `${instance.instanceId} (${describeIncompleteReason(instance.reason)})`).join(", "));
+// "audit-2:44444 (timed out), audit-3:44444 (unreachable)" — why the current page is partial.
+// The id is the instance's base64 API URL; readers get host and port, the URL on hover.
+const incompleteSummary = computed(() =>
+  incompleteInstances.value.map((instance) => {
+    const { label, apiUrl } = describeInstance(instance.instanceId);
+    return { key: instance.instanceId, label, apiUrl, reason: describeIncompleteReason(instance.reason) };
+  })
+);
 
 onBeforeMount(() => {
   setQuery();
@@ -206,7 +212,12 @@ watch(autoRefreshValue, (newValue) => {
         <button v-for="preset in narrowOptions" :key="preset.label" type="button" class="narrow-action" data-testid="narrow-range" @click="applyNarrowing(preset)">{{ preset.label }}</button>
       </div>
     </div>
-    <div v-if="incompleteInstances.length > 0 && !queryInProgress" class="query-incomplete" role="status" data-testid="query-incomplete"><strong>Partial results.</strong> No data from {{ incompleteSummary }}.</div>
+    <div v-if="incompleteInstances.length > 0 && !queryInProgress" class="query-incomplete" role="status" data-testid="query-incomplete">
+      <strong>Partial results.</strong> No data from
+      <template v-for="(instance, index) in incompleteSummary" :key="instance.key"
+        ><template v-if="index > 0">, </template><span :title="instance.apiUrl ?? undefined">{{ instance.label }} ({{ instance.reason }})</span></template
+      >.
+    </div>
     <div class="row results-table">
       <!-- Only when there is nothing to show yet. A re-fetch over existing rows leaves them
            visible and usable: the refresh button already signals the running query -->
