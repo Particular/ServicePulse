@@ -327,6 +327,20 @@ describe("FEATURE: Audit Messages Query State", () => {
     });
   });
 
+  describe("RULE: Rows that arrived since the previous refresh are marked so they can animate in", () => {
+    test("EXAMPLE: Only the rows the store reports as new carry the new-row marker", async () => {
+      const { store } = await renderAuditList([createMessage("msg-1"), createMessage("msg-2")]);
+      await waitForFirstLoadToComplete();
+
+      store.newMessageIds = ["msg-2"];
+      await nextTick();
+
+      const [first, second] = getMessageItems();
+      expect(first).not.toHaveClass("new-row");
+      expect(second).toHaveClass("new-row");
+    });
+  });
+
   describe("RULE: A failed query tells the user what happened and what to try", () => {
     test("EXAMPLE: The error banner is shown after a failed query", async () => {
       const { store } = await renderAuditList([]);

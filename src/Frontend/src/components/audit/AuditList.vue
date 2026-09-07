@@ -19,7 +19,8 @@ import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { loadDefaultRange, narrowingPresets, resolveTimeRange, type RangePreset } from "@/components/audit/timeRange";
 
 const store = useAuditStore();
-const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryStartedAt, queryDurationMs, queryCompletedAt } = storeToRefs(store);
+const { messages, newMessageIds, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryStartedAt, queryDurationMs, queryCompletedAt } = storeToRefs(store);
+const newRowIds = computed(() => new Set(newMessageIds.value));
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
@@ -204,7 +205,7 @@ watch(autoRefreshValue, (newValue) => {
            visible and usable: the refresh button already signals the running query -->
       <LoadingSpinner v-if="firstLoad || (isRefreshing && messages.length === 0)" />
       <template v-for="message in messages" :key="message.id">
-        <AuditListItem :message="message" />
+        <AuditListItem :message="message" :class="{ 'new-row': newRowIds.has(message.id) }" />
       </template>
     </div>
   </div>
@@ -292,5 +293,46 @@ watch(autoRefreshValue, (newValue) => {
 /* Non-row children (the first-load spinner) span the full width */
 .results-table > :not(.item) {
   grid-column: 1 / -1;
+}
+
+/* A row that arrived since the previous refresh of the same query slides in and
+   glows briefly, so what changed is visible without hunting for it. The glow
+   lasts a few seconds because auto-refresh ticks are seconds apart, and it plays
+   once per row: the element is new to the DOM (keyed by id), so the animation
+   starts on insertion and does not restart on later renders. */
+.results-table > .new-row {
+  animation: new-row-arrive 3s ease-out;
+}
+
+@keyframes new-row-arrive {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+    background-color: #d3ebf2;
+  }
+  12% {
+    opacity: 1;
+    transform: none;
+    background-color: #d3ebf2;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .results-table > .new-row {
+    animation: new-row-glow 3s ease-out;
+  }
+
+  @keyframes new-row-glow {
+    0%,
+    40% {
+      background-color: #d3ebf2;
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
 }
 </style>
