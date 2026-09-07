@@ -290,32 +290,22 @@ describe("FEATURE: Audit Messages Query State", () => {
     });
   });
 
-  describe("RULE: A loading overlay is shown when re-fetching with existing results", () => {
-    test("EXAMPLE: Overlay appears over existing messages while a re-fetch is in-flight", async () => {
+  describe("RULE: Existing results stay visible and usable while a re-fetch runs", () => {
+    // The refresh button already signals the running query (spinner, Cancel, elapsed time).
+    // Covering the stale rows would only take them away from the user while waiting.
+    test("EXAMPLE: No overlay covers the rows during a re-fetch, however long it takes", async () => {
       const { verify, isRefreshing } = await renderAuditList([createMessage()]);
-
       await waitForFirstLoadToComplete();
       await waitFor(() => verify.messagesAreVisible());
 
       isRefreshing.value = true;
       await nextTick();
-
-      verify.overlayIsVisible();
-      verify.messagesAreVisible();
-    });
-
-    test("EXAMPLE: Overlay disappears after the re-fetch completes", async () => {
-      const { verify, isRefreshing } = await renderAuditList([createMessage()]);
-
-      await waitForFirstLoadToComplete();
-
-      isRefreshing.value = true;
-      await nextTick();
-      verify.overlayIsVisible();
-
-      isRefreshing.value = false;
-      await nextTick();
       verify.overlayIsNotVisible();
+      verify.spinnerIsNotVisible();
+
+      await new Promise((r) => setTimeout(r, 400));
+      verify.overlayIsNotVisible();
+      verify.messagesAreVisible();
     });
   });
 
