@@ -280,6 +280,21 @@ describe("AuditStore refresh", () => {
     expect(store.newMessageIds).toEqual([]);
   });
 
+  test("clearResults forgets the incomplete-results state", async () => {
+    const store = useAuditStore();
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1, { "X-Particular-Incomplete-Results": "audit-2:timeout" }), [message]]);
+    await store.refresh();
+    expect(store.incompleteInstances).toHaveLength(1);
+    fetchTypedFromServiceControl.mockRejectedValueOnce(new HttpError(504, "Gateway Timeout"));
+    await store.refresh();
+    expect(store.queryTimedOut).toBe(true);
+
+    store.clearResults();
+
+    expect(store.incompleteInstances).toEqual([]);
+    expect(store.queryTimedOut).toBe(false);
+  });
+
   test("a superseded query is not reported as a failure", async () => {
     const store = useAuditStore();
 

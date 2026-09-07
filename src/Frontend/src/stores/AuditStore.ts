@@ -169,6 +169,8 @@ export const useAuditStore = defineStore("AuditStore", () => {
     queryCompletedAt.value = null;
     newMessageIds.value = [];
     previousResultsQueryKey = null;
+    incompleteInstances.value = [];
+    queryTimedOut.value = false;
   }
 
   return {
