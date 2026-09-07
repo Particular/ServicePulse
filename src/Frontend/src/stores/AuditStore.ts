@@ -120,6 +120,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
     messages.value = [];
     totalCount.value = 0;
     queryFailed.value = false;
+    queryDurationMs.value = null;
   }
 
   return {
