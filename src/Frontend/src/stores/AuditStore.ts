@@ -40,6 +40,12 @@ export const useAuditStore = defineStore("AuditStore", () => {
   const queryDurationMs = ref<number | null>(null);
   const queryCompletedAt = ref<string | null>(null);
   const searchHistory = ref(loadSearchHistory());
+  // Ids of rows in the current results that were absent from the previous result of the
+  // same query (e.g. arrived through auto-refresh), so the view can animate their arrival.
+  // Empty for the first result and whenever the query itself changed: then every row is
+  // different and highlighting them all says nothing.
+  const newMessageIds = ref<string[]>([]);
+  let previousResultsQueryKey: string | null = null;
   let activeQuery: AbortController | null = null;
 
   async function loadEndpoints() {
@@ -88,6 +94,21 @@ export const useAuditStore = defineStore("AuditStore", () => {
       }
 
       totalCount.value = parseInt(response.headers.get("total-count") ?? "0");
+      const queryKey = JSON.stringify({
+        endpoint: selectedEndpointName.value,
+        from: timeRangeFrom.value,
+        to: timeRangeTo.value,
+        filter: messageFilterString.value,
+        pageSize: itemsPerPage.value,
+        sort: sortByInstances.value,
+      });
+      if (queryKey === previousResultsQueryKey) {
+        const previousIds = new Set(messages.value.map((m) => m.id));
+        newMessageIds.value = data.filter((m) => !previousIds.has(m.id)).map((m) => m.id);
+      } else {
+        newMessageIds.value = [];
+      }
+      previousResultsQueryKey = queryKey;
       messages.value = data;
       queryFailed.value = false;
       queryDurationMs.value = Math.round(performance.now() - started);
@@ -102,6 +123,8 @@ export const useAuditStore = defineStore("AuditStore", () => {
       // and surfaces here as a failed response. Not rethrown: the callers are watchers, so a
       // rethrow would only become an unhandled rejection instead of user feedback.
       messages.value = [];
+      newMessageIds.value = [];
+      previousResultsQueryKey = null;
       totalCount.value = 0;
       queryFailed.value = true;
     } finally {
@@ -134,6 +157,8 @@ export const useAuditStore = defineStore("AuditStore", () => {
     queryFailed.value = false;
     queryDurationMs.value = null;
     queryCompletedAt.value = null;
+    newMessageIds.value = [];
+    previousResultsQueryKey = null;
   }
 
   return {
@@ -143,6 +168,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
     loadEndpoints,
     sortBy: sortByInstances,
     messages,
+    newMessageIds,
     messageFilterString,
     selectedEndpointName,
     itemsPerPage,

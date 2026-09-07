@@ -59,6 +59,55 @@ describe("AuditStore refresh", () => {
     expect(store.queryFailed).toBe(false);
   });
 
+  describe("new rows since the previous result of the same query", () => {
+    const msg = (id: string) => ({ id });
+
+    test("rows that were not in the previous result are marked new", async () => {
+      const store = useAuditStore();
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [msg("msg-1")]]);
+      await store.refresh();
+
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(2), [msg("msg-2"), msg("msg-1")]]);
+      await store.refresh();
+
+      expect(store.newMessageIds).toEqual(["msg-2"]);
+    });
+
+    test("the first result is never marked new", async () => {
+      const store = useAuditStore();
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(2), [msg("msg-1"), msg("msg-2")]]);
+
+      await store.refresh();
+
+      expect(store.newMessageIds).toEqual([]);
+    });
+
+    test("a changed query marks nothing new, even when every row differs", async () => {
+      const store = useAuditStore();
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [msg("msg-1")]]);
+      await store.refresh();
+
+      store.messageFilterString = "orders";
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [msg("msg-9")]]);
+      await store.refresh();
+
+      expect(store.newMessageIds).toEqual([]);
+    });
+
+    test("the result after a failed query is not marked new", async () => {
+      const store = useAuditStore();
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [msg("msg-1")]]);
+      await store.refresh();
+      fetchTypedFromServiceControl.mockRejectedValueOnce(new Error("Internal Server Error"));
+      await store.refresh();
+
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(2), [msg("msg-2"), msg("msg-1")]]);
+      await store.refresh();
+
+      expect(store.newMessageIds).toEqual([]);
+    });
+  });
+
   test("a failed query flags the failure instead of throwing", async () => {
     fetchTypedFromServiceControl.mockRejectedValue(new Error("Internal Server Error"));
     const store = useAuditStore();
@@ -183,6 +232,22 @@ describe("AuditStore refresh", () => {
     store.clearResults();
 
     expect(store.queryCompletedAt).toBeNull();
+  });
+
+  test("clearResults resets the new-row baseline, so the next result marks nothing new", async () => {
+    const store = useAuditStore();
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [{ id: "msg-1" }]]);
+    await store.refresh();
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(2), [{ id: "msg-2" }, { id: "msg-1" }]]);
+    await store.refresh();
+    expect(store.newMessageIds).toEqual(["msg-2"]);
+
+    store.clearResults();
+    expect(store.newMessageIds).toEqual([]);
+
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(3), [{ id: "msg-3" }, { id: "msg-2" }, { id: "msg-1" }]]);
+    await store.refresh();
+    expect(store.newMessageIds).toEqual([]);
   });
 
   test("a superseded query is not reported as a failure", async () => {
