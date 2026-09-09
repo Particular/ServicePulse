@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/vue";
 import { createTestingPinia } from "@pinia/testing";
 import { createRouter, createMemoryHistory } from "vue-router";
@@ -324,6 +324,42 @@ describe("FEATURE: Audit Messages Query State", () => {
       await waitForFirstLoadToComplete();
 
       expect(document.querySelector("page-banner-stub")).not.toBeNull();
+    });
+  });
+
+  describe("RULE: A query that runs long gets advice instead of a clock", () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    test("EXAMPLE: After five seconds the results line suggests a narrower time range; it goes when the query ends", async () => {
+      const { isRefreshing } = await renderAuditList([createMessage()]);
+      await waitForFirstLoadToComplete();
+      vi.useFakeTimers();
+
+      isRefreshing.value = true;
+      await vi.advanceTimersByTimeAsync(4000);
+      expect(screen.queryByTestId("slow-query-hint")).not.toBeInTheDocument();
+
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(screen.getByTestId("slow-query-hint").textContent).toContain("narrower time range");
+
+      isRefreshing.value = false;
+      await nextTick();
+      expect(screen.queryByTestId("slow-query-hint")).not.toBeInTheDocument();
+    });
+
+    test("EXAMPLE: A query that finishes quickly never shows the hint", async () => {
+      const { isRefreshing } = await renderAuditList([createMessage()]);
+      await waitForFirstLoadToComplete();
+      vi.useFakeTimers();
+
+      isRefreshing.value = true;
+      await vi.advanceTimersByTimeAsync(1000);
+      isRefreshing.value = false;
+      await vi.advanceTimersByTimeAsync(10000);
+
+      expect(screen.queryByTestId("slow-query-hint")).not.toBeInTheDocument();
     });
   });
 

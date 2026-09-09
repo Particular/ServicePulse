@@ -19,13 +19,28 @@ import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { loadDefaultRange, narrowingPresets, resolveTimeRange, type RangePreset } from "@/components/audit/timeRange";
 
 const store = useAuditStore();
-const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryStartedAt, queryDurationMs } = storeToRefs(store);
+const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryDurationMs } = storeToRefs(store);
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
 const { refreshNow, isRefreshing, updateInterval, isActive, start, stop, nextRefreshAt } = useFetchWithAutoRefresh("audit-list", store.refresh, 0);
 const firstLoad = ref(true);
 const queryInProgress = computed(() => firstLoad.value || isRefreshing.value);
+
+// A query that has run for a while gets advice rather than a clock: the only thing
+// the elapsed time ever told the user was "this is slow, make it lighter"
+const slowQueryAfterMs = 5000;
+const slowQuery = ref(false);
+let slowQueryTimer: number | undefined;
+watch(
+  queryInProgress,
+  (running) => {
+    window.clearTimeout(slowQueryTimer);
+    slowQuery.value = false;
+    if (running) slowQueryTimer = window.setTimeout(() => (slowQuery.value = true), slowQueryAfterMs);
+  },
+  { immediate: true }
+);
 const showWizard = ref(false);
 const { status: auditStatus } = useAuditingCapability();
 const wizardPages = computed(() => getAuditingWizardPages(auditStatus.value));
@@ -89,6 +104,7 @@ onBeforeUnmount(() => {
   // in-flight query is aborted so it does not keep running (server-side included) in the background
   stop();
   store.cancelQuery();
+  window.clearTimeout(slowQueryTimer);
   // The rows belong to this visit: the next one may carry different query inputs, so it
   // starts from a clean list (a refresh in place, by contrast, keeps the stale rows)
   store.clearResults();
@@ -180,12 +196,15 @@ watch(autoRefreshValue, (newValue) => {
       <div class="row">
         <FiltersPanel>
           <template #actions>
-            <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" :query-started-at="queryStartedAt" :next-refresh-at="nextRefreshAt" @manual-refresh="refreshNow" @cancel-query="store.cancelQuery" />
+            <RefreshConfig v-model="autoRefreshValue" :query-in-progress="queryInProgress" :next-refresh-at="nextRefreshAt" @manual-refresh="refreshNow" @cancel-query="store.cancelQuery" />
           </template>
         </FiltersPanel>
       </div>
       <div class="row results-row">
-        <ResultsCount :displayed="messages.length" :total="totalCount" :duration-ms="queryDurationMs" />
+        <div class="results-summary">
+          <ResultsCount :displayed="messages.length" :total="totalCount" :duration-ms="queryDurationMs" />
+          <span v-if="slowQuery && queryInProgress" class="slow-query" role="status" data-testid="slow-query-hint">Still running · a narrower time range makes the query lighter.</span>
+        </div>
         <ResultsOptions />
       </div>
       <PageBanner v-if="bannerMessage && isMassTransitConnected === false" :message="bannerMessage" :show-action="showBannerAction" @action="showWizard = true" />
@@ -257,19 +276,36 @@ watch(autoRefreshValue, (newValue) => {
   color: #fff;
 }
 
+/* Summary on the left, Show/Sort/Times pinned on the right. The right group never
+   shrinks and never wraps; the summary is the side that gives, and a slow-query hint
+   goes on its own line under it rather than pushing the options around */
 .results-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
   gap: 1rem;
-  flex-wrap: wrap;
 }
 
-/* ResultsCount's root uses the bootstrap .col class (flex-grow: 1), which would
-   push the options onto their own line; in this row both sides size to content */
+/* ResultsCount's root uses the bootstrap .col class (flex-grow: 1); size it here */
 .results-row > * {
-  flex: 0 1 auto;
   width: auto;
+}
+
+.results-row > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.results-row > :last-child {
+  flex: 0 0 auto;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.slow-query {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.875em;
+  color: #8a6d3b;
 }
 
 .results-table {

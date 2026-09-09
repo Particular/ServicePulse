@@ -22,11 +22,6 @@ const ActionButtonStub = defineComponent({
   template: '<button :data-loading="String(loading)" :disabled="disabled || (loading && disableOnLoading)"><slot name="icon" /><slot /></button>',
 });
 
-const ListFilterSelectorStub = defineComponent({
-  props: { disabled: Boolean },
-  template: '<button :data-disabled="String(disabled)" />',
-});
-
 // ==================== DSL ====================
 
 function renderRefreshConfig(queryInProgress: boolean) {
@@ -35,7 +30,6 @@ function renderRefreshConfig(queryInProgress: boolean) {
     global: {
       stubs: {
         ActionButton: ActionButtonStub,
-        ListFilterSelector: ListFilterSelectorStub,
       },
     },
   });
@@ -44,15 +38,15 @@ function renderRefreshConfig(queryInProgress: boolean) {
     return document.querySelector("button[data-loading]") as HTMLButtonElement;
   }
 
-  function getAutoRefreshSelector(): HTMLButtonElement {
-    return document.querySelector("button[data-disabled]") as HTMLButtonElement;
+  function getIntervalToggle(): HTMLButtonElement {
+    return document.querySelector('[data-testid="refresh-interval"]') as HTMLButtonElement;
   }
 
   async function setQueryInProgress(value: boolean) {
     await rerender({ queryInProgress: value, modelValue: null });
   }
 
-  async function rerenderWith(props: { queryInProgress: boolean; queryStartedAt?: number | null; nextRefreshAt?: number | null; modelValue?: number | null }) {
+  async function rerenderWith(props: { queryInProgress: boolean; nextRefreshAt?: number | null; modelValue?: number | null }) {
     await rerender({ modelValue: null, ...props });
   }
 
@@ -60,14 +54,14 @@ function renderRefreshConfig(queryInProgress: boolean) {
     setQueryInProgress,
     rerenderWith,
     getButton,
+    getIntervalToggle,
     emitted,
     verify: {
       refreshButtonIsLoading: () => expect(getButton().dataset.loading).toBe("true"),
       refreshButtonIsNotLoading: () => expect(getButton().dataset.loading).toBe("false"),
       refreshButtonIsDisabled: () => expect(getButton()).toBeDisabled(),
       refreshButtonIsEnabled: () => expect(getButton()).toBeEnabled(),
-      autoRefreshSelectorIsDisabled: () => expect(getAutoRefreshSelector().dataset.disabled).toBe("true"),
-      autoRefreshSelectorIsEnabled: () => expect(getAutoRefreshSelector().dataset.disabled).toBe("false"),
+      autoRefreshSelectorIsEnabled: () => expect(getIntervalToggle()).toBeEnabled(),
     },
   };
 }
@@ -100,12 +94,17 @@ describe("FEATURE: Refresh Controls Query State", () => {
       expect(getButton().textContent).toContain("Refresh");
     });
 
-    test("EXAMPLE: The cancel button shows the elapsed query time", async () => {
+    test("EXAMPLE: The action segment keeps one width in both states, so the group does not jump", async () => {
       const { rerenderWith, getButton } = renderRefreshConfig(false);
 
-      await rerenderWith({ queryInProgress: true, queryStartedAt: Date.now() - 2700 });
+      expect(getButton()).toHaveClass("refresh-action");
+      expect(getButton().textContent!.trim()).toBe("Refresh");
 
-      expect(getButton().textContent).toMatch(/Cancel · \d+\.\ds/);
+      await rerenderWith({ queryInProgress: true });
+
+      expect(getButton()).toHaveClass("refresh-action");
+      // no clock in the label: the width must not depend on how long the query runs
+      expect(getButton().textContent!.trim()).toBe("Cancel");
     });
 
     test("EXAMPLE: With auto-refresh armed, the countdown ring sits inside the button", async () => {
@@ -179,6 +178,46 @@ describe("FEATURE: Refresh Controls Query State", () => {
 
       expect(emitted().manualRefresh).toBeTruthy();
       expect(emitted().cancelQuery).toBeFalsy();
+    });
+  });
+
+  describe("RULE: The interval sits in the button as a short label, the way Grafana shows it", () => {
+    test("EXAMPLE: The segment reads Off, 5s, 1m or 1h for the active interval", async () => {
+      const { rerenderWith, getIntervalToggle } = renderRefreshConfig(false);
+
+      expect(getIntervalToggle().textContent!.trim()).toBe("Off");
+
+      await rerenderWith({ queryInProgress: false, modelValue: 5000 });
+      expect(getIntervalToggle().textContent!.trim()).toBe("5s");
+
+      await rerenderWith({ queryInProgress: false, modelValue: 60000 });
+      expect(getIntervalToggle().textContent!.trim()).toBe("1m");
+
+      await rerenderWith({ queryInProgress: false, modelValue: 3600000 });
+      expect(getIntervalToggle().textContent!.trim()).toBe("1h");
+    });
+
+    test("EXAMPLE: The segment names the interval in full for assistive tech", async () => {
+      const { rerenderWith, getIntervalToggle } = renderRefreshConfig(false);
+
+      await rerenderWith({ queryInProgress: false, modelValue: 60000 });
+
+      expect(getIntervalToggle()).toHaveAccessibleName("Auto-refresh: Every minute");
+    });
+
+    test("EXAMPLE: Choosing an interval from the menu sets it; choosing Off turns auto-refresh off", async () => {
+      const { emitted } = renderRefreshConfig(false);
+
+      const items = document.querySelectorAll<HTMLButtonElement>(".interval-menu .dropdown-item");
+      const byShort = (short: string) => [...items].find((item) => item.textContent!.trim().startsWith(short))!;
+
+      byShort("1m").click();
+      await Promise.resolve();
+      expect(emitted()["update:modelValue"]).toEqual([[60000]]);
+
+      byShort("Off").click();
+      await Promise.resolve();
+      expect(emitted()["update:modelValue"]).toEqual([[60000], [null]]);
     });
   });
 });
