@@ -41,7 +41,7 @@ jobs:
       - name: Build
         run: dotnet build src --configuration Release
       - name: Run .NET tests
-        uses: Particular/run-tests-action@v1.8.0
+        uses: Particular/run-tests-action@v1.9.0
       # Upload assets and packages
       - name: Upload assets
         uses: actions/upload-artifact@v7.0.1
