@@ -173,9 +173,7 @@ describe("PlatformHealthView", () => {
     const rows = vi.spyOn(store, "rows", "get").mockReturnValue([
       {
         id: "row-1",
-
         type: "Error instance",
-
         name: "Particular.ServiceControl",
         version: "6.19.3",
         health: "healthy",
@@ -188,9 +186,7 @@ describe("PlatformHealthView", () => {
       },
       {
         id: "row-2",
-
         type: "Audit instance",
-
         name: "Particular.ServiceControl.Audit",
         version: "6.18.0",
         health: "healthy",
@@ -332,9 +328,7 @@ describe("PlatformHealthView", () => {
     const rows = vi.spyOn(store, "rows", "get").mockReturnValue([
       {
         id: "row-3",
-
         type: "Error instance",
-
         name: "Particular.ServiceControl",
         version: "6.19.3",
         health: "healthy",
@@ -347,9 +341,7 @@ describe("PlatformHealthView", () => {
       },
       {
         id: "row-4",
-
         type: "Audit instance",
-
         name: "Particular.ServiceControl.Audit",
         version: "6.19.3",
         health: "degraded",
@@ -402,9 +394,7 @@ describe("PlatformHealthView", () => {
     const rows = vi.spyOn(store, "rows", "get").mockReturnValue([
       {
         id: "row-5",
-
         type: "Error instance",
-
         name: "Particular.ServiceControl",
         version: "6.19.3",
         health: "healthy",
