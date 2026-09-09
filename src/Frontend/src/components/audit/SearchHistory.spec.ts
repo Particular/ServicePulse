@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/vue";
+import { nextTick } from "vue";
 import { createTestingPinia } from "@pinia/testing";
 import SearchHistory from "@/components/audit/SearchHistory.vue";
 import { useAuditStore } from "@/stores/AuditStore";
@@ -121,5 +122,108 @@ describe("FEATURE: Search history panel under the search field", () => {
     await fireEvent.click(screen.getByText("Clear history"));
 
     expect(store.clearSearchHistory).toHaveBeenCalled();
+  });
+
+  describe("RULE: The panel closes once the search is submitted, and typing brings it back", () => {
+    test("EXAMPLE: The search reaching the store closes the panel", async () => {
+      const store = renderHistory([{ search: "orders", endpoint: "", at: new Date().toISOString() }]);
+      await openHistory();
+      expect(panel()).toBeInTheDocument();
+
+      // what the debounced search field does once the user pauses
+      store.messageFilterString = "ord";
+      await nextTick();
+
+      expect(panel()).not.toBeInTheDocument();
+    });
+
+    test("EXAMPLE: Typing again after that reopens the panel", async () => {
+      const store = renderHistory([{ search: "orders", endpoint: "", at: new Date().toISOString() }]);
+      await openHistory();
+      store.messageFilterString = "ord";
+      await nextTick();
+
+      await fireEvent.input(searchField(), { target: { value: "orde" } });
+
+      expect(panel()).toBeInTheDocument();
+    });
+
+    test("EXAMPLE: Enter submits the search and closes the panel", async () => {
+      renderHistory([{ search: "orders", endpoint: "", at: new Date().toISOString() }]);
+      await openHistory();
+
+      await fireEvent.keyDown(searchField(), { key: "Enter" });
+
+      expect(panel()).not.toBeInTheDocument();
+    });
+  });
+
+  describe("RULE: The panel is a combobox: arrows move, Enter picks, Tab and blur leave", () => {
+    const entries = () => [
+      { search: "orders", endpoint: "", at: new Date().toISOString() },
+      { search: "invoices", endpoint: "Billing", at: new Date().toISOString() },
+    ];
+
+    test("EXAMPLE: Entries are not tab stops, and Tab closes the panel", async () => {
+      renderHistory(entries());
+      await openHistory();
+
+      const options = screen.getAllByRole("option");
+      expect(options.every((option) => option.getAttribute("tabindex") === "-1")).toBe(true);
+
+      await fireEvent.keyDown(searchField(), { key: "Tab" });
+      expect(panel()).not.toBeInTheDocument();
+    });
+
+    test("EXAMPLE: Arrow keys move a highlight and Enter reruns the highlighted entry", async () => {
+      const store = renderHistory(entries());
+      await openHistory();
+
+      await fireEvent.keyDown(searchField(), { key: "ArrowDown" });
+      await fireEvent.keyDown(searchField(), { key: "ArrowDown" });
+      expect(screen.getAllByRole("option")[1]).toHaveAttribute("aria-selected", "true");
+
+      await fireEvent.keyDown(searchField(), { key: "Enter" });
+
+      expect(store.messageFilterString).toBe("invoices");
+      expect(store.selectedEndpointName).toBe("Billing");
+      expect(panel()).not.toBeInTheDocument();
+    });
+
+    test("EXAMPLE: Arrow Down opens a closed panel", async () => {
+      renderHistory(entries());
+      await openHistory();
+      await fireEvent.keyDown(searchField(), { key: "Escape" });
+      expect(panel()).not.toBeInTheDocument();
+
+      await fireEvent.keyDown(searchField(), { key: "ArrowDown" });
+
+      expect(panel()).toBeInTheDocument();
+    });
+
+    test("EXAMPLE: The field announces itself as a combobox that controls the list", async () => {
+      renderHistory(entries());
+      await openHistory();
+
+      const field = searchField();
+      expect(field).toHaveAttribute("role", "combobox");
+      expect(field).toHaveAttribute("aria-expanded", "true");
+      expect(field.getAttribute("aria-controls")).toBe(panel()!.id);
+
+      await fireEvent.keyDown(field, { key: "ArrowDown" });
+      expect(field.getAttribute("aria-activedescendant")).toBe(screen.getAllByRole("option")[0].id);
+    });
+
+    test("EXAMPLE: Focus leaving the field and the panel closes it", async () => {
+      renderHistory(entries());
+      const outside = document.createElement("button");
+      document.body.appendChild(outside);
+      await openHistory();
+
+      await fireEvent.focusOut(searchField(), { relatedTarget: outside });
+
+      expect(panel()).not.toBeInTheDocument();
+      outside.remove();
+    });
   });
 });

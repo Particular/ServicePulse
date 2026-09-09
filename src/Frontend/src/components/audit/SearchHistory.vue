@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, useId, useTemplateRef, watch, watchEffect } from "vue";
 import { storeToRefs } from "pinia";
 import { useAuditStore } from "@/stores/AuditStore";
 import type { SearchHistoryEntry } from "@/components/audit/searchHistory";
@@ -9,6 +9,12 @@ import { describeRangeText } from "@/components/audit/timeRange";
 // Wraps the search field (default slot) and floats the recent searches below it while
 // the field has focus, the way a browser's address bar does. Entries carry the whole
 // query (text, endpoint, time range), so they are listed with all of it.
+//
+// It behaves as a combobox: the entries are not tab stops; Arrow Up/Down move a
+// highlight, Enter reruns the highlighted entry, Escape and Tab close, and so does focus
+// leaving the field and the panel. Submitting a search (Enter, or the debounced text
+// reaching the store) closes it too: once results show, the history is out of the way
+// until the user types again.
 
 const store = useAuditStore();
 const { searchHistory, messageFilterString, selectedEndpointName, timeRangeFrom, timeRangeTo } = storeToRefs(store);
@@ -16,7 +22,9 @@ const { searchHistory, messageFilterString, selectedEndpointName, timeRangeFrom,
 const open = ref(false);
 // What is being typed right now (the store value trails it by the input's debounce)
 const typed = ref("");
+const highlighted = ref(-1);
 const root = useTemplateRef<HTMLElement>("root");
+const listId = useId();
 
 const matching = computed(() => {
   const needle = typed.value.trim().toLowerCase();
@@ -24,6 +32,9 @@ const matching = computed(() => {
   return searchHistory.value.filter((entry) => entry.search.toLowerCase().includes(needle) || entry.endpoint.toLowerCase().includes(needle));
 });
 const visible = computed(() => open.value && matching.value.length > 0);
+const optionId = (index: number) => `${listId}-option-${index}`;
+
+watch([matching, open], () => (highlighted.value = -1));
 
 function isSearchField(target: EventTarget | null): target is HTMLInputElement {
   return target instanceof HTMLInputElement;
@@ -34,6 +45,13 @@ function onFocusIn(event: FocusEvent) {
     typed.value = event.target.value;
     open.value = true;
   }
+}
+
+function onFocusOut(event: FocusEvent) {
+  // Focus moving anywhere outside the field and the panel closes it (Tab away, a click elsewhere)
+  const next = event.relatedTarget as Node | null;
+  if (next && root.value?.contains(next)) return;
+  open.value = false;
 }
 
 function onClick(event: MouseEvent) {
@@ -61,10 +79,46 @@ function rerun(entry: SearchHistoryEntry) {
   open.value = false;
 }
 
+// The query inputs reaching the store means the search was submitted: results are (about
+// to be) on screen and the panel has done its job. Auto-refresh does not touch these.
+watch([messageFilterString, selectedEndpointName, timeRangeFrom, timeRangeTo], () => (open.value = false));
+
 function rangeLabel(entry: SearchHistoryEntry): string | null {
   if (entry.from === undefined || entry.to === undefined) return null;
   if (entry.from === "" && entry.to === "") return "no time filter";
   return describeRangeText({ from: entry.from, to: entry.to });
+}
+
+function onKeydown(event: KeyboardEvent) {
+  switch (event.key) {
+    case "ArrowDown":
+      if (matching.value.length === 0) return;
+      event.preventDefault();
+      if (!open.value) {
+        open.value = true;
+        highlighted.value = 0;
+      } else {
+        highlighted.value = Math.min(highlighted.value + 1, matching.value.length - 1);
+      }
+      return;
+    case "ArrowUp":
+      if (!visible.value) return;
+      event.preventDefault();
+      highlighted.value = Math.max(highlighted.value - 1, -1);
+      return;
+    case "Enter":
+      if (visible.value && highlighted.value >= 0) {
+        event.preventDefault();
+        rerun(matching.value[highlighted.value]);
+      } else {
+        open.value = false; // the search itself is submitted by the field
+      }
+      return;
+    case "Escape":
+    case "Tab":
+      open.value = false;
+      return;
+  }
 }
 
 // Not the Popover API: this panel behaves like a combobox and must stay open while the
@@ -74,20 +128,46 @@ function rangeLabel(entry: SearchHistoryEntry): string | null {
 function onOutsidePointer(event: PointerEvent) {
   if (open.value && root.value && !root.value.contains(event.target as Node)) open.value = false;
 }
-function onKeydown(event: KeyboardEvent) {
-  if (event.key === "Escape") open.value = false;
-}
 onMounted(() => document.addEventListener("pointerdown", onOutsidePointer));
 onBeforeUnmount(() => document.removeEventListener("pointerdown", onOutsidePointer));
+
+// The field comes in through the slot, so its combobox semantics are set from here
+const field = ref<HTMLInputElement | null>(null);
+onMounted(() => {
+  field.value = root.value?.querySelector("input") ?? null;
+  field.value?.setAttribute("role", "combobox");
+  field.value?.setAttribute("aria-autocomplete", "list");
+  field.value?.setAttribute("aria-haspopup", "listbox");
+  field.value?.setAttribute("aria-controls", listId);
+});
+watchEffect(() => {
+  if (!field.value) return;
+  field.value.setAttribute("aria-expanded", String(visible.value));
+  if (visible.value && highlighted.value >= 0) field.value.setAttribute("aria-activedescendant", optionId(highlighted.value));
+  else field.value.removeAttribute("aria-activedescendant");
+});
 </script>
 
 <template>
-  <div class="search-history" ref="root" @focusin="onFocusIn" @click="onClick" @input="onInput" @keydown="onKeydown">
+  <div class="search-history" ref="root" @focusin="onFocusIn" @focusout="onFocusOut" @click="onClick" @input="onInput" @keydown="onKeydown">
     <slot />
 
-    <div v-if="visible" class="pop" role="listbox" aria-label="Recent searches">
+    <div v-if="visible" :id="listId" class="pop" role="listbox" aria-label="Recent searches">
       <div class="head">Recent searches</div>
-      <button v-for="entry in matching" :key="`${entry.search}|${entry.endpoint}|${entry.from}|${entry.to}`" type="button" role="option" class="entry" title="Run this search again" @click="rerun(entry)">
+      <button
+        v-for="(entry, index) in matching"
+        :id="optionId(index)"
+        :key="`${entry.search}|${entry.endpoint}|${entry.from}|${entry.to}`"
+        type="button"
+        role="option"
+        tabindex="-1"
+        class="entry"
+        :class="{ highlighted: index === highlighted }"
+        :aria-selected="index === highlighted"
+        title="Run this search again"
+        @mouseenter="highlighted = index"
+        @click="rerun(entry)"
+      >
         <span class="what">
           <span v-if="entry.search" class="term">{{ entry.search }}</span>
           <span v-else class="term muted">(no search text)</span>
@@ -97,7 +177,7 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", onOutsidePoint
         <span class="when"><TimeSince :date-utc="entry.at" /></span>
       </button>
       <div class="foot">
-        <button type="button" class="clear" @click="store.clearSearchHistory()">Clear history</button>
+        <button type="button" class="clear" tabindex="-1" @click="store.clearSearchHistory()">Clear history</button>
       </div>
     </div>
   </div>
@@ -145,7 +225,8 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", onOutsidePoint
 }
 
 .entry:hover,
-.entry:focus-visible {
+.entry:focus-visible,
+.entry.highlighted {
   background: #e6f2f6;
 }
 
