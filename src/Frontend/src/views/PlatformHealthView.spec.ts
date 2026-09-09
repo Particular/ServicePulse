@@ -172,6 +172,7 @@ describe("PlatformHealthView", () => {
 
     const rows = vi.spyOn(store, "rows", "get").mockReturnValue([
       {
+        id: "row-1",
         type: "Error instance",
         name: "Particular.ServiceControl",
         version: "6.19.3",
@@ -184,6 +185,7 @@ describe("PlatformHealthView", () => {
         healthDetails: [],
       },
       {
+        id: "row-2",
         type: "Audit instance",
         name: "Particular.ServiceControl.Audit",
         version: "6.18.0",
@@ -325,6 +327,7 @@ describe("PlatformHealthView", () => {
 
     const rows = vi.spyOn(store, "rows", "get").mockReturnValue([
       {
+        id: "row-3",
         type: "Error instance",
         name: "Particular.ServiceControl",
         version: "6.19.3",
@@ -337,6 +340,7 @@ describe("PlatformHealthView", () => {
         healthDetails: [],
       },
       {
+        id: "row-4",
         type: "Audit instance",
         name: "Particular.ServiceControl.Audit",
         version: "6.19.3",
@@ -389,6 +393,7 @@ describe("PlatformHealthView", () => {
 
     const rows = vi.spyOn(store, "rows", "get").mockReturnValue([
       {
+        id: "row-5",
         type: "Error instance",
         name: "Particular.ServiceControl",
         version: "6.19.3",
@@ -414,6 +419,47 @@ describe("PlatformHealthView", () => {
     expect(screen.getByText("http://localhost:33333/api/")).toBeInTheDocument();
 
     rows.mockRestore();
+  });
+
+  test("expands only the clicked row when several audit instances share a name", async () => {
+    const platformModelStore = usePlatformModelStore();
+    const audit = (id: string, port: number, health: "healthy" | "degraded") => ({
+      id,
+      name: "Particular.ServiceControl.Audit",
+      kind: "audit" as const,
+      role: "remote-audit" as const,
+      version: "6.19.3",
+      health,
+      apiUrl: `http://localhost:${port}/api/`,
+    });
+    platformModelStore.model = {
+      primary: {
+        id: "primary",
+        name: "Particular.ServiceControl",
+        kind: "error",
+        role: "primary-error",
+        version: "6.19.3",
+        health: "healthy",
+        apiUrl: "http://localhost:33333/api/",
+      },
+      remotes: [audit("remote-0", 44444, "degraded"), audit("remote-1", 44445, "degraded")],
+      monitoring: null,
+      servicePulse: { name: "ServicePulse", version: "2.8.0", health: "healthy" },
+    } satisfies PlatformModel;
+
+    render(PlatformHealthView, {
+      global: {
+        plugins: [],
+      },
+    });
+
+    const user = userEvent.setup();
+    const [first] = screen.getAllByRole("button", { name: /Degraded/i });
+    await user.click(first);
+
+    expect(document.querySelectorAll('[aria-expanded="true"]')).toHaveLength(1);
+    expect(screen.getAllByText("http://localhost:44444/api/")).toHaveLength(1);
+    expect(screen.queryByText("http://localhost:44445/api/")).not.toBeInTheDocument();
   });
 
   test("renders the Name header and a ServicePulse version nudge", () => {
@@ -448,7 +494,10 @@ describe("PlatformHealthView", () => {
     const store = usePlatformHealthStore();
     const rows = vi.spyOn(store, "rows", "get").mockReturnValue([
       {
+        id: "row-6",
+
         type: "Error instance",
+
         name: "Particular.ServiceControl",
         version: "6.19.3",
         health: "healthy",
@@ -460,7 +509,10 @@ describe("PlatformHealthView", () => {
         healthDetails: [],
       },
       {
+        id: "row-7",
+
         type: "Audit instance",
+
         name: "Particular.ServiceControl.Audit",
         version: "6.19.3",
         health: "degraded",
@@ -513,7 +565,7 @@ describe("PlatformHealthView", () => {
 
     const user = userEvent.setup();
     const buttons = screen.getAllByRole("button", { name: /Healthy/i });
-    const servicePulseButton = buttons.find((button) => button.getAttribute("aria-controls") === "ServicePulse-ServicePulse-details");
+    const servicePulseButton = buttons.find((button) => button.getAttribute("aria-controls") === "servicepulse-details");
     expect(servicePulseButton).toBeDefined();
     await user.click(servicePulseButton!);
 

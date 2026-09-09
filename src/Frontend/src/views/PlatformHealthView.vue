@@ -35,8 +35,10 @@ function shouldShowUpgradeCue(row: (typeof store.rows)[number]) {
   return row.upgradeAvailable && !!getUpgradeTargetVersion(row);
 }
 
+// Keyed by the instance id, not by type and name: several audit instances can carry the
+// same name, and a shared key would expand (and re-render) all of them together
 function rowKey(row: (typeof store.rows)[number]) {
-  return `${row.type}-${row.name}`;
+  return row.id;
 }
 
 function isExpanded(row: (typeof store.rows)[number]) {

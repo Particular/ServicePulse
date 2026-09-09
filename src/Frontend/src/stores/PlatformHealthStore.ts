@@ -209,6 +209,7 @@ function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: s
   }
 
   return {
+    id: instance.id,
     type: formatRowType(instance),
     name: instance.name,
     version: instance.version,
@@ -224,6 +225,7 @@ function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: s
 
 function toServicePulseRow(servicePulse: ServicePulse, latestVersion: string, upgradeLink: string): PlatformHealthRow {
   return {
+    id: "servicepulse",
     type: "ServicePulse",
     name: servicePulse.name,
     version: servicePulse.version,
