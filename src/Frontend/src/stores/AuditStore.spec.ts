@@ -12,9 +12,10 @@ vi.mock("@/components/serviceControlClient", () => ({
 }));
 
 import { useAuditStore } from "@/stores/AuditStore";
+import { HttpError } from "@/utils/HttpError";
 
-function responseWithTotalCount(count: number): Response {
-  return { headers: new Headers({ "total-count": count.toString() }) } as Response;
+function responseWithTotalCount(count: number, extraHeaders: Record<string, string> = {}): Response {
+  return { headers: new Headers({ "total-count": count.toString(), ...extraHeaders }) } as Response;
 }
 
 function abortablePendingFetch(onSignal?: (signal: AbortSignal | undefined) => void) {
@@ -57,6 +58,84 @@ describe("AuditStore refresh", () => {
     expect(store.messages).toEqual([message]);
     expect(store.totalCount).toBe(1);
     expect(store.queryFailed).toBe(false);
+  });
+
+  test("a partial response surfaces the instances whose data is missing", async () => {
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1, { "X-Particular-Incomplete-Results": "audit-2:timeout, audit-3:unavailable" }), [message]]);
+    const store = useAuditStore();
+
+    await store.refresh();
+
+    expect(store.queryFailed).toBe(false);
+    expect(store.incompleteInstances).toEqual([
+      { instanceId: "audit-2", reason: "timeout" },
+      { instanceId: "audit-3", reason: "unavailable" },
+    ]);
+
+    // The next complete response clears the warning
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [message]]);
+    await store.refresh();
+    expect(store.incompleteInstances).toEqual([]);
+  });
+
+  test("a 504 is flagged as the server's query time limit", async () => {
+    fetchTypedFromServiceControl.mockRejectedValue(new HttpError(504, "Gateway Timeout"));
+    const store = useAuditStore();
+
+    await store.refresh();
+
+    expect(store.queryFailed).toBe(true);
+    expect(store.queryTimedOut).toBe(true);
+    expect(store.incompleteInstances).toEqual([]);
+  });
+
+  describe("new rows since the previous result of the same query", () => {
+    const msg = (id: string) => ({ id });
+
+    test("rows that were not in the previous result are marked new", async () => {
+      const store = useAuditStore();
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [msg("msg-1")]]);
+      await store.refresh();
+
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(2), [msg("msg-2"), msg("msg-1")]]);
+      await store.refresh();
+
+      expect(store.newMessageIds).toEqual(["msg-2"]);
+    });
+
+    test("the first result is never marked new", async () => {
+      const store = useAuditStore();
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(2), [msg("msg-1"), msg("msg-2")]]);
+
+      await store.refresh();
+
+      expect(store.newMessageIds).toEqual([]);
+    });
+
+    test("a changed query marks nothing new, even when every row differs", async () => {
+      const store = useAuditStore();
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [msg("msg-1")]]);
+      await store.refresh();
+
+      store.messageFilterString = "orders";
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [msg("msg-9")]]);
+      await store.refresh();
+
+      expect(store.newMessageIds).toEqual([]);
+    });
+
+    test("the result after a failed query is not marked new", async () => {
+      const store = useAuditStore();
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [msg("msg-1")]]);
+      await store.refresh();
+      fetchTypedFromServiceControl.mockRejectedValueOnce(new Error("Internal Server Error"));
+      await store.refresh();
+
+      fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(2), [msg("msg-2"), msg("msg-1")]]);
+      await store.refresh();
+
+      expect(store.newMessageIds).toEqual([]);
+    });
   });
 
   test("a failed query flags the failure instead of throwing", async () => {
@@ -118,6 +197,21 @@ describe("AuditStore refresh", () => {
     expect(store.queryDurationMs).toBeGreaterThanOrEqual(0);
   });
 
+  test("a query with search text or endpoint is recorded in the search history", async () => {
+    fetchTypedFromServiceControl.mockResolvedValue([responseWithTotalCount(0), []]);
+    const store = useAuditStore();
+
+    await store.refresh(); // no search, no endpoint: nothing recorded
+    expect(store.searchHistory).toHaveLength(0);
+
+    store.messageFilterString = "orders";
+    await store.refresh();
+    await store.refresh(); // repeat does not duplicate
+
+    expect(store.searchHistory).toHaveLength(1);
+    expect(store.searchHistory[0]).toMatchObject({ search: "orders", endpoint: "" });
+  });
+
   test("cancelQuery aborts the query in flight without reporting a failure", async () => {
     const store = useAuditStore();
 
@@ -157,6 +251,48 @@ describe("AuditStore refresh", () => {
     store.clearResults();
 
     expect(store.queryDurationMs).toBeNull();
+  });
+
+  test("clearResults forgets when the results were fetched", async () => {
+    const store = useAuditStore();
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [message]]);
+    await store.refresh();
+    expect(store.queryCompletedAt).not.toBeNull();
+
+    store.clearResults();
+
+    expect(store.queryCompletedAt).toBeNull();
+  });
+
+  test("clearResults resets the new-row baseline, so the next result marks nothing new", async () => {
+    const store = useAuditStore();
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1), [{ id: "msg-1" }]]);
+    await store.refresh();
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(2), [{ id: "msg-2" }, { id: "msg-1" }]]);
+    await store.refresh();
+    expect(store.newMessageIds).toEqual(["msg-2"]);
+
+    store.clearResults();
+    expect(store.newMessageIds).toEqual([]);
+
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(3), [{ id: "msg-3" }, { id: "msg-2" }, { id: "msg-1" }]]);
+    await store.refresh();
+    expect(store.newMessageIds).toEqual([]);
+  });
+
+  test("clearResults forgets the incomplete-results state", async () => {
+    const store = useAuditStore();
+    fetchTypedFromServiceControl.mockResolvedValueOnce([responseWithTotalCount(1, { "X-Particular-Incomplete-Results": "audit-2:timeout" }), [message]]);
+    await store.refresh();
+    expect(store.incompleteInstances).toHaveLength(1);
+    fetchTypedFromServiceControl.mockRejectedValueOnce(new HttpError(504, "Gateway Timeout"));
+    await store.refresh();
+    expect(store.queryTimedOut).toBe(true);
+
+    store.clearResults();
+
+    expect(store.incompleteInstances).toEqual([]);
+    expect(store.queryTimedOut).toBe(false);
   });
 
   test("a superseded query is not reported as a failure", async () => {

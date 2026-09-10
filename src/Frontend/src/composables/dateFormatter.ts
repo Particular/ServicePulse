@@ -61,6 +61,36 @@ export function useDateFormatter() {
   /**
    * Format date for tooltip display (local and UTC)
    */
+  // Coarse relative age: moments/minutes/hours/days/weeks/months/years ago
+  function formatCoarseRelative(dateInput: string | Date, now: () => Date = () => new Date()): string {
+    const then = dayjs.utc(dateInput).valueOf();
+    const seconds = Math.max(0, Math.round((now().getTime() - then) / 1000));
+    const unit = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"} ago`;
+    if (seconds < 45) return "moments ago";
+    if (seconds < 60 * 60) return unit(Math.max(1, Math.round(seconds / 60)), "minute");
+    if (seconds < 24 * 60 * 60) return unit(Math.round(seconds / 3600), "hour");
+    if (seconds < 7 * 24 * 60 * 60) return unit(Math.round(seconds / 86400), "day");
+    if (seconds < 5 * 7 * 24 * 60 * 60) return unit(Math.round(seconds / (7 * 86400)), "week");
+    if (seconds < 365 * 24 * 60 * 60) return unit(Math.max(1, Math.round(seconds / (30.44 * 86400))), "month");
+    return unit(Math.max(1, Math.round(seconds / (365.25 * 86400))), "year");
+  }
+
+  // Age-adaptive absolute: time only for today, 'yesterday HH:MM' and weekday
+  // names for the past week, the regular browser-formatted value beyond that.
+  // In UTC mode both the instant and "now" are rebased to UTC wall time, so the
+  // same code path also gets the day boundaries right for that zone.
+  function formatAdaptiveDate(dateInput: string | Date, now: () => Date = () => new Date(), zone: "local" | "utc" = "local"): string {
+    const toWall = (d: Date) => (zone === "utc" ? new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()) : d);
+    const date = toWall(dayjs.utc(dateInput).toDate());
+    const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    const dayDiff = Math.round((startOfDay(toWall(now())) - startOfDay(date)) / 86400000);
+    const time = date.toLocaleTimeString();
+    if (dayDiff <= 0) return time;
+    if (dayDiff === 1) return `yesterday ${time}`;
+    if (dayDiff < 7) return `${date.toLocaleDateString(undefined, { weekday: "long" })} ${time}`;
+    return date.toLocaleString();
+  }
+
   function formatDateTooltip(dateInput: string | Date | null, titleValue?: string): string {
     if (titleValue) return titleValue;
     if (!dateInput || dateInput === emptyDate) return "";
@@ -116,6 +146,8 @@ export function useDateFormatter() {
     formatDateRange,
     formatDateTooltip,
     formatRelativeTime,
+    formatCoarseRelative,
+    formatAdaptiveDate,
     formatLicenseDate,
     isValidDateRange,
     emptyDate,

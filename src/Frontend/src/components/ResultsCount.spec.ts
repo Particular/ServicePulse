@@ -10,6 +10,12 @@ describe("FEATURE: Results count", () => {
     expect(screen.getByText(expected)).toBeInTheDocument();
   });
 
+  test("EXAMPLE: A partial result presents its total as a floor", () => {
+    render(ResultsCount, { props: { displayed: 3, total: 87421337, incomplete: true } });
+
+    expect(screen.getByText(`Showing 3 of at least ${(87421337).toLocaleString()} result(s)`)).toBeInTheDocument();
+  });
+
   test("EXAMPLE: The query duration is shown when known", () => {
     render(ResultsCount, { props: { displayed: 100, total: 500, durationMs: 2700 } });
 
@@ -21,6 +27,15 @@ describe("FEATURE: Results count", () => {
     render(ResultsCount, { props: { displayed: 10, total: 10, durationMs: 320 } });
 
     expect(screen.getByText("Showing 10 of 10 result(s) · took 320 ms")).toBeInTheDocument();
+  });
+
+  test("EXAMPLE: When the query ran is shown relatively with the timestamp as tooltip", () => {
+    const completedAt = new Date(Date.now() - 3 * 60 * 1000).toISOString();
+    render(ResultsCount, { props: { displayed: 10, total: 10, durationMs: 320, completedAt } });
+
+    const ran = screen.getByTestId("ran-ago");
+    expect(ran.textContent).toContain("minutes ago");
+    expect(ran.getAttribute("title")).toContain("(UTC)");
   });
 
   test("EXAMPLE: Zero results render plainly", () => {

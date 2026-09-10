@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { FieldNames, useAuditStore } from "@/stores/AuditStore";
 import { storeToRefs } from "pinia";
-import { useRoute, useRouter } from "vue-router";
+import { RouterLink, useRoute, useRouter } from "vue-router";
+import routeLinks from "@/router/routeLinks";
 import ResultsCount from "@/components/ResultsCount.vue";
 import FiltersPanel from "@/components/audit/FiltersPanel.vue";
 import ResultsOptions from "@/components/audit/ResultsOptions.vue";
@@ -17,9 +18,11 @@ import { CapabilityStatus } from "@/components/platformcapabilities/constants";
 import PageBanner, { type BannerMessage } from "@/components/PageBanner.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { loadDefaultRange, narrowingPresets, resolveTimeRange, type RangePreset } from "@/components/audit/timeRange";
+import { describeIncompleteReason, describeInstance } from "@/components/incompleteResults";
 
 const store = useAuditStore();
-const { messages, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryDurationMs } = storeToRefs(store);
+const { messages, newMessageIds, totalCount, sortBy, messageFilterString, selectedEndpointName, itemsPerPage, timeRangeFrom, timeRangeTo, queryFailed, queryTimedOut, incompleteInstances, queryDurationMs, queryCompletedAt } = storeToRefs(store);
+const newRowIds = computed(() => new Set(newMessageIds.value));
 const route = useRoute();
 const router = useRouter();
 const autoRefreshValue = ref<number | null>(null);
@@ -85,6 +88,17 @@ function applyNarrowing(preset: RangePreset) {
   timeRangeFrom.value = preset.from;
   timeRangeTo.value = preset.to;
 }
+
+// "audit-2:44444 (timed out), audit-3:44444 (unreachable)" — why the current page is partial.
+// The id is the instance's base64 API URL; readers get host and port, the URL on hover.
+// A slow instance is helped by a lighter query; the other reasons are about the instance itself
+const anyInstanceTimedOut = computed(() => incompleteInstances.value.some((instance) => instance.reason === "timeout"));
+const incompleteSummary = computed(() =>
+  incompleteInstances.value.map((instance) => {
+    const { label, apiUrl } = describeInstance(instance.instanceId);
+    return { key: instance.instanceId, label, apiUrl, reason: describeIncompleteReason(instance.reason) };
+  })
+);
 
 onBeforeMount(() => {
   setQuery();
@@ -202,7 +216,7 @@ watch(autoRefreshValue, (newValue) => {
       </div>
       <div class="row results-row">
         <div class="results-summary">
-          <ResultsCount :displayed="messages.length" :total="totalCount" :duration-ms="queryDurationMs" />
+          <ResultsCount :displayed="messages.length" :total="totalCount" :incomplete="incompleteInstances.length > 0" :duration-ms="queryDurationMs" :completed-at="queryCompletedAt" />
           <span v-if="slowQuery && queryInProgress" class="slow-query" role="status" data-testid="slow-query-hint">Still running · a narrower time range makes the query lighter.</span>
         </div>
         <ResultsOptions />
@@ -211,19 +225,31 @@ watch(autoRefreshValue, (newValue) => {
     </div>
     <WizardDialog v-if="showWizard" title="Getting Started with Auditing" :pages="wizardPages" @close="showWizard = false" />
     <div v-if="queryFailed && !queryInProgress" class="query-error" role="alert" data-testid="query-error">
-      <strong>The query failed or took too long and was stopped.</strong>
+      <strong v-if="queryTimedOut">The query exceeded the ServiceControl query time limit and was stopped.</strong>
+      <strong v-else>The query failed or took too long and was stopped.</strong>
       <p v-if="hasNoTimeFilter">This query has no time filter, so it scans the whole audit store. Bounding it is the quickest fix — or try again in an off-peak period.</p>
       <p v-else>Query cost grows with the size of the time window. Try a narrower range, add a search term or endpoint filter, or reduce the number of results ("Show").</p>
       <div v-if="narrowOptions.length > 0" class="error-actions">
         <button v-for="preset in narrowOptions" :key="preset.label" type="button" class="narrow-action" data-testid="narrow-range" @click="applyNarrowing(preset)">{{ preset.label }}</button>
       </div>
     </div>
+    <div v-if="incompleteInstances.length > 0 && !queryInProgress" class="query-incomplete" role="status" data-testid="query-incomplete">
+      <strong>Partial results.</strong> No data from
+      <template v-for="(instance, index) in incompleteSummary" :key="instance.key"
+        ><template v-if="index > 0">, </template><span :title="instance.apiUrl ?? undefined">{{ instance.label }} ({{ instance.reason }})</span></template
+      >.
+      <p class="help">
+        The rows below come from the instances that did answer. Try again in a moment; if it keeps happening, <RouterLink :to="routeLinks.platformHealth">check the health of those instances</RouterLink>.<template v-if="anyInstanceTimedOut">
+          A narrower time range makes the query lighter for a slow instance.</template
+        >
+      </p>
+    </div>
     <div class="row results-table">
       <!-- Only when there is nothing to show yet. A re-fetch over existing rows leaves them
            visible and usable: the refresh button already signals the running query -->
       <LoadingSpinner v-if="firstLoad || (isRefreshing && messages.length === 0)" />
       <template v-for="message in messages" :key="message.id">
-        <AuditListItem :message="message" />
+        <AuditListItem :message="message" :class="{ 'new-row': newRowIds.has(message.id) }" />
       </template>
     </div>
   </div>
@@ -253,6 +279,21 @@ watch(autoRefreshValue, (newValue) => {
 
 .query-error p {
   margin: 0.25rem 0 0;
+}
+
+.query-incomplete {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid #f0e0b6;
+  border-left: 4px solid #f0ad4e;
+  border-radius: 4px;
+  background-color: #fdf9ef;
+}
+
+.query-incomplete .help {
+  margin: 0.25rem 0 0;
+  font-size: 0.875em;
+  color: #6b6b6b;
 }
 
 .error-actions {
@@ -313,5 +354,71 @@ watch(autoRefreshValue, (newValue) => {
   margin-bottom: 5rem;
   background-color: #ffffff;
   position: relative;
+  /* The results list is a grid that places nothing itself: it only declares the six
+     columns, and every row (AuditListItem) joins them with `subgrid`. Declaring them here,
+     once, is what keeps rows aligned: a column is measured across ALL rows, which a row
+     laying out its own columns cannot do.
+
+       1.8em                       status icon
+       minmax(0, 1fr)              message id: the one value allowed to shrink and break,
+                                   so a long id never pushes the values off the row
+       minmax(max-content, 1fr)    each value column, read as: never narrower than its
+                                   widest value in the list (so nothing wraps), and once
+                                   every column has that, share the leftover width equally
+                                   (so the columns spread out on a wide screen instead of
+                                   huddling on the left)
+
+     Deliberately NOT a size container: combining container-type with content-sized
+     tracks froze Chrome's layout. */
+  display: grid;
+  grid-template-columns: 1.8em minmax(0, 1fr) repeat(4, minmax(max-content, 1fr));
+  column-gap: 0.375rem;
+  align-content: start;
+}
+
+/* Non-row children (the first-load spinner) span the full width */
+.results-table > :not(.item) {
+  grid-column: 1 / -1;
+}
+
+/* A row that arrived since the previous refresh of the same query slides in and
+   glows briefly, so what changed is visible without hunting for it. The glow
+   lasts a few seconds because auto-refresh ticks are seconds apart, and it plays
+   once per row: the element is new to the DOM (keyed by id), so the animation
+   starts on insertion and does not restart on later renders. */
+.results-table > .new-row {
+  animation: new-row-arrive 3s ease-out;
+}
+
+@keyframes new-row-arrive {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+    background-color: #d3ebf2;
+  }
+  12% {
+    opacity: 1;
+    transform: none;
+    background-color: #d3ebf2;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .results-table > .new-row {
+    animation: new-row-glow 3s ease-out;
+  }
+
+  @keyframes new-row-glow {
+    0%,
+    40% {
+      background-color: #d3ebf2;
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
 }
 </style>
