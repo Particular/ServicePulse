@@ -62,7 +62,7 @@
     "@types/jsdom": "28.0.3",
     "@types/node": "25.9.2",
     "@vitejs/plugin-vue": "6.0.8",
-    "@vitest/coverage-v8": "4.1.7",
+    "@vitest/coverage-v8": "5.0.0",
     "@vue/tsconfig": "0.9.1",
     "cross-env": "10.1.0",
     "eslint": "10.4.1",
@@ -78,7 +78,7 @@
     "vite": "8.2.1",
     "vite-plugin-checker": "0.14.5",
     "vite-plugin-vue-devtools": "8.2.1",
-    "vitest": "4.1.7",
+    "vitest": "5.0.0",
     "vue-tsc": "3.3.3"
   },
   "msw": {
