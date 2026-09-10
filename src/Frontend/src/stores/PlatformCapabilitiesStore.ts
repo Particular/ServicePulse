@@ -57,14 +57,24 @@ function saveVisibility(visibility: PlatformCapabilitiesVisibility): void {
 export const usePlatformCapabilitiesStore = defineStore("PlatformCapabilitiesStore", () => {
   const { store: connectionStore } = useConnectionsAndStatsAutoRefresh();
   const visibility = ref<PlatformCapabilitiesVisibility>(loadVisibility());
-  const hasSuccessfulMessages = ref(false);
+  // null = not yet determined: consumers must render nothing promotional until the probe answers
+  const hasSuccessfulMessages = ref<boolean | null>(null);
   const hasMonitoredEndpoints = ref(false);
 
   async function checkForSuccessfulMessages() {
+    // Successful messages don't un-exist: once seen, never query again.
+    // The unbounded form of this probe scans the entire audit index (minutes on large
+    // stores), so probe a recent window first and fall back to unbounded only when
+    // the window is empty.
+    if (hasSuccessfulMessages.value === true) {
+      return;
+    }
     try {
-      hasSuccessfulMessages.value = await auditClient.hasSuccessfulMessages();
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000);
+      hasSuccessfulMessages.value = (await auditClient.hasSuccessfulMessages(sevenDaysAgo)) || (await auditClient.hasSuccessfulMessages());
     } catch {
-      hasSuccessfulMessages.value = false;
+      // A failed probe proves nothing about the data; stay unknown and let the next tick retry
+      hasSuccessfulMessages.value = null;
     }
   }
 

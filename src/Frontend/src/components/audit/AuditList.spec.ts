@@ -1,5 +1,5 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/vue";
+import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/vue";
 import { createTestingPinia } from "@pinia/testing";
 import { createRouter, createMemoryHistory } from "vue-router";
 import { ref, shallowReadonly, nextTick, type Ref } from "vue";
@@ -21,8 +21,9 @@ import { type default as Message, MessageStatus } from "@/resources/Message";
 // ==================== Mock Setup ====================
 
 vi.mock("@/composables/autoRefresh");
+const auditingStatus = vi.hoisted(() => ({ value: "Available" }));
 vi.mock("@/components/platformcapabilities/capabilities/AuditingCapability", () => ({
-  useAuditingCapability: () => ({ status: { value: "Available" } }),
+  useAuditingCapability: () => ({ status: auditingStatus }),
 }));
 vi.mock("@/components/platformcapabilities/wizards/AuditingWizardPages", () => ({
   getAuditingWizardPages: () => [],
@@ -41,15 +42,16 @@ interface QueryStateAssertions {
   messagesAreNotVisible(): void;
   refreshControlsKnowQueryIsInProgress(): void;
   refreshControlsKnowQueryIsIdle(): void;
-  filtersKnowQueryIsInProgress(): void;
-  filtersKnowQueryIsIdle(): void;
+  filtersAreNotBlockedByQuery(): void;
 }
 
 interface RenderResult {
   verify: QueryStateAssertions;
   isRefreshing: Ref<boolean>;
   refreshNow: ReturnType<typeof vi.fn>;
+  stop: ReturnType<typeof vi.fn>;
   store: ReturnType<typeof useAuditStore>;
+  unmount: () => void;
 }
 
 // ==================== DOM Query Helpers ====================
@@ -105,9 +107,13 @@ function createMessage(id = "msg-1"): Message {
 
 // ==================== Component Renderer ====================
 
-async function renderAuditList(messages: Message[] = []): Promise<RenderResult> {
+async function renderAuditList(messages: Message[] = [], options: { neverCompleteFirstQuery?: boolean } = {}): Promise<RenderResult> {
   const isRefreshing = ref(false);
   const refreshNow = vi.fn().mockResolvedValue(undefined);
+  if (options.neverCompleteFirstQuery) {
+    refreshNow.mockImplementationOnce(() => new Promise(() => {}));
+  }
+  const stop = vi.fn();
 
   vi.mocked(useFetchWithAutoRefresh).mockReturnValue({
     refreshNow,
@@ -115,7 +121,8 @@ async function renderAuditList(messages: Message[] = []): Promise<RenderResult> 
     updateInterval: vi.fn(),
     isActive: ref(false),
     start: vi.fn(),
-    stop: vi.fn(),
+    stop,
+    nextRefreshAt: shallowReadonly(ref<number | null>(null)),
   });
 
   const router = createRouter({
@@ -133,13 +140,17 @@ async function renderAuditList(messages: Message[] = []): Promise<RenderResult> 
     },
   });
 
-  render(AuditList, {
+  const { unmount } = render(AuditList, {
     global: {
       plugins: [pinia, router],
       stubs: {
         AuditListItem: { template: '<div data-testid="message-item" />' },
-        RefreshConfig: { template: '<div data-testid="refresh-config" :data-query-in-progress="String(queryInProgress)" />', props: ["queryInProgress"] },
-        FiltersPanel: { template: '<div data-testid="filters-panel" :data-query-in-progress="String(queryInProgress)" />', props: ["queryInProgress"] },
+        RefreshConfig: {
+          template: `<div data-testid="refresh-config" :data-query-in-progress="String(queryInProgress)"><button data-testid="cancel-button" @click="$emit('cancel-query')"></button></div>`,
+          props: ["queryInProgress"],
+          emits: ["cancel-query", "manual-refresh"],
+        },
+        FiltersPanel: { template: '<div data-testid="filters-panel" :data-query-in-progress="String(queryInProgress)"><slot name="actions" /></div>', props: ["queryInProgress"] },
         ResultsCount: true,
         WizardDialog: true,
         PageBanner: true,
@@ -172,15 +183,14 @@ async function renderAuditList(messages: Message[] = []): Promise<RenderResult> 
     refreshControlsKnowQueryIsIdle() {
       expect(getRefreshConfig().dataset.queryInProgress).toBe("false");
     },
-    filtersKnowQueryIsInProgress() {
-      expect(getFiltersPanel().dataset.queryInProgress).toBe("true");
-    },
-    filtersKnowQueryIsIdle() {
-      expect(getFiltersPanel().dataset.queryInProgress).toBe("false");
+    filtersAreNotBlockedByQuery() {
+      // The filters panel is deliberately not told about query progress: entering a new
+      // query must always be possible, even while a slow query is still running.
+      expect(getFiltersPanel().dataset.queryInProgress).toBe("undefined");
     },
   };
 
-  return { verify, isRefreshing, refreshNow, store: useAuditStore(pinia) };
+  return { verify, isRefreshing, refreshNow, stop, store: useAuditStore(pinia), unmount };
 }
 
 // A control change reaches the fetch via two async hops (controls watcher -> router.push -> route watcher),
@@ -204,6 +214,8 @@ async function waitForFirstLoadToComplete() {
 describe("FEATURE: Audit Messages Query State", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    auditingStatus.value = "Available";
+    localStorage.clear();
   });
 
   describe("RULE: A spinner is shown during the initial page load", () => {
@@ -213,7 +225,7 @@ describe("FEATURE: Audit Messages Query State", () => {
       verify.spinnerIsVisible();
       verify.messagesAreNotVisible();
       verify.refreshControlsKnowQueryIsInProgress();
-      verify.filtersKnowQueryIsInProgress();
+      verify.filtersAreNotBlockedByQuery();
     });
 
     test("EXAMPLE: Spinner is hidden after the first fetch completes", async () => {
@@ -224,7 +236,7 @@ describe("FEATURE: Audit Messages Query State", () => {
       await waitFor(() => verify.spinnerIsNotVisible());
       verify.overlayIsNotVisible();
       verify.refreshControlsKnowQueryIsIdle();
-      verify.filtersKnowQueryIsIdle();
+      verify.filtersAreNotBlockedByQuery();
     });
   });
 
@@ -256,8 +268,8 @@ describe("FEATURE: Audit Messages Query State", () => {
     });
   });
 
-  describe("RULE: Query controls are disabled during a fetch", () => {
-    test("EXAMPLE: Query controls are disabled when a re-fetch is in-flight", async () => {
+  describe("RULE: Filters stay usable while a query is running", () => {
+    test("EXAMPLE: The filters are not blocked when a re-fetch is in-flight", async () => {
       const { verify, isRefreshing } = await renderAuditList([]);
 
       await waitForFirstLoadToComplete();
@@ -266,10 +278,10 @@ describe("FEATURE: Audit Messages Query State", () => {
       await nextTick();
 
       verify.refreshControlsKnowQueryIsInProgress();
-      verify.filtersKnowQueryIsInProgress();
+      verify.filtersAreNotBlockedByQuery();
     });
 
-    test("EXAMPLE: Query controls are re-enabled after the fetch completes", async () => {
+    test("EXAMPLE: The refresh action is re-enabled after the fetch completes", async () => {
       const { verify, isRefreshing } = await renderAuditList([]);
 
       await waitForFirstLoadToComplete();
@@ -281,36 +293,146 @@ describe("FEATURE: Audit Messages Query State", () => {
       await nextTick();
 
       verify.refreshControlsKnowQueryIsIdle();
-      verify.filtersKnowQueryIsIdle();
+      verify.filtersAreNotBlockedByQuery();
     });
   });
 
-  describe("RULE: A loading overlay is shown when re-fetching with existing results", () => {
-    test("EXAMPLE: Overlay appears over existing messages while a re-fetch is in-flight", async () => {
+  describe("RULE: Existing results stay visible and usable while a re-fetch runs", () => {
+    // The refresh button already signals the running query (spinner, Cancel, elapsed time).
+    // Covering the stale rows would only take them away from the user while waiting.
+    test("EXAMPLE: No overlay covers the rows during a re-fetch, however long it takes", async () => {
       const { verify, isRefreshing } = await renderAuditList([createMessage()]);
-
       await waitForFirstLoadToComplete();
       await waitFor(() => verify.messagesAreVisible());
 
       isRefreshing.value = true;
       await nextTick();
+      verify.overlayIsNotVisible();
+      verify.spinnerIsNotVisible();
 
-      verify.overlayIsVisible();
+      await new Promise((r) => setTimeout(r, 400));
+      verify.overlayIsNotVisible();
       verify.messagesAreVisible();
     });
+  });
 
-    test("EXAMPLE: Overlay disappears after the re-fetch completes", async () => {
-      const { verify, isRefreshing } = await renderAuditList([createMessage()]);
+  describe("RULE: Onboarding prompts render only after the capability probe has answered", () => {
+    test("EXAMPLE: The banner appears once a completed probe found no messages", async () => {
+      auditingStatus.value = "Endpoints Not Configured";
+      await renderAuditList([]);
 
       await waitForFirstLoadToComplete();
 
+      expect(document.querySelector("page-banner-stub")).not.toBeNull();
+    });
+  });
+
+  describe("RULE: A query that runs long gets advice instead of a clock", () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    test("EXAMPLE: After five seconds the results line suggests a narrower time range; it goes when the query ends", async () => {
+      const { isRefreshing } = await renderAuditList([createMessage()]);
+      await waitForFirstLoadToComplete();
+      vi.useFakeTimers();
+
       isRefreshing.value = true;
-      await nextTick();
-      verify.overlayIsVisible();
+      await vi.advanceTimersByTimeAsync(4000);
+      expect(screen.queryByTestId("slow-query-hint")).not.toBeInTheDocument();
+
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(screen.getByTestId("slow-query-hint").textContent).toContain("narrower time range");
 
       isRefreshing.value = false;
       await nextTick();
-      verify.overlayIsNotVisible();
+      expect(screen.queryByTestId("slow-query-hint")).not.toBeInTheDocument();
+    });
+
+    test("EXAMPLE: A query that finishes quickly never shows the hint", async () => {
+      const { isRefreshing } = await renderAuditList([createMessage()]);
+      await waitForFirstLoadToComplete();
+      vi.useFakeTimers();
+
+      isRefreshing.value = true;
+      await vi.advanceTimersByTimeAsync(1000);
+      isRefreshing.value = false;
+      await vi.advanceTimersByTimeAsync(10000);
+
+      expect(screen.queryByTestId("slow-query-hint")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("RULE: A failed query tells the user what happened and what to try", () => {
+    test("EXAMPLE: The error banner is shown after a failed query", async () => {
+      const { store } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      store.queryFailed = true;
+      await nextTick();
+
+      expect(screen.getByTestId("query-error")).toBeInTheDocument();
+    });
+
+    test("EXAMPLE: The error banner is not shown while a retry is in flight", async () => {
+      const { store, isRefreshing } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      store.queryFailed = true;
+      isRefreshing.value = true;
+      await nextTick();
+
+      expect(screen.queryByTestId("query-error")).not.toBeInTheDocument();
+    });
+
+    test("EXAMPLE: A failed query offers one-click narrower ranges", async () => {
+      const { store } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      // default range is now-6h -> now; the two next-narrower presets apply
+      store.queryFailed = true;
+      await nextTick();
+
+      expect(screen.getAllByTestId("narrow-range").map((b) => b.textContent)).toEqual(["Last hour", "Last 15 minutes"]);
+    });
+
+    test("EXAMPLE: Clicking a narrowing action applies that range", async () => {
+      const { store } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      store.queryFailed = true;
+      await nextTick();
+      await fireEvent.click(screen.getByText("Last hour"));
+
+      expect(store.timeRangeFrom).toBe("now-1h");
+      expect(store.timeRangeTo).toBe("now");
+    });
+
+    test("EXAMPLE: A failed query without a time filter says the scan was unbounded", async () => {
+      const { store } = await renderAuditList([]);
+
+      await waitForFirstLoadToComplete();
+
+      store.timeRangeFrom = "";
+      store.timeRangeTo = "";
+      store.queryFailed = true;
+      await nextTick();
+
+      expect(screen.getByText(/no time filter/)).toBeInTheDocument();
+      expect(screen.getAllByTestId("narrow-range").map((b) => b.textContent)).toEqual(["Last 7 days", "Last 24 hours"]);
+    });
+
+    test("EXAMPLE: The error banner is not shown when queries succeed", async () => {
+      const { verify } = await renderAuditList([createMessage()]);
+
+      await waitForFirstLoadToComplete();
+
+      verify.messagesAreVisible();
+      expect(screen.queryByTestId("query-error")).not.toBeInTheDocument();
     });
   });
 
@@ -327,6 +449,19 @@ describe("FEATURE: Audit Messages Query State", () => {
       expect(refreshNow.mock.calls.length - queriesAfterFirstLoad).toBe(1);
     });
 
+    test("EXAMPLE: Typing a search during the slow initial query still starts the new query", async () => {
+      const { refreshNow, store } = await renderAuditList([], { neverCompleteFirstQuery: true });
+
+      await waitForFirstLoadToComplete();
+      expect(refreshNow).toHaveBeenCalledTimes(1); // the initial query, still running
+
+      store.messageFilterString = "orders";
+      await waitForRouteDrivenQuery();
+
+      // The new query must not be swallowed just because the first one never finished
+      expect(refreshNow).toHaveBeenCalledTimes(2);
+    });
+
     test("EXAMPLE: Changing the endpoint fires a single query", async () => {
       const { refreshNow, store } = await renderAuditList([createMessage()]);
 
@@ -337,6 +472,56 @@ describe("FEATURE: Audit Messages Query State", () => {
       await waitForRouteDrivenQuery();
 
       expect(refreshNow.mock.calls.length - queriesAfterFirstLoad).toBe(1);
+    });
+  });
+
+  describe("RULE: The saved default range drives the first query", () => {
+    test("EXAMPLE: Opening the view without URL params applies the browser's saved default", async () => {
+      localStorage.setItem("audit.defaultTimeRange", JSON.stringify({ from: "now-24h", to: "now" }));
+
+      const { store, refreshNow } = await renderAuditList([]);
+      await waitForFirstLoadToComplete();
+
+      expect(store.timeRangeFrom).toBe("now-24h");
+      expect(store.timeRangeTo).toBe("now");
+      expect(refreshNow).toHaveBeenCalled();
+    });
+  });
+
+  describe("RULE: The refresh button cancels the running query", () => {
+    test("EXAMPLE: The cancel action aborts via the store", async () => {
+      const { store } = await renderAuditList([], { neverCompleteFirstQuery: true });
+
+      await waitForFirstLoadToComplete();
+
+      await fireEvent.click(screen.getByTestId("cancel-button"));
+
+      expect(store.cancelQuery).toHaveBeenCalled();
+    });
+  });
+
+  describe("RULE: Leaving the view stops its activity", () => {
+    test("EXAMPLE: Unmounting aborts the in-flight query and releases the auto-refresh", async () => {
+      const { stop, store, unmount } = await renderAuditList([createMessage()], { neverCompleteFirstQuery: true });
+
+      await waitForFirstLoadToComplete();
+
+      unmount();
+
+      expect(store.cancelQuery).toHaveBeenCalled();
+      expect(stop).toHaveBeenCalled();
+    });
+
+    test("EXAMPLE: Unmounting clears the results, so re-entering the view starts from a clean list", async () => {
+      // A refresh-in-place keeps stale rows on purpose; coming back to the view is not that:
+      // the query inputs may differ, so the previous rows must not be shown under the spinner
+      const { store, unmount } = await renderAuditList([createMessage()]);
+
+      await waitForFirstLoadToComplete();
+
+      unmount();
+
+      expect(store.clearResults).toHaveBeenCalled();
     });
   });
 });
