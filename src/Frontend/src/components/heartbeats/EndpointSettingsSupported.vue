@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ConditionalRender from "@/components/ConditionalRender.vue";
 import useIsEndpointSettingsSupported, { minimumSCVersionForEndpointSettings } from "@/components/heartbeats/isEndpointSettingsSupported";
+import ExternalLink from "@/components/ExternalLink.vue";
 
 const isEndpointSettingsSupported = useIsEndpointSettingsSupported();
 </script>
@@ -17,7 +18,7 @@ const isEndpointSettingsSupported = useIsEndpointSettingsSupported();
                 <span> {{ minimumSCVersionForEndpointSettings }} </span>.
               </p>
               <div>
-                <a class="btn btn-default btn-primary" href="https://particular.net/downloads" target="_blank">Update ServiceControl to latest version</a>
+                <ExternalLink class="btn btn-default btn-primary" href="https://particular.net/downloads">Update ServiceControl to latest version</ExternalLink>
               </div>
             </div>
           </div>

@@ -1,4 +1,6 @@
-﻿<script setup lang="ts"></script>
+﻿<script setup lang="ts">
+import ExternalLink from "@/components/ExternalLink.vue";
+</script>
 
 <template>
   <div class="row">
@@ -17,7 +19,7 @@
                   <li>Endpoints sending data to incorrect queue or monitoring server listening.</li>
                 </ul>
                 <div class="action-toolbar">
-                  <a class="btn btn-default btn-primary" href="https://docs.particular.net/monitoring/metrics/" target="_blank">Learn how to enable endpoint monitoring</a>
+                  <ExternalLink class="btn btn-default btn-primary" href="https://docs.particular.net/monitoring/metrics/">Learn how to enable endpoint monitoring</ExternalLink>
                 </div>
               </div>
             </div>

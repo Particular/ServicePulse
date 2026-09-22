@@ -4,6 +4,7 @@ import useIsAllMessagesSupported, { minimumSCVersionForAllMessages } from "@/com
 import ConditionalRender from "@/components/ConditionalRender.vue";
 import ServiceControlAvailable from "@/components/ServiceControlAvailable.vue";
 import LicenseNotExpired from "@/components/LicenseNotExpired.vue";
+import ExternalLink from "@/components/ExternalLink.vue";
 
 const isAllMessagesSupported = useIsAllMessagesSupported();
 </script>
@@ -19,7 +20,7 @@ const isAllMessagesSupported = useIsAllMessagesSupported();
               <span> {{ minimumSCVersionForAllMessages }} </span>.
             </p>
             <div>
-              <a class="btn btn-default btn-primary" href="https://particular.net/downloads" target="_blank">Update ServiceControl to latest version</a>
+              <ExternalLink class="btn btn-default btn-primary" href="https://particular.net/downloads">Update ServiceControl to latest version</ExternalLink>
             </div>
           </div>
         </template>

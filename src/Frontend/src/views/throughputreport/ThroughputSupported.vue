@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ConditionalRender from "@/components/ConditionalRender.vue";
 import useIsThroughputSupported, { minimumSCVersionForThroughput } from "./isThroughputSupported";
+import ExternalLink from "@/components/ExternalLink.vue";
 
 const isThroughputSupported = useIsThroughputSupported();
 </script>
@@ -17,7 +18,7 @@ const isThroughputSupported = useIsThroughputSupported();
                 <span> {{ minimumSCVersionForThroughput }} </span>.
               </p>
               <div>
-                <a class="btn btn-default btn-primary" href="https://particular.net/downloads" target="_blank">Update ServiceControl to latest version</a>
+                <ExternalLink class="btn btn-default btn-primary" href="https://particular.net/downloads">Update ServiceControl to latest version</ExternalLink>
               </div>
             </div>
           </div>

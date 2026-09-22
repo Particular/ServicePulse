@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia";
 import { ref } from "vue";
 import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoRefresh";
 import monitoringClient from "@/components/monitoring/monitoringClient";
+import ExternalLink from "@/components/ExternalLink.vue";
 
 const { store } = useThroughputStoreAutoRefresh();
 const { testResults, isBrokerTransport } = storeToRefs(store);
@@ -27,12 +28,12 @@ async function testConnection() {
       <ConnectionResultView v-if="isBrokerTransport && testResults !== null" title="Broker" :result="testResults.broker_connection_result" />
       <ConnectionResultView v-if="testResults !== null" title="Audit" :result="testResults.audit_connection_result">
         <template #instructions>
-          <a href="https://docs.particular.net/servicecontrol/servicecontrol-instances/remotes#configuration" target="_blank">Learn how to configure audit instances</a>
+          <ExternalLink href="https://docs.particular.net/servicecontrol/servicecontrol-instances/remotes#configuration">Learn how to configure audit instances</ExternalLink>
         </template>
       </ConnectionResultView>
       <ConnectionResultView v-if="isMonitoringEnabled && testResults !== null" title="Monitoring" :result="testResults.monitoring_connection_result">
         <template #instructions>
-          <a href="https://docs.particular.net/servicecontrol/monitoring-instances/installation/creating-config-file" target="_blank">Learn how to configure monitor instances</a>
+          <ExternalLink href="https://docs.particular.net/servicecontrol/monitoring-instances/installation/creating-config-file">Learn how to configure monitor instances</ExternalLink>
         </template>
       </ConnectionResultView>
     </template>

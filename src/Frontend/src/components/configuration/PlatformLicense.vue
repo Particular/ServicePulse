@@ -5,6 +5,7 @@ import convertToWarningLevel from "@/components/configuration/convertToWarningLe
 import { typeText } from "@/resources/LicenseInfo";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "@/components/FAIcon.vue";
+import ExternalLink from "@/components/ExternalLink.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
 import { useLicenseStore } from "@/stores/LicenseStore";
@@ -63,7 +64,7 @@ const { licenseStatus, license } = licenseStore;
                   </DetailsItem>
                   <div class="license-expired-text" role="note" aria-label="license-expired" v-if="licenseStatus.isPlatformTrialExpired">Your license expired. To continue using the Particular Service Platform you'll need to extend your license.</div>
                   <div class="license-page-extend-trial" v-if="licenseStatus.isPlatformTrialExpiring && licenseStatus.isPlatformTrialExpired">
-                    <a class="btn btn-default btn-primary" :href="license.license_extension_url" target="_blank">Extend your license <FAIcon :icon="faExternalLink" /></a>
+                    <ExternalLink class="btn btn-default btn-primary" :href="license.license_extension_url" show-icon>Extend your license</ExternalLink>
                   </div>
                 </template>
                 <template v-if="licenseStatus.isUpgradeProtectionLicense">
@@ -90,7 +91,7 @@ const { licenseStatus, license } = licenseStore;
                 </DetailsItem>
                 <ul class="license-install-info mt-2">
                   <li>
-                    <a href="https://docs.particular.net/servicecontrol/license" target="_blank">Install or update a ServiceControl license</a>
+                    <ExternalLink href="https://docs.particular.net/servicecontrol/license">Install or update a ServiceControl license</ExternalLink>
                   </li>
                 </ul>
                 <div class="need-help">

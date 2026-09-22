@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import { Modal } from "bootstrap";
 import FAIcon from "@/components/FAIcon.vue";
+import ExternalLink from "@/components/ExternalLink.vue";
 import { faChevronLeft, faChevronRight, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import type { WizardImage, WizardPage } from "./types";
 
@@ -168,10 +169,9 @@ onUnmounted(() => {
                 <span v-for="(_, index) in pageImages" :key="index" class="image-dot" :class="{ active: index === currentImageIndex }" @click="currentImageIndex = index"></span>
               </div>
             </div>
-            <a v-if="currentPage.learnMoreUrl" :href="currentPage.learnMoreUrl" target="_blank" rel="noopener noreferrer" class="learn-more-link mt-3 d-inline-flex align-items-center gap-2">
+            <ExternalLink v-if="currentPage.learnMoreUrl" :href="currentPage.learnMoreUrl" class="learn-more-link mt-3 d-inline-flex align-items-center gap-2" :icon="faExternalLinkAlt" icon-class="small" show-icon>
               {{ currentPage.learnMoreText || "Learn more in the documentation" }}
-              <FAIcon :icon="faExternalLinkAlt" class="small" />
-            </a>
+            </ExternalLink>
           </div>
         </div>
         <div class="modal-footer d-flex justify-content-between align-items-center">

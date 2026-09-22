@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import ExternalLink from "@/components/ExternalLink.vue";
+</script>
+
 <template>
-  <span> An <a href="https://particular.net/transactional-session-design" target="_blank">endpoint that is only processing transactional session control messages</a> </span>
+  <span> An <ExternalLink href="https://particular.net/transactional-session-design">endpoint that is only processing transactional session control messages</ExternalLink> </span>
 </template>
