@@ -3,8 +3,6 @@ import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import ExclamationMark from "./../../components/ExclamationMark.vue";
 import convertToWarningLevel from "@/components/configuration/convertToWarningLevel";
 import { typeText } from "@/resources/LicenseInfo";
-import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
-import FAIcon from "@/components/FAIcon.vue";
 import ExternalLink from "@/components/ExternalLink.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
@@ -96,7 +94,7 @@ const { licenseStatus, license } = licenseStore;
                 </ul>
                 <div class="need-help">
                   Need help?
-                  <a href="https://particular.net/contactus">Contact us <FAIcon :icon="faExternalLink" /></a>
+                  <ExternalLink href="https://particular.net/contactus" show-icon>Contact us</ExternalLink>
                 </div>
               </div>
             </div>
