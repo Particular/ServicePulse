@@ -1,20 +1,20 @@
 import ToastPopup from "@/components/ToastPopup.vue";
 import { TYPE, useToast } from "vue-toastification";
-import type { ToastOptions } from "vue-toastification/dist/types/types";
+import type { ToastComponent, ToastOptions } from "vue-toastification/dist/types/types";
 
-export function useShowToast(type: TYPE, title: string, message: string, doNotUseTimeout: boolean = false, options?: ToastOptions) {
+export function useShowToast(type: TYPE, title: string, message: string | ToastComponent, doNotUseTimeout: boolean = false, options?: ToastOptions) {
   const toast = useToast();
-  const content = {
-    // Your component or JSX template
-    component: ToastPopup,
-
-    // Props are just regular props, but these won't be reactive
-    props: {
-      type: type,
-      title: title,
-      message: message,
-    },
-  };
+  const content =
+    typeof message === "string"
+      ? {
+          component: ToastPopup,
+          props: {
+            type: type,
+            title: title,
+            message: message,
+          },
+        }
+      : message;
   toast(content, {
     timeout: doNotUseTimeout ? false : undefined,
     type: type,
