@@ -28,7 +28,7 @@ export interface CapabilityCardHelpers {
   cardSync: () => HTMLElement | null;
   /** Gets the status badge from the capability card */
   statusBadge: () => Promise<HTMLElement | null>;
-  /** Gets the help/action button from the capability card */
+  /** Gets the help/action control (button or link) from the capability card */
   actionButton: () => Promise<HTMLElement | null>;
   /** Gets the status indicators from the capability card */
   statusIndicators: () => Promise<HTMLElement[] | null>;
@@ -97,7 +97,7 @@ export function createCapabilityCardHelpers(options: CapabilityCardOptions): Cap
   async function actionButton(): Promise<HTMLElement | null> {
     const c = await card();
     if (!c) return null;
-    return within(c).queryByRole("button", { name: actionButtonPattern });
+    return within(c).queryByRole("button", { name: actionButtonPattern }) ?? within(c).queryByRole("link", { name: actionButtonPattern });
   }
 
   async function statusIndicators(): Promise<HTMLElement[] | null> {

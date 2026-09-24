@@ -93,6 +93,7 @@ import { storeToRefs } from "pinia";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "@/components/FAIcon.vue";
 import ConditionalRender from "@/components/ConditionalRender.vue";
+import ExternalLink from "@/components/ExternalLink.vue";
 import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
 import { useAuthStore } from "@/stores/AuthStore";
 
@@ -125,7 +126,7 @@ const rows = computed(() =>
                 <div class="text-center message">
                   <p>Viewing your permissions requires a newer version of ServiceControl.</p>
                   <div>
-                    <a class="btn btn-default btn-primary" href="https://particular.net/downloads" target="_blank">Update ServiceControl to latest version</a>
+                    <ExternalLink class="btn btn-default btn-primary" href="https://particular.net/downloads">Update ServiceControl to latest version</ExternalLink>
                   </div>
                 </div>
               </div>
@@ -140,7 +141,7 @@ const rows = computed(() =>
                 <p>Role-based access control is not enabled.</p>
                 <p>Control who can see and do what in ServicePulse. Role-based authorization lets you restrict failed message retries, endpoint management, and other sensitive actions to the right people.</p>
                 <div>
-                  <a class="btn btn-default btn-primary" href="https://docs.particular.net/servicecontrol/security/configuration/authorization" target="_blank">Learn how to enable authorization</a>
+                  <ExternalLink class="btn btn-default btn-primary" href="https://docs.particular.net/servicecontrol/security/configuration/authorization">Learn how to enable authorization</ExternalLink>
                 </div>
               </div>
             </div>

@@ -3,6 +3,7 @@ import { useDateFormatter } from "@/composables/dateFormatter";
 import StatusIcon from "@/components/StatusIcon.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
+import ExternalLink from "@/components/ExternalLink.vue";
 
 const configurationStore = useConfigurationStore();
 const { configuration } = storeToRefs(configurationStore);
@@ -41,7 +42,7 @@ const { formatDate } = useDateFormatter();
   </div>
   <div class="box" v-else>
     <p>MassTransit Connector for ServiceControl is not configured.</p>
-    <p><a target="_blank" href="https://particular.net/learn-more-about-masstransit-connector">Learn more about the MassTransit Connector.</a></p>
+    <p><ExternalLink href="https://particular.net/learn-more-about-masstransit-connector">Learn more about the MassTransit Connector.</ExternalLink></p>
   </div>
 </template>
 

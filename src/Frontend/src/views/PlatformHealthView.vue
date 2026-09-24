@@ -6,6 +6,7 @@ import PlatformHealthSupportModal from "@/components/platformhealth/PlatformHeal
 import usePlatformHealthStoreAutoRefresh from "@/composables/usePlatformHealthStoreAutoRefresh";
 import useEnvironmentAndVersionsAutoRefresh from "@/composables/useEnvironmentAndVersionsAutoRefresh";
 import FAIcon from "@/components/FAIcon.vue";
+import ExternalLink from "@/components/ExternalLink.vue";
 import { faArrowTurnUp, faChevronDown, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { WarningLevel } from "@/components/WarningLevel";
 
@@ -158,10 +159,10 @@ function toggleRow(row: (typeof store.rows)[number]) {
                     </td>
                     <td>
                       <span>{{ row.version }}</span>
-                      <a v-if="shouldShowUpgradeCue(row)" class="upgrade-badge" :href="getUpgradeTargetLink(row)" target="_blank">
+                      <ExternalLink v-if="shouldShowUpgradeCue(row)" class="upgrade-badge" :href="getUpgradeTargetLink(row)">
                         <FAIcon class="footer-icon fake-link" :icon="faArrowTurnUp" />
                         <span>v{{ getUpgradeTargetVersion(row) }} available</span>
-                      </a>
+                      </ExternalLink>
                     </td>
                     <td>
                       <button type="button" class="health-badge health-badge-button" :class="row.health" :aria-expanded="isExpanded(row)" :aria-controls="`${rowKey(row)}-details`" @click="toggleRow(row)">

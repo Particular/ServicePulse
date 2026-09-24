@@ -9,6 +9,7 @@ import useTooltips from "./SequenceDiagram/tooltipOverlay";
 import { onMounted, ref } from "vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import FAIcon from "@/components/FAIcon.vue";
+import ExternalLink from "@/components/ExternalLink.vue";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 const store = useSequenceDiagramStore();
 const { maxWidth, maxHeight, isLoading } = storeToRefs(store);
@@ -22,7 +23,7 @@ onMounted(() => store.refreshConversation());
 <template>
   <div class="wrapper">
     <div class="toolbar">
-      <a class="help-link" target="_blank" href="https://docs.particular.net/servicepulse/sequence-diagram"><FAIcon :icon="faInfoCircle" /> Sequence Diagram Help</a>
+      <ExternalLink class="help-link" href="https://docs.particular.net/servicepulse/sequence-diagram"><FAIcon :icon="faInfoCircle" /> Sequence Diagram Help</ExternalLink>
     </div>
     <LoadingSpinner v-if="isLoading" />
     <div class="outer" @scroll="(ev) => (endpointYOffset = (ev.target as Element).scrollTop)">

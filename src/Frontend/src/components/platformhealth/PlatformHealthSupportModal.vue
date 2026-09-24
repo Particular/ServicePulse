@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ActionButton from "@/components/ActionButton.vue";
+import ExternalLink from "@/components/ExternalLink.vue";
 import { downloadFileFromString } from "@/composables/fileDownloadCreator";
 import { onMounted, onUnmounted, ref } from "vue";
 
@@ -66,17 +67,15 @@ onUnmounted(() => {
         <div class="modal-footer modal-actions">
           <ActionButton variant="primary" aria-label="Download platform health" @click="download">Download platform-health.json</ActionButton>
           <ActionButton :aria-label="showPreview ? 'Hide platform health preview' : 'Preview platform health'" @click="togglePreview">{{ showPreview ? "Hide preview" : "Preview platform-health.json" }}</ActionButton>
-          <a
+          <ExternalLink
             :href="hasDownloaded ? supportCaseUrl : undefined"
             role="link"
             class="btn btn-default"
             :class="{ disabled: !hasDownloaded }"
-            target="_blank"
-            rel="noreferrer"
             :aria-disabled="!hasDownloaded"
             :tabindex="hasDownloaded ? 0 : -1"
             @click="!hasDownloaded && $event.preventDefault()"
-            >Then open the support case</a
+            >Then open the support case</ExternalLink
           >
           <ActionButton aria-label="Close support dialog" @click="close">Close</ActionButton>
         </div>

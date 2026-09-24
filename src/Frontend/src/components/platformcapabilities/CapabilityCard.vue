@@ -2,7 +2,8 @@
 import { ref, computed } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import FAIcon from "@/components/FAIcon.vue";
-import { faCircle, faExternalLink, faTimes } from "@fortawesome/free-solid-svg-icons";
+import ExternalLink from "@/components/ExternalLink.vue";
+import { faCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 import type { StatusIndicator, WizardPage } from "@/components/platformcapabilities/types";
 import { Capability, CapabilityStatus } from "@/components/platformcapabilities/constants";
 import WizardDialog from "./WizardDialog.vue";
@@ -43,8 +44,6 @@ const isExternalUrl = computed(() => props.helpButtonUrl.startsWith("http://") |
 function handleButtonClick() {
   if (shouldShowWizard.value) {
     showWizard.value = true;
-  } else if (isExternalUrl.value) {
-    window.open(props.helpButtonUrl, "_blank");
   } else {
     router.push(props.helpButtonUrl);
   }
@@ -100,7 +99,8 @@ function handleButtonClick() {
       <div class="capability-description">
         {{ props.description }}
       </div>
-      <button class="btn btn-primary" @click="handleButtonClick">{{ props.helpButtonText }} <FAIcon v-if="!shouldShowWizard && isExternalUrl" :icon="faExternalLink" /></button>
+      <ExternalLink v-if="!shouldShowWizard && isExternalUrl" class="btn btn-primary" :href="props.helpButtonUrl" show-icon>{{ props.helpButtonText }}</ExternalLink>
+      <button v-else class="btn btn-primary" @click="handleButtonClick">{{ props.helpButtonText }}</button>
     </div>
 
     <WizardDialog v-if="showWizard && wizardPages" :title="`Getting Started with ${props.title}`" :pages="wizardPages" @close="showWizard = false" />

@@ -15,6 +15,7 @@ import LegendGatewayOrBridgeEndpoint from "./LegendGatewayOrBridgeEndpoint.vue";
 import LegendParticularPlatformEndpoint from "./LegendParticularPlatformEndpoint.vue";
 import useThroughputStoreAutoRefresh from "@/composables/useThroughputStoreAutoRefresh";
 import ExclamationMark from "@/components/ExclamationMark.vue";
+import ExternalLink from "@/components/ExternalLink.vue";
 import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore.ts";
 import { WarningLevel } from "@/components/WarningLevel.ts";
 import { useLicenseStore } from "@/stores/LicenseStore.ts";
@@ -78,7 +79,7 @@ function toggleOptionsLegendVisible() {
           <strong>{{ userIndicatorMapper.get(key) }}</strong> - <component :is="LegendComponent" />.
         </div>
         <p class="mt-2">
-          <small><a href="https://particular.net/usage-user-indicators" target="_blank">See documentation for more details about endpoint type indicators</a>.</small>
+          <small><ExternalLink href="https://particular.net/usage-user-indicators">See documentation for more details about endpoint type indicators</ExternalLink>.</small>
         </p>
       </div>
     </div>

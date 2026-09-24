@@ -11,7 +11,7 @@ import { FailedMessageStatus } from "@/resources/FailedMessage";
 import type SortOptions from "@/resources/SortOptions";
 import { TYPE } from "vue-toastification";
 import type GroupOperation from "@/resources/GroupOperation";
-import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faInfoCircle, faExternalLink, faFilter, faTimes, faArrowRightRotate } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDownAZ, faArrowDownZA, faArrowDownShortWide, faArrowDownWideShort, faInfoCircle, faFilter, faTimes, faArrowRightRotate } from "@fortawesome/free-solid-svg-icons";
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { faCheckSquare } from "@fortawesome/free-regular-svg-icons";
@@ -19,6 +19,7 @@ import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
 import { useStoreAutoRefresh } from "@/composables/useAutoRefresh";
 import { type RetryPeriodOption, useRecoverabilityStore } from "@/stores/RecoverabilityStore";
+import ExternalLink from "@/components/ExternalLink.vue";
 
 const loading = ref(false);
 const { autoRefresh, isRefreshing } = useStoreAutoRefresh("recoverabilityStore", useRecoverabilityStore, 5000);
@@ -140,7 +141,7 @@ watch(isRefreshing, () => {
           <div class="col-12">
             <div class="alert alert-info">
               <FAIcon :icon="faInfoCircle" class="icon info" /> To check if a retried message was also processed successfully, enable
-              <a href="https://docs.particular.net/nservicebus/operations/auditing" target="_blank">message auditing <FAIcon :icon="faExternalLink" /></a>
+              <ExternalLink href="https://docs.particular.net/nservicebus/operations/auditing" show-icon>message auditing</ExternalLink>
             </div>
           </div>
           <div class="col-12" v-if="isMassTransitConnected">

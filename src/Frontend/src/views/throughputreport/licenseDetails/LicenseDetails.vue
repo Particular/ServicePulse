@@ -7,14 +7,14 @@ import { computed } from "vue";
 import DataView from "@/components/DataView.vue";
 import ColumnHeader from "@/components/ColumnHeader.vue";
 import ExclamationMark from "@/components/ExclamationMark.vue";
-import { faExternalLink, faWarning } from "@fortawesome/free-solid-svg-icons";
+import { faWarning } from "@fortawesome/free-solid-svg-icons";
 import { WarningLevel } from "@/components/WarningLevel";
 import useIsLicenseDetailsSupported, { minimumSCVersionForLicenseDetails } from "./isLicenseDetailsSupported";
 import ConditionalRender from "@/components/ConditionalRender.vue";
 import NoMetadata from "./NoMetadata.vue";
-import FAIcon from "@/components/FAIcon.vue";
 import UploadMetadata from "./UploadMetadata.vue";
 import DetailsItem from "@/components/DetailsItem.vue";
+import ExternalLink from "@/components/ExternalLink.vue";
 import { EndpointClassification } from "@/resources/LicenseDetails.ts";
 
 const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
@@ -52,7 +52,7 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
           <span> {{ minimumSCVersionForLicenseDetails }} </span>.
         </p>
         <div>
-          <a class="btn btn-default btn-primary" href="https://particular.net/downloads" target="_blank">Update ServiceControl to latest version</a>
+          <ExternalLink class="btn btn-default btn-primary" href="https://particular.net/downloads">Update ServiceControl to latest version</ExternalLink>
         </div>
       </div>
     </template>
@@ -64,7 +64,7 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
       <template v-if="!validId">
         <div class="id-warning alert alert-danger">
           <span>The stored endpoint metadata file does not match the current license. Please download a new version from the Particular customer portal</span>
-          <a href="https://customers.particular.net" class="btn btn-primary" target="_blank">Customer Portal <FAIcon :icon="faExternalLink" /></a>
+          <ExternalLink href="https://customers.particular.net" class="btn btn-primary" show-icon>Customer Portal</ExternalLink>
         </div>
         <UploadMetadata />
       </template>
@@ -102,7 +102,7 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
         </div>
         <!-- awaiting update to the pricing page to support this functionality -->
         <div v-if="false">
-          <a :href="`https://particular.net/pricing?${estimateUrlParams}`" class="btn btn-primary" target="_blank">Estimate Renewal Price <FAIcon :icon="faExternalLink" /></a>
+          <ExternalLink :href="`https://particular.net/pricing?${estimateUrlParams}`" class="btn btn-primary" show-icon>Estimate Renewal Price</ExternalLink>
         </div>
       </div>
       <div>

@@ -1,6 +1,10 @@
+<script setup lang="ts">
+import ExternalLink from "@/components/ExternalLink.vue";
+</script>
+
 <template>
   <span>
     Known NServiceBus
-    <a href="https://particular.net/endpoints" target="_blank">Endpoint</a>
+    <ExternalLink href="https://particular.net/endpoints">Endpoint</ExternalLink>
   </span>
 </template>
