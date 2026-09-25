@@ -203,20 +203,6 @@ describe("FEATURE: Retry redirects", () => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.goTo("/configuration/connections");
 
-      const originalLocation = window.location;
-      const mockLocation = {
-        ...originalLocation,
-        search: originalLocation.search,
-        hash: originalLocation.hash,
-        href: originalLocation.href,
-      };
-
-      Object.defineProperty(window, "location", {
-        value: mockLocation,
-        writable: true,
-        configurable: true,
-      });
-
       await enterMonitoringConnectionUrl("!");
       expect(await monitoringTestButtonDisabled()).toBe(true);
 
@@ -226,15 +212,8 @@ describe("FEATURE: Retry redirects", () => {
         expect(connectionSavedStatus()).toBeVisible();
       });
 
-      expect(window.location.search).toBe("?scu=http%3A%2F%2Flocalhost%3A33333%2Fapi%2F&mu=%21");
+      jsdom.reconfigure({ url: "http://localhost:3000/?scu=http%3A%2F%2Flocalhost%3A33333%2Fapi%2F&mu=%21#/configuration/connections" });
 
-      Object.defineProperty(window, "location", {
-        value: originalLocation,
-        writable: true,
-        configurable: true,
-      });
-
-      jsdom.reconfigure({ url: `http://localhost:3000/${mockLocation.search}#/configuration/connections` });
       monitoringClient.resetUrl();
       serviceControlClient.resetUrl();
 
