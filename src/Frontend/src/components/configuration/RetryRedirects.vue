@@ -101,6 +101,11 @@ async function saveCreatedRedirect(redirect: RetryRedirect) {
       useShowToast(TYPE.ERROR, "Error", result.message);
     }
   }
+  if (result.message === "success" && redirect.immediatelyRetry) {
+    return redirectsStore.retryPendingMessagesForQueue(redirect.sourceQueue);
+  } else {
+    return result;
+  }
 }
 
 function deleteRedirect(redirect: Redirect) {
