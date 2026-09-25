@@ -206,7 +206,7 @@ describe("FEATURE: Retry redirects", () => {
       await enterMonitoringConnectionUrl("!");
       expect(await monitoringTestButtonDisabled()).toBe(true);
 
-      window.localStorage.setItem("mu", "!");
+await clickSaveConnections();
       monitoringClient.resetUrl();
       serviceControlClient.resetUrl();
 
