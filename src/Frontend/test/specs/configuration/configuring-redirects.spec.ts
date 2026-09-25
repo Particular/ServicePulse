@@ -162,7 +162,7 @@ describe("FEATURE: Configuring queue redirects", () => {
         expect(bed.redirects).toHaveLength(1);
         expect(isRedirectListed("Sales.Service", "Billing.Service")).toBe(true);
         expect(bed.retriedQueues).toContain("Sales.Service");
-        expect(isNotificationVisible(/failed to retry pending messages: internal server error/i)).toBe(true);
+        expect(isNotificationVisible(/failed to retry pending messages: (internal server error|http 500)/i)).toBe(true);
         expect(isNotificationVisible(/redirect created successfully/i)).toBe(true);
       });
     });

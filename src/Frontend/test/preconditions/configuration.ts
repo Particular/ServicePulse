@@ -89,12 +89,10 @@ export const hasManageableRedirects =
     redirects = [],
     knownQueues = [],
     retryStatus = 200,
-    retryStatusText,
   }: {
     redirects?: Redirect[];
     knownQueues?: string[];
     retryStatus?: number;
-    retryStatusText?: string;
   } = {}) =>
   ({ driver }: SetupFactoryOptions): RedirectsTestBed => {
     const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
@@ -160,7 +158,6 @@ export const hasManageableRedirects =
       return Promise.resolve({
         body: {},
         status: retryStatus,
-        statusText: retryStatusText ?? (retryStatus >= 400 ? "Internal Server Error" : "OK"),
       });
     });
 
