@@ -85,7 +85,17 @@ const conflictResponse = (conflict: RedirectConflict) => Promise.resolve({ body:
 
 // Models the ServiceControl redirects API closely enough
 export const hasManageableRedirects =
-  ({ redirects = [], knownQueues = [], retryStatus = 200 }: { redirects?: Redirect[]; knownQueues?: string[]; retryStatus?: number } = {}) =>
+  ({
+    redirects = [],
+    knownQueues = [],
+    retryStatus = 200,
+    retryStatusText = "Internal Server Error",
+  }: {
+    redirects?: Redirect[];
+    knownQueues?: string[];
+    retryStatus?: number;
+    retryStatusText?: string;
+  } = {}) =>
   ({ driver }: SetupFactoryOptions): RedirectsTestBed => {
     const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
     const table = [...redirects];
@@ -147,7 +157,7 @@ export const hasManageableRedirects =
 
     driver.mockEndpointDynamic(`${serviceControlInstanceUrl}errors/queues/:queue/retry`, "post", (_url, params) => {
       retriedQueues.push(String(params.queue));
-      return Promise.resolve(retryStatus >= 400 ? { body: {}, status: retryStatus } : { body: {} });
+      return Promise.resolve(retryStatus >= 400 ? { body: {}, status: retryStatus, statusText: retryStatusText } : { body: {} });
     });
 
     return { redirects: table, retriedQueues };
