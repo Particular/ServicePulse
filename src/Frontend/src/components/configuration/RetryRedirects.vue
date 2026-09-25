@@ -66,16 +66,15 @@ async function saveUpdatedRedirect(redirect: RetryRedirect) {
   const result = await redirectsStore.updateRedirect(redirect);
   if (result.message === "success") {
     await getRedirects();
+    redirectSaveSuccessful.value = true;
+    useShowToast(TYPE.INFO, "Info", "Redirect updated successfully");
     if (redirect.immediatelyRetry) {
       const retryResult = await redirectsStore.retryPendingMessagesForQueue(redirect.sourceQueue);
       if (retryResult.message !== "success") {
-        redirectSaveSuccessful.value = false;
         useShowToast(TYPE.ERROR, "Error", `Redirect updated, but failed to retry pending messages: ${retryResult.statusText}`);
         return retryResult;
       }
     }
-    redirectSaveSuccessful.value = true;
-    useShowToast(TYPE.INFO, "Info", "Redirect updated successfully");
   } else {
     redirectSaveSuccessful.value = false;
     if (result.status === 409) {
@@ -93,16 +92,15 @@ async function saveCreatedRedirect(redirect: RetryRedirect) {
   const result = await redirectsStore.createRedirect(redirect);
   if (result.message === "success") {
     await getRedirects();
+    redirectSaveSuccessful.value = true;
+    useShowToast(TYPE.INFO, "Info", "Redirect created successfully");
     if (redirect.immediatelyRetry) {
       const retryResult = await redirectsStore.retryPendingMessagesForQueue(redirect.sourceQueue);
       if (retryResult.message !== "success") {
-        redirectSaveSuccessful.value = false;
         useShowToast(TYPE.ERROR, "Error", `Redirect created, but failed to retry pending messages: ${retryResult.statusText}`);
         return retryResult;
       }
     }
-    redirectSaveSuccessful.value = true;
-    useShowToast(TYPE.INFO, "Info", "Redirect created successfully");
   } else {
     redirectSaveSuccessful.value = false;
     if (result.status === 409 && result.statusText === "Duplicate") {

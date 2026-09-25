@@ -163,8 +163,8 @@ describe("FEATURE: Configuring queue redirects", () => {
         expect(isRedirectListed("Sales.Service", "Billing.Service")).toBe(true);
         expect(bed.retriedQueues).toContain("Sales.Service");
         expect(isNotificationVisible(/failed to retry pending messages/i)).toBe(true);
+        expect(isNotificationVisible(/redirect created successfully/i)).toBe(true);
       });
-      expect(isNotificationVisible(/redirect created successfully/i)).toBe(false);
     });
 
     test("EXAMPLE: Clicking the 'create' button with the 'Immediately retry any matching failed messages' checkbox unchecked should create a redirect and not start a retry operation", async ({ driver }) => {
@@ -407,8 +407,8 @@ describe("FEATURE: Configuring queue redirects", () => {
         expect(isRedirectListed("Sales.Service", "Billing.Service")).toBe(true);
         expect(bed.retriedQueues).toContain("Sales.Service");
         expect(isNotificationVisible(/failed to retry pending messages/i)).toBe(true);
+        expect(isNotificationVisible(/redirect updated successfully/i)).toBe(true);
       });
-      expect(isNotificationVisible(/redirect updated successfully/i)).toBe(false);
     });
 
     test("EXAMPLE: Modifying a redirect and unchecking the 'Immediately retry any matching failed messages' checkbox should update the redirect and not start a retry operation", async ({ driver }) => {
