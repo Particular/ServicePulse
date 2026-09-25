@@ -44,7 +44,7 @@
     "vue": "3.5.35",
     "vue-codemirror6": "1.5.2",
     "vue-router": "5.1.0",
-    "vue-tippy": "6.7.1",
+    "vue-tippy": "6.8.0",
     "vue-toastification": "2.0.0-rc.5",
     "vue3-cookies": "1.0.6",
     "vue3-simple-typeahead": "1.0.11",
