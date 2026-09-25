@@ -89,7 +89,7 @@ export const hasManageableRedirects =
     redirects = [],
     knownQueues = [],
     retryStatus = 200,
-    retryStatusText = "Internal Server Error",
+    retryStatusText,
   }: {
     redirects?: Redirect[];
     knownQueues?: string[];
@@ -157,7 +157,11 @@ export const hasManageableRedirects =
 
     driver.mockEndpointDynamic(`${serviceControlInstanceUrl}errors/queues/:queue/retry`, "post", (_url, params) => {
       retriedQueues.push(String(params.queue));
-      return Promise.resolve(retryStatus >= 400 ? { body: {}, status: retryStatus, statusText: retryStatusText } : { body: {} });
+      return Promise.resolve({
+        body: {},
+        status: retryStatus,
+        statusText: retryStatusText ?? (retryStatus >= 400 ? "Internal Server Error" : "OK"),
+      });
     });
 
     return { redirects: table, retriedQueues };
