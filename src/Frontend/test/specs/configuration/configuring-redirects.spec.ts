@@ -37,7 +37,7 @@ describe("FEATURE: Configuring queue redirects", () => {
       });
     });
 
-    test("EXAMPLE: Exiting redirects should be shown in a list", async ({ driver }) => {
+    test("EXAMPLE: Existing redirects should be shown in a list", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(
         precondition.hasManageableRedirects({
