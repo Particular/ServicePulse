@@ -85,7 +85,7 @@ const conflictResponse = (conflict: RedirectConflict) => Promise.resolve({ body:
 
 // Models the ServiceControl redirects API closely enough
 export const hasManageableRedirects =
-  ({ redirects = [], knownQueues = [] }: { redirects?: Redirect[]; knownQueues?: string[] } = {}) =>
+  ({ redirects = [], knownQueues = [], retryStatus = 200 }: { redirects?: Redirect[]; knownQueues?: string[]; retryStatus?: number } = {}) =>
   ({ driver }: SetupFactoryOptions): RedirectsTestBed => {
     const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
     const table = [...redirects];
@@ -147,7 +147,7 @@ export const hasManageableRedirects =
 
     driver.mockEndpointDynamic(`${serviceControlInstanceUrl}errors/queues/:queue/retry`, "post", (_url, params) => {
       retriedQueues.push(String(params.queue));
-      return Promise.resolve({ body: {} });
+      return Promise.resolve(retryStatus >= 400 ? { body: {}, status: retryStatus } : { body: {} });
     });
 
     return { redirects: table, retriedQueues };

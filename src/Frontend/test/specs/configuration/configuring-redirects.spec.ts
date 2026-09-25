@@ -146,6 +146,27 @@ describe("FEATURE: Configuring queue redirects", () => {
       });
     });
 
+    test("EXAMPLE: Clicking the 'create' button with the 'Immediately retry any matching failed messages' checkbox checked should show an error message when the retry operation fails", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const bed = await driver.setUp(precondition.hasManageableRedirects({ redirects: [], knownQueues: KNOWN_QUEUES, retryStatus: 500 }));
+
+      await driver.goTo(REDIRECTS_PAGE);
+
+      const dialog = await openCreateRedirectDialog();
+      await setSourceQueue(dialog, "Sales.Service");
+      await setTargetQueue(dialog, "Billing.Service");
+      await setImmediateRetry(dialog, true);
+      await submitRedirectDialog(dialog, "create");
+
+      await waitFor(() => {
+        expect(bed.redirects).toHaveLength(1);
+        expect(isRedirectListed("Sales.Service", "Billing.Service")).toBe(true);
+        expect(bed.retriedQueues).toContain("Sales.Service");
+        expect(isNotificationVisible(/failed to retry pending messages/i)).toBe(true);
+      });
+      expect(isNotificationVisible(/redirect created successfully/i)).toBe(false);
+    });
+
     test("EXAMPLE: Clicking the 'create' button with the 'Immediately retry any matching failed messages' checkbox unchecked should create a redirect and not start a retry operation", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       const bed = await driver.setUp(precondition.hasManageableRedirects({ redirects: [], knownQueues: KNOWN_QUEUES }));
