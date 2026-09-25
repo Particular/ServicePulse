@@ -60,6 +60,10 @@ function editRedirect(redirect: Redirect) {
   showEdit.value = true;
 }
 
+function getRetryFailureDescription(retryResult: { status: number; statusText?: string }) {
+  return retryResult.statusText || `HTTP ${retryResult.status}`;
+}
+
 async function saveUpdatedRedirect(redirect: RetryRedirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
@@ -71,7 +75,7 @@ async function saveUpdatedRedirect(redirect: RetryRedirect) {
     if (redirect.immediatelyRetry) {
       const retryResult = await redirectsStore.retryPendingMessagesForQueue(redirect.sourceQueue);
       if (retryResult.message !== "success") {
-        useShowToast(TYPE.ERROR, "Error", `Redirect updated, but failed to retry pending messages: ${retryResult.statusText}`);
+        useShowToast(TYPE.ERROR, "Error", `Redirect updated, but failed to retry pending messages: ${getRetryFailureDescription(retryResult)}`);
         return retryResult;
       }
     }
@@ -97,7 +101,7 @@ async function saveCreatedRedirect(redirect: RetryRedirect) {
     if (redirect.immediatelyRetry) {
       const retryResult = await redirectsStore.retryPendingMessagesForQueue(redirect.sourceQueue);
       if (retryResult.message !== "success") {
-        useShowToast(TYPE.ERROR, "Error", `Redirect created, but failed to retry pending messages: ${retryResult.statusText}`);
+        useShowToast(TYPE.ERROR, "Error", `Redirect created, but failed to retry pending messages: ${getRetryFailureDescription(retryResult)}`);
         return retryResult;
       }
     }
