@@ -3,6 +3,7 @@ const ROW_SELECTOR = ".row.box.repeat-item.failed-message";
 export interface DeletedMessageRow {
   id: string;
   messageType: string;
+  messageTypeFontWeight: string;
   messageTypeIsBold: boolean;
   endpoint: string;
   machine: string;
@@ -26,16 +27,27 @@ function labelledValue(spans: string[], label: string): string {
   return span ? normalise(span.slice(label.length)) : "";
 }
 
+function isBold(element: HTMLElement | null): boolean {
+  if (!element) {
+    return false;
+  }
+  const fontWeight = getComputedStyle(element).fontWeight;
+  const numericWeight = Number.parseInt(fontWeight, 10);
+  return fontWeight === "bold" || fontWeight === "bolder" || (!Number.isNaN(numericWeight) && numericWeight >= 600);
+}
+
 function queryRows(): DeletedMessageRow[] {
   return Array.from(document.querySelectorAll<HTMLElement>(ROW_SELECTOR)).map((element) => {
     const checkbox = element.querySelector<HTMLInputElement>("input.checkbox");
+    const messageTypeElement = element.querySelector<HTMLElement>("p.lead.break");
     const spans = Array.from(element.querySelectorAll<HTMLElement>("p.metadata > span.metadata")).map((span) => normalise(span.textContent ?? ""));
     const retryBadge = Array.from(element.querySelectorAll<HTMLElement>("p.metadata > span")).find((span) => /retry failures/i.test(span.textContent ?? ""));
 
     return {
       id: checkbox?.id.replace(/^checkbox/, "") ?? "",
-      messageType: normalise(element.querySelector("p.lead.break")?.textContent ?? ""),
-      messageTypeIsBold: element.querySelector("p.lead.break") !== null,
+      messageType: normalise(messageTypeElement?.textContent ?? ""),
+      messageTypeFontWeight: messageTypeElement ? getComputedStyle(messageTypeElement).fontWeight : "",
+      messageTypeIsBold: isBold(messageTypeElement),
       endpoint: labelledValue(spans, "Endpoint:"),
       machine: labelledValue(spans, "Machine:"),
       failedSince: labelledValue(spans, "Failed:"),
