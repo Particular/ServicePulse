@@ -2,7 +2,7 @@ import type Configuration from "@/resources/Configuration";
 import type { EditAndRetryConfig } from "@/resources/Configuration";
 import type { SetupFactoryOptions } from "../driver";
 import type RecoverabilityHistoryResponse from "@/resources/RecoverabilityHistoryResponse";
-import type { FailedMessage } from "@/resources/FailedMessage";
+import { type FailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
 import type Message from "@/resources/Message";
 
 const serviceControlConfiguration = (errorRetentionPeriod: string): Configuration => ({
@@ -159,7 +159,23 @@ export const enableEditAndRetry = ({ driver }: SetupFactoryOptions) => {
 };
 
 export const hasFailedMessage =
-  ({ withGroupId, withMessageId, withContentType, withBody }: { withGroupId: string; withMessageId: string; withContentType: string; withBody: Record<string, string | number | boolean> | string | number | boolean | null | undefined }) =>
+  ({
+    withGroupId,
+    withMessageId,
+    withContentType,
+    withBody,
+    withStatus = FailedMessageStatus.Unresolved,
+    withTimeOfFailure = "2024-06-27T06:14:48.912923Z",
+    withLastModified = "2024-06-27T06:14:49.2216249Z",
+  }: {
+    withGroupId: string;
+    withMessageId: string;
+    withContentType: string;
+    withBody: Record<string, string | number | boolean> | string | number | boolean | null | undefined;
+    withStatus?: FailedMessageStatus;
+    withTimeOfFailure?: string;
+    withLastModified?: string;
+  }) =>
   ({ driver }: SetupFactoryOptions) => {
     const serviceControlUrl = window.defaultConfig.service_control_url;
 
@@ -177,26 +193,26 @@ export const hasFailedMessage =
       },
       message_id: withMessageId,
       number_of_processing_attempts: 1,
-      status: "unresolved",
+      status: withStatus,
       sending_endpoint: { name: "Sender", host_id: "abb12931-1352-fd70-02c2-b78f6daab553", host: "mobvm2" },
       receiving_endpoint: { name: "Endpoint1", host_id: "abb12931-1352-fd70-02c2-b78f6daab553", host: "mobvm2" },
       queue_address: "Endpoint1",
-      time_of_failure: "2024-06-27T06:14:48.912923Z",
-      last_modified: "2024-06-27T06:14:49.2216249Z",
+      time_of_failure: withTimeOfFailure,
+      last_modified: withLastModified,
       edited: false,
       edit_of: "",
     };
 
     driver.mockEndpointDynamic(`${serviceControlUrl}errors`, "get", (url) => {
       const status = url.searchParams.get("status");
-      if (status === "unresolved") {
+      if (status === withStatus) {
         return Promise.resolve({
           body: [failedMessage],
           headers: { "Total-Count": "1" },
         });
       }
 
-      //For status=archived or status=retryissued
+      //For any other status
       return Promise.resolve({
         body: [],
         headers: { "Total-Count": "0" },
@@ -275,7 +291,7 @@ export const hasFailedMessage =
       body: failedMessage,
     });
 
-    driver.mockEndpoint(`${serviceControlUrl}recoverability/groups{/:classifier}`, {
+    driver.mockEndpoint(`${serviceControlUrl}recoverability/groups{/:classifier}?`, {
       body: [
         {
           id: withGroupId,
@@ -302,4 +318,21 @@ export const hasFailedMessage =
     });
 
     return failedMessage;
+  };
+
+export const hasFailedMessageNotFound =
+  ({ withId }: { withId: string }) =>
+  ({ driver }: SetupFactoryOptions) => {
+    const serviceControlUrl = window.defaultConfig.service_control_url;
+    driver.mockEndpoint(`${serviceControlUrl}errors/last/${withId}`, {
+      body: {},
+      status: 404,
+    });
+  };
+
+export const hasFailedMessageRetrievalError =
+  ({ withId, networkError = false }: { withId: string; networkError?: boolean }) =>
+  ({ driver }: SetupFactoryOptions) => {
+    const serviceControlUrl = window.defaultConfig.service_control_url;
+    driver.mockEndpoint(`${serviceControlUrl}errors/last/${withId}`, networkError ? { networkError: true } : { body: { error: "Internal server error" }, status: 500 });
   };
