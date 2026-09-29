@@ -67,6 +67,13 @@ async function givenFailedMessagesInAPaymentsGroupAreShown(driver: Driver): Prom
   const bed = await driver.setUp(precondition.hasFailedMessages({ messages: asList(fixture), groups }));
   await driver.goTo(routeLinks.failedMessage.group.link(GROUP_ONE));
   await waitFor(() => expect(getFailedMessageRowCount()).toBe(groups[0].messageIds.length), { timeout: 5000 });
+  await waitFor(
+    () => {
+      expect(groupHeading()).toBe(GROUP_ONE_TITLE);
+      expect(groupMessageCount()).toBe(`${groups[0].messageIds.length} messages in group`);
+    },
+    { timeout: 5000 }
+  );
   return bed;
 }
 
