@@ -16,6 +16,8 @@ export * from "../preconditions/hasHeartbeatEndpoints";
 export { serviceControlWithMonitoring } from "./serviceControlWithMonitoring";
 export * from "./recoverability";
 export * from "./deletedMessages";
+export * from "./deletedMessageGroups";
+export * from "./deletableFailedMessage";
 export * from "./licensing";
 export { hasLicensingReportAvailable } from "../preconditions/hasLicensingReportAvailable";
 export { hasLicensingSettingTest } from "../preconditions/hasLicensingSettingTest";

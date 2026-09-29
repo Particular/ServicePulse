@@ -129,6 +129,26 @@ export const recoverabilityEditConfigDefaultHandler = ({ driver }: SetupFactoryO
   });
 };
 
+export interface EditAndRetryConfigTestBed {
+  wasServed: () => boolean;
+}
+
+export const hasEditAndRetryConfig =
+  (enabled: boolean) =>
+  ({ driver }: SetupFactoryOptions): EditAndRetryConfigTestBed => {
+    const serviceControlUrl = window.defaultConfig.service_control_url;
+    const config = structuredClone(editConfig);
+    config.enabled = enabled;
+    let served = false;
+
+    driver.mockEndpointDynamic(`${serviceControlUrl}edit/config`, "get", () => {
+      served = true;
+      return Promise.resolve({ body: config });
+    });
+
+    return { wasServed: () => served };
+  };
+
 export const enableEditAndRetry = ({ driver }: SetupFactoryOptions) => {
   const serviceControlUrl = window.defaultConfig.service_control_url;
   const config = structuredClone(editConfig);
@@ -280,4 +300,6 @@ export const hasFailedMessage =
     driver.mockEndpoint(`${serviceControlUrl}recoverability/groups/id/${withGroupId}`, {
       body: { id: withGroupId, title: "Endpoint1", type: "Endpoint Name", count: 1, first: "2024-06-27T06:14:48.912923Z", last: "2024-06-27T06:14:48.912923Z" },
     });
+
+    return failedMessage;
   };

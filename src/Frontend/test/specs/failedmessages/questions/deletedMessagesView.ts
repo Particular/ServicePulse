@@ -1,10 +1,7 @@
 import { screen } from "@testing-library/vue";
+import { normalise } from "./domText";
 
 const RESTORE_CONFIRMATION_NAME = /restore the selected messages/i;
-
-function normalise(value: string): string {
-  return value.replace(/\s+/g, " ").trim();
-}
 
 function tabElements(): HTMLElement[] {
   return Array.from(document.querySelectorAll<HTMLElement>(".tabs h5"));
