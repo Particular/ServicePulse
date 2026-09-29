@@ -14,7 +14,8 @@ export interface FailedMessageRow {
   exceptionMessage: string;
   isSelected: boolean;
   isSelectable: boolean;
-  hasRequestRetryButton: boolean;
+  isHovered: boolean;
+  isRequestRetryActionVisible: boolean;
   element: HTMLElement;
 }
 
@@ -24,6 +25,7 @@ function queryRows(): FailedMessageRow[] {
     const messageTypeElement = element.querySelector<HTMLElement>("p.lead.break");
     const spans = Array.from(element.querySelectorAll<HTMLElement>("p.metadata > span.metadata")).map((span) => normalise(span.textContent ?? ""));
     const retryBadge = Array.from(element.querySelectorAll<HTMLElement>("p.metadata > span")).find((span) => /retry failures/i.test(span.textContent ?? ""));
+    const requestRetryAction = element.querySelector<HTMLElement>('button[name="retryMessage"]');
 
     return {
       id: checkbox?.id.replace(/^checkbox/, "") ?? "",
@@ -37,7 +39,8 @@ function queryRows(): FailedMessageRow[] {
       exceptionMessage: normalise(element.querySelector("pre.stacktrace-preview")?.textContent ?? ""),
       isSelected: checkbox?.checked ?? false,
       isSelectable: checkbox !== null && !checkbox.disabled,
-      hasRequestRetryButton: element.querySelector('button[name="retryMessage"]') !== null,
+      isRequestRetryActionVisible: requestRetryAction !== null && getComputedStyle(requestRetryAction).display !== "none",
+      isHovered: element.matches(":hover"),
       element,
     };
   });

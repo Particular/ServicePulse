@@ -1,5 +1,5 @@
 import userEvent from "@testing-library/user-event";
-import { fireEvent } from "@testing-library/vue";
+import { hoverFailedMessage } from "./hoverFailedMessage";
 
 function retryButton(messageId: string): HTMLElement {
   const row = document.querySelector(`.row.box.repeat-item.failed-message #checkbox${messageId}`)?.closest(".failed-message");
@@ -11,6 +11,6 @@ function retryButton(messageId: string): HTMLElement {
 }
 
 export async function requestRetryFor(messageId: string): Promise<void> {
-  const button = retryButton(messageId);
-  await userEvent.click(button);
+  await hoverFailedMessage(messageId);
+  await userEvent.click(retryButton(messageId));
 }

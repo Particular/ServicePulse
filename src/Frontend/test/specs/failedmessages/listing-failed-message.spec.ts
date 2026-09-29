@@ -25,6 +25,7 @@ import {
   selectionButtonText,
 } from "./questions/failedMessagesView";
 import { clearFailedMessageSelection, selectAllFailedMessages, selectFailedMessage } from "./actions/failedMessageSelection";
+import { hoverFailedMessage } from "./actions/hoverFailedMessage";
 import { openTab } from "./actions/openTab";
 import { requestRetryFor } from "./actions/requestRetry";
 import { sortBy, sortByDescending } from "./actions/sortFailedMessages";
@@ -192,9 +193,14 @@ describe("FEATURE: All Failed Messages", () => {
       const { middle } = failedMessagesFixture();
       await givenFailedMessagesAreShown(driver, asList({ middle }));
 
+      expect(getFailedMessageRow(middle.id)?.isRequestRetryActionVisible).toBe(false);
+
+      await hoverFailedMessage(middle.id);
+
       const row = getFailedMessageRow(middle.id);
+      expect(row?.isHovered).toBe(true);
       expect(row?.isSelectable).toBe(true);
-      expect(row?.hasRequestRetryButton).toBe(true);
+      expect(row?.isRequestRetryActionVisible).toBe(true);
     });
   });
 
