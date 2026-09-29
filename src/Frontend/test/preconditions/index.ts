@@ -16,6 +16,7 @@ export * from "../preconditions/hasHeartbeatEndpoints";
 export { serviceControlWithMonitoring } from "./serviceControlWithMonitoring";
 export * from "./recoverability";
 export * from "./deletedMessages";
+export * from "./failedMessages";
 export * from "./deletedMessageGroups";
 export * from "./deletableFailedMessage";
 export * from "./licensing";
