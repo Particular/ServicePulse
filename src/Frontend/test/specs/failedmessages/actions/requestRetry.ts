@@ -12,9 +12,5 @@ function retryButton(messageId: string): HTMLElement {
 
 export async function requestRetryFor(messageId: string): Promise<void> {
   const button = retryButton(messageId);
-  try {
-    await userEvent.click(button);
-  } catch {
-    fireEvent.click(button);
-  }
+  await userEvent.click(button);
 }

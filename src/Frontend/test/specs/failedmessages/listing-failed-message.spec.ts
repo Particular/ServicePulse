@@ -87,7 +87,7 @@ describe("FEATURE: All Failed Messages", () => {
       await waitFor(() => expect(browserTabTitle()).toBe("All Failed Messages • ServicePulse"));
     });
 
-    test("EXAMPLE: Failed messages should be ordered according to the selected sort by field", async ({ driver }) => {
+    test("EXAMPLE: Failed messages should be ordered by failure time by default", async ({ driver }) => {
       const { oldest, middle, newest } = failedMessagesFixture();
       await givenFailedMessagesAreShown(driver, asList({ oldest, middle, newest }));
 
