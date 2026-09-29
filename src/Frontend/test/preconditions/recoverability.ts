@@ -5,40 +5,51 @@ import type RecoverabilityHistoryResponse from "@/resources/RecoverabilityHistor
 import type { FailedMessage } from "@/resources/FailedMessage";
 import type Message from "@/resources/Message";
 
+const serviceControlConfiguration = (errorRetentionPeriod: string): Configuration => ({
+  host: {
+    service_name: "Particular.ServiceControl",
+    raven_db_path: "",
+    logging: {
+      log_path: "",
+      logging_level: "Info",
+      raven_db_log_level: "Info",
+    },
+  },
+  data_retention: {
+    error_retention_period: errorRetentionPeriod,
+  },
+  performance_tunning: {
+    http_default_connection_limit: 100,
+    external_integrations_dispatching_batch_size: 100,
+    expiration_process_batch_size: 100,
+    expiration_process_timer_in_seconds: 300,
+  },
+  transport: {
+    transport_type: "MSMQ",
+    error_log_queue: "error.log",
+    error_queue: "error",
+    forward_error_messages: true,
+  },
+  plugins: {
+    heartbeat_grace_period: "00:00:00",
+  },
+});
+
 export const serviceControlConfigurationDefaultHandler = ({ driver }: SetupFactoryOptions) => {
   const serviceControlUrl = window.defaultConfig.service_control_url;
   driver.mockEndpoint(`${serviceControlUrl}configuration`, {
-    body: <Configuration>{
-      host: {
-        service_name: "Particular.ServiceControl",
-        raven_db_path: "",
-        logging: {
-          log_path: "",
-          logging_level: "Info",
-          raven_db_log_level: "Info",
-        },
-      },
-      data_retention: {
-        error_retention_period: "30.00:00:00",
-      },
-      performance_tunning: {
-        http_default_connection_limit: 100,
-        external_integrations_dispatching_batch_size: 100,
-        expiration_process_batch_size: 100,
-        expiration_process_timer_in_seconds: 300,
-      },
-      transport: {
-        transport_type: "MSMQ",
-        error_log_queue: "error.log",
-        error_queue: "error",
-        forward_error_messages: true,
-      },
-      plugins: {
-        heartbeat_grace_period: "00:00:00",
-      },
-    },
+    body: serviceControlConfiguration("30.00:00:00"),
   });
 };
+
+export const hasErrorRetentionPeriod =
+  (errorRetentionPeriod: string) =>
+  ({ driver }: SetupFactoryOptions) => {
+    const serviceControlUrl = window.defaultConfig.service_control_url;
+    driver.mockEndpoint(`${serviceControlUrl}configuration`, {
+      body: serviceControlConfiguration(errorRetentionPeriod),
+    });
+  };
 
 export const archivedGroupsWithClassifierDefaulthandler = ({ driver }: SetupFactoryOptions) => {
   const serviceControlUrl = window.defaultConfig.service_control_url;
