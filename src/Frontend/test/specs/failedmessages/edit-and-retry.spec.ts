@@ -1,30 +1,50 @@
 import { test, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
+import type { EditAndRetryConfigTestBed } from "../../preconditions/recoverability";
+import type { Driver } from "../../driver";
 import { openEditAndRetryEditor } from "./actions/openEditAndRetryEditor";
 import { getEditAndRetryEditor } from "./questions/getEditAndRetryEditor";
+import { isEditAndRetryButtonVisible, messageTypeTitle } from "./questions/messageDetails";
 import { expect } from "vitest";
+import { waitFor } from "@testing-library/vue";
+
+const GROUP_ID = "81dca64e-76fc-e1c3-11a2-3069f51c58c8";
+const MESSAGE_ID = "40134401-bab9-41aa-9acb-b19c0066f22d";
+const MESSAGE_TYPE = "ServiceControl.SmokeTest.SimpleCommand";
+
+async function givenAFailedMessageIsDisplayed(driver: Driver, allowEditing: boolean): Promise<EditAndRetryConfigTestBed> {
+  await driver.setUp(precondition.serviceControlWithMonitoring);
+  const editConfig = await driver.setUp(precondition.hasEditAndRetryConfig(allowEditing));
+  await driver.setUp(
+    precondition.hasFailedMessage({
+      withGroupId: GROUP_ID,
+      withMessageId: MESSAGE_ID,
+      withContentType: "application/json",
+      withBody: { Index: 0, Data: "" },
+    })
+  );
+
+  await driver.goTo(`messages/${GROUP_ID}`);
+  await waitFor(() => expect(messageTypeTitle()).toBe(MESSAGE_TYPE));
+
+  await waitFor(() => expect(editConfig.wasServed()).toBe(true));
+
+  return editConfig;
+}
 
 describe("FEATURE: Editing failed messages", () => {
   describe("RULE: Editing of a message should only be allowed when ServiceControl 'AllowMessageEditing' is enabled", () => {
-    test.todo(
-      "EXAMPLE: ServiceControl 'AllowMessageEditing' is disabled"
-      /* 
-          Given a failed message is displayed in the Failed Messages list
-          and the ServiceControl 'AllowMessageEditing' is disabled
-          When the user sees the details of the message
-          Then button for editing the message is not shown
-        */
-    );
+    test("EXAMPLE: ServiceControl 'AllowMessageEditing' is disabled", async ({ driver }) => {
+      await givenAFailedMessageIsDisplayed(driver, false);
 
-    test.todo(
-      "EXAMPLE: ServiceControl 'AllowMessageEditing' is enabled"
-      /* 
-            Given a failed message is displayed in the Failed Messages list
-            and the ServiceControl 'AllowMessageEditing' is enabled
-            When the user sees the details of the message
-            Then button for editing the message is shown
-            */
-    );
+      expect(isEditAndRetryButtonVisible()).toBe(false);
+    });
+
+    test("EXAMPLE: ServiceControl 'AllowMessageEditing' is enabled", async ({ driver }) => {
+      await givenAFailedMessageIsDisplayed(driver, true);
+
+      await waitFor(() => expect(isEditAndRetryButtonVisible()).toBe(true));
+    });
   });
 
   describe("RULE: Only messages with with a content-type that is editable text should be allowed to be edited", () => {
