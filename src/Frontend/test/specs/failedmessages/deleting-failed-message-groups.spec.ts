@@ -24,7 +24,7 @@ async function givenDeletedMessageGroupsAreShown(driver: Driver, titles: string[
 
 describe("FEATURE: Deleted Message Groups", () => {
   describe("RULE: Deleted Message Groups view should shows all current deleted messages, grouped by the selected grouping", () => {
-    test("EXAMPLE: A message should be show when there are no deleted messages", async ({ driver }) => {
+    test("EXAMPLE: A message should be shown when there are no deleted messages", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasDeletedMessageGroups({ groups: [] }));
       await driver.goTo(DELETED_MESSAGE_GROUPS);
