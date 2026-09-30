@@ -33,8 +33,6 @@ export enum LicenseStatus {
   ValidWithExpiringTrial = "ValidWithExpiringTrial",
   InvalidDueToExpiredTrial = "InvalidDueToExpiredTrial",
   InvalidDueToExpiredUpgradeProtection = "InvalidDueToExpiredUpgradeProtection",
-  ValidWithExpiredUpgradeProtection = "ValidWithExpiredUpgradeProtection",
-  ValidWithExpiringUpgradeProtection = "ValidWithExpiringUpgradeProtection",
   ValidWithExpiringSubscription = "ValidWithExpiringSubscription",
 }
 export enum LicenseType {

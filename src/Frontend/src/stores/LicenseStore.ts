@@ -32,8 +32,6 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
     isPlatformTrialExpired: false,
     isPlatformTrialExpiring: false,
     isInvalidDueToUpgradeProtectionExpired: false,
-    isValidWithExpiredUpgradeProtection: false,
-    isValidWithExpiringUpgradeProtection: false,
     isExpired: false,
     upgradeDaysLeft: "",
     subscriptionDaysLeft: "",
@@ -94,8 +92,6 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
       licenseStatus.isPlatformTrialExpiring = license.license_status === LicenseStatus.ValidWithExpiringTrial;
       licenseStatus.isPlatformTrialExpired = license.license_status === LicenseStatus.InvalidDueToExpiredTrial;
       licenseStatus.isInvalidDueToUpgradeProtectionExpired = license.license_status === LicenseStatus.InvalidDueToExpiredUpgradeProtection;
-      licenseStatus.isValidWithExpiredUpgradeProtection = license.license_status === LicenseStatus.ValidWithExpiredUpgradeProtection;
-      licenseStatus.isValidWithExpiringUpgradeProtection = license.license_status === LicenseStatus.ValidWithExpiringUpgradeProtection;
       licenseStatus.upgradeDaysLeft = getUpgradeDaysLeft();
       licenseStatus.subscriptionDaysLeft = getSubscriptionDaysLeft();
       licenseStatus.trialDaysLeft = getTrialDaysLeft();
@@ -123,9 +119,7 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
       case LicenseStatus.InvalidDueToExpiredSubscription:
       case LicenseStatus.InvalidDueToExpiredUpgradeProtection:
         return LicenseWarningLevel.Danger;
-      case LicenseStatus.ValidWithExpiringUpgradeProtection:
       case LicenseStatus.ValidWithExpiringTrial:
-      case LicenseStatus.ValidWithExpiredUpgradeProtection:
       case LicenseStatus.ValidWithExpiringSubscription:
         return LicenseWarningLevel.Warning;
       default:

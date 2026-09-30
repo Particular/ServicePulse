@@ -36,18 +36,6 @@ describe("LicenseNotifications", () => {
       body: "Your Early Access license will expire soon. To continue using the Particular Service Platform you'll need to extend your license.",
     },
     {
-      status: LicenseStatus.ValidWithExpiredUpgradeProtection,
-      isMassTransitConnector: false,
-      heading: "Upgrade protection expired",
-      body: "Once upgrade protection expires, you'll no longer have access to support or new product versions",
-    },
-    {
-      status: LicenseStatus.ValidWithExpiringUpgradeProtection,
-      isMassTransitConnector: false,
-      heading: "Upgrade protection expires soon",
-      body: "Once upgrade protection expires, you'll no longer have access to support or new product versions",
-    },
-    {
       status: LicenseStatus.ValidWithExpiringSubscription,
       isMassTransitConnector: false,
       heading: "Platform license expires soon",

@@ -13,14 +13,10 @@ const props = defineProps<{
 
 const heading = computed(() => {
   switch (props.licenseStatus) {
-    case LicenseStatus.ValidWithExpiredUpgradeProtection:
-      return "Upgrade protection expired";
     case LicenseStatus.ValidWithExpiringTrial:
       return props.isMassTransitConnector ? "Early Access license expiring" : "Non-production development license expiring";
     case LicenseStatus.ValidWithExpiringSubscription:
       return "Platform license expires soon";
-    case LicenseStatus.ValidWithExpiringUpgradeProtection:
-      return "Upgrade protection expires soon";
     default:
       return "";
   }

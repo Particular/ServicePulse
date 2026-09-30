@@ -21,10 +21,8 @@ function displayWarningMessage(licenseStatus: LicenseStatus) {
   const configurationRootLink = router.resolve(routeLinks.configuration.root).href;
   let type: TYPE.WARNING | TYPE.ERROR;
   switch (licenseStatus) {
-    case LicenseStatus.ValidWithExpiredUpgradeProtection:
     case LicenseStatus.ValidWithExpiringTrial:
     case LicenseStatus.ValidWithExpiringSubscription:
-    case LicenseStatus.ValidWithExpiringUpgradeProtection:
       type = TYPE.WARNING;
       break;
     case LicenseStatus.InvalidDueToExpiredTrial:
