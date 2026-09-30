@@ -27,7 +27,7 @@ function displayWarningMessage(licenseStatus: LicenseStatus) {
       break;
     case LicenseStatus.InvalidDueToExpiredTrial:
     case LicenseStatus.InvalidDueToExpiredSubscription:
-    case LicenseStatus.InvalidDueToExpiredUpgradeProtection:
+    case LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported:
       type = TYPE.ERROR;
       break;
     default:

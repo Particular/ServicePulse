@@ -48,7 +48,7 @@ const getLicenseMockedResponse =
         licenseExtensionUrl = extensionUrl ? extensionUrl : "https://particular.net/extend-your-trial?p=servicepulse";
         break;
       case LicenseType.UpgradeProtection:
-        status = LicenseStatus.InvalidDueToExpiredUpgradeProtection;
+        status = LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported;
         upgradeProtectionExpiration = customISOString;
         licenseExtensionUrl = extensionUrl ? extensionUrl : "https://particular.net/extend-your-trial?p=servicepulse";
         break;

@@ -66,7 +66,7 @@ describe("LicenseNotifications", () => {
     }
   });
 
-  test.each([LicenseStatus.InvalidDueToExpiredTrial, LicenseStatus.InvalidDueToExpiredSubscription, LicenseStatus.InvalidDueToExpiredUpgradeProtection])("renders a persistent error for %s", async (status) => {
+  test.each([LicenseStatus.InvalidDueToExpiredTrial, LicenseStatus.InvalidDueToExpiredSubscription, LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported])("renders a persistent error for %s", async (status) => {
     const { licenseStore } = renderNotifications();
     licenseStore.license.license_status = status;
     await nextTick();
