@@ -239,10 +239,11 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   }
 
   async function retryAll() {
+    updateDateRangeForPeriod();
     let url = "pendingretries/retry";
     const data: { from: string; to: string; queueaddress?: string } = {
-      from: new Date(0).toISOString(),
-      to: new Date(0).toISOString(),
+      from: startDate.value.toISOString(),
+      to: endDate.value.toISOString(),
     };
     if (selectedQueue.value !== "empty") {
       url = "pendingretries/queues/retry";
@@ -273,7 +274,7 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
     deletedPeriodOptions,
     retryPeriodOptions,
     selectedPeriod,
-    selectedQueue: shallowReadonly(selectedQueue),
+    selectedQueue,
     endpoints: shallowReadonly(endpoints),
     setSort,
     setPeriod,
