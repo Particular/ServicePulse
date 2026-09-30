@@ -1,12 +1,12 @@
 import { expect } from "vitest";
 import { waitFor } from "@testing-library/vue";
+import { flushPromises } from "@vue/test-utils";
 import { test, describe } from "../../drivers/vitest/driver";
 import type { Driver } from "../../driver";
 import * as precondition from "../../preconditions";
 import type { FailedMessageGroupOptions, FailedMessageGroupsTestBed } from "../../preconditions/failedMessageGroups";
 import routeLinks from "@/router/routeLinks";
 import type HistoricRetryOperation from "@/resources/HistoricRetryOperation";
-import { RetryType } from "@/resources/RetryType";
 import { getCompletedRetryRequestRows, isCompletedRetryRequestsListExpanded, isNoCompletedRetryRequestsMessageVisible, visibleCompletedRetryRequestsSummary } from "./questions/completedRetryRequests";
 import { toggleCompletedRetryRequests } from "./actions/toggleCompletedRetryRequests";
 import { tabBadge } from "./questions/failedMessagesTabs";
@@ -38,10 +38,13 @@ async function givenFailedMessageGroupsAreShown(driver: Driver, groups: { title:
 async function givenCompletedRetryRequests(driver: Driver, operations: HistoricRetryOperation[]): Promise<void> {
   await driver.setUp(precondition.serviceControlWithMonitoring);
   await driver.setUp(precondition.hasFailedMessageGroups({ groups: [precondition.createFailedMessageGroup("group-1", { title: "Payments failures" })] }));
-  await driver.setUp(precondition.hasCompletedRetryRequests({ operations }));
+  const bed = await driver.setUp(precondition.hasCompletedRetryRequests({ operations }));
 
   await driver.goTo(FAILED_MESSAGE_GROUPS);
   await waitFor(() => expect(getFailedMessageGroupRowCount()).toBe(1), { timeout: 5000 });
+  // The list starts empty, so an empty list alone doesn't prove the history response was rendered
+  await waitFor(() => expect(bed.historyRequestCount).toBeGreaterThan(0));
+  await flushPromises();
   await waitFor(() => expect(getCompletedRetryRequestRows()).toHaveLength(operations.length));
 }
 
@@ -105,12 +108,15 @@ describe("FEATURE: Failed Message Groups", () => {
     test("EXAMPLE: Hovering the cursor over a group should indicate that it is active and selectable", async ({ driver }) => {
       await givenFailedMessageGroupsAreShown(driver, [{ title: "Payments failures", options: { count: 3 } }]);
 
-      expect(getFailedMessageGroupRow("Payments failures")?.isHovered).toBe(false);
+      const before = getFailedMessageGroupRow("Payments failures");
+      expect(before?.isHovered).toBe(false);
+      expect(before?.hasHoverCue).toBe(false);
 
       await hoverFailedMessageGroup("Payments failures");
 
       const row = getFailedMessageGroupRow("Payments failures");
       expect(row?.isHovered).toBe(true);
+      expect(row?.hasHoverCue).toBe(true);
       expect(row?.isSelectable).toBe(true);
     });
   });

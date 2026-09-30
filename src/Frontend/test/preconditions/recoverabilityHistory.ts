@@ -25,14 +25,25 @@ export const createHistoricRetryOperation = (
   number_of_messages_processed: messagesSent,
 });
 
+export interface CompletedRetryRequestsTestBed {
+  historyRequestCount: number;
+}
+
 export const hasCompletedRetryRequests =
   ({ operations = [] }: { operations?: HistoricRetryOperation[] } = {}) =>
-  ({ driver }: SetupFactoryOptions) => {
+  ({ driver }: SetupFactoryOptions): CompletedRetryRequestsTestBed => {
     const serviceControlUrl = window.defaultConfig.service_control_url;
-    driver.mockEndpoint(`${serviceControlUrl}recoverability/history`, {
-      body: <RecoverabilityHistoryResponse>{
-        historic_operations: operations,
-        unacknowledged_operations: [],
-      },
+    const bed: CompletedRetryRequestsTestBed = { historyRequestCount: 0 };
+
+    driver.mockEndpointDynamic(`${serviceControlUrl}recoverability/history`, "get", () => {
+      bed.historyRequestCount++;
+      return Promise.resolve({
+        body: <RecoverabilityHistoryResponse>{
+          historic_operations: operations,
+          unacknowledged_operations: [],
+        },
+      });
     });
+
+    return bed;
   };

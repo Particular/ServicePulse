@@ -13,6 +13,8 @@ export interface FailedMessageGroupRow {
   note: string | null;
   actions: string[];
   isHovered: boolean;
+  /** The title highlight the component toggles on mouseenter/mouseleave. */
+  hasHoverCue: boolean;
   isSelectable: boolean;
   element: HTMLElement;
 }
@@ -40,6 +42,8 @@ function queryRows(): FailedMessageGroupRow[] {
       note: noteValue(element),
       actions: Array.from(element.querySelectorAll<HTMLButtonElement>("button")).map((button) => normalise(button.textContent ?? "")),
       isHovered: element.matches(":hover"),
+      // The row's own :hover styling lives in main.css, which jsdom doesn't apply, so check the class the component adds instead
+      hasHoverCue: titleElement?.classList.contains("msg-type-hover") ?? false,
       // The row is a div, so Vue renders :disabled as the string "true"/"false" rather than toggling the attribute
       isSelectable: element.getAttribute("disabled") !== "true",
       element,
