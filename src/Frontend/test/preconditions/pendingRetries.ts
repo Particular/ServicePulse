@@ -47,9 +47,16 @@ export interface RetryAllRequest {
   queueaddress?: string;
 }
 
+export interface ResolveAllRequest {
+  from: string;
+  to: string;
+  queueaddress?: string;
+}
+
 export interface PendingRetriesTestBed {
   pendingRetryMessages: FailedMessage[];
   retryAllRequests: RetryAllRequest[];
+  resolveAllRequests: ResolveAllRequest[];
 }
 
 export const hasPendingRetryMessages =
@@ -58,6 +65,7 @@ export const hasPendingRetryMessages =
     const serviceControlUrl = window.defaultConfig.service_control_url;
     const table = [...messages];
     const retryAllRequests: RetryAllRequest[] = [];
+    const resolveAllRequests: ResolveAllRequest[] = [];
 
     const withinModifiedWindow = (url: URL) => {
       const range = url.searchParams.get("modified");
@@ -110,5 +118,18 @@ export const hasPendingRetryMessages =
       return { body: {} };
     });
 
-    return { pendingRetryMessages: table, retryAllRequests };
+    driver.mockEndpointDynamic(`${serviceControlUrl}pendingretries/queues/resolve`, "patch", async (_url, _params, request) => {
+      resolveAllRequests.push((await request.json()) as ResolveAllRequest);
+      return { body: {} };
+    });
+
+    driver.mockEndpointDynamic(`${serviceControlUrl}pendingretries/resolve`, "patch", async (_url, _params, request) => {
+      const body = (await request.json()) as Record<string, unknown>;
+      if (!("uniquemessageids" in body)) {
+        resolveAllRequests.push(body as unknown as ResolveAllRequest);
+      }
+      return { body: {} };
+    });
+
+    return { pendingRetryMessages: table, retryAllRequests, resolveAllRequests };
   };

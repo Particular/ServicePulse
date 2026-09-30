@@ -32,7 +32,7 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
   const endDate = ref(new Date());
   const dateRange = computed(() => `${startDate.value.toISOString()}...${endDate.value.toISOString()}`);
   const selectedPeriod = ref<DeletedPeriodOption | RetryPeriodOption>("Deleted in the last 7 days");
-  const selectedQueue = ref("empty");
+  const selectedQueue = ref<string | null>(null);
   const endpoints = ref<string[]>([]);
 
   const configurationStore = useConfigurationStore();
@@ -80,7 +80,7 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
       case FailedMessageStatus.Archived:
         return `&modified=${dateRange.value}`;
       case FailedMessageStatus.RetryIssued: {
-        const searchPhrase = selectedQueue.value === "empty" ? "" : selectedQueue.value;
+        const searchPhrase = selectedQueue.value ?? "";
         return `&queueaddress=${searchPhrase}&modified=${dateRange.value}`;
       }
       default:
@@ -240,25 +240,38 @@ export const useRecoverabilityStore = defineStore("RecoverabilityStore", () => {
 
   async function retryAll() {
     updateDateRangeForPeriod();
+    const queue = selectedQueue.value;
     let url = "pendingretries/retry";
     const data: { from: string; to: string; queueaddress?: string } = {
       from: startDate.value.toISOString(),
       to: endDate.value.toISOString(),
     };
-    if (selectedQueue.value !== "empty") {
+    if (queue !== null) {
       url = "pendingretries/queues/retry";
-      data.queueaddress = selectedQueue.value;
+      data.queueaddress = queue;
     }
 
     await serviceControlClient.postToServiceControl(url, data);
   }
 
   async function resolveAll() {
-    await serviceControlClient.patchToServiceControl("pendingretries/resolve", { from: new Date(0).toISOString(), to: new Date().toISOString() });
+    updateDateRangeForPeriod();
+    const queue = selectedQueue.value;
+    let url = "pendingretries/resolve";
+    const data: { from: string; to: string; queueaddress?: string } = {
+      from: startDate.value.toISOString(),
+      to: endDate.value.toISOString(),
+    };
+    if (queue !== null) {
+      url = "pendingretries/queues/resolve";
+      data.queueaddress = queue;
+    }
+
+    await serviceControlClient.patchToServiceControl(url, data);
   }
 
   async function clearSelectedQueue() {
-    selectedQueue.value = "empty";
+    selectedQueue.value = null;
     await refresh();
   }
 
