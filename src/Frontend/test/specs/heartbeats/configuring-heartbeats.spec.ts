@@ -2,7 +2,7 @@ import { test, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
 import { expect, vi } from "vitest";
 import { getNothingToConfigureStatus } from "./questions/getNothingToConfigureStatus";
-import { navigateToHeartbeatsConfiguration, navigateToUnHealthyHeartbeats } from "./actions/navigateToHeartbeatsTabs";
+import { navigateToHeartbeatsConfiguration, navigateToHealthyHeartbeats, navigateToUnHealthyHeartbeats } from "./actions/navigateToHeartbeatsTabs";
 import { getEndpointsForConfiguration } from "./questions/getEndpointsForConfiguration";
 import { getEndpointInstance } from "./questions/getEndpointInstance";
 import { toggleHeartbeatMonitoring } from "./actions/toggleHeartbeatMonitoring";
@@ -10,7 +10,12 @@ import { getAllHeartbeatEndpointRecords, getHeartbeatEndpointRecord } from "./qu
 import { healthyEndpointTemplate } from "../../mocks/heartbeat-endpoint-template";
 import { setHeartbeatFilter } from "./actions/setHeartbeatFilter";
 import { getHeartbeatFilterValue } from "./questions/getHeartbeatFilterValue";
+import { getListedEndpointNames } from "./questions/getListedEndpointNames";
+import { getColumnSortDirection } from "./questions/getColumnSortDirection";
+import { sortEndpointsBy } from "./actions/sortEndpointsBy";
+import { waitFor } from "@testing-library/vue";
 import { flushPromises } from "@vue/test-utils";
+import { EndpointStatus } from "@/resources/Heartbeat";
 
 vi.mock("@vueuse/core", async (importOriginal) => {
   const originalModule = await importOriginal<typeof import("@vueuse/core")>();
@@ -20,6 +25,20 @@ vi.mock("@vueuse/core", async (importOriginal) => {
     useDebounceFn: (fn: Function) => fn,
   };
 });
+
+const endpointsStagedByHeartbeatAge = () => [endpointWithHeartbeatAge("Foo1", 2), endpointWithHeartbeatAge("Foo2", 3), endpointWithHeartbeatAge("Foo3", 1)];
+
+function endpointWithHeartbeatAge(name: string, hoursSinceHeartbeat: number) {
+  return {
+    ...healthyEndpointTemplate,
+    id: name,
+    name,
+    heartbeat_information: {
+      reported_status: EndpointStatus.Alive,
+      last_report_at: new Date(Date.now() - hoursSinceHeartbeat * 60 * 60 * 1000).toISOString(),
+    },
+  };
+}
 
 describe("FEATURE: Heartbeats configuration", () => {
   describe("RULE: A list of all endpoints with the heartbeats plug-in installed should be displayed", () => {
@@ -133,47 +152,78 @@ describe("FEATURE: Heartbeats configuration", () => {
   });
 
   describe("RULE: Sorting by of the name of an endpoint should be possible in all displays", () => {
-    test.todo("EXAMPLE: List of endpoints should be sorted by name in ascending order");
+    test("EXAMPLE: List of endpoints should be sorted by name in ascending order", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasHeartbeatsEndpoints(endpointsStagedByHeartbeatAge()));
+      await driver.goTo("heartbeats/unhealthy");
 
-    /* SCENARIO
-      Given 3 endpoint instance
-        Name |
-        Foo1
-        Foo2
-        Foo3
-      When the sort by is set to Name
-      Then the instances should be listed in order
-    */
+      await navigateToHeartbeatsConfiguration();
 
-    /* NOTES
-      Name (asc/desc)
-      Latest heartbeat (asc/dec)
-    */
+      await waitFor(() => expect(getListedEndpointNames()).toEqual(["Foo1", "Foo2", "Foo3"]));
+      expect(getColumnSortDirection("name")).toBe("ascending");
+    });
 
-    test.todo("EXAMPLE: List of endpoints should be sorted by name in descending order");
-    /* SCENARIO
-      Given 3 endpoint instance
-        Name |
-        Foo1
-        Foo2
-        Foo3
-      When the sort by is set to Name (descending)
-      Then the instances should be listed in reverse order
-    */
+    test("EXAMPLE: List of endpoints should be sorted by name in descending order", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasHeartbeatsEndpoints(endpointsStagedByHeartbeatAge()));
+      await driver.goTo("heartbeats/unhealthy");
 
-    test.todo("EXAMPLE: List of endpoints should be sorted by latest heartbeat in ascending order");
-    test.todo("EXAMPLE: List of endpoints should be sorted by latest heartbeat in descending order");
-    /* SCENARIO
-      Same again for Latest heartbeat
-    */
+      await navigateToHeartbeatsConfiguration();
+      await waitFor(() => expect(getListedEndpointNames()).toEqual(["Foo1", "Foo2", "Foo3"]));
 
-    test.todo("EXAMPLE: Sort by should be persisted on page refresh and across tabs");
-    /* SCENARIO
-      Given the Sort By field has been changed
-      When the page is refreshed
-      Then the Sort By field retains its value
-      And the Sort By field has the same value on all other Endpoint Heartbeats tabs
-    */
+      await sortEndpointsBy("name");
+
+      await waitFor(() => expect(getListedEndpointNames()).toEqual(["Foo3", "Foo2", "Foo1"]));
+      expect(getColumnSortDirection("name")).toBe("descending");
+    });
+
+    test("EXAMPLE: List of endpoints should be sorted by latest heartbeat in descending order", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasHeartbeatsEndpoints(endpointsStagedByHeartbeatAge()));
+      await driver.goTo("heartbeats/unhealthy");
+
+      await navigateToHeartbeatsConfiguration();
+      await waitFor(() => expect(getListedEndpointNames()).toEqual(["Foo1", "Foo2", "Foo3"]));
+
+      await sortEndpointsBy("latestHeartbeat");
+
+      await waitFor(() => expect(getListedEndpointNames()).toEqual(["Foo3", "Foo1", "Foo2"]));
+      expect(getColumnSortDirection("latestHeartbeat")).toBe("descending");
+    });
+
+    test("EXAMPLE: List of endpoints should be sorted by latest heartbeat in ascending order", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasHeartbeatsEndpoints(endpointsStagedByHeartbeatAge()));
+      await driver.goTo("heartbeats/unhealthy");
+
+      await navigateToHeartbeatsConfiguration();
+      await waitFor(() => expect(getListedEndpointNames()).toEqual(["Foo1", "Foo2", "Foo3"]));
+
+      await sortEndpointsBy("latestHeartbeat"); // newest first
+      await sortEndpointsBy("latestHeartbeat"); // oldest first
+
+      await waitFor(() => expect(getListedEndpointNames()).toEqual(["Foo2", "Foo1", "Foo3"]));
+      expect(getColumnSortDirection("latestHeartbeat")).toBe("ascending");
+    });
+
+    test("EXAMPLE: Sort by is shared across the Endpoint Heartbeats tabs", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasHeartbeatsEndpoints(endpointsStagedByHeartbeatAge()));
+      await driver.goTo("heartbeats/unhealthy");
+
+      await navigateToHeartbeatsConfiguration();
+      await waitFor(() => expect(getListedEndpointNames()).toEqual(["Foo1", "Foo2", "Foo3"]));
+
+      await sortEndpointsBy("latestHeartbeat");
+      await waitFor(() => expect(getListedEndpointNames()).toEqual(["Foo3", "Foo1", "Foo2"]));
+
+      await navigateToHealthyHeartbeats();
+
+      await waitFor(() => expect(getListedEndpointNames()).toEqual(["Foo3", "Foo1", "Foo2"]));
+      expect(getColumnSortDirection("latestHeartbeat")).toBe("descending");
+    });
+
+    test.todo("EXAMPLE: Sort by should be persisted on page refresh");
   });
 
   describe("RULE: Filtering endpoints by name should be possible", () => {
@@ -265,6 +315,11 @@ describe("FEATURE: Heartbeats configuration", () => {
     /* SCENARIO
       When the configuration screen is loaded
       Then a warning should be displayed about this being disconnected to performance monitoring
+
+    NOTES
+      The configuration screen shows no such warning. The only advisory on the
+      heartbeats pages is the MassTransit compatibility notice, which is unrelated
+      to performance monitoring, so there is nothing to assert against yet.
     */
   });
 });
