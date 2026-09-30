@@ -565,7 +565,7 @@ defineExpose<IMessageGroupList>({
                             <span class="metadata">
                               <FAIcon :icon="faEnvelope" class="icon" />
                               Messages left to delete:
-                              {{ group.operation_remaining_count || 0 }}
+                              {{ Math.max(group.operation_remaining_count || 0, 0) }}
                             </span>
                             <span class="metadata">
                               <FAIcon :icon="faEnvelope" class="icon" />
