@@ -16,7 +16,7 @@ vi.mock("@vueuse/core", async (importOriginal) => {
   const originalModule = await importOriginal<typeof import("@vueuse/core")>();
   return {
     ...originalModule,
-    useDebounceFn: (fn: Function) => fn,
+    useDebounceFn: <Args extends unknown[], Result>(fn: (...args: Args) => Result) => fn,
   };
 });
 
