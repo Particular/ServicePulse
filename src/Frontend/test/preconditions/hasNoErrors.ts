@@ -1,6 +1,6 @@
 import type { SetupFactoryOptions } from "../driver";
 
-const content = JSON.stringify([]);
+const content: never[] = [];
 
 export const errorsDefaultHandler = ({ driver }: SetupFactoryOptions) => {
   const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
