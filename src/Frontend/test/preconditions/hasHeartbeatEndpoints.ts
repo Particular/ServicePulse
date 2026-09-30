@@ -182,3 +182,8 @@ export const HasHealthyAndUnHealthyNamedEndpoints = (numberOfHealthyEndpoints: n
 };
 
 export const HasHealthyAndUnHealthyEndpoints = (numberOfHealthyEndpoints: number, numberOfUnhealthyEndpoints: number) => HasHealthyAndUnHealthyNamedEndpoints(numberOfHealthyEndpoints, numberOfUnhealthyEndpoints, "TestEndpoint");
+
+export const heartbeatEndpointNames = (endpointNamePrefix: string, count: number) => Array.from({ length: count }, (_unused, index) => `${endpointNamePrefix}_${index}`);
+
+export const endpointsWithHeartbeatStatus = (sendingNames: string[], stoppedNames: string[] = []) =>
+  hasHeartbeatsEndpoints([...sendingNames.map((name) => ({ ...healthyEndpointTemplate, id: name, name })), ...stoppedNames.map((name) => ({ ...unHealthyEndpointTemplate, id: name, name }))]);
