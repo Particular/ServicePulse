@@ -29,7 +29,10 @@ const heading = computed(() => {
       <p>
         <strong>{{ props.type === TYPE.ERROR ? "Error" : "" }}</strong>
       </p>
-      <span v-if="props.type === TYPE.ERROR">Your license has expired. Please contact Particular Software support at: <a href="https://particular.net/support">https://particular.net/support</a></span>
+      <span v-if="props.type === TYPE.ERROR">
+        {{ props.licenseStatus === LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported ? "Your upgrade protection license is no longer supported." : "Your license has expired." }}
+        Please contact Particular Software support at: <a href="https://particular.net/support">https://particular.net/support</a>
+      </span>
       <div v-else>
         <strong>{{ heading }}</strong>
         <div v-if="props.licenseStatus === LicenseStatus.ValidWithExpiringTrial">

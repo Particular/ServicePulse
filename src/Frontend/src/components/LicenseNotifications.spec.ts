@@ -66,7 +66,11 @@ describe("LicenseNotifications", () => {
     }
   });
 
-  test.each([LicenseStatus.InvalidDueToExpiredTrial, LicenseStatus.InvalidDueToExpiredSubscription, LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported])("renders a persistent error for %s", async (status) => {
+  test.each([
+    { status: LicenseStatus.InvalidDueToExpiredTrial, message: "Your license has expired. Please contact Particular Software support at:" },
+    { status: LicenseStatus.InvalidDueToExpiredSubscription, message: "Your license has expired. Please contact Particular Software support at:" },
+    { status: LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported, message: "Your upgrade protection license is no longer supported. Please contact Particular Software support at:" },
+  ])("renders a persistent error for $status", async ({ status, message }) => {
     const { licenseStore } = renderNotifications();
     licenseStore.license.license_status = status;
     await nextTick();
@@ -74,7 +78,7 @@ describe("LicenseNotifications", () => {
     const { container } = renderNotification(TYPE.ERROR, status);
 
     expect(screen.getByText("Error")).toBeInTheDocument();
-    expect(screen.getByText("Your license has expired. Please contact Particular Software support at:")).toBeInTheDocument();
+    expect(screen.getByText(message)).toBeInTheDocument();
     expect(container.querySelector(".toast-message.toast-error")).toBeInTheDocument();
     const support = screen.getByRole("link", { name: "https://particular.net/support" });
     expect(support).toHaveAttribute("href", "https://particular.net/support");
