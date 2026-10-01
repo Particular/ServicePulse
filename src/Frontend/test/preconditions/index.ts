@@ -17,6 +17,7 @@ export { serviceControlWithMonitoring } from "./serviceControlWithMonitoring";
 export * from "./recoverability";
 export * from "./deletedMessages";
 export * from "./failedMessages";
+export * from "./pendingRetries";
 export * from "./deletedMessageGroups";
 export * from "./failedMessageGroups";
 export * from "./recoverabilityHistory";
