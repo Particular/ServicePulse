@@ -21,8 +21,9 @@ export const hasActiveLicense = ({ driver }: SetupFactoryOptions) => {
   });
   return licenseResponseTemplate;
 };
-export const hasExpiredLicense = (licenseType: LicenseType, expiredDays: number = 10, extensionUrl: string = "") => getLicenseMockedResponse(licenseType, expiredDays, extensionUrl, true);
-export const hasExpiringLicense = (licenseType: LicenseType, expiringInDays: number = 10, extensionUrl: string = "") => getLicenseMockedResponse(licenseType, expiringInDays, extensionUrl, false);
+export const hasExpiredLicense = (licenseType: LicenseType.Subscription | LicenseType.Trial, expiredDays: number = 10, extensionUrl: string = "") => getLicenseMockedResponse(licenseType, expiredDays, extensionUrl, true);
+export const hasExpiringLicense = (licenseType: LicenseType.Subscription | LicenseType.Trial, expiringInDays: number = 10, extensionUrl: string = "") => getLicenseMockedResponse(licenseType, expiringInDays, extensionUrl, false);
+export const hasUnsupportedUpgradeProtectionLicense = (protectionDateOffset: number = 10) => getLicenseMockedResponse(LicenseType.UpgradeProtection, protectionDateOffset, "", false);
 
 const getLicenseMockedResponse =
   (licenseType: LicenseType, expiringInDays: number, extensionUrl: string, isExpired: boolean) =>

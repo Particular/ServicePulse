@@ -27,10 +27,10 @@ const { licenseStatus, license } = licenseStore;
       </div>
     </div>
   </template>
-  <template v-if="licenseStatus.isInvalidDueToUpgradeProtectionExpired">
+  <template v-if="licenseStatus.isUpgradeProtectionUnsupported">
     <div class="text-center monitoring-no-data">
-      <h1>Platform license expired</h1>
-      <p>Your upgrade protection period has elapsed and your license is not valid for this version of ServicePulse.</p>
+      <h1>Platform license no longer supported</h1>
+      <p>Your upgrade protection license is no longer supported. Please update your license to continue using the Particular Service Platform.</p>
       <div class="action-toolbar">
         <RouterLink class="btn btn-default btn-primary" :to="routeLinks.configuration.license.link">View license details</RouterLink>
       </div>

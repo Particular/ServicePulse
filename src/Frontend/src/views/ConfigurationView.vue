@@ -95,7 +95,7 @@ function preventIfDisabled(e: Event, disabled: boolean) {
             <RouterLink :to="routeLinks.throughput.setup.root">Usage Setup</RouterLink>
             <exclamation-mark :type="WarningLevel.Danger" v-if="hasErrors" />
           </h5>
-          <template v-if="!licenseStatus.isExpired">
+          <template v-if="!licenseStatus.isInvalid">
             <h5
               :class="{
                 active: isRouteSelected(routeLinks.configuration.massTransitConnector.link),
