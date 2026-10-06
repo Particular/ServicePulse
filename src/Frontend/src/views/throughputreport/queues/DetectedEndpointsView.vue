@@ -32,7 +32,6 @@ const { isBrokerTransport, hasErrors } = storeToRefs(store);
       UserIndicator.TransactionalSessionProcessorEndpoint,
       UserIndicator.GatewayOrBridgingEndpoint,
       UserIndicator.ParticularPlatformEndpoint,
-      UserIndicator.PlannedToDecommission,
       UserIndicator.NServiceBusEndpointNoLongerInUse,
     ]"
     :source="DataSource.WellKnownEndpoint"
