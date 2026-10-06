@@ -30,7 +30,6 @@ const { testResults } = storeToRefs(store);
       UserIndicator.TransactionalSessionProcessorEndpoint,
       UserIndicator.GatewayOrBridgingEndpoint,
       UserIndicator.ParticularPlatformEndpoint,
-      UserIndicator.PlannedToDecommission,
       UserIndicator.NServiceBusEndpointNoLongerInUse,
       UserIndicator.NotNServiceBusEndpoint,
     ]"
