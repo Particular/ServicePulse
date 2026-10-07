@@ -72,10 +72,40 @@ afterEach(() => {
   router = undefined;
   container = undefined;
   vi.clearAllMocks();
+  getUser.mockResolvedValue(null);
   window.history.replaceState(null, "", "/");
 });
 
 describe("useAuth preserves message deep links through OIDC login", () => {
+  test("keeps the dashboard for a callback without a saved destination", async () => {
+    signinCallback.mockResolvedValue({ access_token: "test-token" });
+    const callback = await loadAuthPage("/?code=authorization-code&state=oidc-state");
+    expect(await callback.auth.authenticate(config)).toBe(true);
+    expect(callback.router.currentRoute.value.path).toBe("/dashboard");
+    expect(window.location.hash).toBe("#/dashboard");
+    expect(window.location.search).toBe("");
+  });
+
+  test("keeps a callback hash route when application state is absent", async () => {
+    signinCallback.mockResolvedValue({ access_token: "test-token" });
+    const callback = await loadAuthPage("/?code=authorization-code&state=oidc-state#/messages/message-1/processing-1?back=/messages");
+    expect(await callback.auth.authenticate(config)).toBe(true);
+    expect(callback.router.currentRoute.value.path).toBe("/messages/message-1/processing-1");
+    expect(callback.router.currentRoute.value.query).toEqual({ back: "/messages" });
+    expect(window.location.hash).toBe("#/messages/message-1/processing-1?back=/messages");
+    expect(window.location.search).toBe("");
+  });
+
+  test("keeps a deep link without redirecting when a valid session exists", async () => {
+    getUser.mockResolvedValue({ access_token: "test-token", expired: false });
+    const page = await loadAuthPage("/#/messages/message-1/processing-1?back=/messages");
+    expect(await page.auth.authenticate(config)).toBe(true);
+    expect(page.router.currentRoute.value.path).toBe("/messages/message-1/processing-1");
+    expect(page.router.currentRoute.value.query).toEqual({ back: "/messages" });
+    expect(signinRedirect).not.toHaveBeenCalled();
+    expect(signinCallback).not.toHaveBeenCalled();
+  });
+
   test.each([
     "/messages/message-1/processing-1?back=/messages",
     "/messages/message-1/processing-1?back=%2Fmessages&search=Order%20Placed&page=2",
