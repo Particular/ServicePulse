@@ -118,6 +118,9 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
               <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.excludedQueues.link) }">
                 <RouterLink :to="routeLinks.throughput.licenseDetails.excludedQueues.link">Excluded Queues</RouterLink>
               </h5>
+              <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.unassignedQueues.link) }">
+                <RouterLink :to="routeLinks.throughput.licenseDetails.unassignedQueues.link">Unassigned Queues</RouterLink>
+              </h5>
             </div>
           </div>
         </div>

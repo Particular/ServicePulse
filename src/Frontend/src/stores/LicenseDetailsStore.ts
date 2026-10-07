@@ -13,6 +13,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   const endpoints = ref<Endpoint[]>([]);
   const infrastructureQueues = ref<Queue[]>([]);
   const excludedQueues = ref<Queue[]>([]);
+  const unassignedQueues = ref<Queue[]>([]);
   const serviceEndDate = ref<Date>();
   const validId = ref<boolean>(true);
   const hasLicenseDetails = ref(false);
@@ -56,6 +57,14 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
       endpoints.value = data.endpoints.map((metaEp) => new Endpoint(crypto.randomUUID(), metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes));
       infrastructureQueues.value = data.infrastructure_queues.map(toQueue);
       excludedQueues.value = data.excluded_queues.map(toQueue);
+      const assignedQueues = [...endpoints.value.flatMap((endpoint) => endpoint.queues), ...infrastructureQueues.value, ...excludedQueues.value];
+      unassignedQueues.value = scQueues
+        .filter((scQ) => !assignedQueues.find((queue) => scQ.name_hash === queue.nameHash && ((!queue.scopeHash && !scQ.scope_hash) || queue.scopeHash === scQ.scope_hash)))
+        .map((scQ) => ({
+          nameHash: scQ.name_hash,
+          scopeHash: scQ.scope_hash ?? "",
+          details: scQ,
+        }));
       serviceEndDate.value = new Date(data.service_end_date);
       validId.value = data.valid_id;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -81,6 +90,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     endpointSizes,
     infrastructureQueues,
     excludedQueues,
+    unassignedQueues,
     serviceEndDate,
     validId,
     hasLicenseDetails,

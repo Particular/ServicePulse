@@ -60,11 +60,7 @@ th:not(.queue-name) {
 td {
   padding-top: 0.1rem;
   padding-bottom: 0.1rem;
-}
-
-td.queue-name {
-  display: flex;
-  gap: 3px;
+  align-content: center;
 }
 
 .throughput {

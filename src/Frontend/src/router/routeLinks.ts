@@ -100,6 +100,7 @@ const throughputEndpointLinks = (root: string) => {
     licensedEndpoints: createLink("licensed"),
     infrastructureQueues: createLink("infrastructure"),
     excludedQueues: createLink("excluded"),
+    unassignedQueues: createLink("unassigned"),
   };
 };
 

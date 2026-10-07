@@ -8,21 +8,12 @@ defineProps<{ queue: Queue }>();
 </script>
 
 <template>
-  <div class="queue-name">
-    <span>
-      <span class="scope" v-if="queue.details && queue.scopeHash">{{ queue.details.scope }}</span>
-      <span class="name" v-if="queue.details">{{ queue.details.name }}</span>
-      <ExclamationMark v-else :icon="faWarning" :type="WarningLevel.Danger" title="A queue existed when the usage report for the last license was generated which no longer exists. Please contact Particular Support" />
-    </span>
-  </div>
+  <span class="scope" v-if="queue.details && queue.scopeHash">{{ queue.details.scope }}</span>
+  <span class="name" v-if="queue.details">{{ queue.details.name }}</span>
+  <ExclamationMark v-else :icon="faWarning" :type="WarningLevel.Danger" title="A queue existed when the usage report for the last license was generated which no longer exists. Please contact Particular Support if you are unable to determine why." />
 </template>
 
 <style scoped>
-.queue-name {
-  display: flex;
-  flex-direction: column;
-}
-
 .scope {
   border: solid 1px #666;
   border-radius: 4px;
