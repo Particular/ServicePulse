@@ -2,6 +2,7 @@
 import { computed, ref } from "vue";
 import type EmailSettings from "@/components/configuration/EmailSettings";
 import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
+import ExternalLink from "@/components/ExternalLink.vue";
 
 const emit = defineEmits<{
   save: [settings: UpdateEmailNotificationsSettingsRequest];
@@ -87,7 +88,13 @@ function close() {
               <div class="row"></div>
               <div class="form-group">
                 <label for="password">Authentication password</label>
-                <input type="password" id="password" name="password" v-model="authentication_password" class="form-control" />
+                <input type="password" id="password" name="password" v-model="authentication_password" class="form-control" placeholder="Leave empty to keep the stored password" autocomplete="new-password" aria-describedby="passwordHelp" />
+                <div id="passwordHelp" class="form-text">The stored password is never shown.</div>
+              </div>
+              <div class="row"></div>
+              <div class="alert alert-info py-2">
+                Use a dedicated SMTP account with limited send permissions.
+                <ExternalLink href="https://docs.particular.net/servicecontrol/security/smtp-account">Securing the SMTP account</ExternalLink>
               </div>
               <div class="row"></div>
               <div class="form-group">
