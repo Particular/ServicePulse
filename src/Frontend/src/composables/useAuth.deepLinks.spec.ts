@@ -46,6 +46,7 @@ async function loadAuthPage(url: string) {
     routes: [
       { path: "/", redirect: "/dashboard" },
       { path: "/dashboard", component: emptyView },
+      { path: "/logged-out", component: emptyView, meta: { title: "Signed Out", allowAnonymous: true } },
       { path: "/messages/:messageId/:id", component: emptyView },
       { path: "/messages/:id", component: emptyView },
     ],
@@ -138,6 +139,10 @@ describe("useAuth preserves message deep links through OIDC login", () => {
     ["a protocol-relative url", "//evil.example/messages"],
     ["a relative path", "foo"],
     ["the logged-out route", "/logged-out"],
+    ["the logged-out route in uppercase", "/LOGGED-OUT"],
+    ["the logged-out route with mixed casing", "/Logged-Out"],
+    ["the logged-out route with a trailing slash", "/LOGGED-OUT/"],
+    ["the logged-out route with query parameters", "/Logged-Out?back=/messages"],
     ["a route that does not exist", "/no-such-route"],
     ["an empty url", ""],
     ["a non-string value", { path: "/messages/message-1/processing-1" }],
