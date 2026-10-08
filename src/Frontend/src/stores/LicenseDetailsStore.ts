@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import logger from "@/logger";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import createThroughputClient from "@/views/throughputreport/throughputClient";
 import { Endpoint, EndpointSize, type Queue, type LicensedEndpointDetails, type ApiQueue, EndpointClassification } from "@/resources/LicenseDetails";
 import serviceControlClient from "@/components/serviceControlClient";
@@ -32,9 +32,23 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
   }
 
+  function unexcludeQueue(queue: Queue) {
+    excludedQueues.value = excludedQueues.value.filter((assigned) => assigned !== queue);
+    returnToUnassigned(queue);
+  }
+
   function markQueueAsInfrastructure(queue: Queue) {
     infrastructureQueues.value.push(queue);
     unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
+  }
+
+  function unmarkQueueAsInfrastructure(queue: Queue) {
+    infrastructureQueues.value = infrastructureQueues.value.filter((assigned) => assigned !== queue);
+    returnToUnassigned(queue);
+  }
+
+  function returnToUnassigned(queue: Queue) {
+    if (queue.details) unassignedQueues.value.push(queue);
   }
 
   function createEndpointFromQueue(queue: Queue) {
@@ -113,21 +127,25 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     await refresh();
   }
 
+  const compare = (q1: Queue, q2: Queue) => q1.details?.name.toLocaleLowerCase().localeCompare(q2.details?.name.toLocaleLowerCase());
+
   watch(isLicenseDetailsSupported, refresh, { immediate: true });
 
   return {
     endpoints,
     endpointSizes,
-    infrastructureQueues,
-    excludedQueues,
-    unassignedQueues,
+    infrastructureQueues: computed(() => infrastructureQueues.value.toSorted(compare)),
+    excludedQueues: computed(() => excludedQueues.value.toSorted(compare)),
+    unassignedQueues: computed(() => unassignedQueues.value.toSorted(compare)),
     serviceEndDate,
     validId,
     hasLicenseDetails,
     error,
     uploadEndpointMetadata,
     excludeQueue,
+    unexcludeQueue,
     markQueueAsInfrastructure,
+    unmarkQueueAsInfrastructure,
     createEndpointFromQueue,
     addQueueToEndpoint,
   };

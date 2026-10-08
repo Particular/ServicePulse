@@ -31,7 +31,7 @@ defineProps<{
                 {{ queue.details?.average_monthly_throughput?.toLocaleString() }}
               </div>
             </td>
-            <td v-if="$slots.actions">
+            <td v-if="$slots.actions" class="actions">
               <slot name="actions" :queue="queue" />
             </td>
           </tr>
@@ -64,5 +64,9 @@ td {
 .throughput {
   display: flex;
   justify-content: space-between;
+}
+
+.actions {
+  background: linear-gradient(to right, transparent 0%, var(--reduced-emphasis) 1em, var(--reduced-emphasis) calc(100% - 1em), transparent 100%);
 }
 </style>
