@@ -6,7 +6,7 @@ defineProps<{ label: string; tooltip?: string; ariaLabel?: string }>();
   <div class="details-item">
     <label>{{ label }}</label>
     <!-- role and aria-label are used for tests -->
-    <span role="note" :title="tooltip" :aria-label="ariaLabel"><slot></slot></span>
+    <span role="note" v-tippy="tooltip" :aria-label="ariaLabel"><slot></slot></span>
   </div>
 </template>
 
@@ -29,5 +29,6 @@ defineProps<{ label: string; tooltip?: string; ariaLabel?: string }>();
 
 .details-item span {
   padding: 0.375rem 0;
+  width: fit-content;
 }
 </style>

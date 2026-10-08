@@ -9,6 +9,9 @@ const { infrastructureQueues } = storeToRefs(licenseDetailsStore);
 </script>
 
 <template>
-  <QueueData v-if="infrastructureQueues.length" :queues="infrastructureQueues" />
+  <div class="alert alert-info mt-1">These are queues which only exist in your system to support the Particular Platform functionality</div>
+  <div class="mt-2" v-if="infrastructureQueues.length">
+    <QueueData :queues="infrastructureQueues" />
+  </div>
   <NoData v-else message="There are currently no infrastructure queues associated with your license"></NoData>
 </template>

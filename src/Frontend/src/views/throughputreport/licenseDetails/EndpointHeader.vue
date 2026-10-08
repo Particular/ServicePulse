@@ -30,7 +30,7 @@ watch(
   <div class="endpoint-header" :key="endpoint.clientId" :style="{ '--endpoint-header-bg': `var(${endpointClassificationStyle})` }">
     <div class="endpoint-name">
       <FAIcon :icon="faCircleChevronUp" class="collapse-button" size="lg" tabindex="0" title="collapse" @click="emit('collapse')" />
-      <strong :title="endpoint.name">{{ endpoint.name }}</strong>
+      <strong v-tippy="endpoint.name">{{ endpoint.name }}</strong>
     </div>
     <div class="header-buttons d-print-none"></div>
   </div>

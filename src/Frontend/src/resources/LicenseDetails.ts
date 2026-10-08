@@ -19,6 +19,7 @@ export interface ApiEndpoint {
 export interface ApiQueue {
   name_hash: string;
   scope_hash: string;
+  is_amended: boolean;
 }
 
 interface ApiProduct {
@@ -34,6 +35,7 @@ export enum EndpointClassification {
 export interface Queue {
   nameHash: string;
   scopeHash: string;
+  isAmended: boolean;
   details: QueueThroughputSummary;
 }
 
@@ -42,15 +44,15 @@ export class Endpoint {
   name: string;
   readonly queues: Queue[];
   readonly classification: EndpointClassification;
-  readonly endpointSize: EndpointSize;
+  readonly licensedSize: EndpointSize | null;
   readonly availableSizes: EndpointSize[];
 
-  constructor(clientId: string, name: string, queues: Queue[], classification: EndpointClassification, endpointSize: EndpointSize, availableSizes: EndpointSize[]) {
+  constructor(clientId: string, name: string, queues: Queue[], classification: EndpointClassification, licensedSize: EndpointSize | null, availableSizes: EndpointSize[]) {
     this.clientId = clientId;
     this.name = name;
     this.queues = queues;
     this.classification = classification;
-    this.endpointSize = endpointSize;
+    this.licensedSize = licensedSize;
     this.availableSizes = availableSizes;
   }
 
@@ -63,7 +65,7 @@ export class Endpoint {
   }
 
   get matchesLicensedSize() {
-    return this.endpointSize === this.currentSize;
+    return this.licensedSize == null || this.licensedSize === this.currentSize;
   }
 }
 

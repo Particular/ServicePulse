@@ -2,7 +2,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import logger from "@/logger";
 import { ref, watch } from "vue";
 import createThroughputClient from "@/views/throughputreport/throughputClient";
-import { Endpoint, EndpointSize, type Queue, type LicensedEndpointDetails, type ApiQueue } from "@/resources/LicenseDetails";
+import { Endpoint, EndpointSize, type Queue, type LicensedEndpointDetails, type ApiQueue, EndpointClassification } from "@/resources/LicenseDetails";
 import serviceControlClient from "@/components/serviceControlClient";
 import useIsLicenseDetailsSupported from "@/views/throughputreport/licenseDetails/isLicenseDetailsSupported";
 
@@ -27,6 +27,34 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     hasLicenseDetails.value = false;
   }
 
+  function excludeQueue(queue: Queue) {
+    excludedQueues.value.push(queue);
+    unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
+  }
+
+  function markQueueAsInfrastructure(queue: Queue) {
+    infrastructureQueues.value.push(queue);
+    unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
+  }
+
+  function createEndpointFromQueue(queue: Queue) {
+    //max endpoint name length of 80 - take from the end to reduce chance of clashes
+    let name = queue.details.name.substring(queue.details.name.length - 80);
+    while (endpoints.value.find((endpoint) => endpoint.name === name)) {
+      //NOTE that this could potentially lead to an infinite loop, if it finds more than 40 clashes
+      // but the likelihood of this happening is infinitesimal so we're not handling it
+      name = `${name}_1`.substring(name.length + 2 - 80);
+    }
+    const endpoint = new Endpoint(crypto.randomUUID(), name, [], EndpointClassification.Full, null, endpointSizes.value);
+    addQueueToEndpoint(queue, endpoint);
+    endpoints.value.push(endpoint);
+  }
+
+  function addQueueToEndpoint(queue: Queue, endpoint: Endpoint) {
+    endpoint.queues.push(queue);
+    unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
+  }
+
   async function refresh() {
     if (!isLicenseDetailsSupported) {
       reset();
@@ -48,6 +76,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
         ({
           nameHash: metaQ.name_hash,
           scopeHash: metaQ.scope_hash,
+          isAmended: metaQ.is_amended ?? false,
           details: scQueues.find((scQ) => scQ.name_hash === metaQ.name_hash && ((!metaQ.scope_hash && !scQ.scope_hash) || metaQ.scope_hash === scQ.scope_hash)),
         }) as Queue;
 
@@ -63,6 +92,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
         .map((scQ) => ({
           nameHash: scQ.name_hash,
           scopeHash: scQ.scope_hash ?? "",
+          isAmended: false, //TODO: this may be true, if it was previously classified in the license metadata and the customer unassigns it
           details: scQ,
         }));
       serviceEndDate.value = new Date(data.service_end_date);
@@ -96,6 +126,10 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     hasLicenseDetails,
     error,
     uploadEndpointMetadata,
+    excludeQueue,
+    markQueueAsInfrastructure,
+    createEndpointFromQueue,
+    addQueueToEndpoint,
   };
 });
 

@@ -509,3 +509,9 @@ div.alert.alert-warning strong {
 .tooltip {
   font-size: 12px;
 }
+
+/* Added when dealing with long queue names in EndpointHeader and CollapsedEndpoint */
+.tippy-box {
+  overflow-wrap: break-word;
+  word-break: break-word; /* Fallback for older browsers */
+}
