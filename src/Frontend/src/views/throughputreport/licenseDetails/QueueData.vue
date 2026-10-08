@@ -6,8 +6,6 @@ import type { Queue } from "@/resources/LicenseDetails";
 
 defineProps<{
   queues: Queue[];
-  actionsComponent?: object;
-  additionalData?: object;
 }>();
 </script>
 
@@ -19,7 +17,7 @@ defineProps<{
           <tr>
             <th class="queue-name">Queue Name</th>
             <th class="text-end">Throughput</th>
-            <th v-if="actionsComponent"></th>
+            <th v-if="$slots.actions"></th>
           </tr>
         </thead>
         <tbody>
@@ -33,8 +31,8 @@ defineProps<{
                 {{ queue.details?.average_monthly_throughput?.toLocaleString() }}
               </div>
             </td>
-            <td v-if="actionsComponent">
-              <component :is="actionsComponent" :queue="queue" :additional-data="additionalData" />
+            <td v-if="$slots.actions">
+              <slot name="actions" :queue="queue" />
             </td>
           </tr>
         </tbody>

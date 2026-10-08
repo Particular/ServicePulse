@@ -20,7 +20,11 @@ const selectedQueue = ref<Queue>();
     downloading the usage report
   </div>
   <div class="mt-2" v-if="unassignedQueues.length">
-    <QueueData :queues="unassignedQueues" :actions-component="UnassignedQueueActions" :additional-data="{ setSelectedQueue: (queue: Queue) => (selectedQueue = queue) }" />
+    <QueueData :queues="unassignedQueues">
+      <template #actions="{ queue }">
+        <UnassignedQueueActions :queue="queue" :set-selected-queue="(queue: Queue) => (selectedQueue = queue)" />
+      </template>
+    </QueueData>
   </div>
   <NoData v-else message="There are currently no queues that remain unassigned"></NoData>
 

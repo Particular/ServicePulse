@@ -4,9 +4,7 @@ import type { Queue } from "@/resources/LicenseDetails";
 import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore";
 import { faArrowRightToBracket, faCircleMinus, faCirclePlus, faGear } from "@fortawesome/free-solid-svg-icons";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const props = defineProps<{ queue: Queue; additionalData: any }>();
-const setSelectedQueue: (queue: Queue) => void = props.additionalData.setSelectedQueue;
+const props = defineProps<{ queue: Queue; setSelectedQueue: (queue: Queue) => void }>();
 
 const store = useLicenseDetailsStore();
 const { excludeQueue, createEndpointFromQueue, markQueueAsInfrastructure } = store;
