@@ -11,7 +11,7 @@ interface SigninState {
 
 // The return URL round-trips through browser storage, so only restore in-app routes.
 function isRestorableRoute(returnUrl: unknown): returnUrl is string {
-  return typeof returnUrl === "string" && returnUrl.startsWith("/") && !returnUrl.startsWith("//") && !returnUrl.startsWith(routeLinks.loggedOut);
+  return typeof returnUrl === "string" && returnUrl.startsWith("/") && !returnUrl.startsWith("//") && !returnUrl.toLowerCase().startsWith(routeLinks.loggedOut);
 }
 
 let userManager: UserManager | null = null;
