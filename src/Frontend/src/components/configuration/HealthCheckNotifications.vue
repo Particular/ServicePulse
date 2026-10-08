@@ -32,10 +32,12 @@ async function toggleEmailNotifications() {
   emailToggleSuccessful.value = await healthChecksStore.toggleEmailNotifications();
 }
 
-function editEmailNotifications() {
+async function editEmailNotifications() {
   emailToggleSuccessful.value = null;
   emailTestSuccessful.value = null;
   emailUpdateSuccessful.value = null;
+  // Start the form from what ServiceControl has now, not from what was loaded with the page.
+  await healthChecksStore.refresh();
   showEmailConfiguration.value = true;
 }
 
