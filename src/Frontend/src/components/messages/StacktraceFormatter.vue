@@ -57,7 +57,7 @@ watch(
 
 <template>
   <div class="stack-trace-container">
-    <template v-for="line in formattedStack" :key="line">
+    <template v-for="(line, lineIndex) in formattedStack" :key="lineIndex">
       <template v-if="typeof line === 'string'">
         <span>{{ line }}</span>
       </template>

@@ -10,7 +10,7 @@ export async function navigateToHeartbeatsConfiguration() {
 }
 
 export async function navigateToHealthyHeartbeats() {
-  const healthyHeartbeatsTab = await screen.findByRole("tab", { name: /Healthy Endpoints \(\d+\)/i });
+  const healthyHeartbeatsTab = await screen.findByRole("tab", { name: /^\s*Healthy Endpoints \(\d+\)\s*$/i });
   healthyHeartbeatsTab.click();
 
   // Wait for the tab to switch
