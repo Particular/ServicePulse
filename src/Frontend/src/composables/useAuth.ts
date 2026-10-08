@@ -9,6 +9,11 @@ interface SigninState {
   returnUrl?: string;
 }
 
+// The return URL round-trips through browser storage, so only restore in-app routes.
+function isRestorableRoute(returnUrl: unknown): returnUrl is string {
+  return typeof returnUrl === "string" && returnUrl.startsWith("/") && !returnUrl.startsWith("//") && !returnUrl.toLowerCase().startsWith(routeLinks.loggedOut);
+}
+
 let userManager: UserManager | null = null;
 
 /**
@@ -114,9 +119,9 @@ export function useAuth() {
             authStore.setToken(user.access_token);
             // Remove OAuth parameters without discarding the hash route or Vue Router's history state.
             window.history.replaceState(window.history.state, document.title, window.location.pathname + window.location.hash);
-            const state = user.state as SigninState | undefined;
-            if (state?.returnUrl) {
-              await router.replace(state.returnUrl);
+            const returnUrl = (user.state as SigninState | undefined)?.returnUrl;
+            if (isRestorableRoute(returnUrl) && router.resolve(returnUrl).matched.length > 0) {
+              await router.replace(returnUrl);
             }
             return true;
           }

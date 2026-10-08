@@ -4,10 +4,11 @@ import { createPinia } from "pinia";
 import { createRouter, createWebHashHistory, type Router } from "vue-router";
 import type { SigninRedirectArgs } from "oidc-client-ts";
 
-const { signinRedirect, signinCallback, getUser } = vi.hoisted(() => ({
+const { signinRedirect, signinCallback, getUser, captured } = vi.hoisted(() => ({
   signinRedirect: vi.fn<(args?: SigninRedirectArgs) => Promise<void>>().mockResolvedValue(undefined),
   signinCallback: vi.fn(),
   getUser: vi.fn().mockResolvedValue(null),
+  captured: {} as { expired?: () => Promise<void> },
 }));
 
 vi.mock("oidc-client-ts", () => ({
@@ -19,7 +20,9 @@ vi.mock("oidc-client-ts", () => ({
       addUserLoaded: vi.fn(),
       addUserUnloaded: vi.fn(),
       addAccessTokenExpiring: vi.fn(),
-      addAccessTokenExpired: vi.fn(),
+      addAccessTokenExpired: (handler: () => Promise<void>) => {
+        captured.expired = handler;
+      },
       addSilentRenewError: vi.fn(),
     };
   },
@@ -43,6 +46,7 @@ async function loadAuthPage(url: string) {
     routes: [
       { path: "/", redirect: "/dashboard" },
       { path: "/dashboard", component: emptyView },
+      { path: "/logged-out", component: emptyView, meta: { title: "Signed Out", allowAnonymous: true } },
       { path: "/messages/:messageId/:id", component: emptyView },
       { path: "/messages/:id", component: emptyView },
     ],
@@ -129,5 +133,43 @@ describe("useAuth preserves message deep links through OIDC login", () => {
     expect(callback.router.currentRoute.value.query).toEqual(requestedRoute.query);
     expect(window.location.hash).toBe(`#${callback.router.currentRoute.value.fullPath}`);
     expect(window.location.search).toBe("");
+  });
+
+  test.each([
+    ["a protocol-relative url", "//evil.example/messages"],
+    ["a relative path", "foo"],
+    ["the logged-out route", "/logged-out"],
+    ["the logged-out route in uppercase", "/LOGGED-OUT"],
+    ["the logged-out route with mixed casing", "/Logged-Out"],
+    ["the logged-out route with a trailing slash", "/LOGGED-OUT/"],
+    ["the logged-out route with query parameters", "/Logged-Out?back=/messages"],
+    ["a route that does not exist", "/no-such-route"],
+    ["an empty url", ""],
+    ["a non-string value", { path: "/messages/message-1/processing-1" }],
+  ])("falls back to the dashboard when the saved destination is %s", async (_, returnUrl) => {
+    signinCallback.mockResolvedValue({ access_token: "test-token", state: { returnUrl } });
+    const callback = await loadAuthPage("/?code=authorization-code&state=oidc-state");
+    expect(await callback.auth.authenticate(config)).toBe(true);
+    expect(callback.router.currentRoute.value.path).toBe("/dashboard");
+    expect(window.location.search).toBe("");
+  });
+
+  test("returns to the current route after the session is lost and the user signs in again", async () => {
+    getUser.mockResolvedValue({ access_token: "test-token", expired: false });
+    const page = await loadAuthPage("/#/messages/message-1/processing-1?back=/messages");
+    expect(await page.auth.authenticate(config)).toBe(true);
+    expect(signinRedirect).not.toHaveBeenCalled();
+
+    await captured.expired!();
+    expect(signinRedirect).toHaveBeenCalledOnce();
+
+    const state = signinRedirect.mock.calls[0]?.[0]?.state;
+    signinCallback.mockResolvedValue({ access_token: "test-token", state });
+    getUser.mockResolvedValue(null);
+    const callback = await loadAuthPage("/?code=authorization-code&state=oidc-state");
+    expect(await callback.auth.authenticate(config)).toBe(true);
+
+    expect(callback.router.currentRoute.value.path).toBe("/messages/message-1/processing-1");
+    expect(callback.router.currentRoute.value.query).toEqual({ back: "/messages" });
   });
 });
