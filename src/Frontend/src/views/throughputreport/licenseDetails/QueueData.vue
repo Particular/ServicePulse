@@ -4,9 +4,7 @@ import InlineThroughputGraph from "../queues/InlineThroughputGraph.vue";
 import QueueName from "./QueueName.vue";
 import type { Queue } from "@/resources/LicenseDetails";
 
-defineProps<{
-  queues: Queue[];
-}>();
+defineProps<{ queues: Queue[]; currentLocation?: string }>();
 </script>
 
 <template>
@@ -23,7 +21,7 @@ defineProps<{
         <tbody>
           <tr v-for="queue in pageData" :key="`${queue.nameHash}`">
             <td class="queue-name">
-              <QueueName :queue="queue" />
+              <QueueName :queue="queue" :amended="queue.originalLocation != currentLocation" />
             </td>
             <td class="text-end">
               <div class="throughput">

@@ -4,12 +4,12 @@ import { faWarning } from "@fortawesome/free-solid-svg-icons";
 import ExclamationMark from "@/components/ExclamationMark.vue";
 import { WarningLevel } from "@/components/WarningLevel";
 
-defineProps<{ queue: Queue }>();
+withDefaults(defineProps<{ queue: Queue; amended: boolean }>(), { amended: false });
 </script>
 
 <template>
   <span class="scope" v-if="queue.details && queue.scopeHash">{{ queue.details.scope }}</span>
-  <span class="name" v-if="queue.details">{{ queue.details.name }}</span>
+  <span class="name" :class="{ amended }" v-if="queue.details">{{ queue.details.name }}</span>
   <ExclamationMark v-else :icon="faWarning" :type="WarningLevel.Danger" title="A queue existed when the usage report for the last license was generated which no longer exists. Please contact Particular Support if you are unable to determine why." />
 </template>
 
@@ -26,5 +26,10 @@ defineProps<{ queue: Queue }>();
 
 .name {
   overflow-wrap: anywhere;
+}
+
+.name.amended::before {
+  content: "✏️";
+  margin-right: 0.25em;
 }
 </style>

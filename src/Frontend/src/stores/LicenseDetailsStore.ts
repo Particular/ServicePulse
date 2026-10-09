@@ -97,25 +97,28 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
         ({
           nameHash: metaQ.name_hash,
           scopeHash: metaQ.scope_hash,
-          isAmended: metaQ.is_amended ?? false,
+          originalLocation: metaQ.original_location,
           details: scQueues.find((scQ) => scQ.name_hash === metaQ.name_hash && ((!metaQ.scope_hash && !scQ.scope_hash) || metaQ.scope_hash === scQ.scope_hash)),
         }) as Queue;
 
       const sortedProducts = data.products.toSorted((p1, p2) => (p1.monthly_throughput ?? Number.MAX_VALUE) - (p2.monthly_throughput ?? Number.MAX_VALUE));
       const sortedEndpointSizes = sortedProducts.map((product, i) => new EndpointSize(product.product_code, i > 0 ? (sortedProducts[i - 1].monthly_throughput ?? 0) + 1 : 0, product.monthly_throughput));
       endpointSizes.value = sortedEndpointSizes;
-      endpoints.value = data.endpoints.map((metaEp) => new Endpoint(crypto.randomUUID(), metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes));
+      endpoints.value = data.endpoints.map((metaEp) => new Endpoint(metaEp.client_id, metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes));
       infrastructureQueues.value = data.infrastructure_queues.map(toQueue);
       excludedQueues.value = data.excluded_queues.map(toQueue);
       const assignedQueues = [...endpoints.value.flatMap((endpoint) => endpoint.queues), ...infrastructureQueues.value, ...excludedQueues.value];
       unassignedQueues.value = scQueues
         .filter((scQ) => !assignedQueues.find((queue) => scQ.name_hash === queue.nameHash && ((!queue.scopeHash && !scQ.scope_hash) || queue.scopeHash === scQ.scope_hash)))
-        .map((scQ) => ({
-          nameHash: scQ.name_hash,
-          scopeHash: scQ.scope_hash ?? "",
-          isAmended: false, //TODO: this may be true, if it was previously classified in the license metadata and the customer unassigns it
-          details: scQ,
-        }));
+        .map(
+          (scQ) =>
+            ({
+              nameHash: scQ.name_hash,
+              scopeHash: scQ.scope_hash ?? "",
+              //TODO: originalLocation may not be undefined, if it was previously classified in the license metadata and the customer unassigns it
+              details: scQ,
+            }) as Queue
+        );
       serviceEndDate.value = new Date(data.service_end_date);
       validId.value = data.valid_id;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

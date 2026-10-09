@@ -136,6 +136,7 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
               </h5>
             </div>
           </div>
+          <div class="mt-1">✏️ before a queue name indicates that the queue location differs from what was licensed</div>
         </div>
         <RouterView />
       </div>

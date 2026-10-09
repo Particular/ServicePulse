@@ -10,6 +10,7 @@ export interface LicensedEndpointDetails {
 }
 
 export interface ApiEndpoint {
+  client_id: string;
   name: string;
   classification: EndpointClassification;
   endpoint_size: string;
@@ -19,7 +20,7 @@ export interface ApiEndpoint {
 export interface ApiQueue {
   name_hash: string;
   scope_hash: string;
-  is_amended: boolean;
+  original_location: string;
 }
 
 interface ApiProduct {
@@ -35,7 +36,7 @@ export enum EndpointClassification {
 export interface Queue {
   nameHash: string;
   scopeHash: string;
-  isAmended: boolean;
+  originalLocation?: string;
   details: QueueThroughputSummary;
 }
 

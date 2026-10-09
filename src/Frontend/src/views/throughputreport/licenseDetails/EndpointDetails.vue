@@ -40,9 +40,9 @@ const sortedQueues = computed(() => props.endpoint.queues.toSorted((q1, q2) => q
     </div>
     <ThroughputGraph :data="throughputByMonth" class="graph" v-if="throughputByMonth.length" />
     <div class="queue-data">
-      <QueueData :queues="sortedQueues">
+      <QueueData :queues="sortedQueues" :current-location="endpoint.clientId">
         <template #actions="{ queue }">
-          <EndpointQueueActions :queue="queue" :endpoint="endpoint" />
+          <EndpointQueueActions v-if="endpoint.queues.length > 1" :queue="queue" :endpoint="endpoint" />
         </template>
       </QueueData>
     </div>

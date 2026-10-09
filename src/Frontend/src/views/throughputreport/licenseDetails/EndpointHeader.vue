@@ -32,7 +32,9 @@ watch(
       <FAIcon :icon="faCircleChevronUp" class="collapse-button" size="lg" tabindex="0" title="collapse" @click="emit('collapse')" />
       <strong v-tippy="endpoint.name">{{ endpoint.name }}</strong>
     </div>
-    <div class="header-buttons d-print-none"></div>
+    <div class="header-buttons">
+      <button class="btn btn-secondary">Remove</button>
+    </div>
   </div>
 </template>
 
