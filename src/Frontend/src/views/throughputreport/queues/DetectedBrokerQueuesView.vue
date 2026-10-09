@@ -26,13 +26,12 @@ const { testResults } = storeToRefs(store);
     ariaLabel="Detected broker queues"
     :indicator-options="[
       UserIndicator.NServiceBusEndpoint,
-      UserIndicator.NotNServiceBusEndpoint,
-      UserIndicator.TransactionalSessionProcessorEndpoint,
       UserIndicator.SendOnlyEndpoint,
-      UserIndicator.NServiceBusEndpointNoLongerInUse,
-      UserIndicator.PlannedToDecommission,
+      UserIndicator.TransactionalSessionProcessorEndpoint,
       UserIndicator.GatewayOrBridgingEndpoint,
       UserIndicator.ParticularPlatformEndpoint,
+      UserIndicator.NServiceBusEndpointNoLongerInUse,
+      UserIndicator.NotNServiceBusEndpoint,
     ]"
     :source="DataSource.Broker"
     column-title="Queue Name"
