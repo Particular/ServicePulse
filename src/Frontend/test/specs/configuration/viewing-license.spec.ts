@@ -5,8 +5,8 @@ import { licenseTypeDetails } from "./questions/licenseTypeDetails";
 import { licenseExpiryDate } from "./questions/licenseExpiryDate";
 import { licenseExpiryDaysLeft } from "./questions/licenseExpiryDaysLeft";
 import { licenseExpired } from "./questions/licenseExpired";
-import { waitFor } from "@testing-library/vue";
-import { LicenseType } from "@/resources/LicenseInfo";
+import { screen, waitFor } from "@testing-library/vue";
+import { LicenseType, upgradeProtectionUnsupportedMessage } from "@/resources/LicenseInfo";
 import { licenseTabList, licenseTabNames } from "./questions/licenseTabs";
 
 describe("FEATURE: License", () => {
@@ -82,33 +82,22 @@ describe("FEATURE: License", () => {
     });
   });
 
-  describe("RULE: Upgrade Protection license expiring soon must be displayed with a reference to how much time is left and a warning:'Once upgrade protection expires, you'll no longer have access to support or new product versions. '", () => {
-    test("EXAMPLE: Upgrade Protection license expiring in 11 days", async ({ driver }) => {
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasExpiringLicense(LicenseType.UpgradeProtection, 11));
-      await driver.goTo("/configuration/license");
-      await waitFor(async () => {
-        expect(await licenseExpiryDaysLeft()).toBeVisible();
-        expect((await licenseExpiryDaysLeft()).textContent).toContain("11 days left");
-      });
-    });
-    test("EXAMPLE: Upgrade Protection license expiring tomorrow", async ({ driver }) => {
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasExpiringLicense(LicenseType.UpgradeProtection, 1));
-      await driver.goTo("/configuration/license");
-      await waitFor(async () => {
-        expect(await licenseExpiryDaysLeft()).toBeVisible();
-        expect((await licenseExpiryDaysLeft()).textContent).toContain("1 day left");
-      });
-    });
-    test("EXAMPLE: Upgrade Protection license expiring today", async ({ driver }) => {
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasExpiringLicense(LicenseType.UpgradeProtection, -1));
-      await driver.goTo("/configuration/license");
-      await waitFor(async () => {
-        const testable = await licenseExpiryDaysLeft();
-        expect(testable).toBeVisible();
-        expect(testable.textContent).toContain("expired");
+  describe("RULE: Upgrade Protection licenses are unsupported regardless of the protection date", () => {
+    [11, 1, 0, -1].forEach((protectionDateOffset) => {
+      test(`EXAMPLE: Unsupported upgrade protection with protection date offset ${protectionDateOffset}`, async ({ driver }) => {
+        await driver.setUp(precondition.serviceControlWithMonitoring);
+        await driver.setUp(precondition.hasUnsupportedUpgradeProtectionLicense(protectionDateOffset));
+        await driver.goTo("/configuration/license");
+        await waitFor(async () => {
+          expect(await licenseExpiryDate()).toBeVisible();
+          expect(await licenseExpiryDaysLeft()).toHaveTextContent("no longer supported");
+          const unsupportedMessage = screen.getByRole("note", { name: "license-unsupported" });
+          expect(unsupportedMessage).toBeVisible();
+          expect(unsupportedMessage).toHaveTextContent(`${upgradeProtectionUnsupportedMessage} Please update your license to continue using the Particular Service Platform.`);
+          expect(screen.queryByText(/expired before this version of ServicePulse was released/)).not.toBeInTheDocument();
+          expect(await licenseTabList()).toHaveLength(3);
+          expect(await licenseTabNames()).toEqual(expect.arrayContaining(["License", "Usage Setup", "Connections"]));
+        });
       });
     });
   });

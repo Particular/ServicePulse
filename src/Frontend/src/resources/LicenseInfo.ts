@@ -1,5 +1,7 @@
 import type Configuration from "./Configuration";
 
+export const upgradeProtectionUnsupportedMessage = "Your upgrade protection license is no longer supported.";
+
 export interface LicensedProduct {
   name: string;
   quantity: number;
@@ -32,9 +34,7 @@ export enum LicenseStatus {
   InvalidDueToExpiredSubscription = "InvalidDueToExpiredSubscription",
   ValidWithExpiringTrial = "ValidWithExpiringTrial",
   InvalidDueToExpiredTrial = "InvalidDueToExpiredTrial",
-  InvalidDueToExpiredUpgradeProtection = "InvalidDueToExpiredUpgradeProtection",
-  ValidWithExpiredUpgradeProtection = "ValidWithExpiredUpgradeProtection",
-  ValidWithExpiringUpgradeProtection = "ValidWithExpiringUpgradeProtection",
+  InvalidDueToUpgradeProtectionNoLongerBeingSupported = "InvalidDueToUpgradeProtectionNoLongerBeingSupported",
   ValidWithExpiringSubscription = "ValidWithExpiringSubscription",
 }
 export enum LicenseType {
