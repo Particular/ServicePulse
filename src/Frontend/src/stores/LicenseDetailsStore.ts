@@ -137,7 +137,16 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     await refresh();
   }
 
-  const compare = (q1: Queue, q2: Queue) => q1.details?.name.toLocaleLowerCase().localeCompare(q2.details?.name.toLocaleLowerCase());
+  const compare = (q1: Queue, q2: Queue) => {
+    const name1 = q1.details?.name;
+    const name2 = q2.details?.name;
+
+    if (name1 == null && name2 == null) return 0;
+    if (name1 == null) return 1;
+    if (name2 == null) return -1;
+
+    return name1.toLocaleLowerCase().localeCompare(name2.toLocaleLowerCase());
+  };
 
   watch(isLicenseDetailsSupported, refresh, { immediate: true });
 

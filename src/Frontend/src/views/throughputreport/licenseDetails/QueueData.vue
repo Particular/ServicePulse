@@ -56,7 +56,7 @@ th:not(.queue-name) {
 td {
   padding-top: 0.1rem;
   padding-bottom: 0.1rem;
-  align-content: center;
+  vertical-align: middle;
 }
 
 .throughput {
