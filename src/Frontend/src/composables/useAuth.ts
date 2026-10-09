@@ -3,6 +3,16 @@ import type { AuthConfig } from "@/types/auth";
 import { UserManager, type User } from "oidc-client-ts";
 import routeLinks from "@/router/routeLinks";
 import logger from "@/logger";
+import { useRouter } from "vue-router";
+
+interface SigninState {
+  returnUrl?: string;
+}
+
+// The return URL round-trips through browser storage, so only restore in-app routes.
+function isRestorableRoute(returnUrl: unknown): returnUrl is string {
+  return typeof returnUrl === "string" && returnUrl.startsWith("/") && !returnUrl.startsWith("//") && !returnUrl.toLowerCase().startsWith(routeLinks.loggedOut);
+}
 
 let userManager: UserManager | null = null;
 
@@ -12,6 +22,7 @@ let userManager: UserManager | null = null;
  */
 export function useAuth() {
   const authStore = useAuthStore();
+  const router = useRouter();
 
   // The session was lost mid-run (access token expired or silent renewal failed). Re-authenticate
   // instead of leaving the app blank. With a live identity-provider session this is a silent
@@ -26,7 +37,7 @@ export function useAuth() {
     }
     authStore.setAuthenticating(true);
     try {
-      await userManager?.signinRedirect();
+      await userManager?.signinRedirect({ state: { returnUrl: window.location.hash.slice(1) } });
     } catch (error) {
       logger.error("Re-authentication after session loss failed:", error);
       authStore.setAuthError({ description: error instanceof Error ? error.message : "Re-authentication after session loss failed" });
@@ -106,8 +117,12 @@ export function useAuth() {
           const user = await manager.signinCallback();
           if (user) {
             authStore.setToken(user.access_token);
-            // Clean up URL by removing OAuth parameters
-            window.history.replaceState({}, document.title, window.location.pathname);
+            // Remove OAuth parameters without discarding the hash route or Vue Router's history state.
+            window.history.replaceState(window.history.state, document.title, window.location.pathname + window.location.hash);
+            const returnUrl = (user.state as SigninState | undefined)?.returnUrl;
+            if (isRestorableRoute(returnUrl) && router.resolve(returnUrl).matched.length > 0) {
+              await router.replace(returnUrl);
+            }
             return true;
           }
         } catch (error) {
@@ -140,7 +155,7 @@ export function useAuth() {
 
       // No valid session, initiate login
       authStore.setAuthenticating(true);
-      await manager.signinRedirect();
+      await manager.signinRedirect({ state: { returnUrl: window.location.hash.slice(1) } });
       return false; // Will redirect, so this won't actually return
     } catch (error) {
       authStore.setAuthenticating(false);
