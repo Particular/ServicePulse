@@ -6,7 +6,7 @@ import { TYPE } from "vue-toastification";
 import LicenseNotifications from "@/components/LicenseNotifications.vue";
 import LicenseNotificationPopup from "@/components/LicenseNotificationPopup.vue";
 import { useShowToast } from "@/composables/toast";
-import { LicenseStatus } from "@/resources/LicenseInfo";
+import { LicenseStatus, upgradeProtectionUnsupportedMessage } from "@/resources/LicenseInfo";
 import routeLinks from "@/router/routeLinks";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { useLicenseStore } from "@/stores/LicenseStore";
@@ -69,7 +69,7 @@ describe("LicenseNotifications", () => {
   test.each([
     { status: LicenseStatus.InvalidDueToExpiredTrial, message: "Your license has expired. Please contact Particular Software support at:" },
     { status: LicenseStatus.InvalidDueToExpiredSubscription, message: "Your license has expired. Please contact Particular Software support at:" },
-    { status: LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported, message: "Your upgrade protection license is no longer supported. Please contact Particular Software support at:" },
+    { status: LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported, message: `${upgradeProtectionUnsupportedMessage} Please contact Particular Software support at:` },
   ])("renders a persistent error for $status", async ({ status, message }) => {
     const { licenseStore } = renderNotifications();
     licenseStore.license.license_status = status;

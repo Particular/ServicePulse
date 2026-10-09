@@ -6,7 +6,7 @@ import { licenseExpiryDate } from "./questions/licenseExpiryDate";
 import { licenseExpiryDaysLeft } from "./questions/licenseExpiryDaysLeft";
 import { licenseExpired } from "./questions/licenseExpired";
 import { screen, waitFor } from "@testing-library/vue";
-import { LicenseType } from "@/resources/LicenseInfo";
+import { LicenseType, upgradeProtectionUnsupportedMessage } from "@/resources/LicenseInfo";
 import { licenseTabList, licenseTabNames } from "./questions/licenseTabs";
 
 describe("FEATURE: License", () => {
@@ -91,7 +91,9 @@ describe("FEATURE: License", () => {
         await waitFor(async () => {
           expect(await licenseExpiryDate()).toBeVisible();
           expect(await licenseExpiryDaysLeft()).toHaveTextContent("no longer supported");
-          expect(screen.getByText("Your upgrade protection license is no longer supported. Please update your license to continue using the Particular Service Platform.")).toBeVisible();
+          const unsupportedMessage = screen.getByRole("note", { name: "license-unsupported" });
+          expect(unsupportedMessage).toBeVisible();
+          expect(unsupportedMessage).toHaveTextContent(`${upgradeProtectionUnsupportedMessage} Please update your license to continue using the Particular Service Platform.`);
           expect(screen.queryByText(/expired before this version of ServicePulse was released/)).not.toBeInTheDocument();
           expect(await licenseTabList()).toHaveLength(3);
           expect(await licenseTabNames()).toEqual(expect.arrayContaining(["License", "Usage Setup", "Connections"]));

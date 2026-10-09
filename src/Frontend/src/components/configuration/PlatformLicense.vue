@@ -2,7 +2,7 @@
 import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import ExclamationMark from "./../../components/ExclamationMark.vue";
 import convertToWarningLevel from "@/components/configuration/convertToWarningLevel";
-import { typeText } from "@/resources/LicenseInfo";
+import { typeText, upgradeProtectionUnsupportedMessage } from "@/resources/LicenseInfo";
 import ExternalLink from "@/components/ExternalLink.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
@@ -79,7 +79,9 @@ const { licenseStatus, license } = licenseStore;
                       <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
                     </span>
                   </DetailsItem>
-                  <div class="license-expired-text" v-if="licenseStatus.isUpgradeProtectionUnsupported">Your upgrade protection license is no longer supported. Please update your license to continue using the Particular Service Platform.</div>
+                  <div class="license-expired-text" role="note" aria-label="license-unsupported" v-if="licenseStatus.isUpgradeProtectionUnsupported">
+                    {{ upgradeProtectionUnsupportedMessage }} Please update your license to continue using the Particular Service Platform.
+                  </div>
                 </template>
                 <DetailsItem label="ServiceControl Instance">
                   {{ formattedInstanceName }}

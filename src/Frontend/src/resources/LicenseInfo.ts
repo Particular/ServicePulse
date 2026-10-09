@@ -1,5 +1,7 @@
 import type Configuration from "./Configuration";
 
+export const upgradeProtectionUnsupportedMessage = "Your upgrade protection license is no longer supported.";
+
 export interface LicensedProduct {
   name: string;
   quantity: number;

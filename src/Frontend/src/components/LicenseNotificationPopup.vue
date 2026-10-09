@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { TYPE } from "vue-toastification";
-import { LicenseStatus } from "@/resources/LicenseInfo";
+import { LicenseStatus, upgradeProtectionUnsupportedMessage } from "@/resources/LicenseInfo";
 
 const props = defineProps<{
   type: TYPE.WARNING | TYPE.ERROR;
@@ -30,7 +30,7 @@ const heading = computed(() => {
         <strong>{{ props.type === TYPE.ERROR ? "Error" : "" }}</strong>
       </p>
       <span v-if="props.type === TYPE.ERROR">
-        {{ props.licenseStatus === LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported ? "Your upgrade protection license is no longer supported." : "Your license has expired." }}
+        {{ props.licenseStatus === LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported ? upgradeProtectionUnsupportedMessage : "Your license has expired." }}
         Please contact Particular Software support at: <a href="https://particular.net/support">https://particular.net/support</a>
       </span>
       <div v-else>

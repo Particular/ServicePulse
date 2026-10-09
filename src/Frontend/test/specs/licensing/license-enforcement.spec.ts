@@ -5,7 +5,7 @@ import { expiredLicenseMessageWithValue } from "./questions/expiredLicenseMessag
 import { viewYourLicenseButton } from "./questions/viewYourLicenseButton";
 import { extendYourLicenseButton } from "./questions/extendYourLicenseButton";
 import { getAlertNotifications } from "./questions/alertNotifications";
-import { LicenseType } from "@/resources/LicenseInfo";
+import { LicenseType, upgradeProtectionUnsupportedMessage } from "@/resources/LicenseInfo";
 import { screen } from "@testing-library/vue";
 
 describe("FEATURE: EXPIRING license detection", () => {
@@ -94,13 +94,13 @@ describe("FEATURE: UNSUPPORTED license detection", () => {
       //Act
       await driver.goTo("monitoring");
 
-      expect(await expiredLicenseMessageWithValue(/your upgrade protection license is no longer supported\. please update your license to continue using the particular service platform\./i)).toBeTruthy();
+      expect(await expiredLicenseMessageWithValue(`${upgradeProtectionUnsupportedMessage} Please update your license to continue using the Particular Service Platform.`)).toBeTruthy();
       expect(screen.getByRole("heading", { name: "Platform license no longer supported" })).toBeVisible();
       expect(screen.queryByRole("heading", { name: /license expired/i })).not.toBeInTheDocument();
       expect((await viewYourLicenseButton()).address).toBe("#/configuration/license");
 
       //Find all the toast notifications that popped up and check if there is a notification about the unsupported license with a link to the expected page
-      const notification = (await getAlertNotifications()).find((n) => n.textMatches(/your upgrade protection license is no longer supported\. please contact particular software support at:/i));
+      const notification = (await getAlertNotifications()).find((n) => n.textMatches(new RegExp(`${upgradeProtectionUnsupportedMessage.replaceAll(".", "\\.")} Please contact Particular Software support at:`, "i")));
 
       expect(notification).not.toBeUndefined();
       expect(notification?.hasLink({ caption: "https://particular.net/support", address: "https://particular.net/support" })).toBeTruthy();
