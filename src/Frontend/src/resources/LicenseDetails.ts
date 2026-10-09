@@ -42,7 +42,7 @@ export interface Queue {
 export class Endpoint {
   readonly clientId: string;
   name: string;
-  readonly queues: Queue[];
+  queues: Queue[];
   readonly classification: EndpointClassification;
   readonly licensedSize: EndpointSize | null;
   readonly availableSizes: EndpointSize[];

@@ -5,6 +5,7 @@ import { computed } from "vue";
 import type { MonthlyThroughput } from "@/resources/QueueThroughputSummary.ts";
 import ThroughputGraph from "../queues/ThroughputGraph.vue";
 import DetailsItem from "@/components/DetailsItem.vue";
+import EndpointQueueActions from "./EndpointQueueActions.vue";
 
 const props = defineProps<{ endpoint: Endpoint }>();
 
@@ -39,7 +40,11 @@ const sortedQueues = computed(() => props.endpoint.queues.toSorted((q1, q2) => q
     </div>
     <ThroughputGraph :data="throughputByMonth" class="graph" v-if="throughputByMonth.length" />
     <div class="queue-data">
-      <QueueData :queues="sortedQueues" />
+      <QueueData :queues="sortedQueues">
+        <template #actions="{ queue }">
+          <EndpointQueueActions :queue="queue" :endpoint="endpoint" />
+        </template>
+      </QueueData>
     </div>
   </div>
 </template>

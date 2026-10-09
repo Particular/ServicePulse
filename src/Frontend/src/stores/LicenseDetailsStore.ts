@@ -69,6 +69,13 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
   }
 
+  function removeQueueFromEndpoint(queue: Queue, endpoint: Endpoint) {
+    endpoint.queues = endpoint.queues.filter((assigned) => assigned !== queue);
+    //TODO
+    //endpoint.excludeThroughput = endpoint.excludeThroughput.filter((et) => !queue.matches(et));
+    returnToUnassigned(queue);
+  }
+
   async function refresh() {
     if (!isLicenseDetailsSupported) {
       reset();
@@ -148,6 +155,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     unmarkQueueAsInfrastructure,
     createEndpointFromQueue,
     addQueueToEndpoint,
+    removeQueueFromEndpoint,
   };
 });
 
