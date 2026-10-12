@@ -76,6 +76,11 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     returnToUnassigned(queue);
   }
 
+  function removeEndpoint(endpoint: Endpoint) {
+    endpoints.value = endpoints.value.filter((e) => e !== endpoint);
+    endpoint.queues.forEach((queue) => returnToUnassigned(queue));
+  }
+
   async function refresh() {
     if (!isLicenseDetailsSupported) {
       reset();
@@ -168,6 +173,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     createEndpointFromQueue,
     addQueueToEndpoint,
     removeQueueFromEndpoint,
+    removeEndpoint,
   };
 });
 

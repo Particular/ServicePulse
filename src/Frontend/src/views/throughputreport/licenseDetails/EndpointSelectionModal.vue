@@ -55,7 +55,7 @@ onUnmounted(() => {
             </button>
           </div>
         </div>
-        <div class="modal-footer modal-actions">
+        <div class="modal-footer">
           <ActionButton aria-label="Close Endpoint Selection" @click="closeDialog">Cancel</ActionButton>
         </div>
       </div>
@@ -68,13 +68,6 @@ onUnmounted(() => {
 
 .endpoint-selection-modal {
   max-width: 85vw;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  justify-content: flex-end;
 }
 
 .list-group {

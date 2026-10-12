@@ -2,6 +2,7 @@
 import { computed, ref, watch } from "vue";
 import { EndpointClassification, type Endpoint } from "@/resources/LicenseDetails";
 import FAIcon from "@/components/FAIcon.vue";
+import RemoveEndpoint from "./RemoveEndpoint.vue";
 import { faCircleChevronUp } from "@fortawesome/free-solid-svg-icons";
 
 const props = defineProps<{ endpoint: Endpoint }>();
@@ -19,6 +20,7 @@ const endpointClassificationStyle = computed(() => {
 });
 
 const endpointName = ref(props.endpoint.name);
+const showRemove = ref(false);
 
 watch(
   () => props.endpoint.name,
@@ -27,15 +29,17 @@ watch(
 </script>
 
 <template>
-  <div class="endpoint-header" :key="endpoint.clientId" :style="{ '--endpoint-header-bg': `var(${endpointClassificationStyle})` }">
+  <div class="endpoint-header" v-bind="$attrs" :key="endpoint.clientId" :style="{ '--endpoint-header-bg': `var(${endpointClassificationStyle})` }">
     <div class="endpoint-name">
       <FAIcon :icon="faCircleChevronUp" class="collapse-button" size="lg" tabindex="0" title="collapse" @click="emit('collapse')" />
       <strong v-tippy="endpoint.name">{{ endpoint.name }}</strong>
     </div>
     <div class="header-buttons">
-      <button class="btn btn-secondary">Remove</button>
+      <button class="btn btn-secondary" @click="showRemove = true">Remove</button>
     </div>
   </div>
+
+  <RemoveEndpoint v-if="showRemove" :endpoint="endpoint" @close="showRemove = false" />
 </template>
 
 <style scoped>
