@@ -2,11 +2,15 @@
 import { computed, ref, watch } from "vue";
 import { EndpointClassification, type Endpoint } from "@/resources/LicenseDetails";
 import FAIcon from "@/components/FAIcon.vue";
-import RemoveEndpoint from "./RemoveEndpoint.vue";
+import Modal from "@/components/ModalDialog.vue";
+import ActionButton from "@/components/ActionButton.vue";
+import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore";
 import { faCircleChevronUp } from "@fortawesome/free-solid-svg-icons";
 
 const props = defineProps<{ endpoint: Endpoint }>();
 const emit = defineEmits(["collapse"]);
+
+const licenseDetailsStore = useLicenseDetailsStore();
 
 const endpointClassificationStyle = computed(() => {
   switch (props.endpoint.classification) {
@@ -21,6 +25,11 @@ const endpointClassificationStyle = computed(() => {
 
 const endpointName = ref(props.endpoint.name);
 const showRemove = ref(false);
+
+function removeEndpoint() {
+  licenseDetailsStore.removeEndpoint(props.endpoint);
+  showRemove.value = false;
+}
 
 watch(
   () => props.endpoint.name,
@@ -39,7 +48,16 @@ watch(
     </div>
   </div>
 
-  <RemoveEndpoint v-if="showRemove" :endpoint="endpoint" @close="showRemove = false" />
+  <Modal v-if="showRemove" id="remove-endpoint" title="Remove Endpoint" @close="showRemove = false">
+    <template #modalBody>
+      <span>Please confirm removing Endpoint: {{ endpoint.name }}</span>
+      <div class="mt-3 title">{{ endpoint.queues.length }} queues will be assigned to Unassigned Queues.</div>
+    </template>
+    <template #modalFooter="{ close }">
+      <ActionButton aria-label="Confirm Remove Endpoint" variant="primary" @click="removeEndpoint">Remove</ActionButton>
+      <ActionButton aria-label="Close Remove Endpoint Dialog" @click="close">Cancel</ActionButton>
+    </template>
+  </Modal>
 </template>
 
 <style scoped>
