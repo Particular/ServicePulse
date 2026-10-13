@@ -99,6 +99,12 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     removedEndpoints.value.push(endpoint.clientId);
   }
 
+  function renameEndpoint(endpoint: Endpoint, name: string) {
+    endpoint.name = name;
+    endpoint.amended = true;
+    hasChanges.value = true;
+  }
+
   async function refresh() {
     if (!isLicenseDetailsSupported.value) {
       reset();
@@ -182,14 +188,14 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     try {
       const response = await serviceControlClient.postToServiceControl("license/amendDetails", {
         endpoints: endpoints.value
-          .filter((endpoint) => endpoint.queues.some((queue) => queue.originalLocation !== endpoint.clientId))
+          .filter((endpoint) => endpoint.amended || endpoint.queues.some((queue) => queue.originalLocation !== endpoint.clientId))
           .map((endpoint) => ({
             client_id: endpoint.clientId,
             name: endpoint.name,
             classification: endpoint.classification,
             amended_queues: endpoint.queues.filter((queue) => queue.originalLocation !== endpoint.clientId).map(toApiQueue),
           })),
-        removed_endpoint_ids: removedEndpoints,
+        removed_endpoint_ids: removedEndpoints.value,
         infrastructure_queues: infrastructureQueues.value.filter((queue) => queue.originalLocation !== "infrastructure").map(toApiQueue),
         excluded_queues: excludedQueues.value.filter((queue) => queue.originalLocation !== "excluded").map(toApiQueue),
         unassigned_queues: unassignedQueues.value.filter((queue) => queue.originalLocation != null).map(toApiQueue),
@@ -243,6 +249,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     addQueueToEndpoint,
     removeQueueFromEndpoint,
     removeEndpoint,
+    renameEndpoint,
     discardChanges,
     saveChanges,
   };

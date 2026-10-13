@@ -49,6 +49,8 @@ export class Endpoint {
   readonly licensedSize: EndpointSize | null;
   readonly availableSizes: EndpointSize[];
 
+  amended: boolean;
+
   constructor(clientId: string, name: string, queues: Queue[], classification: EndpointClassification, licensedSize: EndpointSize | null, availableSizes: EndpointSize[]) {
     this.clientId = clientId;
     this.name = name;
@@ -56,6 +58,8 @@ export class Endpoint {
     this.classification = classification;
     this.licensedSize = licensedSize;
     this.availableSizes = availableSizes;
+
+    this.amended = false;
   }
 
   get totalAverageMonthlyThroughput() {

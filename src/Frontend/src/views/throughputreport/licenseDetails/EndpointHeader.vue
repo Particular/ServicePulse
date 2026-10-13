@@ -3,6 +3,7 @@ import { computed, ref, watch } from "vue";
 import { EndpointClassification, type Endpoint } from "@/resources/LicenseDetails";
 import FAIcon from "@/components/FAIcon.vue";
 import Modal from "@/components/ModalDialog.vue";
+import EndpointName from "./EndpointName.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore";
 import { faCircleChevronUp } from "@fortawesome/free-solid-svg-icons";
@@ -25,10 +26,15 @@ const endpointClassificationStyle = computed(() => {
 
 const endpointName = ref(props.endpoint.name);
 const showRemove = ref(false);
+const showRename = ref(false);
 
 function removeEndpoint() {
   licenseDetailsStore.removeEndpoint(props.endpoint);
   showRemove.value = false;
+}
+
+function renameEndpoint(name: string) {
+  licenseDetailsStore.renameEndpoint(props.endpoint, name);
 }
 
 watch(
@@ -44,6 +50,7 @@ watch(
       <strong v-tippy="endpoint.name">{{ endpoint.name }}</strong>
     </div>
     <div class="header-buttons">
+      <button class="btn btn-secondary" @click="showRename = true">Rename</button>
       <button class="btn btn-secondary" @click="showRemove = true">Remove</button>
     </div>
   </div>
@@ -58,6 +65,7 @@ watch(
       <ActionButton aria-label="Close Remove Endpoint Dialog" @click="close">Cancel</ActionButton>
     </template>
   </Modal>
+  <EndpointName v-if="showRename" :endpoint="endpoint" @close="showRename = false" @save="renameEndpoint" />
 </template>
 
 <style scoped>
