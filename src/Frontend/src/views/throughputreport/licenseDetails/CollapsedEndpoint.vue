@@ -28,10 +28,9 @@ const endpointClassificationStyle = computed(() => {
     <div class="details">
       <span class="queues">Queues: {{ endpoint.queues.length }}</span>
       <span class="throughput">Throughput: {{ endpoint.totalAverageMonthlyThroughput.toLocaleString() }}</span>
-      <template v-if="endpoint.classification === EndpointClassification.Full">
-        <span class="c-size">Current Size: {{ endpoint.currentSize.name }}</span>
-        <span class="l-size">Licensed Size: {{ endpoint.licensedSize?.name ?? "Not Licensed" }} </span>
-      </template>
+      <span class="c-size" v-if="endpoint.classification === EndpointClassification.Full">Current Size: {{ endpoint.currentSize.name }}</span>
+      <span class="c-size" v-else />
+      <span class="l-size">Licensed Size: {{ endpoint.licensedSize?.name ?? (endpoint.classification === EndpointClassification.Full ? "Not Licensed" : "Send Only") }} </span>
     </div>
     <!-- <div>
       <RemoveEndpoint :endpoint="endpoint" />

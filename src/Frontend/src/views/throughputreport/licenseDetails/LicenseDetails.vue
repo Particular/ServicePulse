@@ -16,6 +16,7 @@ import UploadMetadata from "./UploadMetadata.vue";
 import DetailsItem from "@/components/DetailsItem.vue";
 import ExternalLink from "@/components/ExternalLink.vue";
 import { EndpointClassification } from "@/resources/LicenseDetails.ts";
+import ActionButton from "@/components/ActionButton.vue";
 
 const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
 
@@ -136,8 +137,8 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
               </h5>
             </div>
             <div class="action-buttons">
-              <button class="btn btn-secondary" v-if="hasChanges" :disabled="saving" @click="licenseDetailsStore.discardChanges">Discard Changes</button>
-              <button class="btn btn-primary" v-if="hasChanges" :disabled="saving" @click="licenseDetailsStore.saveChanges">Save Changes</button>
+              <ActionButton variant="secondary" v-if="hasChanges" :disabled="saving" @click="licenseDetailsStore.discardChanges">Discard Changes</ActionButton>
+              <ActionButton variant="primary" v-if="hasChanges" :disabled="saving" :loading="saving" @click="licenseDetailsStore.saveChanges">Save Changes</ActionButton>
             </div>
           </div>
           <div class="mt-1">✏️ before a queue name indicates that the queue location differs from what was licensed</div>

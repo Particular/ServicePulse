@@ -45,7 +45,7 @@ export class Endpoint {
   readonly clientId: string;
   name: string;
   queues: Queue[];
-  readonly classification: EndpointClassification;
+  classification: EndpointClassification;
   readonly licensedSize: EndpointSize | null;
   readonly availableSizes: EndpointSize[];
 
@@ -71,7 +71,7 @@ export class Endpoint {
   }
 
   get matchesLicensedSize() {
-    return this.licensedSize == null || this.licensedSize === this.currentSize;
+    return this.licensedSize != null && this.licensedSize === this.currentSize;
   }
 }
 

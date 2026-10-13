@@ -35,7 +35,7 @@ const sortedQueues = computed(() => props.endpoint.queues.toSorted((q1, q2) => q
         {{ endpoint.currentSize.name }}
       </DetailsItem>
       <DetailsItem label="Licensed Size" :tooltip="endpoint.classification === EndpointClassification.Full ? endpoint.licensedSize?.throughputText : undefined">
-        {{ endpoint.classification === EndpointClassification.Full ? (endpoint.licensedSize?.name ?? "Not Licensed") : "Send Only" }}
+        {{ endpoint.licensedSize?.name ?? (endpoint.classification === EndpointClassification.Full ? "Not Licensed" : "Send Only") }}
       </DetailsItem>
     </div>
     <ThroughputGraph :data="throughputByMonth" class="graph" v-if="throughputByMonth.length" />

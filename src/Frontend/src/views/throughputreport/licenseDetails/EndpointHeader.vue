@@ -37,6 +37,10 @@ function renameEndpoint(name: string) {
   licenseDetailsStore.renameEndpoint(props.endpoint, name);
 }
 
+function reclassifyEndpoint(value: EndpointClassification) {
+  licenseDetailsStore.reclassifyEndpoint(props.endpoint, value);
+}
+
 watch(
   () => props.endpoint.name,
   (newValue) => (endpointName.value = newValue)
@@ -50,8 +54,14 @@ watch(
       <strong v-tippy="endpoint.name">{{ endpoint.name }}</strong>
     </div>
     <div class="header-buttons">
-      <button class="btn btn-secondary" @click="showRename = true">Rename</button>
-      <button class="btn btn-secondary" @click="showRemove = true">Remove</button>
+      <div>
+        <label>Classification:</label>
+        <select @change="(e) => reclassifyEndpoint(Number((e.target as HTMLSelectElement).value))" :value="endpoint.classification" class="form-select">
+          <option v-for="[name, classification] in Object.entries(EndpointClassification).filter(([, val]) => typeof val === 'number')" :value="classification" :key="classification">{{ name }}</option>
+        </select>
+      </div>
+      <ActionButton variant="secondary" @click="showRename = true">Rename</ActionButton>
+      <ActionButton variant="secondary" @click="showRemove = true">Remove</ActionButton>
     </div>
   </div>
 

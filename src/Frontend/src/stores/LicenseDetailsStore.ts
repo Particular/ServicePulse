@@ -105,6 +105,12 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     hasChanges.value = true;
   }
 
+  function reclassifyEndpoint(endpoint: Endpoint, classification: EndpointClassification) {
+    endpoint.classification = classification;
+    endpoint.amended = true;
+    hasChanges.value = true;
+  }
+
   async function refresh() {
     if (!isLicenseDetailsSupported.value) {
       reset();
@@ -250,6 +256,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     removeQueueFromEndpoint,
     removeEndpoint,
     renameEndpoint,
+    reclassifyEndpoint,
     discardChanges,
     saveChanges,
   };
