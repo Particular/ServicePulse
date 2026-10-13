@@ -16,6 +16,8 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   const infrastructureQueues = ref<Queue[]>([]);
   const excludedQueues = ref<Queue[]>([]);
   const unassignedQueues = ref<Queue[]>([]);
+  /** stores queues that have no mapped details (so we don't want them in unassigned), but were previously assigned */
+  const unmappedQueues = ref<Queue[]>([]);
   const serviceEndDate = ref<Date>();
   const validId = ref<boolean>(true);
   const hasLicenseDetails = ref(false);
@@ -30,6 +32,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     infrastructureQueues.value = [];
     excludedQueues.value = [];
     unassignedQueues.value = [];
+    unmappedQueues.value = [];
     hasLicenseDetails.value = false;
     hasChanges.value = false;
     removedEndpoints.value = [];
@@ -64,6 +67,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
 
   function returnToUnassigned(queue: Queue) {
     if (queue.details) unassignedQueues.value.push(queue);
+    else unmappedQueues.value.push(queue);
     hasChanges.value = true;
   }
 
@@ -142,6 +146,9 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
       endpoints.value = data.endpoints.map((metaEp) => new Endpoint(metaEp.client_id, metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes));
       infrastructureQueues.value = data.infrastructure_queues.map(toQueue);
       excludedQueues.value = data.excluded_queues.map(toQueue);
+      /* only used for save, not load */
+      unmappedQueues.value = [];
+      removedEndpoints.value = [];
       const initialUnassignedQueues = data.unassigned_queues.map(toQueue);
       const assignedQueues = [...endpoints.value.flatMap((endpoint) => endpoint.queues), ...infrastructureQueues.value, ...excludedQueues.value, ...initialUnassignedQueues];
       unassignedQueues.value = [
@@ -205,6 +212,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
         infrastructure_queues: infrastructureQueues.value.filter((queue) => queue.originalLocation !== "infrastructure").map(toApiQueue),
         excluded_queues: excludedQueues.value.filter((queue) => queue.originalLocation !== "excluded").map(toApiQueue),
         unassigned_queues: unassignedQueues.value.filter((queue) => queue.originalLocation != null).map(toApiQueue),
+        unmapped_queues: unmappedQueues.value.map(toApiQueue),
       });
       if (!response.ok) {
         const text = await response.text();
