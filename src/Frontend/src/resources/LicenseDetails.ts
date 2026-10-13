@@ -4,6 +4,7 @@ export interface LicensedEndpointDetails {
   endpoints: ApiEndpoint[];
   infrastructure_queues: ApiQueue[];
   excluded_queues: ApiQueue[];
+  unassigned_queues: ApiQueue[];
   service_end_date: string;
   products: ApiProduct[];
   valid_id: boolean;

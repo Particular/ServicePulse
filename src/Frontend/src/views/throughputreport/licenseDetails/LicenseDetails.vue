@@ -20,7 +20,7 @@ import { EndpointClassification } from "@/resources/LicenseDetails.ts";
 const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
 
 const licenseDetailsStore = useLicenseDetailsStore();
-const { endpoints, endpointSizes, serviceEndDate, validId, hasLicenseDetails, error, infrastructureQueues, excludedQueues, unassignedQueues } = storeToRefs(licenseDetailsStore);
+const { endpoints, endpointSizes, serviceEndDate, validId, hasLicenseDetails, error, infrastructureQueues, excludedQueues, unassignedQueues, hasChanges, saving } = storeToRefs(licenseDetailsStore);
 
 const sizes = computed(() =>
   endpoints.value
@@ -108,7 +108,7 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
       </div>
       <div>
         <div class="row mt-3">
-          <div class="col-sm-12">
+          <div class="col-sm-12 tab-row">
             <div class="nav tabs">
               <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.licensedEndpoints.link) }">
                 <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">
@@ -134,6 +134,10 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
                   <span class="badge">{{ unassignedQueues.length }}</span>
                 </RouterLink>
               </h5>
+            </div>
+            <div class="action-buttons">
+              <button class="btn btn-secondary" v-if="hasChanges" :disabled="saving" @click="licenseDetailsStore.discardChanges">Discard Changes</button>
+              <button class="btn btn-primary" v-if="hasChanges" :disabled="saving" @click="licenseDetailsStore.saveChanges">Save Changes</button>
             </div>
           </div>
           <div class="mt-1">✏️ before a queue name indicates that the queue location differs from what was licensed</div>
@@ -186,6 +190,18 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
 .id-warning button {
   flex: 0;
   white-space: nowrap;
+}
+
+.tab-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.tab-row .action-buttons {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
 }
 
 h5 a {

@@ -5,6 +5,8 @@ import createThroughputClient from "@/views/throughputreport/throughputClient";
 import { Endpoint, EndpointSize, type Queue, type LicensedEndpointDetails, type ApiQueue, EndpointClassification } from "@/resources/LicenseDetails";
 import serviceControlClient from "@/components/serviceControlClient";
 import useIsLicenseDetailsSupported from "@/views/throughputreport/licenseDetails/isLicenseDetailsSupported";
+import { useShowToast } from "@/composables/toast";
+import { TYPE } from "vue-toastification";
 
 export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
@@ -17,6 +19,9 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   const serviceEndDate = ref<Date>();
   const validId = ref<boolean>(true);
   const hasLicenseDetails = ref(false);
+  const hasChanges = ref(false);
+  const removedEndpoints = ref<string[]>([]);
+  const saving = ref(false);
   const error = ref<string | null>();
 
   function reset() {
@@ -24,31 +29,42 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     endpoints.value = [];
     infrastructureQueues.value = [];
     excludedQueues.value = [];
+    unassignedQueues.value = [];
     hasLicenseDetails.value = false;
+    hasChanges.value = false;
+    removedEndpoints.value = [];
+    serviceEndDate.value = undefined;
+    validId.value = true;
+    error.value = null;
   }
 
   function excludeQueue(queue: Queue) {
     excludedQueues.value.push(queue);
     unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
+    hasChanges.value = true;
   }
 
   function unexcludeQueue(queue: Queue) {
     excludedQueues.value = excludedQueues.value.filter((assigned) => assigned !== queue);
     returnToUnassigned(queue);
+    hasChanges.value = true;
   }
 
   function markQueueAsInfrastructure(queue: Queue) {
     infrastructureQueues.value.push(queue);
     unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
+    hasChanges.value = true;
   }
 
   function unmarkQueueAsInfrastructure(queue: Queue) {
     infrastructureQueues.value = infrastructureQueues.value.filter((assigned) => assigned !== queue);
     returnToUnassigned(queue);
+    hasChanges.value = true;
   }
 
   function returnToUnassigned(queue: Queue) {
     if (queue.details) unassignedQueues.value.push(queue);
+    hasChanges.value = true;
   }
 
   function createEndpointFromQueue(queue: Queue) {
@@ -67,6 +83,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   function addQueueToEndpoint(queue: Queue, endpoint: Endpoint) {
     endpoint.queues.push(queue);
     unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
+    hasChanges.value = true;
   }
 
   function removeQueueFromEndpoint(queue: Queue, endpoint: Endpoint) {
@@ -79,10 +96,11 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   function removeEndpoint(endpoint: Endpoint) {
     endpoints.value = endpoints.value.filter((e) => e !== endpoint);
     endpoint.queues.forEach((queue) => returnToUnassigned(queue));
+    removedEndpoints.value.push(endpoint.clientId);
   }
 
   async function refresh() {
-    if (!isLicenseDetailsSupported) {
+    if (!isLicenseDetailsSupported.value) {
       reset();
       return;
     }
@@ -112,24 +130,29 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
       endpoints.value = data.endpoints.map((metaEp) => new Endpoint(metaEp.client_id, metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes));
       infrastructureQueues.value = data.infrastructure_queues.map(toQueue);
       excludedQueues.value = data.excluded_queues.map(toQueue);
-      const assignedQueues = [...endpoints.value.flatMap((endpoint) => endpoint.queues), ...infrastructureQueues.value, ...excludedQueues.value];
-      unassignedQueues.value = scQueues
-        .filter((scQ) => !assignedQueues.find((queue) => scQ.name_hash === queue.nameHash && ((!queue.scopeHash && !scQ.scope_hash) || queue.scopeHash === scQ.scope_hash)))
-        .map(
-          (scQ) =>
-            ({
-              nameHash: scQ.name_hash,
-              scopeHash: scQ.scope_hash ?? "",
-              //TODO: originalLocation may not be undefined, if it was previously classified in the license metadata and the customer unassigns it
-              details: scQ,
-            }) as Queue
-        );
+      const initialUnassignedQueues = data.unassigned_queues.map(toQueue);
+      const assignedQueues = [...endpoints.value.flatMap((endpoint) => endpoint.queues), ...infrastructureQueues.value, ...excludedQueues.value, ...initialUnassignedQueues];
+      unassignedQueues.value = [
+        ...initialUnassignedQueues,
+        ...scQueues
+          .filter((scQ) => !assignedQueues.find((queue) => scQ.name_hash === queue.nameHash && ((!queue.scopeHash && !scQ.scope_hash) || queue.scopeHash === scQ.scope_hash)))
+          .map(
+            (scQ) =>
+              ({
+                nameHash: scQ.name_hash,
+                scopeHash: scQ.scope_hash ?? "",
+                details: scQ,
+              }) as Queue
+          ),
+      ];
       serviceEndDate.value = new Date(data.service_end_date);
       validId.value = data.valid_id;
+      hasChanges.value = false;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       error.value = `Error fetching endpoint metadata: ${err.message ?? err}`;
       logger.error("Error fetching endpoint metadata", err);
+      throw err;
     }
   }
 
@@ -140,6 +163,50 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
       throw new Error(`Upload Failed: ${response.status} ${response.statusText} - ${text}`);
     }
     await refresh();
+  }
+
+  async function discardChanges() {
+    saving.value = true;
+    try {
+      await refresh();
+    } finally {
+      saving.value = false;
+    }
+  }
+
+  async function saveChanges() {
+    saving.value = true;
+    function toApiQueue(queue: Queue) {
+      return { name_hash: queue.nameHash, scope_hash: queue.scopeHash, original_location: queue.originalLocation };
+    }
+    try {
+      const response = await serviceControlClient.postToServiceControl("license/amendDetails", {
+        endpoints: endpoints.value
+          .filter((endpoint) => endpoint.queues.some((queue) => queue.originalLocation !== endpoint.clientId))
+          .map((endpoint) => ({
+            client_id: endpoint.clientId,
+            name: endpoint.name,
+            classification: endpoint.classification,
+            amended_queues: endpoint.queues.filter((queue) => queue.originalLocation !== endpoint.clientId).map(toApiQueue),
+          })),
+        removed_endpoint_ids: removedEndpoints,
+        infrastructure_queues: infrastructureQueues.value.filter((queue) => queue.originalLocation !== "infrastructure").map(toApiQueue),
+        excluded_queues: excludedQueues.value.filter((queue) => queue.originalLocation !== "excluded").map(toApiQueue),
+        unassigned_queues: unassignedQueues.value.filter((queue) => queue.originalLocation != null).map(toApiQueue),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Save Failed: ${response.status} ${response.statusText} - ${text}`);
+      }
+      await refresh();
+      useShowToast(TYPE.SUCCESS, "Saved", "", false, { timeout: 1000 });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      useShowToast(TYPE.ERROR, "Error", "Failed to save changes to endpoint metadata.");
+      logger.error("Failed to save changes to endpoint metadata.", err);
+    } finally {
+      saving.value = false;
+    }
   }
 
   const compare = (q1: Queue, q2: Queue) => {
@@ -164,6 +231,8 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     serviceEndDate,
     validId,
     hasLicenseDetails,
+    hasChanges,
+    saving,
     error,
     uploadEndpointMetadata,
     excludeQueue,
@@ -174,6 +243,8 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     addQueueToEndpoint,
     removeQueueFromEndpoint,
     removeEndpoint,
+    discardChanges,
+    saveChanges,
   };
 });
 
