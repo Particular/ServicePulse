@@ -177,7 +177,7 @@ onMounted(async () => {
 <template>
   <ModalDialog id="failed-message-editor" title="Edit and retry message" @close="attemptClose" width="70%">
     <template #modalBody>
-      <div class="row modal-msg-editor">
+      <div class="row modal-msg-editor" role="dialog" aria-label="edit and retry message">
         <div class="msg-editor-tabs full-width">
           <div class="row msg-editor-tabs-header full-width">
             <div class="full-width no-side-padding">

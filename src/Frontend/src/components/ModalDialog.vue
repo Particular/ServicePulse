@@ -19,6 +19,7 @@ function onKeydown(event: KeyboardEvent) {
 onMounted(() => {
   document.body.className = "modal-open";
   document.addEventListener("keydown", onKeydown);
+  /* native dialog showModal captures tab focus */
   const showModal = ref.value?.showModal;
   if (showModal) showModal();
 });
@@ -26,6 +27,7 @@ onMounted(() => {
 onUnmounted(() => {
   document.body.className = "";
   document.removeEventListener("keydown", onKeydown);
+  /* native dialog close releases tab focus */
   const close = ref.value?.close;
   if (close) close();
 });
