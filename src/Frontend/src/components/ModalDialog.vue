@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from "vue";
+import type * as CSS from "csstype";
 
-defineProps<{ id: string; title: string; class?: string }>();
+defineProps<{ id: string; title: string; width?: CSS.Property.Width }>();
 const emit = defineEmits<{ close: [] }>();
 
 function closeDialog() {
@@ -27,7 +28,7 @@ onUnmounted(() => {
 <template>
   <div class="modal-mask" @click.self="closeDialog">
     <div class="modal-wrapper">
-      <div :class="`modal-container ${id}-modal`" role="dialog" aria-modal="true" :aria-labelledby="`${id}-title`">
+      <div :class="`modal-container ${id}-modal`" :style="{ width }" role="dialog" aria-modal="true" :aria-labelledby="`${id}-title`">
         <div class="modal-header">
           <div class="modal-title">
             <h3 :id="`${id}-title`">{{ title }}</h3>
@@ -50,6 +51,8 @@ onUnmounted(() => {
 
 .modal-container {
   max-width: 85vw;
+  max-height: 95vh;
+  overflow-y: auto;
 }
 
 .modal-header {
