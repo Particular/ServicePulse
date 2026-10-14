@@ -19,13 +19,15 @@ function onKeydown(event: KeyboardEvent) {
 onMounted(() => {
   document.body.className = "modal-open";
   document.addEventListener("keydown", onKeydown);
-  ref.value?.showModal();
+  const showModal = ref.value?.showModal;
+  if (showModal) showModal();
 });
 
 onUnmounted(() => {
   document.body.className = "";
   document.removeEventListener("keydown", onKeydown);
-  ref.value?.close();
+  const close = ref.value?.close;
+  if (close) close();
 });
 </script>
 
