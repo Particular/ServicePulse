@@ -2,6 +2,7 @@
 import { computed, ref } from "vue";
 import ActionButton from "@/components/ActionButton.vue";
 import FAIcon from "@/components/FAIcon.vue";
+import ModalDialog from "../ModalDialog.vue";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 export interface RetryRedirect {
@@ -83,74 +84,63 @@ function close() {
 </script>
 
 <template>
-  <div class="modal-mask">
-    <div class="modal-wrapper">
-      <div class="modal-container modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title" v-if="model.message_redirect_id">Modify redirect</h3>
-          <h3 class="modal-title" v-if="!model.message_redirect_id">Create redirect</h3>
+  <ModalDialog id="retry-redirect-edit" :title="model.message_redirect_id ? 'Modify redirect' : 'Create redirect'" @close="close">
+    <template #modalBody>
+      <div class="row redirectForm">
+        <div class="form-group">
+          <label for="sourceQueue">From physical address</label>
+          <FAIcon :icon="faInfoCircle" v-tippy="sourceQueueTooltip" class="info" size="sm" />
+          <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid }">
+            <select id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-select" required :disabled="!!model.message_redirect_id">
+              <option v-for="option in model.queues" :value="option" :key="option">
+                {{ option }}
+              </option>
+            </select>
+          </div>
         </div>
+        <div class="row"></div>
+        <div class="form-group">
+          <label for="targetQueue">To physical address</label>
+          <FAIcon :icon="faInfoCircle" v-tippy="targetQueueTooltip" class="info" size="sm" />
+          <div :class="{ 'has-error': !targetQueueIsValid, 'has-success': targetQueueIsValid }">
+            <vue3-simple-typeahead
+              id="targetQueue"
+              name="targetQueue"
+              :defaultItem="model.to_physical_address"
+              v-model="targetQueue"
+              @selectItem="selectToAddress"
+              class="form-control"
+              required
+              placeholder="Start writing..."
+              :items="model.queues"
+              :minInputLength="1"
+            >
+            </vue3-simple-typeahead>
 
-        <form name="redirectForm" class="redirectForm" novalidate>
-          <div class="modal-body">
-            <div class="row">
-              <div class="form-group">
-                <label for="sourceQueue">From physical address</label>
-                <FAIcon :icon="faInfoCircle" v-tippy="sourceQueueTooltip" class="info" size="sm" />
-                <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid }">
-                  <select id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-select" required :disabled="!!model.message_redirect_id">
-                    <option v-for="option in model.queues" :value="option" :key="option">
-                      {{ option }}
-                    </option>
-                  </select>
-                </div>
+            <template v-if="noKnownQueues">
+              <div :class="{ 'has-error': noKnownQueues }">
+                <p class="control-label">No known queues found. You can enter a queue name manually, but if you don't provide a valid address, the redirected message will be lost.</p>
               </div>
-              <div class="row"></div>
-              <div class="form-group">
-                <label for="targetQueue">To physical address</label>
-                <FAIcon :icon="faInfoCircle" v-tippy="targetQueueTooltip" class="info" size="sm" />
-                <div :class="{ 'has-error': !targetQueueIsValid, 'has-success': targetQueueIsValid }">
-                  <vue3-simple-typeahead
-                    id="targetQueue"
-                    name="targetQueue"
-                    :defaultItem="model.to_physical_address"
-                    v-model="targetQueue"
-                    @selectItem="selectToAddress"
-                    class="form-control"
-                    required
-                    placeholder="Start writing..."
-                    :items="model.queues"
-                    :minInputLength="1"
-                  >
-                  </vue3-simple-typeahead>
-
-                  <template v-if="noKnownQueues">
-                    <div :class="{ 'has-error': noKnownQueues }">
-                      <p class="control-label">No known queues found. You can enter a queue name manually, but if you don't provide a valid address, the redirected message will be lost.</p>
-                    </div>
-                  </template>
-                  <template v-if="notKnownQueue">
-                    <div :class="{ 'has-error': notKnownQueue }">
-                      <p class="control-label">Target queue does not match any known queue. You can enter a queue name manually, but if you don't provide a valid address, the redirected message will be lost.</p>
-                    </div>
-                  </template>
-                </div>
+            </template>
+            <template v-if="notKnownQueue">
+              <div :class="{ 'has-error': notKnownQueue }">
+                <p class="control-label">Target queue does not match any known queue. You can enter a queue name manually, but if you don't provide a valid address, the redirected message will be lost.</p>
               </div>
-              <div class="form-group">
-                <input type="checkbox" v-model="immediatelyRetry" class="check-label" id="immediatelyRetry" />
-                <label for="immediatelyRetry">Immediately retry any matching failed messages</label>
-              </div>
-            </div>
+            </template>
           </div>
-          <div class="modal-footer">
-            <ActionButton v-if="model.message_redirect_id" variant="primary" :disabled="!formIsValid" @click="edit">Modify</ActionButton>
-            <ActionButton v-if="!model.message_redirect_id" variant="primary" :disabled="!formIsValid" @click="create">Create</ActionButton>
-            <ActionButton @click="close">Cancel</ActionButton>
-          </div>
-        </form>
+        </div>
+        <div class="form-group">
+          <input type="checkbox" v-model="immediatelyRetry" class="check-label" id="immediatelyRetry" />
+          <label for="immediatelyRetry">Immediately retry any matching failed messages</label>
+        </div>
       </div>
-    </div>
-  </div>
+    </template>
+    <template #modalFooter>
+      <ActionButton v-if="model.message_redirect_id" variant="primary" :disabled="!formIsValid" @click="edit">Modify</ActionButton>
+      <ActionButton v-if="!model.message_redirect_id" variant="primary" :disabled="!formIsValid" @click="create">Create</ActionButton>
+      <ActionButton @click="close">Cancel</ActionButton>
+    </template>
+  </ModalDialog>
 </template>
 
 <style scoped>
