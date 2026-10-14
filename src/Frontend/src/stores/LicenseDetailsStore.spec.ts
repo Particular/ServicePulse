@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
 import type QueueThroughputSummary from "@/resources/QueueThroughputSummary";
-import { EndpointClassification, type LicensedEndpointDetails, type Queue } from "@/resources/LicenseDetails";
+import { EndpointClassification, type LicensedEndpointDetails } from "@/resources/LicenseDetails";
 
 const mocks = vi.hoisted(() => ({
   isSupported: false,
