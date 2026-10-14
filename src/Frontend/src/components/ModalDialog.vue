@@ -52,11 +52,17 @@ onUnmounted(() => {
 .modal-container {
   max-width: 85vw;
   max-height: 95vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
   display: flex;
+  flex-shrink: 0;
+}
+
+.modal-body {
+  flex: 1;
 }
 
 .modal-title {
@@ -67,5 +73,6 @@ onUnmounted(() => {
 
 .modal-footer {
   gap: 0.25rem;
+  flex-shrink: 0;
 }
 </style>
