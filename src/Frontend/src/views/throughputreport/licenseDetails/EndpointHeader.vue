@@ -55,8 +55,8 @@ watch(
     </div>
     <div class="header-buttons">
       <div>
-        <label>Classification:</label>
-        <select @change="(e) => reclassifyEndpoint(Number((e.target as HTMLSelectElement).value))" :value="endpoint.classification" class="form-select">
+        <label :for="`${endpoint.clientId}classification`">Classification:</label>
+        <select :id="`${endpoint.clientId}classification`" @change="(e) => reclassifyEndpoint(Number((e.target as HTMLSelectElement).value))" :value="endpoint.classification" class="form-select">
           <option v-for="[name, classification] in Object.entries(EndpointClassification).filter(([, val]) => typeof val === 'number')" :value="classification" :key="classification">{{ name }}</option>
         </select>
       </div>
@@ -119,5 +119,9 @@ watch(
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.header-buttons label {
+  margin: 0;
 }
 </style>
