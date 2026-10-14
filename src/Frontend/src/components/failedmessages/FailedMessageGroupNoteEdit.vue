@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { ref } from "vue";
+import ModalDialog from "../ModalDialog.vue";
+import ActionButton from "../ActionButton.vue";
 
 const emit = defineEmits(["createNoteConfirmed", "editNoteConfirmed", "cancelEditNote"]);
 
@@ -30,47 +32,22 @@ function editNote() {
 function close() {
   emit("cancelEditNote");
 }
-
-onUnmounted(() => {
-  // Must remove the class again once the modal is dismissed
-  document.getElementsByTagName("body")[0].className = "";
-});
-
-onMounted(() => {
-  // Add the `modal-open` class to the body tag
-  document.getElementsByTagName("body")[0].className = "modal-open";
-});
 </script>
 
 <template>
-  <div class="modal-mask">
-    <div class="modal-wrapper">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3 class="modal-title" v-if="settings.comment">Modify Note</h3>
-          <h3 class="modal-title" v-if="!settings.comment">Create Note</h3>
+  <ModalDialog id="failed-message-group-note" :title="settings.comment ? 'Modify Note' : 'Create Note'" @close="close">
+    <template #modalBody>
+      <div class="row">
+        <div class="form-group">
+          <label for="comment">Note</label>
+          <textarea type="text" id="txtcomment" name="txtcomment" v-model.trim="grpcomment" placeholder="Comment" :minInputLength="1" class="form-control" required></textarea>
         </div>
-
-        <form name="commentNoteForm" novalidate>
-          <div class="modal-body">
-            <div class="row">
-              <div class="form-group">
-                <label for="comment">Note</label>
-                <textarea type="text" id="txtcomment" name="txtcomment" v-model.trim="grpcomment" placeholder="Comment" :minInputLength="1" class="form-control" required></textarea>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button v-if="settings.comment" :disabled="!grpcomment" class="btn btn-primary" @click="editNote">Modify</button>
-            <button v-if="!settings.comment" :disabled="!grpcomment" class="btn btn-primary" @click="createNote">Create</button>
-            <button class="btn btn-default" @click="close">Cancel</button>
-          </div>
-        </form>
       </div>
-    </div>
-  </div>
+    </template>
+    <template #modalFooter>
+      <ActionButton v-if="settings.comment" :disabled="!grpcomment" variant="primary" @click="editNote">Modify</ActionButton>
+      <ActionButton v-if="!settings.comment" :disabled="!grpcomment" variant="primary" @click="createNote">Create</ActionButton>
+      <ActionButton @click="close">Cancel</ActionButton>
+    </template>
+  </ModalDialog>
 </template>
-
-<style scoped>
-@import "@/components/modal.css";
-</style>
