@@ -111,8 +111,6 @@ function close() {
 </template>
 
 <style scoped>
-@import "@/components/modal.css";
-
 .notificationsForm {
   display: flex;
   flex-direction: column;

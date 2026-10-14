@@ -144,8 +144,6 @@ function close() {
 </template>
 
 <style scoped>
-@import "@/components/modal.css";
-
 .redirectForm {
   display: flex;
   flex-direction: column;

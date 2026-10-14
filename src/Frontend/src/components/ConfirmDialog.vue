@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ActionButton from "@/components/ActionButton.vue";
+import ModalDialog from "./ModalDialog.vue";
 import { onMounted, onUnmounted } from "vue";
 
 const emit = defineEmits<{ confirm: []; cancel: [] }>();
@@ -34,26 +35,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="modal-mask">
-    <div class="modal-wrapper">
-      <div class="modal-container" role="dialog" :aria-label="heading">
-        <div class="modal-header">
-          <div class="modal-title">
-            <h3>{{ heading }}</h3>
-          </div>
-        </div>
-        <div class="modal-body">
-          <p>{{ body }}</p>
-          <p v-if="secondParagraph && secondParagraph.length">{{ secondParagraph }}</p>
-        </div>
-        <div class="modal-footer">
-          <ActionButton variant="primary" :aria-label="hideCancel ? 'Ok' : 'Yes'" @click="confirm">{{ hideCancel ? "Ok" : "Yes" }}</ActionButton>
-          <ActionButton v-if="!hideCancel" aria-label="No" @click="close">No</ActionButton>
-        </div>
-      </div>
-    </div>
-  </div>
+  <ModalDialog id="confirm" :title="heading" @close="close">
+    <template #modalBody>
+      <p>{{ body }}</p>
+      <p v-if="secondParagraph && secondParagraph.length">{{ secondParagraph }}</p>
+    </template>
+    <template #modalFooter>
+      <ActionButton variant="primary" :aria-label="hideCancel ? 'Ok' : 'Yes'" @click="confirm">{{ hideCancel ? "Ok" : "Yes" }}</ActionButton>
+      <ActionButton v-if="!hideCancel" aria-label="No" @click="close">No</ActionButton>
+    </template>
+  </ModalDialog>
 </template>
-<style scoped>
-@import "@/components/modal.css";
-</style>
