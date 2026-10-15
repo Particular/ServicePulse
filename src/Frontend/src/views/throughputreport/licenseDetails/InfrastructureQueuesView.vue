@@ -12,7 +12,7 @@ const { infrastructureQueues } = storeToRefs(licenseDetailsStore);
 <template>
   <div class="alert alert-info mt-1">These are queues which only exist in your system to support the Particular Platform functionality</div>
   <div class="mt-2" v-if="infrastructureQueues.length">
-    <QueueData :queues="infrastructureQueues" current-location="infrastructure">
+    <QueueData :queues="infrastructureQueues" current-location="infrastructure" sticky-pagination>
       <template #actions="{ queue }">
         <InfrastructureQueueActions :queue="queue" />
       </template>
