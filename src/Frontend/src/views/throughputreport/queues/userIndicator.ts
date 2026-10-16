@@ -4,7 +4,7 @@ export enum UserIndicator {
   TransactionalSessionProcessorEndpoint = "TransactionalSessionProcessorEndpoint",
   SendOnlyEndpoint = "SendOnlyEndpoint",
   NServiceBusEndpointNoLongerInUse = "NServiceBusEndpointNoLongerInUse",
-  PlannedToDecommission = "PlannedToDecommission",
   GatewayOrBridgingEndpoint = "GatewayOrBridgingEndpoint",
   ParticularPlatformEndpoint = "ParticularPlatformEndpoint",
+  PlannedToDecommission = "PlannedToDecommission",
 }

@@ -9,7 +9,6 @@ import LegendNServiceBusEndpoint from "./LegendNServiceBusEndpoint.vue";
 import LegendNServiceBusEndpointNoLongerInUse from "./LegendNServiceBusEndpointNoLongerInUse.vue";
 import LegendTransactionalSessionProcessorEndpoint from "./LegendTransactionalSessionProcessorEndpoint.vue";
 import LegendSendOnlyEndpoint from "./LegendSendOnlyEndpoint.vue";
-import LegendPlannedToDecommission from "./LegendPlannedToDecommission.vue";
 import LegendNotNServiceBusEndpoint from "./LegendNotNServiceBusEndpoint.vue";
 import LegendGatewayOrBridgeEndpoint from "./LegendGatewayOrBridgeEndpoint.vue";
 import LegendParticularPlatformEndpoint from "./LegendParticularPlatformEndpoint.vue";
@@ -32,13 +31,12 @@ const showLegend = ref(false);
 
 const legendOptions = new Map<UserIndicator, Component>([
   [UserIndicator.NServiceBusEndpoint, LegendNServiceBusEndpoint],
-  [UserIndicator.NServiceBusEndpointNoLongerInUse, LegendNServiceBusEndpointNoLongerInUse],
-  [UserIndicator.TransactionalSessionProcessorEndpoint, LegendTransactionalSessionProcessorEndpoint],
   [UserIndicator.SendOnlyEndpoint, LegendSendOnlyEndpoint],
-  [UserIndicator.PlannedToDecommission, LegendPlannedToDecommission],
-  [UserIndicator.NotNServiceBusEndpoint, LegendNotNServiceBusEndpoint],
+  [UserIndicator.TransactionalSessionProcessorEndpoint, LegendTransactionalSessionProcessorEndpoint],
   [UserIndicator.GatewayOrBridgingEndpoint, LegendGatewayOrBridgeEndpoint],
   [UserIndicator.ParticularPlatformEndpoint, LegendParticularPlatformEndpoint],
+  [UserIndicator.NServiceBusEndpointNoLongerInUse, LegendNServiceBusEndpointNoLongerInUse],
+  [UserIndicator.NotNServiceBusEndpoint, LegendNotNServiceBusEndpoint],
 ]);
 
 function toggleOptionsLegendVisible() {

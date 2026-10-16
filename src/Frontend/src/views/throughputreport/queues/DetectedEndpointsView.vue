@@ -28,13 +28,13 @@ const { isBrokerTransport, hasErrors } = storeToRefs(store);
     ariaLabel="Detected endpoints"
     :indicator-options="[
       UserIndicator.NServiceBusEndpoint,
-      UserIndicator.TransactionalSessionProcessorEndpoint,
       UserIndicator.SendOnlyEndpoint,
-      UserIndicator.NServiceBusEndpointNoLongerInUse,
-      UserIndicator.PlannedToDecommission,
+      UserIndicator.TransactionalSessionProcessorEndpoint,
       UserIndicator.GatewayOrBridgingEndpoint,
       UserIndicator.ParticularPlatformEndpoint,
+      UserIndicator.NServiceBusEndpointNoLongerInUse,
     ]"
+    :legacy-indicator-options="[UserIndicator.PlannedToDecommission]"
     :source="DataSource.WellKnownEndpoint"
     column-title="Endpoint Name"
     :show-endpoint-type-placeholder="false"
