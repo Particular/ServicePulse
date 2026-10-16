@@ -201,6 +201,11 @@ const config: RouteItem[] = [
                 path: routeLinks.throughput.licenseDetails.excludedQueues.template,
                 component: () => import("@/views/throughputreport/licenseDetails/ExcludedQueuesView.vue"),
               },
+              {
+                title: "Unassigned Queues",
+                path: routeLinks.throughput.licenseDetails.unassignedQueues.template,
+                component: () => import("@/views/throughputreport/licenseDetails/UnassignedQueuesView.vue"),
+              },
             ],
           },
         ],

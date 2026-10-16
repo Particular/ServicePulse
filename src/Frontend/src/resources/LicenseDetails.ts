@@ -4,12 +4,14 @@ export interface LicensedEndpointDetails {
   endpoints: ApiEndpoint[];
   infrastructure_queues: ApiQueue[];
   excluded_queues: ApiQueue[];
+  unassigned_queues: ApiQueue[];
   service_end_date: string;
   products: ApiProduct[];
   valid_id: boolean;
 }
 
 export interface ApiEndpoint {
+  client_id: string;
   name: string;
   classification: EndpointClassification;
   endpoint_size: string;
@@ -19,6 +21,7 @@ export interface ApiEndpoint {
 export interface ApiQueue {
   name_hash: string;
   scope_hash: string;
+  original_location: string;
 }
 
 interface ApiProduct {
@@ -34,24 +37,29 @@ export enum EndpointClassification {
 export interface Queue {
   nameHash: string;
   scopeHash: string;
+  originalLocation?: string;
   details: QueueThroughputSummary;
 }
 
 export class Endpoint {
   readonly clientId: string;
   name: string;
-  readonly queues: Queue[];
-  readonly classification: EndpointClassification;
-  readonly endpointSize: EndpointSize;
+  queues: Queue[];
+  classification: EndpointClassification;
+  readonly licensedSize: EndpointSize | null;
   readonly availableSizes: EndpointSize[];
 
-  constructor(clientId: string, name: string, queues: Queue[], classification: EndpointClassification, endpointSize: EndpointSize, availableSizes: EndpointSize[]) {
+  amended: boolean;
+
+  constructor(clientId: string, name: string, queues: Queue[], classification: EndpointClassification, licensedSize: EndpointSize | null, availableSizes: EndpointSize[]) {
     this.clientId = clientId;
     this.name = name;
     this.queues = queues;
     this.classification = classification;
-    this.endpointSize = endpointSize;
+    this.licensedSize = licensedSize;
     this.availableSizes = availableSizes;
+
+    this.amended = false;
   }
 
   get totalAverageMonthlyThroughput() {
@@ -63,7 +71,7 @@ export class Endpoint {
   }
 
   get matchesLicensedSize() {
-    return this.endpointSize === this.currentSize;
+    return this.licensedSize != null && this.licensedSize === this.currentSize;
   }
 }
 

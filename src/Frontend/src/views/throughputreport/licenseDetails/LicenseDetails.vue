@@ -16,11 +16,12 @@ import UploadMetadata from "./UploadMetadata.vue";
 import DetailsItem from "@/components/DetailsItem.vue";
 import ExternalLink from "@/components/ExternalLink.vue";
 import { EndpointClassification } from "@/resources/LicenseDetails.ts";
+import ActionButton from "@/components/ActionButton.vue";
 
 const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
 
 const licenseDetailsStore = useLicenseDetailsStore();
-const { endpoints, endpointSizes, serviceEndDate, validId, hasLicenseDetails, error } = storeToRefs(licenseDetailsStore);
+const { endpoints, endpointSizes, serviceEndDate, validId, hasLicenseDetails, error, infrastructureQueues, excludedQueues, unassignedQueues, hasChanges, saving } = storeToRefs(licenseDetailsStore);
 
 const sizes = computed(() =>
   endpoints.value
@@ -28,9 +29,10 @@ const sizes = computed(() =>
     .reduce(
       (result, endpoint) => {
         const { licensed, current } = result;
-        const licensedCount = licensed.get(endpoint.endpointSize.name) ?? 0;
+        const licensedSizeName = endpoint.licensedSize?.name;
+        const licensedCount = licensed.get(licensedSizeName ?? "") ?? 0;
         const currentCount = current.get(endpoint.currentSize.name) ?? 0;
-        licensed.set(endpoint.endpointSize.name, licensedCount + 1);
+        if (licensedSizeName != null) licensed.set(licensedSizeName, licensedCount + 1);
         current.set(endpoint.currentSize.name, currentCount + 1);
         return { licensed, current };
       },
@@ -107,19 +109,39 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
       </div>
       <div>
         <div class="row mt-3">
-          <div class="col-sm-12">
+          <div class="col-sm-12 tab-row">
             <div class="nav tabs">
               <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.licensedEndpoints.link) }">
-                <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">Licensed Endpoints</RouterLink>
+                <RouterLink :to="routeLinks.throughput.licenseDetails.licensedEndpoints.link">
+                  <span>Licensed Endpoints</span>
+                  <span class="badge">{{ endpoints.length }}</span>
+                </RouterLink>
               </h5>
               <h5 class="nav-item" role="tab" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.infrastructureQueues.link) }">
-                <RouterLink :to="routeLinks.throughput.licenseDetails.infrastructureQueues.link">Infrastructure Queues</RouterLink>
+                <RouterLink :to="routeLinks.throughput.licenseDetails.infrastructureQueues.link">
+                  <span>Infrastructure Queues</span>
+                  <span class="badge">{{ infrastructureQueues.length }}</span>
+                </RouterLink>
               </h5>
               <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.excludedQueues.link) }">
-                <RouterLink :to="routeLinks.throughput.licenseDetails.excludedQueues.link">Excluded Queues</RouterLink>
+                <RouterLink :to="routeLinks.throughput.licenseDetails.excludedQueues.link">
+                  <span>Excluded Queues</span>
+                  <span class="badge">{{ excludedQueues.length }}</span>
+                </RouterLink>
+              </h5>
+              <h5 class="nav-item" :class="{ active: isRouteSelected(routeLinks.throughput.licenseDetails.unassignedQueues.link) }">
+                <RouterLink :to="routeLinks.throughput.licenseDetails.unassignedQueues.link">
+                  <span>Unassigned Queues</span>
+                  <span class="badge">{{ unassignedQueues.length }}</span>
+                </RouterLink>
               </h5>
             </div>
+            <div class="action-buttons">
+              <ActionButton variant="secondary" v-if="hasChanges" :disabled="saving" @click="licenseDetailsStore.discardChanges">Discard Changes</ActionButton>
+              <ActionButton variant="primary" v-if="hasChanges" :disabled="saving" :loading="saving" @click="licenseDetailsStore.saveChanges">Save Changes</ActionButton>
+            </div>
           </div>
+          <div class="mt-1">✏️ before a queue name indicates that the queue location differs from what was licensed</div>
         </div>
         <RouterView />
       </div>
@@ -169,5 +191,25 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
 .id-warning button {
   flex: 0;
   white-space: nowrap;
+}
+
+.tab-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.tab-row .action-buttons {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+h5 a {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  /* prevent UI overlap if tabs wrap */
+  margin-top: 0.25rem;
 }
 </style>

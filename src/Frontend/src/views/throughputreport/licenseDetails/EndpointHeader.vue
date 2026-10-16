@@ -2,10 +2,16 @@
 import { computed, ref, watch } from "vue";
 import { EndpointClassification, type Endpoint } from "@/resources/LicenseDetails";
 import FAIcon from "@/components/FAIcon.vue";
+import Modal from "@/components/ModalDialog.vue";
+import EndpointName from "./EndpointName.vue";
+import ActionButton from "@/components/ActionButton.vue";
+import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore";
 import { faCircleChevronUp } from "@fortawesome/free-solid-svg-icons";
 
 const props = defineProps<{ endpoint: Endpoint }>();
 const emit = defineEmits(["collapse"]);
+
+const licenseDetailsStore = useLicenseDetailsStore();
 
 const endpointClassificationStyle = computed(() => {
   switch (props.endpoint.classification) {
@@ -19,6 +25,21 @@ const endpointClassificationStyle = computed(() => {
 });
 
 const endpointName = ref(props.endpoint.name);
+const showRemove = ref(false);
+const showRename = ref(false);
+
+function removeEndpoint() {
+  licenseDetailsStore.removeEndpoint(props.endpoint);
+  showRemove.value = false;
+}
+
+function renameEndpoint(name: string) {
+  licenseDetailsStore.renameEndpoint(props.endpoint, name);
+}
+
+function reclassifyEndpoint(value: EndpointClassification) {
+  licenseDetailsStore.reclassifyEndpoint(props.endpoint, value);
+}
 
 watch(
   () => props.endpoint.name,
@@ -27,13 +48,34 @@ watch(
 </script>
 
 <template>
-  <div class="endpoint-header" :key="endpoint.clientId" :style="{ '--endpoint-header-bg': `var(${endpointClassificationStyle})` }">
+  <div class="endpoint-header" v-bind="$attrs" :key="endpoint.clientId" :style="{ '--endpoint-header-bg': `var(${endpointClassificationStyle})` }">
     <div class="endpoint-name">
       <FAIcon :icon="faCircleChevronUp" class="collapse-button" size="lg" tabindex="0" title="collapse" @click="emit('collapse')" />
-      <strong :title="endpoint.name">{{ endpoint.name }}</strong>
+      <strong v-tippy="endpoint.name">{{ endpoint.name }}</strong>
     </div>
-    <div class="header-buttons d-print-none"></div>
+    <div class="header-buttons">
+      <div>
+        <label :for="`${endpoint.clientId}classification`">Classification:</label>
+        <select :id="`${endpoint.clientId}classification`" @change="(e) => reclassifyEndpoint(Number((e.target as HTMLSelectElement).value))" :value="endpoint.classification" class="form-select">
+          <option v-for="[name, classification] in Object.entries(EndpointClassification).filter(([, val]) => typeof val === 'number')" :value="classification" :key="classification">{{ name }}</option>
+        </select>
+      </div>
+      <ActionButton variant="secondary" @click="showRename = true">Rename</ActionButton>
+      <ActionButton variant="secondary" @click="showRemove = true">Remove</ActionButton>
+    </div>
   </div>
+
+  <Modal v-if="showRemove" id="remove-endpoint" title="Remove Endpoint" @close="showRemove = false">
+    <template #modalBody>
+      <span>Please confirm removing Endpoint: {{ endpoint.name }}</span>
+      <div class="mt-3 title">{{ endpoint.queues.length }} queues will be assigned to Unassigned Queues.</div>
+    </template>
+    <template #modalFooter="{ close }">
+      <ActionButton aria-label="Confirm Remove Endpoint" variant="primary" @click="removeEndpoint">Remove</ActionButton>
+      <ActionButton aria-label="Close Remove Endpoint Dialog" @click="close">Cancel</ActionButton>
+    </template>
+  </Modal>
+  <EndpointName v-if="showRename" :endpoint="endpoint" @close="showRename = false" @save="renameEndpoint" />
 </template>
 
 <style scoped>
@@ -77,5 +119,9 @@ watch(
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.header-buttons label {
+  margin: 0;
 }
 </style>

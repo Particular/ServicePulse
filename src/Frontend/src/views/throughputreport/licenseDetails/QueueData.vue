@@ -4,11 +4,7 @@ import InlineThroughputGraph from "../queues/InlineThroughputGraph.vue";
 import QueueName from "./QueueName.vue";
 import type { Queue } from "@/resources/LicenseDetails";
 
-defineProps<{
-  queues: Queue[];
-  actionsComponent?: object;
-  additionalData?: object;
-}>();
+defineProps<{ queues: Queue[]; currentLocation?: string }>();
 </script>
 
 <template>
@@ -19,13 +15,13 @@ defineProps<{
           <tr>
             <th class="queue-name">Queue Name</th>
             <th class="text-end">Throughput</th>
-            <th v-if="actionsComponent"></th>
+            <th v-if="$slots.actions"></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="queue in pageData" :key="`${queue.nameHash}`">
             <td class="queue-name">
-              <QueueName :queue="queue" />
+              <QueueName :queue="queue" :amended="queue.originalLocation != currentLocation" />
             </td>
             <td class="text-end">
               <div class="throughput">
@@ -33,8 +29,8 @@ defineProps<{
                 {{ queue.details?.average_monthly_throughput?.toLocaleString() }}
               </div>
             </td>
-            <td v-if="actionsComponent">
-              <component :is="actionsComponent" :queue="queue" :additional-data="additionalData" />
+            <td v-if="$slots.actions" class="actions">
+              <slot name="actions" :queue="queue" />
             </td>
           </tr>
         </tbody>
@@ -60,15 +56,15 @@ th:not(.queue-name) {
 td {
   padding-top: 0.1rem;
   padding-bottom: 0.1rem;
-}
-
-td.queue-name {
-  display: flex;
-  gap: 3px;
+  vertical-align: middle;
 }
 
 .throughput {
   display: flex;
   justify-content: space-between;
+}
+
+.actions {
+  background: linear-gradient(to right, transparent 0%, var(--reduced-emphasis) 1em, var(--reduced-emphasis) calc(100% - 1em), transparent 100%);
 }
 </style>

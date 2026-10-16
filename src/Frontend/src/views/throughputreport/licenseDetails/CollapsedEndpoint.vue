@@ -23,15 +23,14 @@ const endpointClassificationStyle = computed(() => {
   <div class="endpoint-header" :style="{ '--endpoint-header-bg': `var(${endpointClassificationStyle})` }">
     <div class="endpoint-name">
       <FAIcon :icon="faCircleChevronDown" class="expand-button" size="lg" tabindex="0" title="expand" @click="emit('expand')" />
-      <strong :title="endpoint.name">{{ endpoint.name }}</strong>
+      <strong v-tippy="endpoint.name">{{ endpoint.name }}</strong>
     </div>
     <div class="details">
       <span class="queues">Queues: {{ endpoint.queues.length }}</span>
       <span class="throughput">Throughput: {{ endpoint.totalAverageMonthlyThroughput.toLocaleString() }}</span>
-      <template v-if="endpoint.classification === EndpointClassification.Full">
-        <span class="c-size">Current Size: {{ endpoint.currentSize.name }}</span>
-        <span class="l-size">Licensed Size: {{ endpoint.endpointSize.name }} </span>
-      </template>
+      <span class="c-size" v-if="endpoint.classification === EndpointClassification.Full">Current Size: {{ endpoint.currentSize.name }}</span>
+      <span class="c-size" v-else />
+      <span class="l-size">Licensed Size: {{ endpoint.licensedSize?.name ?? (endpoint.classification === EndpointClassification.Full ? "Not Licensed" : "Send Only") }} </span>
     </div>
     <!-- <div>
       <RemoveEndpoint :endpoint="endpoint" />
@@ -81,7 +80,10 @@ const endpointClassificationStyle = computed(() => {
   width: 7em;
 }
 
-.endpoint-header .details .l-size,
+.endpoint-header .details .l-size {
+  width: 13em;
+}
+
 .endpoint-header .details .c-size {
   width: 10em;
 }

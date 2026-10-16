@@ -5,6 +5,7 @@ import { computed } from "vue";
 import type { MonthlyThroughput } from "@/resources/QueueThroughputSummary.ts";
 import ThroughputGraph from "../queues/ThroughputGraph.vue";
 import DetailsItem from "@/components/DetailsItem.vue";
+import EndpointQueueActions from "./EndpointQueueActions.vue";
 
 const props = defineProps<{ endpoint: Endpoint }>();
 
@@ -33,13 +34,17 @@ const sortedQueues = computed(() => props.endpoint.queues.toSorted((q1, q2) => q
       <DetailsItem v-if="endpoint.classification === EndpointClassification.Full" label="Current Size" :tooltip="endpoint.currentSize.throughputText">
         {{ endpoint.currentSize.name }}
       </DetailsItem>
-      <DetailsItem label="Licensed Size" :tooltip="endpoint.classification === EndpointClassification.Full ? endpoint.endpointSize.throughputText : undefined">
-        {{ endpoint.classification === EndpointClassification.Full ? endpoint.endpointSize.name : "Send Only" }}
+      <DetailsItem label="Licensed Size" :tooltip="endpoint.classification === EndpointClassification.Full ? endpoint.licensedSize?.throughputText : undefined">
+        {{ endpoint.licensedSize?.name ?? (endpoint.classification === EndpointClassification.Full ? "Not Licensed" : "Send Only") }}
       </DetailsItem>
     </div>
     <ThroughputGraph :data="throughputByMonth" class="graph" v-if="throughputByMonth.length" />
     <div class="queue-data">
-      <QueueData :queues="sortedQueues" />
+      <QueueData :queues="sortedQueues" :current-location="endpoint.clientId">
+        <template #actions="{ queue }">
+          <EndpointQueueActions v-if="endpoint.queues.length > 1" :queue="queue" :endpoint="endpoint" />
+        </template>
+      </QueueData>
     </div>
   </div>
 </template>

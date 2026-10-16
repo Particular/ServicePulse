@@ -172,6 +172,7 @@ export const licenseDetailsDefaultHandler = ({ driver }: SetupFactoryOptions) =>
       endpoints: [],
       infrastructure_queues: [],
       excluded_queues: [],
+      unassigned_queues: [],
       service_end_date: "2026-12-31T00:00:00Z",
       valid_id: true,
     },

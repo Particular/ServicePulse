@@ -6,6 +6,7 @@ import EndpointHeader from "./EndpointHeader.vue";
 import EndpointDetails from "./EndpointDetails.vue";
 import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore.ts";
 import { storeToRefs } from "pinia";
+import ActionButton from "@/components/ActionButton.vue";
 
 const licenseDetailsStore = useLicenseDetailsStore();
 const { endpoints } = storeToRefs(licenseDetailsStore);
@@ -15,15 +16,22 @@ const expandedLength = computed(() => [...expandedEndpoints.values()].filter((va
 </script>
 
 <template>
-  <div class="mt-2">
+  <div class="legend mt-2">
+    <strong>Legend:</strong>
+    <div class="card full">Current size matches license</div>
+    <div class="card size-mismatch">Current size differs from license</div>
+    <div class="card send-only">Send Only endpoint</div>
+  </div>
+  <div></div>
+  <div class="mt-3">
     <DataView :data="endpoints" :items-per-page="100" @page-changed="expandedEndpoints.clear()" sticky-pagination>
       <template #data="{ pageData, pageNumber }">
         <!--parent div with key ensures that any state for the details below is reset on page change-->
         <div :key="pageNumber">
           <div class="actions mb-2">
             <div class="backdrop"></div>
-            <button type="button" class="btn btn-secondary" :disabled="expandedLength === pageData.length" @click="pageData.forEach((endpoint) => expandedEndpoints.set(endpoint, true))">Expand All</button>
-            <button type="button" class="btn btn-secondary" :disabled="expandedLength === 0" @click="pageData.forEach((endpoint) => expandedEndpoints.set(endpoint, false))">Collapse All</button>
+            <ActionButton variant="secondary" :disabled="expandedLength === pageData.length" @click="pageData.forEach((endpoint) => expandedEndpoints.set(endpoint, true))">Expand All</ActionButton>
+            <ActionButton variant="secondary" :disabled="expandedLength === 0" @click="pageData.forEach((endpoint) => expandedEndpoints.set(endpoint, false))">Collapse All</ActionButton>
           </div>
           <div class="card mb-3" v-for="endpoint in pageData" :key="endpoint.clientId">
             <template v-if="expandedEndpoints.get(endpoint)">
@@ -69,5 +77,32 @@ const expandedLength = computed(() => [...expandedEndpoints.values()].filter((va
   inset: 0;
   backdrop-filter: blur(16px);
   z-index: -1;
+}
+
+.legend {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.legend > strong {
+  align-self: center;
+}
+
+.legend > div {
+  padding: 0.5rem;
+  background-color: hsl(from var(--legend-bg) h s 90%);
+}
+
+.legend > div.full {
+  --legend-bg: var(--full);
+}
+
+.legend > div.size-mismatch {
+  --legend-bg: var(--size-mismatch);
+}
+
+.legend > div.send-only {
+  --legend-bg: var(--send-only);
 }
 </style>
