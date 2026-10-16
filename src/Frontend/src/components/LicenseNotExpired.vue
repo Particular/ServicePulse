@@ -8,7 +8,7 @@ const { licenseStatus } = licenseStore;
 </script>
 
 <template>
-  <ConditionalRender :supported="!licenseStatus.isExpired">
+  <ConditionalRender :supported="!licenseStatus.isInvalid">
     <template #unsupported>
       <LicenseExpired />
     </template>

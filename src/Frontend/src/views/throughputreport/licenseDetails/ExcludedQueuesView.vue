@@ -12,7 +12,7 @@ const { excludedQueues } = storeToRefs(licenseDetailsStore);
 <template>
   <div class="alert alert-info mt-1">These are queues which do not form part of your NServiceBus system, and do not contribute to your license</div>
   <div class="mt-2" v-if="excludedQueues.length">
-    <QueueData :queues="excludedQueues" current-location="excluded">
+    <QueueData :queues="excludedQueues" current-location="excluded" sticky-pagination>
       <template #actions="{ queue }">
         <ExcludedQueueActions :queue="queue" />
       </template>

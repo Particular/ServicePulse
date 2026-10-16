@@ -5,7 +5,8 @@ import { expiredLicenseMessageWithValue } from "./questions/expiredLicenseMessag
 import { viewYourLicenseButton } from "./questions/viewYourLicenseButton";
 import { extendYourLicenseButton } from "./questions/extendYourLicenseButton";
 import { getAlertNotifications } from "./questions/alertNotifications";
-import { LicenseType } from "@/resources/LicenseInfo";
+import { LicenseType, upgradeProtectionUnsupportedMessage } from "@/resources/LicenseInfo";
+import { screen } from "@testing-library/vue";
 
 describe("FEATURE: EXPIRING license detection", () => {
   describe("RULE: The user should be alerted while using the monitoring endpoint list functionality about an EXPIRING license", () => {
@@ -25,22 +26,17 @@ describe("FEATURE: EXPIRING license detection", () => {
       });
     });
 
-    [
-      { description: "Expiring upgrade protection", licenseType: LicenseType.UpgradeProtection, textMatch: /once upgrade protection expires, you'll no longer have access to support or new product versions/i },
-      { description: "Expiring platform subscription", licenseType: LicenseType.Subscription, textMatch: /Once the license expires you'll no longer be able to continue using the Particular Service Platform/i },
-    ].forEach(({ description, licenseType, textMatch }) => {
-      test(`EXAMPLE: ${description}`, async ({ driver }) => {
-        //Arrange
-        await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasExpiringLicense(licenseType));
+    test("EXAMPLE: Expiring platform subscription", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasExpiringLicense(LicenseType.Subscription));
 
-        await driver.goTo("monitoring");
+      await driver.goTo("monitoring");
 
-        const notification = (await getAlertNotifications()).find((n) => n.textMatches(textMatch));
+      const notification = (await getAlertNotifications()).find((n) => n.textMatches(/Once the license expires you'll no longer be able to continue using the Particular Service Platform/i));
 
-        expect(notification).not.toBeUndefined();
-        expect(notification?.hasLink({ caption: "View license details", address: "#/configuration" })).toBeTruthy();
-      });
+      expect(notification).not.toBeUndefined();
+      expect(notification?.hasLink({ caption: "View license details", address: "#/configuration" })).toBeTruthy();
     });
   });
 });
@@ -85,20 +81,26 @@ describe("FEATURE: EXPIRED license detection", () => {
       expect(notification).not.toBeUndefined();
       expect(notification?.hasLink({ caption: "https://particular.net/support", address: "https://particular.net/support" })).toBeTruthy();
     });
+  });
+});
 
-    test("EXAMPLE: Expired upgrade protection", async ({ driver }) => {
+describe("FEATURE: UNSUPPORTED license detection", () => {
+  [11, 1, 0, -1].forEach((protectionDateOffset) => {
+    test(`EXAMPLE: Unsupported upgrade protection blocks monitoring with protection date offset ${protectionDateOffset}`, async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasExpiredLicense(LicenseType.UpgradeProtection));
+      await driver.setUp(precondition.hasUnsupportedUpgradeProtectionLicense(protectionDateOffset));
 
       //Act
       await driver.goTo("monitoring");
 
-      expect(await expiredLicenseMessageWithValue(/your upgrade protection period has elapsed and your license is not valid for this version of servicepulse\./i)).toBeTruthy();
+      expect(await expiredLicenseMessageWithValue(`${upgradeProtectionUnsupportedMessage} Please update your license to continue using the Particular Service Platform.`)).toBeTruthy();
+      expect(screen.getByRole("heading", { name: "Platform license no longer supported" })).toBeVisible();
+      expect(screen.queryByRole("heading", { name: /license expired/i })).not.toBeInTheDocument();
       expect((await viewYourLicenseButton()).address).toBe("#/configuration/license");
 
-      //Find all the toast notifications that popped up and check if there is a notification about the expired license with a link to the expected page
-      const notification = (await getAlertNotifications()).find((n) => n.textMatches(/your license has expired\. please contact particular software support at:/i));
+      //Find all the toast notifications that popped up and check if there is a notification about the unsupported license with a link to the expected page
+      const notification = (await getAlertNotifications()).find((n) => n.textMatches(new RegExp(`${upgradeProtectionUnsupportedMessage.replaceAll(".", "\\.")} Please contact Particular Software support at:`, "i")));
 
       expect(notification).not.toBeUndefined();
       expect(notification?.hasLink({ caption: "https://particular.net/support", address: "https://particular.net/support" })).toBeTruthy();

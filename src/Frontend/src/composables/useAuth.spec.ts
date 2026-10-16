@@ -39,6 +39,10 @@ vi.mock("oidc-client-ts", () => ({
   WebStorageStateStore: class {},
 }));
 
+vi.mock("vue-router", () => ({
+  useRouter: () => ({ replace: vi.fn() }),
+}));
+
 const config = { authority: "https://idp" } as never;
 
 // Fresh module state per test (useAuth keeps a module-singleton UserManager), then run the initial
@@ -68,10 +72,12 @@ describe("useAuth recovers a lost session from OIDC events", () => {
     const store = await initAuth();
     store.setAuthenticating(false); // initial redirect 'returned'
     signinRedirect.mockClear();
+    window.location.hash = "#/messages/message-1/processing-1?back=/messages";
 
     captured.expired!();
 
     expect(signinRedirect).toHaveBeenCalledTimes(1);
+    expect(signinRedirect).toHaveBeenCalledWith({ state: { returnUrl: "/messages/message-1/processing-1?back=/messages" } });
     expect(store.token).toBeNull();
   });
 

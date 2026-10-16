@@ -31,10 +31,8 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
     isPlatformExpired: false,
     isPlatformTrialExpired: false,
     isPlatformTrialExpiring: false,
-    isInvalidDueToUpgradeProtectionExpired: false,
-    isValidWithExpiredUpgradeProtection: false,
-    isValidWithExpiringUpgradeProtection: false,
-    isExpired: false,
+    isUpgradeProtectionUnsupported: false,
+    isInvalid: false,
     upgradeDaysLeft: "",
     subscriptionDaysLeft: "",
     trialDaysLeft: "",
@@ -93,14 +91,12 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
       licenseStatus.isPlatformExpired = license.license_status === LicenseStatus.InvalidDueToExpiredSubscription;
       licenseStatus.isPlatformTrialExpiring = license.license_status === LicenseStatus.ValidWithExpiringTrial;
       licenseStatus.isPlatformTrialExpired = license.license_status === LicenseStatus.InvalidDueToExpiredTrial;
-      licenseStatus.isInvalidDueToUpgradeProtectionExpired = license.license_status === LicenseStatus.InvalidDueToExpiredUpgradeProtection;
-      licenseStatus.isValidWithExpiredUpgradeProtection = license.license_status === LicenseStatus.ValidWithExpiredUpgradeProtection;
-      licenseStatus.isValidWithExpiringUpgradeProtection = license.license_status === LicenseStatus.ValidWithExpiringUpgradeProtection;
+      licenseStatus.isUpgradeProtectionUnsupported = license.license_status === LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported;
       licenseStatus.upgradeDaysLeft = getUpgradeDaysLeft();
       licenseStatus.subscriptionDaysLeft = getSubscriptionDaysLeft();
       licenseStatus.trialDaysLeft = getTrialDaysLeft();
       licenseStatus.warningLevel = getLicenseWarningLevel();
-      licenseStatus.isExpired = licenseStatus.isPlatformExpired || licenseStatus.isPlatformTrialExpired || licenseStatus.isInvalidDueToUpgradeProtectionExpired;
+      licenseStatus.isInvalid = licenseStatus.isPlatformExpired || licenseStatus.isPlatformTrialExpired || licenseStatus.isUpgradeProtectionUnsupported;
       licenseStatus.licenseExtensionUrl = license.license_extension_url;
     } finally {
       loading.value = false;
@@ -121,11 +117,9 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
     switch (license.license_status) {
       case LicenseStatus.InvalidDueToExpiredTrial:
       case LicenseStatus.InvalidDueToExpiredSubscription:
-      case LicenseStatus.InvalidDueToExpiredUpgradeProtection:
+      case LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported:
         return LicenseWarningLevel.Danger;
-      case LicenseStatus.ValidWithExpiringUpgradeProtection:
       case LicenseStatus.ValidWithExpiringTrial:
-      case LicenseStatus.ValidWithExpiredUpgradeProtection:
       case LicenseStatus.ValidWithExpiringSubscription:
         return LicenseWarningLevel.Warning;
       default:
@@ -165,7 +159,7 @@ export const useLicenseStore = defineStore("LicenseStore", () => {
   }
 
   function getUpgradeDaysLeft() {
-    if (license.license_status === LicenseStatus.InvalidDueToExpiredUpgradeProtection) return " - expired";
+    if (license.license_status === LicenseStatus.InvalidDueToUpgradeProtectionNoLongerBeingSupported) return " - no longer supported";
 
     const expiringIn = useGetDayDiffFromToday(license.upgrade_protection_expiration);
     //TODO: can this be unified with the function above? Text is currently similar but not identical.
