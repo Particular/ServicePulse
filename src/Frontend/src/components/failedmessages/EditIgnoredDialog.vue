@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import ModalDialog from "../ModalDialog.vue";
+import ActionButton from "../ActionButton.vue";
+
 const emit = defineEmits<{
   close: [];
 }>();
@@ -9,29 +12,12 @@ function closeDialog() {
 </script>
 
 <template>
-  <section name="edit_ignored_dialog">
-    <div class="modal" style="z-index: 1050; display: block" role="dialog" aria-label="edit ignored">
-      <div class="modal-mask">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <div class="modal-title">
-                <h3>Edit Ignored</h3>
-              </div>
-            </div>
-            <div class="modal-body">
-              <p>This retry was ignored because another edit had already been processed.</p>
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-primary" @click="closeDialog()">Ok</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <ModalDialog id="edit-ignored" title="Edit Ignored" @close="closeDialog">
+    <template #modalBody>
+      <p>This retry was ignored because another edit had already been processed.</p>
+    </template>
+    <template #modalFooter>
+      <ActionButton @click="closeDialog()">Ok</ActionButton>
+    </template>
+  </ModalDialog>
 </template>
-
-<style scoped>
-@import "@/components/modal.css";
-</style>

@@ -12,6 +12,8 @@ import FAIcon from "@/components/FAIcon.vue";
 import { faExclamationCircle, faExclamationTriangle, faUndo } from "@fortawesome/free-solid-svg-icons";
 import type { HeaderWithEditing } from "@/resources/EditMessage";
 import { useDebounceFn } from "@vueuse/core";
+import ModalDialog from "../ModalDialog.vue";
+import ActionButton from "../ActionButton.vue";
 
 const emit = defineEmits<{
   cancel: [];
@@ -159,6 +161,12 @@ function togglePanel(panelNum: number) {
   panel.value = panelNum;
 }
 
+function attemptClose() {
+  if (!showEditAndRetryConfirmation.value && !showCancelConfirmation.value) confirmCancel();
+  else if (showCancelConfirmation.value) showCancelConfirmation.value = false;
+  else if (showEditAndRetryConfirmation.value) showEditAndRetryConfirmation.value = false;
+}
+
 onMounted(async () => {
   await messageStore.ensureEditAndRetryConfigurationLoaded();
   togglePanel(1);
@@ -167,112 +175,110 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section name="failed_message_editor">
-    <div class="model modal-msg-editor" style="z-index: 1050; display: block" role="dialog" aria-label="edit and retry message">
-      <div class="modal-mask">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <div class="modal-title">
-                <h3>Edit and retry message</h3>
+  <ModalDialog id="failed-message-editor" title="Edit and retry message" @close="attemptClose" width="70%">
+    <template #modalBody>
+      <div class="row modal-msg-editor" role="dialog" aria-label="edit and retry message">
+        <div class="msg-editor-tabs full-width">
+          <div class="row msg-editor-tabs-header full-width">
+            <div class="full-width no-side-padding">
+              <div role="tablist" class="tabs msg-tabs">
+                <h5 role="tab" :class="{ active: panel === 1 }" class="nav-item" @click.prevent="togglePanel(1)"><a href="#">Headers</a></h5>
+                <h5 role="tab" :class="{ active: panel === 2 }" class="nav-item" @click.prevent="togglePanel(2)"><a href="#">Message body</a></h5>
               </div>
             </div>
-            <div class="modal-body">
-              <div class="row">
+          </div>
+          <div class="row msg-editor-content full-width">
+            <div class="full-width">
+              <div class="alert alert-warning" v-if="localMessage.isEvent">
                 <div class="col-sm-12">
-                  <div class="row msg-editor-tabs">
-                    <div class="col-sm-12 no-side-padding">
-                      <div role="tablist" class="tabs msg-tabs">
-                        <h5 role="tab" :class="{ active: panel === 1 }" class="nav-item" @click.prevent="togglePanel(1)"><a href="#">Headers</a></h5>
-                        <h5 role="tab" :class="{ active: panel === 2 }" class="nav-item" @click.prevent="togglePanel(2)"><a href="#">Message body</a></h5>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row msg-editor-content">
-                    <div class="col-sm-12 no-side-padding">
-                      <div class="alert alert-warning" v-if="localMessage.isEvent">
-                        <div class="col-sm-12">
-                          <FAIcon :icon="faExclamationCircle" /> This message is an event. If it was already successfully handled by other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in
-                          altering the system behavior.
-                        </div>
-                      </div>
-                      <div class="alert alert-warning" v-if="!localMessage.isContentTypeSupported || localMessage.bodyUnavailable">
-                        <div role="status" aria-label="cannot edit message body" class="col-sm-12">
-                          <FAIcon :icon="faExclamationCircle" /> Message body cannot be edited because content type "{{ localMessage.bodyContentType }}" is not supported. Only messages with content types "application/json" and "text/xml" can be
-                          edited.
-                        </div>
-                      </div>
-                      <div class="row alert alert-danger" v-if="showEditRetryGenericError">
-                        <div class="col-sm-12"><FAIcon :icon="faExclamationTriangle" class="error" /> An error occurred while retrying the message, please check the ServiceControl logs for more details on the failure.</div>
-                      </div>
-                      <table role="tabpanel" class="table" v-if="panel === 1">
-                        <tbody>
-                          <tr class="interactiveList" v-for="header in localMessage.headers" :key="header.key">
-                            <MessageHeader :header="header"></MessageHeader>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <template v-if="panel === 2">
-                        <div role="tabpanel" v-if="!localMessage.bodyUnavailable">
-                          <div style="margin-top: 1.25rem">
-                            <LoadingSpinner v-if="body.loading" />
-                            <CodeEditor v-else aria-label="message body" :read-only="!localMessage.isContentTypeSupported" v-model="localMessage.messageBody" :language="localMessage.language" :show-gutter="true">
-                              <template #toolbarLeft>
-                                <span class="empty-error" v-if="localMessage.isBodyEmpty"><FAIcon :icon="faExclamationTriangle" class="error" /> Message body cannot be empty</span>
-                              </template>
-                              <template #toolbarRight>
-                                <button v-if="localMessage.isBodyChanged" type="button" class="btn btn-secondary btn-sm" @click="resetBodyChanges"><FAIcon :icon="faUndo" /> Reset changes</button>
-                              </template>
-                            </CodeEditor>
-                          </div>
-                        </div>
-                        <div role="tabpanel" class="alert alert-info" v-else>{{ localMessage.bodyUnavailable }}</div>
-                      </template>
-                    </div>
-                  </div>
+                  <FAIcon :icon="faExclamationCircle" /> This message is an event. If it was already successfully handled by other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in altering the
+                  system behavior.
                 </div>
               </div>
-            </div>
-            <div class="modal-footer" v-if="!showEditAndRetryConfirmation && !showCancelConfirmation">
-              <button class="btn btn-default" @click="confirmCancel()">Cancel</button>
-              <button class="btn btn-primary" :disabled="localMessage.isBodyEmpty || localMessage.bodyUnavailable" @click="confirmEditAndRetry()">Retry</button>
-            </div>
-            <div class="modal-footer cancel-confirmation" v-if="showCancelConfirmation">
-              <div>Are you sure you want to cancel? Any changes you made will be lost.</div>
-              <button class="btn btn-default" @click="close()">Yes</button>
-              <button class="btn btn-primary" @click="showCancelConfirmation = false">No</button>
-            </div>
-            <div class="modal-footer edit-retry-confirmation" v-if="showEditAndRetryConfirmation">
-              <div>Are you sure you want to continue? If you edited the message, it may cause unexpected consequences in the system.</div>
-              <button class="btn btn-default" @click="retryEditedMessage()">Yes</button>
-              <button class="btn btn-primary" @click="showEditAndRetryConfirmation = false">No</button>
+              <div class="alert alert-warning" v-if="!localMessage.isContentTypeSupported || localMessage.bodyUnavailable">
+                <div role="status" aria-label="cannot edit message body" class="col-sm-12">
+                  <FAIcon :icon="faExclamationCircle" /> Message body cannot be edited because content type "{{ localMessage.bodyContentType }}" is not supported. Only messages with content types "application/json" and "text/xml" can be edited.
+                </div>
+              </div>
+              <div class="alert alert-danger" v-if="showEditRetryGenericError">
+                <div class="col-sm-12"><FAIcon :icon="faExclamationTriangle" class="error" /> An error occurred while retrying the message, please check the ServiceControl logs for more details on the failure.</div>
+              </div>
+              <table role="tabpanel" class="table" v-if="panel === 1">
+                <tbody>
+                  <tr class="interactiveList" v-for="header in localMessage.headers" :key="header.key">
+                    <MessageHeader :header="header"></MessageHeader>
+                  </tr>
+                </tbody>
+              </table>
+              <template v-if="panel === 2">
+                <div role="tabpanel" v-if="!localMessage.bodyUnavailable">
+                  <div style="margin-top: 1.25rem">
+                    <LoadingSpinner v-if="body.loading" />
+                    <CodeEditor v-else aria-label="message body" :read-only="!localMessage.isContentTypeSupported" v-model="localMessage.messageBody" :language="localMessage.language" :show-gutter="true">
+                      <template #toolbarLeft>
+                        <span class="empty-error" v-if="localMessage.isBodyEmpty"><FAIcon :icon="faExclamationTriangle" class="error" /> Message body cannot be empty</span>
+                      </template>
+                      <template #toolbarRight>
+                        <button v-if="localMessage.isBodyChanged" type="button" class="btn btn-secondary btn-sm" @click="resetBodyChanges"><FAIcon :icon="faUndo" /> Reset changes</button>
+                      </template>
+                    </CodeEditor>
+                  </div>
+                </div>
+                <div role="tabpanel" class="alert alert-info" v-else>{{ localMessage.bodyUnavailable }}</div>
+              </template>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </template>
+    <template #modalFooter>
+      <template v-if="!showEditAndRetryConfirmation && !showCancelConfirmation">
+        <ActionButton @click="confirmCancel()">Cancel</ActionButton>
+        <ActionButton variant="primary" :disabled="localMessage.isBodyEmpty || localMessage.bodyUnavailable" @click="confirmEditAndRetry()">Retry</ActionButton>
+      </template>
+      <div class="modal-footer cancel-confirmation" v-else-if="showCancelConfirmation">
+        <span>Are you sure you want to cancel? Any changes you made will be lost.</span>
+        <div>
+          <ActionButton @click="close()">Yes</ActionButton>
+          <ActionButton variant="primary" @click="showCancelConfirmation = false">No</ActionButton>
+        </div>
+      </div>
+      <div class="modal-footer edit-retry-confirmation" v-else-if="showEditAndRetryConfirmation">
+        <span>Are you sure you want to continue? If you edited the message, it may cause unexpected consequences in the system.</span>
+        <div>
+          <ActionButton @click="retryEditedMessage()">Yes</ActionButton>
+          <ActionButton variant="primary" @click="showEditAndRetryConfirmation = false">No</ActionButton>
+        </div>
+      </div>
+    </template>
+  </ModalDialog>
 </template>
 
 <style scoped>
-@import "@/components/modal.css";
-
 .cancel-confirmation,
 .edit-retry-confirmation {
   background: #181919;
   color: #fff;
   border-bottom-right-radius: 6px;
   border-bottom-left-radius: 6px;
+  flex-basis: 100%;
+  justify-content: space-between;
+  padding: 0.25rem 0.5rem;
 }
 
 .cancel-confirmation div,
 .edit-retry-confirmation div {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.cancel-confirmation span,
+.edit-retry-confirmation span {
   display: inline-block;
   font-weight: bold;
   font-size: 14px;
   position: relative;
   top: 1px;
-  margin-right: 20px;
 }
 
 .modal-msg-editor .reset-body a:hover {
@@ -292,22 +298,24 @@ onMounted(async () => {
   color: #ce4844;
 }
 
-.modal-msg-editor .modal-dialog {
-  width: 70%;
+.modal-msg-editor .msg-editor-tabs {
+  position: relative;
 }
 
-.modal-msg-editor .modal-body {
-  overflow-y: auto;
-  height: 80vh;
+.modal-msg-editor .full-width {
+  width: 100%;
 }
 
 .modal-msg-editor .msg-tabs {
   margin-top: 20px;
 }
 
-.modal-msg-editor .row.msg-editor-tabs {
+.modal-msg-editor .row.msg-editor-tabs-header {
   height: 52px;
-  position: relative;
+  position: sticky;
+  top: -15px;
+  left: 0; /* TODO: horizonal scroll sticky isn't working */
+  background: #fff;
   box-shadow: -10px 20px 20px #fff;
   z-index: 10;
 }
@@ -316,14 +324,11 @@ onMounted(async () => {
   margin-top: 20px;
 }
 
-.modal-msg-editor .row,
-.modal-msg-editor .col-sm-12 {
+.modal-msg-editor .row {
   height: 100%;
 }
 
 .modal-msg-editor .row.msg-editor-content {
-  height: calc(100% - 37px);
-  overflow-y: auto;
   padding-right: 15px;
 }
 </style>
