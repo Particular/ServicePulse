@@ -33,6 +33,7 @@ const { testResults } = storeToRefs(store);
       UserIndicator.NServiceBusEndpointNoLongerInUse,
       UserIndicator.NotNServiceBusEndpoint,
     ]"
+    :legacy-indicator-options="[UserIndicator.PlannedToDecommission]"
     :source="DataSource.Broker"
     column-title="Queue Name"
     :show-endpoint-type-placeholder="true"

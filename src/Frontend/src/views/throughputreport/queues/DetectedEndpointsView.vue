@@ -34,6 +34,7 @@ const { isBrokerTransport, hasErrors } = storeToRefs(store);
       UserIndicator.ParticularPlatformEndpoint,
       UserIndicator.NServiceBusEndpointNoLongerInUse,
     ]"
+    :legacy-indicator-options="[UserIndicator.PlannedToDecommission]"
     :source="DataSource.WellKnownEndpoint"
     column-title="Endpoint Name"
     :show-endpoint-type-placeholder="false"

@@ -8,4 +8,5 @@ export const userIndicatorMapper = new Map<UserIndicator, string>([
   [UserIndicator.NotNServiceBusEndpoint, "Not an NServiceBus Endpoint"],
   [UserIndicator.GatewayOrBridgingEndpoint, "Gateway or Bridging Endpoint"],
   [UserIndicator.ParticularPlatformEndpoint, "Particular Platform Infrastructure Endpoint"],
+  [UserIndicator.PlannedToDecommission, "Planned to be decommissioned"],
 ]);
