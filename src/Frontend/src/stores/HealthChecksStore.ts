@@ -54,16 +54,16 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
   }
 
   async function toggleEmailNotifications() {
-    const result = await getResponseOrError(() =>
-      serviceControlClient.postToServiceControl("notifications/email/toggle", {
-        enabled: !(emailNotifications.value.enabled ?? true),
-      })
-    );
+    const previous = emailNotifications.value.enabled;
+    const enabled = !(previous ?? true);
+    // Show the new state straight away, so the next toggle sends the opposite value.
+    emailNotifications.value.enabled = enabled;
+    const result = await getResponseOrError(() => serviceControlClient.postToServiceControl("notifications/email/toggle", { enabled }));
     if (result.message === "success") return true;
     else {
       logger.error(result.message);
       //set it back to what it was
-      emailNotifications.value.enabled = !emailNotifications.value.enabled;
+      emailNotifications.value.enabled = previous;
       return false;
     }
   }
