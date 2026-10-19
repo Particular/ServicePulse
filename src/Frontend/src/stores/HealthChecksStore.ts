@@ -10,60 +10,57 @@ import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
 import { ApiRoutes } from "@/composables/apiRoutes";
 
 export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
-  const emailNotifications = ref<EmailSettings>({
-    enabled: null,
-    enable_tls: null,
-    smtp_server: "",
-    smtp_port: null,
-    authentication_account: "",
-    authentication_password: "",
-    from: "",
-    to: "",
-  });
+  // Only page-level state is kept here. The settings the dialog edits are loaded with loadEmailSettings() each
+  // time it opens, and are not kept.
+  const emailNotificationsEnabled = ref<boolean | null>(null);
 
   const environmentStore = useEnvironmentAndVersionsStore();
   const hasResponseStatusInHeaders = environmentStore.serviceControlIsGreaterThan("5.2");
+  const smtpPasswordIsWriteOnly = environmentStore.serviceControlIsGreaterThan("6.21.2");
 
   const { canCall } = useAllowedRoutes();
   const canManageNotifications = computed(() => canCall(ApiRoutes.manageNotifications));
   const canTestNotifications = computed(() => canCall(ApiRoutes.testNotifications));
 
   async function refresh() {
-    let result: EmailNotifications | null;
     try {
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EmailNotifications>("notifications/email");
-      result = data;
+      emailNotificationsEnabled.value = data.enabled;
     } catch (err) {
       logger.error(err);
-      result = {
-        enabled: false,
-        enable_tls: false,
-      };
+      emailNotificationsEnabled.value = false;
     }
+  }
 
-    emailNotifications.value = {
-      enabled: result.enabled,
-      enable_tls: result.enable_tls,
-      smtp_server: result.smtp_server ? result.smtp_server : "",
-      smtp_port: result.smtp_port ? result.smtp_port : null,
-      authentication_account: result.authentication_account ? result.authentication_account : "",
-      authentication_password: result.authentication_password ? result.authentication_password : "",
-      from: result.from ? result.from : "",
-      to: result.to ? result.to : "",
-    };
+  async function loadEmailSettings(): Promise<EmailSettings | null> {
+    try {
+      const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EmailNotifications>("notifications/email");
+      // ServiceControl versions before 6.21.2 also return the SMTP password. It is not copied.
+      return {
+        enable_tls: data.enable_tls,
+        smtp_server: data.smtp_server ?? "",
+        smtp_port: data.smtp_port || null,
+        authentication_account: data.authentication_account ?? "",
+        from: data.from ?? "",
+        to: data.to ?? "",
+      };
+    } catch (err) {
+      logger.error(err);
+      return null;
+    }
   }
 
   async function toggleEmailNotifications() {
     const result = await getResponseOrError(() =>
       serviceControlClient.postToServiceControl("notifications/email/toggle", {
-        enabled: !(emailNotifications.value.enabled ?? true),
+        enabled: !(emailNotificationsEnabled.value ?? true),
       })
     );
     if (result.message === "success") return true;
     else {
       logger.error(result.message);
       //set it back to what it was
-      emailNotifications.value.enabled = !emailNotifications.value.enabled;
+      emailNotificationsEnabled.value = !emailNotificationsEnabled.value;
       return false;
     }
   }
@@ -81,15 +78,24 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
   }
 
   async function saveEmailNotifications(newSettings: UpdateEmailNotificationsSettingsRequest) {
-    const result = await getResponseOrError(() => serviceControlClient.postToServiceControl("notifications/email", newSettings));
+    const result = await getResponseOrError(async () => serviceControlClient.postToServiceControl("notifications/email", await keepStoredPassword(newSettings)));
     if (result.message === "success") {
-      // The saved settings are not copied into the store. The configuration dialog loads them from
-      // ServiceControl when it opens, and the password must not stay in memory.
       return true;
     } else {
       logger.error(result.message);
       return false;
     }
+  }
+
+  // An empty password means "keep the stored password". ServiceControl 6.21.2 and later do this themselves. Earlier
+  // versions replace the stored password with the empty one, so the stored password is read and sent back with
+  // the request instead. It is not kept after the request.
+  async function keepStoredPassword(newSettings: UpdateEmailNotificationsSettingsRequest) {
+    if (smtpPasswordIsWriteOnly.value || newSettings.authorization_password || !newSettings.authorization_account) {
+      return newSettings;
+    }
+    const [, stored] = await serviceControlClient.fetchTypedFromServiceControl<EmailNotifications>("notifications/email");
+    return { ...newSettings, authorization_password: stored.authentication_password ?? "" };
   }
 
   async function getResponseOrError(action: () => Promise<Response>, responseStatusTextOverride?: (response: Response) => string) {
@@ -109,7 +115,8 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
 
   return {
     refresh,
-    emailNotifications,
+    emailNotificationsEnabled,
+    loadEmailSettings,
     canManageNotifications,
     canTestNotifications,
     toggleEmailNotifications,

@@ -1,8 +1,9 @@
-import { render, describe, test, screen, expect, userEvent } from "@component-test-utils";
+import { render, describe, test, screen, within, expect, userEvent } from "@component-test-utils";
+import { waitFor } from "@testing-library/vue";
 import { vi, beforeEach, afterEach } from "vitest";
 import sut from "@/components/configuration/HealthCheckNotifications.vue";
 import { createTestingPinia } from "@pinia/testing";
-import { useHealthChecksStore } from "@/stores/HealthChecksStore";
+import { useHealthChecksStore, type HealthChecksStore } from "@/stores/HealthChecksStore";
 import type EmailSettings from "@/components/configuration/EmailSettings";
 
 // ─── DSL ─────────────────────────────────────────────────────────────────────
@@ -16,6 +17,7 @@ interface ComponentDSL {
     requestTestNotification(): Promise<void>;
     provideValidEmailConfiguration(): Promise<void>;
     settingsChangeInServiceControl(changes: Partial<EmailSettings>): void;
+    serviceControlBecomesUnreachable(): void;
   };
   verify: {
     emailNotificationsAreEnabled(): void;
@@ -33,7 +35,14 @@ interface ComponentDSL {
     emailConfigurationMatches(config: Partial<EmailSettings>): void;
     storedPasswordIsNotShownAndCanBeKept(): void;
     limitingTheSmtpAccountIsRecommended(): void;
+    emailSettingsCouldNotBeLoaded(): void;
   };
+}
+
+// The store state a test can start from. Only page-level state lives in the store; the settings the dialog
+// edits are provided with settingsInServiceControl.
+interface InitialState {
+  HealthChecksStore?: Partial<Pick<HealthChecksStore, "emailNotificationsEnabled">>;
 }
 
 // ─── Test suite ──────────────────────────────────────────────────────────────
@@ -55,8 +64,8 @@ afterEach(() => {
 });
 
 describe("FEATURE: Health check notifications", () => {
-  describe("RULE: Email notifications can be enabled and disabled", () => {
-    test("EXAMPLE: Email notifications are currently disabled", async () => {
+  describe("RULE: Must let email notifications be turned on and off", () => {
+    test("EXAMPLE: The one where email notifications are off and get switched on", async () => {
       /*
        * Given Email notifications are OFF
        * When the toggle button is clicked
@@ -65,7 +74,7 @@ describe("FEATURE: Health check notifications", () => {
       const componentDriver = renderComponent({
         initialState: {
           HealthChecksStore: {
-            emailNotifications: emailSettingsWithEnabled(false),
+            emailNotificationsEnabled: false,
           },
         },
       });
@@ -75,7 +84,7 @@ describe("FEATURE: Health check notifications", () => {
       componentDriver.verify.emailNotificationsWereToggled();
     });
 
-    test("EXAMPLE: Email notifications are currently enabled", async () => {
+    test("EXAMPLE: The one where email notifications are on and get switched off", async () => {
       /*
        * Given Email notifications are ON
        * When the toggle button is clicked
@@ -84,7 +93,7 @@ describe("FEATURE: Health check notifications", () => {
       const componentDriver = renderComponent({
         initialState: {
           HealthChecksStore: {
-            emailNotifications: emailSettingsWithEnabled(true),
+            emailNotificationsEnabled: true,
           },
         },
       });
@@ -95,8 +104,8 @@ describe("FEATURE: Health check notifications", () => {
     });
   });
 
-  describe("RULE: The email configuration dialog can be opened and closed", () => {
-    test("EXAMPLE: The configuration dialog is not currently visible", async () => {
+  describe("RULE: Must let the email configuration dialog be opened and closed without saving", () => {
+    test("EXAMPLE: The one where Configure is clicked, and the dialog opens", async () => {
       /*
        * Given the Email configuration popup is not visible
        * When the "Configure" button is clicked
@@ -109,7 +118,7 @@ describe("FEATURE: Health check notifications", () => {
       componentDriver.verify.emailConfigurationIsAccessible();
     });
 
-    test("EXAMPLE: Edits have been made in the configuration dialog", async () => {
+    test("EXAMPLE: The one where edits are made and then cancelled, and nothing is saved", async () => {
       /*
        * Given the Email configuration popup is visible
        * And edits have been made to the email configuration
@@ -128,49 +137,37 @@ describe("FEATURE: Health check notifications", () => {
     });
   });
 
-  describe("RULE: Email configuration can only be saved when the form is valid", () => {
-    test("EXAMPLE: Required fields are missing or contain invalid values", async () => {
-      /*
-       * Given the Email configuration popup is visible
-       * When invalid or incomplete data is entered into the form
-       * Then the Save button is not enabled
-       */
-      const componentDriver = renderComponent({
-        initialState: {
-          HealthChecksStore: {
-            // All fields empty – form is invalid by default
-            emailNotifications: emptyEmailSettings(),
-          },
-        },
-      });
-
-      await componentDriver.actions.openEmailConfiguration();
-      componentDriver.verify.userCannotSaveConfiguration();
-    });
-
-    test("EXAMPLE: All required fields are present and valid", async () => {
+  describe("RULE: Must allow saving the email configuration only when the form is valid", () => {
+    test("EXAMPLE: The one where every required field is valid, and the configuration can be saved", async () => {
       /*
        * Given the Email configuration popup is visible
        * When valid data is entered for all required fields
        * Then the Save button is enabled
        */
-      const componentDriver = renderComponent({
-        initialState: {
-          HealthChecksStore: {
-            emailNotifications: emptyEmailSettings(),
-          },
-        },
-      });
+      const componentDriver = renderComponent({ settingsInServiceControl: emptyEmailSettings() });
 
       await componentDriver.actions.openEmailConfiguration();
       componentDriver.verify.userCannotSaveConfiguration();
       await componentDriver.actions.provideValidEmailConfiguration();
       componentDriver.verify.userCanSaveConfiguration();
     });
+
+    test("COUNTER-EXAMPLE: The one where required fields are missing or invalid, and the configuration cannot be saved", async () => {
+      /*
+       * Given the Email configuration popup is visible
+       * When invalid or incomplete data is entered into the form
+       * Then the Save button is not enabled
+       */
+      // All fields empty – form is invalid by default
+      const componentDriver = renderComponent({ settingsInServiceControl: emptyEmailSettings() });
+
+      await componentDriver.actions.openEmailConfiguration();
+      componentDriver.verify.userCannotSaveConfiguration();
+    });
   });
 
-  describe("RULE: Saving email configuration updates the stored settings and closes the dialog", () => {
-    test("EXAMPLE: A valid configuration has been entered", async () => {
+  describe("RULE: Must close the dialog once a valid email configuration is saved", () => {
+    test("EXAMPLE: The one where a valid configuration is saved, and the dialog closes", async () => {
       /*
        * Given the Email configuration popup is visible
        * And a valid configuration has been entered
@@ -178,13 +175,7 @@ describe("FEATURE: Health check notifications", () => {
        * Then the email configuration is updated
        * And the Email configuration popup is closed
        */
-      const componentDriver = renderComponent({
-        initialState: {
-          HealthChecksStore: {
-            emailNotifications: emptyEmailSettings(),
-          },
-        },
-      });
+      const componentDriver = renderComponent({ settingsInServiceControl: emptyEmailSettings() });
 
       await componentDriver.actions.openEmailConfiguration();
       await componentDriver.actions.provideValidEmailConfiguration();
@@ -195,40 +186,32 @@ describe("FEATURE: Health check notifications", () => {
     });
   });
 
-  describe("RULE: Health check notification settings persist after a page refresh", () => {
-    test("EXAMPLE: Email configuration has been updated", async () => {
+  describe("RULE: Must show the saved settings after a page refresh", () => {
+    test("EXAMPLE: The one where the configuration was changed before the refresh, and the dialog shows what was last saved", async () => {
       /*
        * When the email configuration has been changed
        * And the screen is refreshed
        * Then the email notification configuration matches what was last saved
        *
-       * The store's refresh() action is stubbed, so the initial state we set
-       * represents what the store holds after loading previously-saved settings.
+       * The store's loadEmailSettings() action is stubbed, so the settings we
+       * provide represent what ServiceControl returns for previously-saved settings.
        */
       const savedConfig: EmailSettings = {
-        enabled: true,
         enable_tls: true,
         smtp_server: "mail.example.com",
         smtp_port: 465,
         authentication_account: "user@example.com",
-        authentication_password: "secret",
         from: "noreply@example.com",
         to: "admin@example.com",
       };
 
-      const componentDriver = renderComponent({
-        initialState: {
-          HealthChecksStore: {
-            emailNotifications: savedConfig,
-          },
-        },
-      });
+      const componentDriver = renderComponent({ settingsInServiceControl: savedConfig });
 
       await componentDriver.actions.openEmailConfiguration();
       componentDriver.verify.emailConfigurationMatches(savedConfig);
     });
 
-    test("EXAMPLE: Email notifications were enabled before refresh", () => {
+    test("EXAMPLE: The one where email notifications were on before the refresh, and they are still shown as on", () => {
       /*
        * Given Email notifications are ON
        * When the page is refreshed
@@ -237,7 +220,7 @@ describe("FEATURE: Health check notifications", () => {
       const componentDriver = renderComponent({
         initialState: {
           HealthChecksStore: {
-            emailNotifications: emailSettingsWithEnabled(true),
+            emailNotificationsEnabled: true,
           },
         },
       });
@@ -245,7 +228,7 @@ describe("FEATURE: Health check notifications", () => {
       componentDriver.verify.emailNotificationsAreEnabled();
     });
 
-    test("EXAMPLE: Email notifications were disabled before refresh", () => {
+    test("EXAMPLE: The one where email notifications were off before the refresh, and they are still shown as off", () => {
       /*
        * Given Email notifications are OFF
        * When the page is refreshed
@@ -254,7 +237,7 @@ describe("FEATURE: Health check notifications", () => {
       const componentDriver = renderComponent({
         initialState: {
           HealthChecksStore: {
-            emailNotifications: emailSettingsWithEnabled(false),
+            emailNotificationsEnabled: false,
           },
         },
       });
@@ -263,30 +246,48 @@ describe("FEATURE: Health check notifications", () => {
     });
   });
 
-  describe("RULE: The email configuration dialog shows the settings that ServiceControl has now", () => {
-    test("EXAMPLE: Another user changed the settings after the page was loaded", async () => {
+  describe("RULE: Must show the settings ServiceControl has now when the dialog opens", () => {
+    test("EXAMPLE: The one where another user changed the settings after the page loaded, and the dialog shows their change", async () => {
       /*
        * Given the page was loaded with the To address old@example.com
        * And another user changed the To address in ServiceControl to new@example.com
        * When the Email configuration popup is opened
        * Then the To address is new@example.com
        */
-      const componentDriver = renderComponent({
-        initialState: {
-          HealthChecksStore: {
-            emailNotifications: { ...emptyEmailSettings(), to: "old@example.com" },
-          },
-        },
-      });
+      const componentDriver = renderComponent({ settingsInServiceControl: { ...emptyEmailSettings(), to: "old@example.com" } });
 
       componentDriver.actions.settingsChangeInServiceControl({ to: "new@example.com" });
       await componentDriver.actions.openEmailConfiguration();
       componentDriver.verify.emailConfigurationMatches({ to: "new@example.com" });
     });
+
+    test("COUNTER-EXAMPLE: The one where ServiceControl cannot be reached when the dialog opens, and it says the settings could not be loaded", async () => {
+      /*
+       * Given Email notifications are ON
+       * And ServiceControl cannot be reached
+       * When the Email configuration popup is opened
+       * Then it says that the settings could not be loaded
+       * And the configuration cannot be saved
+       * And Email notifications are still shown as ON
+       */
+      const componentDriver = renderComponent({
+        initialState: {
+          HealthChecksStore: {
+            emailNotificationsEnabled: true,
+          },
+        },
+      });
+
+      componentDriver.actions.serviceControlBecomesUnreachable();
+      await componentDriver.actions.openEmailConfiguration();
+      componentDriver.verify.emailSettingsCouldNotBeLoaded();
+      componentDriver.verify.userCannotSaveConfiguration();
+      componentDriver.verify.emailNotificationsAreEnabled();
+    });
   });
 
-  describe("RULE: The stored SMTP password is never shown", () => {
-    test("EXAMPLE: ServiceControl has a stored password for the SMTP account", async () => {
+  describe("RULE: Must never show the stored SMTP password", () => {
+    test("EXAMPLE: The one where ServiceControl has a stored password, and the password field stays empty", async () => {
       /*
        * Given ServiceControl has a stored SMTP password
        * And ServiceControl does not return it
@@ -294,41 +295,29 @@ describe("FEATURE: Health check notifications", () => {
        * Then the password field is empty
        * And the field explains that an empty password keeps the stored password
        */
-      const componentDriver = renderComponent({
-        initialState: {
-          HealthChecksStore: {
-            emailNotifications: { ...emptyEmailSettings(), authentication_account: "user@example.com" },
-          },
-        },
-      });
+      const componentDriver = renderComponent({ settingsInServiceControl: { ...emptyEmailSettings(), authentication_account: "user@example.com" } });
 
       await componentDriver.actions.openEmailConfiguration();
       componentDriver.verify.storedPasswordIsNotShownAndCanBeKept();
     });
   });
 
-  describe("RULE: The email configuration recommends limiting what the SMTP account can send", () => {
-    test("EXAMPLE: The Email configuration popup is opened", async () => {
+  describe("RULE: Should recommend limiting what the SMTP account can send", () => {
+    test("EXAMPLE: The one where the dialog opens, and it recommends a dedicated SMTP account with limited send permissions", async () => {
       /*
        * When the Email configuration popup is opened
        * Then it recommends a dedicated SMTP account with limited send permissions
        * And it links to the documentation
        */
-      const componentDriver = renderComponent({
-        initialState: {
-          HealthChecksStore: {
-            emailNotifications: emptyEmailSettings(),
-          },
-        },
-      });
+      const componentDriver = renderComponent({ settingsInServiceControl: emptyEmailSettings() });
 
       await componentDriver.actions.openEmailConfiguration();
       componentDriver.verify.limitingTheSmtpAccountIsRecommended();
     });
   });
 
-  describe("RULE: Sending a test notification indicates whether delivery succeeded or failed", () => {
-    test("EXAMPLE: The email configuration is invalid", async () => {
+  describe("RULE: Must show whether a test notification was delivered", () => {
+    test("EXAMPLE: The one where the configuration is invalid, and the test notification is shown as failed", async () => {
       /*
        * Given an invalid configuration
        * When "Send test notification" is clicked
@@ -345,7 +334,7 @@ describe("FEATURE: Health check notifications", () => {
       await componentDriver.verify.testNotificationFailed();
     });
 
-    test("EXAMPLE: The email configuration is valid", async () => {
+    test("EXAMPLE: The one where the configuration is valid, and the test notification is shown as sent", async () => {
       /*
        * Given a valid configuration
        * When "Send test notification" is clicked
@@ -366,7 +355,7 @@ describe("FEATURE: Health check notifications", () => {
 
 // ─── Render helper ───────────────────────────────────────────────────────────
 
-function renderComponent({ initialState = {} }: { initialState?: Record<string, unknown> } = {}): ComponentDSL {
+function renderComponent({ initialState = {}, settingsInServiceControl = emptyEmailSettings() }: { initialState?: InitialState; settingsInServiceControl?: EmailSettings } = {}): ComponentDSL {
   const user = userEvent.setup();
 
   render(sut, {
@@ -391,6 +380,8 @@ function renderComponent({ initialState = {} }: { initialState?: Record<string, 
   // After rendering, obtain the store so we can set up mock return values
   // and verify calls within assertions.
   const store = useHealthChecksStore();
+  // The dialog loads the settings it edits from ServiceControl each time it opens.
+  vi.mocked(store.loadEmailSettings).mockResolvedValue(settingsInServiceControl);
 
   return {
     actions: {
@@ -399,6 +390,8 @@ function renderComponent({ initialState = {} }: { initialState?: Record<string, 
       },
       async openEmailConfiguration() {
         await user.click(screen.getByRole("button", { name: /configure/i }));
+        const dialog = screen.getByRole("dialog", { name: /email configuration/i });
+        await waitFor(() => expect(within(dialog).queryByRole("status")).not.toBeInTheDocument());
       },
       async confirmEmailConfigurationChanges() {
         await user.click(screen.getByRole("button", { name: /save/i }));
@@ -410,10 +403,10 @@ function renderComponent({ initialState = {} }: { initialState?: Record<string, 
         await user.click(screen.getByRole("button", { name: /send test notification/i }));
       },
       settingsChangeInServiceControl(changes: Partial<EmailSettings>) {
-        vi.mocked(store.refresh).mockImplementation(() => {
-          store.emailNotifications = { ...store.emailNotifications, ...changes };
-          return Promise.resolve();
-        });
+        vi.mocked(store.loadEmailSettings).mockResolvedValue({ ...settingsInServiceControl, ...changes });
+      },
+      serviceControlBecomesUnreachable() {
+        vi.mocked(store.loadEmailSettings).mockResolvedValue(null);
       },
       async provideValidEmailConfiguration() {
         await user.type(screen.getByLabelText(/smtp server address/i), "smtp.example.com");
@@ -465,6 +458,10 @@ function renderComponent({ initialState = {} }: { initialState?: Record<string, 
         expect(password).toHaveAttribute("placeholder", expect.stringMatching(/leave empty to keep the stored password/i));
         expect(password).toHaveAccessibleDescription(/stored password is never shown/i);
       },
+      emailSettingsCouldNotBeLoaded() {
+        expect(screen.getByRole("alert")).toHaveTextContent(/could not be loaded/i);
+        expect(screen.queryByLabelText(/smtp server address/i)).not.toBeInTheDocument();
+      },
       limitingTheSmtpAccountIsRecommended() {
         expect(screen.getByText(/use a dedicated smtp account/i)).toBeInTheDocument();
         expect(screen.getByRole("link", { name: /securing the smtp account/i })).toHaveAttribute("href", "https://docs.particular.net/servicecontrol/security/smtp-account");
@@ -499,20 +496,11 @@ function renderComponent({ initialState = {} }: { initialState?: Record<string, 
 
 function emptyEmailSettings(): EmailSettings {
   return {
-    enabled: null,
     enable_tls: null,
     smtp_server: "",
     smtp_port: null,
     authentication_account: "",
-    authentication_password: "",
     from: "",
     to: "",
-  };
-}
-
-function emailSettingsWithEnabled(enabled: boolean): EmailSettings {
-  return {
-    ...emptyEmailSettings(),
-    enabled,
   };
 }
