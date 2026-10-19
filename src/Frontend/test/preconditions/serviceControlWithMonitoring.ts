@@ -95,4 +95,7 @@ export const serviceControlWithMonitoring = async ({ driver }: SetupFactoryOptio
 
   //default handler for /api/license/details
   await driver.setUp(precondition.licenseDetailsDefaultHandler);
+
+  //default handlers for /api/timeouts, /api/timeouts/counts, and /api/sagas/{id}/timeouts
+  await driver.setUp(precondition.hasSagaTimeouts([]));
 };
