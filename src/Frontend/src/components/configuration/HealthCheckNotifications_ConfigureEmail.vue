@@ -1,25 +1,46 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import type EmailSettings from "@/components/configuration/EmailSettings";
+import { computed, onMounted, ref } from "vue";
 import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
 import ModalDialog from "../ModalDialog.vue";
 import ActionButton from "../ActionButton.vue";
 import ExternalLink from "@/components/ExternalLink.vue";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import { useHealthChecksStore } from "@/stores/HealthChecksStore";
 
 const emit = defineEmits<{
   save: [settings: UpdateEmailNotificationsSettingsRequest];
   cancel: [];
 }>();
 
-const settings = defineProps<EmailSettings>();
+const healthChecksStore = useHealthChecksStore();
 
-const smtp_server = ref(settings.smtp_server);
-const smtp_port = ref(settings.smtp_port);
-const authentication_account = ref(settings.authentication_account);
-const authentication_password = ref(settings.authentication_password);
-const enable_tls = ref(settings.enable_tls);
-const from = ref(settings.from);
-const to = ref(settings.to);
+const loading = ref(true);
+const loadFailed = ref(false);
+
+const smtp_server = ref("");
+const smtp_port = ref<number | null>(null);
+const authentication_account = ref("");
+// Always starts empty: the stored password is never loaded into the form.
+const authentication_password = ref("");
+const enable_tls = ref<boolean | null>(null);
+const from = ref("");
+const to = ref("");
+
+// Start the form from what ServiceControl has now, not from what was loaded with the page.
+onMounted(async () => {
+  const settings = await healthChecksStore.loadEmailSettings();
+  if (settings) {
+    smtp_server.value = settings.smtp_server;
+    smtp_port.value = settings.smtp_port;
+    authentication_account.value = settings.authentication_account;
+    enable_tls.value = settings.enable_tls;
+    from.value = settings.from;
+    to.value = settings.to;
+  } else {
+    loadFailed.value = true;
+  }
+  loading.value = false;
+});
 
 const emailRe = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -65,7 +86,9 @@ function close() {
 <template>
   <ModalDialog id="email-config-dialog" title="Email configuration" @close="close" width="800px">
     <template #modalBody>
-      <div class="notificationsForm">
+      <LoadingSpinner v-if="loading" />
+      <div v-else-if="loadFailed" class="alert alert-danger" role="alert">The email settings could not be loaded from ServiceControl. Close this dialog and try again.</div>
+      <div v-else class="notificationsForm">
         <div class="row">
           <div class="form-group" :class="{ 'has-error': !smtpServerIsValid }">
             <label for="smtpServerAddress">SMTP server address</label>
@@ -111,7 +134,7 @@ function close() {
       </div>
     </template>
     <template #modalFooter>
-      <ActionButton variant="primary" :disabled="!formIsValid" @click="save">Save</ActionButton>
+      <ActionButton variant="primary" :disabled="loading || loadFailed || !formIsValid" @click="save">Save</ActionButton>
       <ActionButton @click="close">Cancel</ActionButton>
     </template>
   </ModalDialog>
