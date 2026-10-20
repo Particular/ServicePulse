@@ -21,7 +21,7 @@ onMounted(() => {
   document.body.className = "modal-open";
   document.addEventListener("keydown", onKeydown);
   /* native dialog showModal captures tab focus */
-  const showModal = ref.value?.showModal.bind(ref.value);
+  const showModal = ref.value?.showModal?.bind(ref.value);
   if (showModal) showModal();
 });
 
