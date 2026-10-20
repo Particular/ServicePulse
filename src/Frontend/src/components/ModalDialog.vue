@@ -6,6 +6,7 @@ defineProps<{ id: string; title: string; width?: CSS.Property.Width }>();
 const emit = defineEmits<{ close: [] }>();
 
 const ref = useTemplateRef("dialog");
+const currentFocus = document.activeElement;
 
 function closeDialog() {
   emit("close");
@@ -20,7 +21,7 @@ onMounted(() => {
   document.body.className = "modal-open";
   document.addEventListener("keydown", onKeydown);
   /* native dialog showModal captures tab focus */
-  const showModal = ref.value?.showModal;
+  const showModal = ref.value?.showModal.bind(ref.value);
   if (showModal) showModal();
 });
 
@@ -28,8 +29,9 @@ onUnmounted(() => {
   document.body.className = "";
   document.removeEventListener("keydown", onKeydown);
   /* native dialog close releases tab focus */
-  const close = ref.value?.close;
+  const close = ref.value?.close.bind(ref.value);
   if (close) close();
+  if (currentFocus instanceof HTMLElement) currentFocus.focus();
 });
 </script>
 
