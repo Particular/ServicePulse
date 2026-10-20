@@ -245,7 +245,6 @@ pre {
 }
 
 .btn-default {
-  padding: 8px 16px;
   color: #333;
   background-color: #fff;
   border-color: #ccc;
@@ -266,7 +265,6 @@ pre {
 }
 
 .btn.btn-primary {
-  padding: 8px 16px;
   background-color: var(--sp-blue);
   border-color: #0686aa;
   color: #fff;
@@ -416,7 +414,6 @@ span.metadata.metadata-link i.fa {
 
 .btn.btn-retry-dismiss {
   border-radius: 4px;
-  padding: 8px 16px;
 }
 
 .btn.btn-xs {

@@ -3,7 +3,7 @@ import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
 import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore";
 import { storeToRefs } from "pinia";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import DataView from "@/components/DataView.vue";
 import ColumnHeader from "@/components/ColumnHeader.vue";
 import ExclamationMark from "@/components/ExclamationMark.vue";
@@ -17,11 +17,14 @@ import DetailsItem from "@/components/DetailsItem.vue";
 import ExternalLink from "@/components/ExternalLink.vue";
 import { EndpointClassification } from "@/resources/LicenseDetails.ts";
 import ActionButton from "@/components/ActionButton.vue";
+import ConfirmDialog from "@/components/ConfirmDialog.vue";
 
 const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
 
 const licenseDetailsStore = useLicenseDetailsStore();
-const { endpoints, endpointSizes, serviceEndDate, validId, hasLicenseDetails, error, infrastructureQueues, excludedQueues, unassignedQueues, hasChanges, saving } = storeToRefs(licenseDetailsStore);
+const { endpoints, endpointSizes, serviceEndDate, validId, hasLicenseDetails, error, infrastructureQueues, excludedQueues, unassignedQueues, hasChanges, hasAmendments, saving } = storeToRefs(licenseDetailsStore);
+
+const confirmReset = ref(false);
 
 const sizes = computed(() =>
   endpoints.value
@@ -43,6 +46,11 @@ const licensedCounts = computed(() => sizes.value.licensed);
 const currentCounts = computed(() => sizes.value.current);
 const allSizes = computed(() => [...new Set([...licensedCounts.value.keys(), ...currentCounts.value.keys()])].sort((a, b) => endpointSizes.value.findIndex((size) => size.name === a) - endpointSizes.value.findIndex((size) => size.name === b)));
 const estimateUrlParams = computed(() => [...currentCounts.value.entries().map(([endpointSize, count]) => `${endpointSize}=${count}`)].join("&"));
+
+async function removeAmendments() {
+  confirmReset.value = false;
+  await licenseDetailsStore.removeAmendments();
+}
 </script>
 
 <template>
@@ -102,9 +110,10 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
             </DataView>
           </div>
         </div>
-        <!-- awaiting update to the pricing page to support this functionality -->
-        <div v-if="false">
-          <ExternalLink :href="`https://particular.net/pricing?${estimateUrlParams}`" class="btn btn-primary" show-icon>Estimate Renewal Price</ExternalLink>
+        <div class="action-buttons">
+          <ActionButton v-if="hasAmendments" variant="danger" @click="confirmReset = true" :disabled="saving">Remove Amendments</ActionButton>
+          <!-- awaiting update to the pricing page to support this functionality -->
+          <ExternalLink v-if="true" :href="`https://particular.net/pricing?${estimateUrlParams}`" class="btn btn-primary" show-icon>Estimate Renewal Price</ExternalLink>
         </div>
       </div>
       <div>
@@ -147,6 +156,14 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
       </div>
     </ConditionalRender>
   </ConditionalRender>
+
+  <ConfirmDialog
+    v-if="confirmReset"
+    heading="Confirm Remove Endpoint Amendments"
+    body="Are you sure you want to remove all endpoint and queue assignment amendments made since uploading the latest license metadata file?"
+    @cancel="confirmReset = false"
+    @confirm="removeAmendments"
+  />
 </template>
 
 <style scoped>
@@ -199,7 +216,7 @@ const estimateUrlParams = computed(() => [...currentCounts.value.entries().map((
   align-items: end;
 }
 
-.tab-row .action-buttons {
+.action-buttons {
   display: flex;
   gap: 0.25rem;
   flex-wrap: wrap;

@@ -222,8 +222,27 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
       useShowToast(TYPE.SUCCESS, "Saved", "", false, { timeout: 1000 });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      useShowToast(TYPE.ERROR, "Error", "Failed to save changes to endpoint metadata.");
+      useShowToast(TYPE.ERROR, "Error", "Failed to save changes to endpoint metadata");
       logger.error("Failed to save changes to endpoint metadata.", err);
+    } finally {
+      saving.value = false;
+    }
+  }
+
+  async function removeAmendments() {
+    saving.value = true;
+    try {
+      const response = await serviceControlClient.postToServiceControl("license/removeAmendments");
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Remove Amendments Failed: ${response.status} ${response.statusText} - ${text}`);
+      }
+      await refresh();
+      useShowToast(TYPE.SUCCESS, "Amendments Removed", "", false, { timeout: 1000 });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      useShowToast(TYPE.ERROR, "Error", "Failed to remove endpoint metadata amendments");
+      logger.error("Failed to remove endpoint metadata amendments.", err);
     } finally {
       saving.value = false;
     }
@@ -252,6 +271,14 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     validId,
     hasLicenseDetails,
     hasChanges,
+    hasAmendments: computed(
+      () =>
+        !hasChanges.value &&
+        (endpoints.value.some((endpoint) => endpoint.queues.some((queue) => queue.originalLocation !== endpoint.clientId)) ||
+          infrastructureQueues.value.some((queue) => queue.originalLocation !== "infrastructure") ||
+          excludedQueues.value.some((queue) => queue.originalLocation !== "excluded") ||
+          unassignedQueues.value.some((queue) => queue.originalLocation != null))
+    ),
     saving,
     error,
     uploadEndpointMetadata,
@@ -267,6 +294,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
     reclassifyEndpoint,
     discardChanges,
     saveChanges,
+    removeAmendments,
   };
 });
 
