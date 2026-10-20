@@ -5,7 +5,6 @@ import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
-import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
 import OnOffSwitch from "../OnOffSwitch.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
@@ -39,10 +38,8 @@ function editEmailNotifications() {
   showEmailConfiguration.value = true;
 }
 
-async function saveEditedEmailNotifications(newSettings: UpdateEmailNotificationsSettingsRequest) {
-  emailUpdateSuccessful.value = null;
+function emailNotificationsSaved(saveSuccessful: boolean) {
   showEmailConfiguration.value = false;
-  const saveSuccessful = await healthChecksStore.saveEmailNotifications(newSettings);
   if (saveSuccessful) {
     emailUpdateSuccessful.value = true;
     useShowToast(TYPE.INFO, "Info", "Email settings updated.");
@@ -137,8 +134,8 @@ onMounted(async () => {
       </LicenseNotExpired>
 
       <Teleport to="#modalDisplay">
-        <!-- The dialog loads the settings it edits each time it opens -->
-        <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration" @cancel="showEmailConfiguration = false" @save="saveEditedEmailNotifications"> </HealthCheckNotifications_EmailConfiguration>
+        <!-- The dialog reads the settings from ServiceControl when it opens, and saves them itself -->
+        <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration" @cancel="showEmailConfiguration = false" @saved="emailNotificationsSaved"> </HealthCheckNotifications_EmailConfiguration>
       </Teleport>
     </ServiceControlAvailable>
   </section>

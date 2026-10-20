@@ -1,10 +1,12 @@
-import { render, describe, test, screen, within, expect, userEvent } from "@component-test-utils";
+import { render, describe, test, screen, within, expect, userEvent, mockEndpoint, mockEndpointDynamic } from "@component-test-utils";
 import { waitFor } from "@testing-library/vue";
 import { vi, beforeEach, afterEach } from "vitest";
 import sut from "@/components/configuration/HealthCheckNotifications.vue";
 import { createTestingPinia } from "@pinia/testing";
 import { useHealthChecksStore, type HealthChecksStore } from "@/stores/HealthChecksStore";
-import type EmailSettings from "@/components/configuration/EmailSettings";
+import type EmailNotifications from "@/resources/EmailNotifications";
+import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
+import { mockServer } from "../../../test/mock-server";
 
 // ─── DSL ─────────────────────────────────────────────────────────────────────
 
@@ -16,7 +18,9 @@ interface ComponentDSL {
     discardEmailConfigurationChanges(): Promise<void>;
     requestTestNotification(): Promise<void>;
     provideValidEmailConfiguration(): Promise<void>;
-    settingsChangeInServiceControl(changes: Partial<EmailSettings>): void;
+    enterPassword(password: string): Promise<void>;
+    removeAccount(): Promise<void>;
+    settingsChangeInServiceControl(changes: Partial<EmailNotifications>): void;
     serviceControlBecomesUnreachable(): void;
   };
   verify: {
@@ -32,18 +36,21 @@ interface ComponentDSL {
     testNotificationWasRequested(): void;
     emailConfigurationWasSaved(): void;
     emailConfigurationWasNotSaved(): void;
-    emailConfigurationMatches(config: Partial<EmailSettings>): void;
+    savedSettingsInclude(settings: Partial<UpdateEmailNotificationsSettingsRequest>): void;
+    emailConfigurationMatches(config: Partial<EmailNotifications>): void;
     storedPasswordIsNotShownAndCanBeKept(): void;
     limitingTheSmtpAccountIsRecommended(): void;
     emailSettingsCouldNotBeLoaded(): void;
   };
 }
 
-// The store state a test can start from. Only page-level state lives in the store; the settings the dialog
-// edits are provided with settingsInServiceControl.
+// The store state a test can start from. Only page-level state lives in the store; the dialog reads the settings it
+// edits from ServiceControl, given with settingsInServiceControl.
 interface InitialState {
   HealthChecksStore?: Partial<Pick<HealthChecksStore, "emailNotificationsEnabled">>;
 }
+
+const storedPassword = "stored-secret";
 
 // ─── Test suite ──────────────────────────────────────────────────────────────
 
@@ -61,6 +68,7 @@ beforeEach(() => {
 afterEach(() => {
   const modalDisplay = document.getElementById("modalDisplay");
   if (modalDisplay) document.body.removeChild(modalDisplay);
+  mockServer.resetHandlers();
 });
 
 describe("FEATURE: Health check notifications", () => {
@@ -193,10 +201,11 @@ describe("FEATURE: Health check notifications", () => {
        * And the screen is refreshed
        * Then the email notification configuration matches what was last saved
        *
-       * The store's loadEmailSettings() action is stubbed, so the settings we
-       * provide represent what ServiceControl returns for previously-saved settings.
+       * ServiceControl's response is mocked, so the settings we provide represent
+       * what ServiceControl returns for previously-saved settings.
        */
-      const savedConfig: EmailSettings = {
+      const savedConfig: EmailNotifications = {
+        enabled: true,
         enable_tls: true,
         smtp_server: "mail.example.com",
         smtp_port: 465,
@@ -287,18 +296,76 @@ describe("FEATURE: Health check notifications", () => {
   });
 
   describe("RULE: Must never show the stored SMTP password", () => {
-    test("EXAMPLE: The one where ServiceControl has a stored password, and the password field stays empty", async () => {
+    test("EXAMPLE: The one where ServiceControl returns the stored password, and the password field stays empty", async () => {
       /*
-       * Given ServiceControl has a stored SMTP password
-       * And ServiceControl does not return it
+       * Given ServiceControl older than 6.21.2, which returns the stored SMTP password
        * When the Email configuration popup is opened
        * Then the password field is empty
        * And the field explains that an empty password keeps the stored password
        */
-      const componentDriver = renderComponent({ settingsInServiceControl: { ...emptyEmailSettings(), authentication_account: "user@example.com" } });
+      const componentDriver = renderComponent({ settingsInServiceControl: settingsWithStoredPassword() });
 
       await componentDriver.actions.openEmailConfiguration();
       componentDriver.verify.storedPasswordIsNotShownAndCanBeKept();
+    });
+  });
+
+  describe("RULE: Must keep the stored password unless a new one is entered or the account is removed", () => {
+    test("EXAMPLE: The one where ServiceControl 6.21.2 or later does not return the stored password and it is left empty, and the empty password is sent", async () => {
+      /*
+       * Given ServiceControl 6.21.2 or later, which does not return the stored password
+       *   and keeps it when an empty one is sent
+       * When the settings are saved with the password left empty
+       * Then the empty password is sent
+       */
+      const componentDriver = renderComponent({ settingsInServiceControl: settingsWithoutPassword() });
+
+      await componentDriver.actions.openEmailConfiguration();
+      await componentDriver.actions.confirmEmailConfigurationChanges();
+      componentDriver.verify.savedSettingsInclude({ authorization_account: "user@example.com", authorization_password: "" });
+    });
+
+    test("EXAMPLE: The one where ServiceControl older than 6.21.2 returns the stored password and it is left empty, and the stored password is sent back", async () => {
+      /*
+       * Given ServiceControl older than 6.21.2, which returns the stored password
+       *   and replaces it with whatever a save sends
+       * When the settings are saved with the password left empty
+       * Then the stored password is sent back with the save
+       *   (sending the empty password would erase it)
+       */
+      const componentDriver = renderComponent({ settingsInServiceControl: settingsWithStoredPassword() });
+
+      await componentDriver.actions.openEmailConfiguration();
+      await componentDriver.actions.confirmEmailConfigurationChanges();
+      componentDriver.verify.savedSettingsInclude({ authorization_account: "user@example.com", authorization_password: storedPassword });
+    });
+
+    test("EXAMPLE: The one where a new password is entered, and it replaces the stored one", async () => {
+      /*
+       * Given ServiceControl returns the stored password
+       * When a new password is entered and the settings are saved
+       * Then the new password is sent
+       */
+      const componentDriver = renderComponent({ settingsInServiceControl: settingsWithStoredPassword() });
+
+      await componentDriver.actions.openEmailConfiguration();
+      await componentDriver.actions.enterPassword("new-secret");
+      await componentDriver.actions.confirmEmailConfigurationChanges();
+      componentDriver.verify.savedSettingsInclude({ authorization_password: "new-secret" });
+    });
+
+    test("EXAMPLE: The one where the account is removed, and the password is removed with it", async () => {
+      /*
+       * Given ServiceControl returns the stored password
+       * When the account is removed and the settings are saved with the password left empty
+       * Then the empty password is sent, because without an account the password is never used
+       */
+      const componentDriver = renderComponent({ settingsInServiceControl: settingsWithStoredPassword() });
+
+      await componentDriver.actions.openEmailConfiguration();
+      await componentDriver.actions.removeAccount();
+      await componentDriver.actions.confirmEmailConfigurationChanges();
+      componentDriver.verify.savedSettingsInclude({ authorization_account: "", authorization_password: "" });
     });
   });
 
@@ -355,8 +422,17 @@ describe("FEATURE: Health check notifications", () => {
 
 // ─── Render helper ───────────────────────────────────────────────────────────
 
-function renderComponent({ initialState = {}, settingsInServiceControl = emptyEmailSettings() }: { initialState?: InitialState; settingsInServiceControl?: EmailSettings } = {}): ComponentDSL {
+function renderComponent({ initialState = {}, settingsInServiceControl = emptyEmailSettings() }: { initialState?: InitialState; settingsInServiceControl?: EmailNotifications } = {}): ComponentDSL {
   const user = userEvent.setup();
+
+  // The dialog reads and saves the settings it edits through ServiceControl's API, answered here by the mock server.
+  const emailSettingsUrl = `${window.defaultConfig.service_control_url}notifications/email`;
+  mockEndpoint(emailSettingsUrl, { body: settingsInServiceControl });
+  const savedSettings: UpdateEmailNotificationsSettingsRequest[] = [];
+  mockEndpointDynamic(emailSettingsUrl, "post", async (_url, _params, request) => {
+    savedSettings.push((await request.json()) as UpdateEmailNotificationsSettingsRequest);
+    return { body: {} };
+  });
 
   render(sut, {
     global: {
@@ -380,8 +456,6 @@ function renderComponent({ initialState = {}, settingsInServiceControl = emptyEm
   // After rendering, obtain the store so we can set up mock return values
   // and verify calls within assertions.
   const store = useHealthChecksStore();
-  // The dialog loads the settings it edits from ServiceControl each time it opens.
-  vi.mocked(store.loadEmailSettings).mockResolvedValue(settingsInServiceControl);
 
   return {
     actions: {
@@ -395,6 +469,7 @@ function renderComponent({ initialState = {}, settingsInServiceControl = emptyEm
       },
       async confirmEmailConfigurationChanges() {
         await user.click(screen.getByRole("button", { name: /save/i }));
+        await waitFor(() => expect(screen.queryByRole("dialog", { name: /email configuration/i })).not.toBeInTheDocument());
       },
       async discardEmailConfigurationChanges() {
         await user.click(screen.getByRole("button", { name: /cancel/i }));
@@ -402,11 +477,17 @@ function renderComponent({ initialState = {}, settingsInServiceControl = emptyEm
       async requestTestNotification() {
         await user.click(screen.getByRole("button", { name: /send test notification/i }));
       },
-      settingsChangeInServiceControl(changes: Partial<EmailSettings>) {
-        vi.mocked(store.loadEmailSettings).mockResolvedValue({ ...settingsInServiceControl, ...changes });
+      async enterPassword(password: string) {
+        await user.type(screen.getByLabelText(/authentication password/i), password);
+      },
+      async removeAccount() {
+        await user.clear(screen.getByLabelText(/authentication account/i));
+      },
+      settingsChangeInServiceControl(changes: Partial<EmailNotifications>) {
+        mockEndpoint(emailSettingsUrl, { body: { ...settingsInServiceControl, ...changes } });
       },
       serviceControlBecomesUnreachable() {
-        vi.mocked(store.loadEmailSettings).mockResolvedValue(null);
+        mockEndpoint(emailSettingsUrl, { body: null, networkError: true });
       },
       async provideValidEmailConfiguration() {
         await user.type(screen.getByLabelText(/smtp server address/i), "smtp.example.com");
@@ -447,10 +528,14 @@ function renderComponent({ initialState = {}, settingsInServiceControl = emptyEm
         expect(store.testEmailNotifications).toHaveBeenCalled();
       },
       emailConfigurationWasSaved() {
-        expect(store.saveEmailNotifications).toHaveBeenCalled();
+        expect(savedSettings).toHaveLength(1);
       },
       emailConfigurationWasNotSaved() {
-        expect(store.saveEmailNotifications).not.toHaveBeenCalled();
+        expect(savedSettings).toHaveLength(0);
+      },
+      savedSettingsInclude(settings: Partial<UpdateEmailNotificationsSettingsRequest>) {
+        expect(savedSettings).toHaveLength(1);
+        expect(savedSettings[0]).toMatchObject(settings);
       },
       storedPasswordIsNotShownAndCanBeKept() {
         const password = screen.getByLabelText(/authentication password/i);
@@ -466,7 +551,7 @@ function renderComponent({ initialState = {}, settingsInServiceControl = emptyEm
         expect(screen.getByText(/use a dedicated smtp account/i)).toBeInTheDocument();
         expect(screen.getByRole("link", { name: /securing the smtp account/i })).toHaveAttribute("href", "https://docs.particular.net/servicecontrol/security/smtp-account");
       },
-      emailConfigurationMatches(config: Partial<EmailSettings>) {
+      emailConfigurationMatches(config: Partial<EmailNotifications>) {
         if (config.smtp_server !== undefined) {
           expect(screen.getByLabelText(/smtp server address/i)).toHaveValue(config.smtp_server);
         }
@@ -494,13 +579,27 @@ function renderComponent({ initialState = {}, settingsInServiceControl = emptyEm
 
 // ─── Precondition helpers ────────────────────────────────────────────────────
 
-function emptyEmailSettings(): EmailSettings {
+function emptyEmailSettings(): EmailNotifications {
   return {
-    enable_tls: null,
-    smtp_server: "",
-    smtp_port: null,
-    authentication_account: "",
-    from: "",
-    to: "",
+    enabled: false,
+    enable_tls: false,
   };
+}
+
+// What ServiceControl 6.21.2 and later return for a valid configuration with an account: no password.
+function settingsWithoutPassword(): EmailNotifications {
+  return {
+    enabled: true,
+    enable_tls: true,
+    smtp_server: "smtp.example.com",
+    smtp_port: 587,
+    authentication_account: "user@example.com",
+    from: "from@example.com",
+    to: "to@example.com",
+  };
+}
+
+// What ServiceControl before 6.21.2 returns for the same configuration: the stored password too.
+function settingsWithStoredPassword(): EmailNotifications {
+  return { ...settingsWithoutPassword(), authentication_password: storedPassword };
 }
