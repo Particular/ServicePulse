@@ -30,9 +30,8 @@ async function generateReport() {
 
     if (hasNonUserIndicatorEndpoint) reportWarnings.value.push("Not all endpoints/queues have an Endpoint Type set.");
     if (hasLicenseDetails.value && unassignedQueues.value.length > 0) {
-      if (hasAmendments.value)
-        reportWarnings.value.push("Amendments have been made to the license details, but some queues remain unassigned. Amending the license details to fully represent your current system will assist with expediting your license renewal.");
-      else reportWarnings.value.push("Some queues remain unassigned on the license details tab. Amending the license details to fully represent your current system will assist with expediting your license renewal.");
+      if (hasAmendments.value) reportWarnings.value.push("Amendments have been made to the license details, but some queues remain unassigned.");
+      else reportWarnings.value.push("Some queues remain unassigned on the license details tab.");
     }
     if (!reportWarnings.value.length) {
       await downloadReport();
@@ -71,11 +70,13 @@ async function downloadReport() {
             <Teleport to="#modalDisplay">
               <ModalDialog v-if="reportWarnings.length" id="download-report" title="Download Report" @close="reportWarnings = []" @confirm="downloadReport">
                 <template #modalBody>
+                  <span>Please check the following:</span>
                   <ul>
                     <li v-for="warning in reportWarnings" :key="warning">
                       {{ warning }}
                     </li>
                   </ul>
+                  <p>None of the above items are required, however providing as much information as possible about your current system as part of the usage report will assist in expediting your license renewal.</p>
                   <p>Are you sure you want to continue?</p>
                 </template>
                 <template #modalFooter>
