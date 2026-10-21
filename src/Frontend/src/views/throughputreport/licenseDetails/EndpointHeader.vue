@@ -7,11 +7,13 @@ import EndpointName from "./EndpointName.vue";
 import ActionButton from "@/components/ActionButton.vue";
 import { useLicenseDetailsStore } from "@/stores/LicenseDetailsStore";
 import { faCircleChevronUp } from "@fortawesome/free-solid-svg-icons";
+import useIsLicenseDetailAmendmentSupported from "./isLicenseDetailAmendmentSupported.ts";
 
 const props = defineProps<{ endpoint: Endpoint }>();
 const emit = defineEmits(["collapse"]);
 
 const licenseDetailsStore = useLicenseDetailsStore();
+const isLicenseDetailAmendmentSupported = useIsLicenseDetailAmendmentSupported();
 
 const endpointClassificationStyle = computed(() => {
   switch (props.endpoint.classification) {
@@ -53,7 +55,7 @@ watch(
       <FAIcon :icon="faCircleChevronUp" class="collapse-button" size="lg" tabindex="0" title="collapse" @click="emit('collapse')" />
       <strong v-tippy="endpoint.name">{{ endpoint.name }}</strong>
     </div>
-    <div class="header-buttons">
+    <div class="header-buttons" v-if="isLicenseDetailAmendmentSupported">
       <div>
         <label :for="`${endpoint.clientId}classification`">Classification:</label>
         <select :id="`${endpoint.clientId}classification`" @change="(e) => reclassifyEndpoint(Number((e.target as HTMLSelectElement).value))" :value="endpoint.classification" class="form-select">

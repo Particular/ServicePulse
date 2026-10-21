@@ -104,7 +104,7 @@ describe("EndpointsView tests", () => {
       const use = userEvent.setup();
 
       await use.click(screen.getByRole("button", { name: /Download Report/i }));
-      expect(screen.queryAllByText(new RegExp(`Please email '${fileName}' to your account manager`)).length).toBeGreaterThanOrEqual(1);
+      expect(screen.queryAllByText(new RegExp(`Please email '${fileName}' to your Particular account manager.`)).length).toBeGreaterThanOrEqual(1);
     });
 
     test("and there are warnings, dialog is displayed", async () => {
@@ -116,7 +116,7 @@ describe("EndpointsView tests", () => {
       const use = userEvent.setup();
 
       await use.click(screen.getByRole("button", { name: /Download Report/i }));
-      expect(screen.getByText("Not all endpoints/queues have an Endpoint Type set")).toBeInTheDocument();
+      expect(screen.getByText("Not all endpoints/queues have an Endpoint Type set.")).toBeInTheDocument();
     });
   });
 });
