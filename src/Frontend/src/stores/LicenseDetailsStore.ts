@@ -7,9 +7,11 @@ import serviceControlClient from "@/components/serviceControlClient";
 import useIsLicenseDetailsSupported from "@/views/throughputreport/licenseDetails/isLicenseDetailsSupported";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
+import useIsLicenseDetailAmendmentSupported from "@/views/throughputreport/licenseDetails/isLicenseDetailAmendmentSupported";
 
 export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
+  const isLicenseDetailAmendmentSupported = useIsLicenseDetailAmendmentSupported();
 
   const endpointSizes = ref<EndpointSize[]>([]);
   const endpoints = ref<Endpoint[]>([]);
@@ -42,36 +44,48 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   }
 
   function excludeQueue(queue: Queue) {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     excludedQueues.value.push(queue);
     unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
     hasChanges.value = true;
   }
 
   function unexcludeQueue(queue: Queue) {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     excludedQueues.value = excludedQueues.value.filter((assigned) => assigned !== queue);
     returnToUnassigned(queue);
     hasChanges.value = true;
   }
 
   function markQueueAsInfrastructure(queue: Queue) {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     infrastructureQueues.value.push(queue);
     unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
     hasChanges.value = true;
   }
 
   function unmarkQueueAsInfrastructure(queue: Queue) {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     infrastructureQueues.value = infrastructureQueues.value.filter((assigned) => assigned !== queue);
     returnToUnassigned(queue);
     hasChanges.value = true;
   }
 
   function returnToUnassigned(queue: Queue) {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     if (queue.details) unassignedQueues.value.push(queue);
     else unmappedQueues.value.push(queue);
     hasChanges.value = true;
   }
 
   function createEndpointFromQueue(queue: Queue) {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     //max endpoint name length of 80 - take from the end to reduce chance of clashes
     let name = queue.details.name.substring(queue.details.name.length - 80);
     while (endpoints.value.find((endpoint) => endpoint.name === name)) {
@@ -85,12 +99,16 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   }
 
   function addQueueToEndpoint(queue: Queue, endpoint: Endpoint) {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     endpoint.queues.push(queue);
     unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
     hasChanges.value = true;
   }
 
   function removeQueueFromEndpoint(queue: Queue, endpoint: Endpoint) {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     endpoint.queues = endpoint.queues.filter((assigned) => assigned !== queue);
     //TODO
     //endpoint.excludeThroughput = endpoint.excludeThroughput.filter((et) => !queue.matches(et));
@@ -98,18 +116,24 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   }
 
   function removeEndpoint(endpoint: Endpoint) {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     endpoints.value = endpoints.value.filter((e) => e !== endpoint);
     endpoint.queues.forEach((queue) => returnToUnassigned(queue));
     removedEndpoints.value.push(endpoint.clientId);
   }
 
   function renameEndpoint(endpoint: Endpoint, name: string) {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     endpoint.name = name;
     endpoint.amended = true;
     hasChanges.value = true;
   }
 
   function reclassifyEndpoint(endpoint: Endpoint, classification: EndpointClassification) {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     endpoint.classification = classification;
     endpoint.amended = true;
     hasChanges.value = true;
@@ -194,6 +218,8 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   }
 
   async function saveChanges() {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     saving.value = true;
     function toApiQueue(queue: Queue) {
       return { name_hash: queue.nameHash, scope_hash: queue.scopeHash, original_location: queue.originalLocation };
@@ -230,6 +256,8 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
   }
 
   async function removeAmendments() {
+    if (!isLicenseDetailAmendmentSupported) return;
+
     saving.value = true;
     try {
       const response = await serviceControlClient.postToServiceControl("license/removeAmendments");

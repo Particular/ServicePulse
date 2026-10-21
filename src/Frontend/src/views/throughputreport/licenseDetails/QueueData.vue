@@ -3,6 +3,9 @@ import DataView from "@/components/DataView.vue";
 import InlineThroughputGraph from "../queues/InlineThroughputGraph.vue";
 import QueueName from "./QueueName.vue";
 import type { Queue } from "@/resources/LicenseDetails";
+import useIsLicenseDetailAmendmentSupported from "./isLicenseDetailAmendmentSupported.ts";
+
+const isLicenseDetailAmendmentSupported = useIsLicenseDetailAmendmentSupported();
 
 defineProps<{ queues: Queue[]; currentLocation?: string }>();
 </script>
@@ -15,7 +18,7 @@ defineProps<{ queues: Queue[]; currentLocation?: string }>();
           <tr>
             <th class="queue-name">Queue Name</th>
             <th class="text-end">Throughput</th>
-            <th v-if="$slots.actions"></th>
+            <th v-if="isLicenseDetailAmendmentSupported && $slots.actions"></th>
           </tr>
         </thead>
         <tbody>
@@ -29,7 +32,7 @@ defineProps<{ queues: Queue[]; currentLocation?: string }>();
                 {{ queue.details?.average_monthly_throughput?.toLocaleString() }}
               </div>
             </td>
-            <td v-if="$slots.actions" class="actions">
+            <td v-if="isLicenseDetailAmendmentSupported && $slots.actions" class="actions">
               <slot name="actions" :queue="queue" />
             </td>
           </tr>

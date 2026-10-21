@@ -18,8 +18,10 @@ import ExternalLink from "@/components/ExternalLink.vue";
 import { EndpointClassification } from "@/resources/LicenseDetails.ts";
 import ActionButton from "@/components/ActionButton.vue";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
+import useIsLicenseDetailAmendmentSupported from "./isLicenseDetailAmendmentSupported.ts";
 
 const isLicenseDetailsSupported = useIsLicenseDetailsSupported();
+const isLicenseDetailAmendmentSupported = useIsLicenseDetailAmendmentSupported();
 
 const licenseDetailsStore = useLicenseDetailsStore();
 const { endpoints, endpointSizes, serviceEndDate, validId, hasLicenseDetails, error, infrastructureQueues, excludedQueues, unassignedQueues, hasChanges, hasAmendments, saving } = storeToRefs(licenseDetailsStore);
@@ -111,7 +113,7 @@ async function removeAmendments() {
           </div>
         </div>
         <div class="action-buttons">
-          <ActionButton v-if="hasAmendments" variant="danger" @click="confirmReset = true" :disabled="saving">Remove Amendments</ActionButton>
+          <ActionButton v-if="isLicenseDetailAmendmentSupported && hasAmendments" variant="danger" @click="confirmReset = true" :disabled="saving">Remove Amendments</ActionButton>
           <!-- awaiting update to the pricing page to support this functionality -->
           <ExternalLink v-if="false" :href="`https://particular.net/pricing?${estimateUrlParams}`" class="btn btn-primary" show-icon>Estimate Renewal Price</ExternalLink>
         </div>
@@ -150,7 +152,7 @@ async function removeAmendments() {
               <ActionButton variant="primary" v-if="hasChanges" :disabled="saving" :loading="saving" @click="licenseDetailsStore.saveChanges">Save Changes</ActionButton>
             </div>
           </div>
-          <div class="mt-1">✏️ before a queue name indicates that the queue location differs from what was licensed</div>
+          <div class="mt-1" v-if="isLicenseDetailAmendmentSupported">✏️ before a queue name indicates that the queue location differs from what was licensed</div>
         </div>
         <RouterView />
       </div>
