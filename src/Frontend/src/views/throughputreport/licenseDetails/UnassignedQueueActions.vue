@@ -30,7 +30,7 @@ function markAsInfrastructure() {
 
     <button class="btn btn-secondary" type="button" v-tippy="'Create endpoint from queue'" @click="addToNew"><FAIcon :icon="faCirclePlus" /></button>
 
-    <button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#availableEndpoints" v-tippy="'Add queue to existing endpoint'" @click="setSelectedQueue(queue)">
+    <button class="btn btn-secondary" type="button" v-tippy="'Add queue to existing endpoint'" @click="setSelectedQueue(queue)">
       <FAIcon :icon="faArrowRightToBracket" />
     </button>
   </div>
