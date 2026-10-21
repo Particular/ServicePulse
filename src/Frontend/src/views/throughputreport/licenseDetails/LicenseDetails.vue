@@ -113,7 +113,7 @@ async function removeAmendments() {
         <div class="action-buttons">
           <ActionButton v-if="hasAmendments" variant="danger" @click="confirmReset = true" :disabled="saving">Remove Amendments</ActionButton>
           <!-- awaiting update to the pricing page to support this functionality -->
-          <ExternalLink v-if="true" :href="`https://particular.net/pricing?${estimateUrlParams}`" class="btn btn-primary" show-icon>Estimate Renewal Price</ExternalLink>
+          <ExternalLink v-if="false" :href="`https://particular.net/pricing?${estimateUrlParams}`" class="btn btn-primary" show-icon>Estimate Renewal Price</ExternalLink>
         </div>
       </div>
       <div>
