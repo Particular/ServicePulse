@@ -116,7 +116,7 @@ describe("EndpointsView tests", () => {
       const use = userEvent.setup();
 
       await use.click(screen.getByRole("button", { name: /Download Report/i }));
-      expect(screen.getByText("Not all endpoints/queues have an Endpoint Type set")).toBeInTheDocument();
+      expect(screen.getByText("Not all endpoints/queues have an Endpoint Type set.")).toBeInTheDocument();
     });
   });
 });
