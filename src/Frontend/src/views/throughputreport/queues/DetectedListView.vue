@@ -259,7 +259,7 @@ async function save() {
           <select class="form-select endpointType format-text" @change="(event) => updateIndicator(event, row.name)">
             <option v-if="props.showEndpointTypePlaceholder" value="">Pick the most appropriate option</option>
             <option v-for="item in props.indicatorOptions" :key="item" :value="item" :selected="(dataChanges.get(row.name)?.indicator ?? getDefaultEndpointType(row)) === item">{{ userIndicatorMapper.get(item) }}</option>
-            <option v-for="item in props.legacyIndicatorOptions?.filter((legacy) => row.user_indicator === legacy)" :key="item" :value="item" :selected="(dataChanges.get(row.name)?.indicator ?? getDefaultEndpointType(row)) === item">
+            <option v-for="item in props.legacyIndicatorOptions?.filter((legacy) => row.user_indicator === legacy)" :key="item" :value="item" :selected="(dataChanges.get(row.name)?.indicator) === item">
               {{ userIndicatorMapper.get(item) }}
             </option>
           </select>
