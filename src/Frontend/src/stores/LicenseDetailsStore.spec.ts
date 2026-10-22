@@ -194,6 +194,7 @@ describe("LicenseDetailsStore", () => {
           client_id: "endpoint-1",
           name: "Sales",
           classification: EndpointClassification.Full,
+          amended: false,
           endpoint_size: "large",
           queues: [{ name_hash: "sales-hash", scope_hash: "", original_location: "endpoint-1" }],
         },
