@@ -14,6 +14,7 @@ export interface ApiEndpoint {
   client_id: string;
   name: string;
   classification: EndpointClassification;
+  amended: boolean;
   endpoint_size: string;
   queues: ApiQueue[];
 }
@@ -51,15 +52,14 @@ export class Endpoint {
 
   amended: boolean;
 
-  constructor(clientId: string, name: string, queues: Queue[], classification: EndpointClassification, licensedSize: EndpointSize | null, availableSizes: EndpointSize[]) {
+  constructor(clientId: string, name: string, queues: Queue[], classification: EndpointClassification, amended: boolean, licensedSize: EndpointSize | null, availableSizes: EndpointSize[]) {
     this.clientId = clientId;
     this.name = name;
     this.queues = queues;
     this.classification = classification;
+    this.amended = amended;
     this.licensedSize = licensedSize;
     this.availableSizes = availableSizes;
-
-    this.amended = false;
   }
 
   get totalAverageMonthlyThroughput() {

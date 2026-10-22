@@ -93,7 +93,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
       // but the likelihood of this happening is infinitesimal so we're not handling it
       name = `${name}_1`.substring(name.length + 2 - 80);
     }
-    const endpoint = new Endpoint(crypto.randomUUID(), name, [], EndpointClassification.Full, null, endpointSizes.value);
+    const endpoint = new Endpoint(crypto.randomUUID(), name, [], EndpointClassification.Full, false, null, endpointSizes.value);
     addQueueToEndpoint(queue, endpoint);
     endpoints.value.push(endpoint);
   }
@@ -103,6 +103,7 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
 
     endpoint.queues.push(queue);
     unassignedQueues.value = unassignedQueues.value.filter((unassigned) => unassigned !== queue);
+    endpoint.amended = true;
     hasChanges.value = true;
   }
 
@@ -167,7 +168,9 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
       const sortedProducts = data.products.toSorted((p1, p2) => (p1.monthly_throughput ?? Number.MAX_VALUE) - (p2.monthly_throughput ?? Number.MAX_VALUE));
       const sortedEndpointSizes = sortedProducts.map((product, i) => new EndpointSize(product.product_code, i > 0 ? (sortedProducts[i - 1].monthly_throughput ?? 0) + 1 : 0, product.monthly_throughput));
       endpointSizes.value = sortedEndpointSizes;
-      endpoints.value = data.endpoints.map((metaEp) => new Endpoint(metaEp.client_id, metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes));
+      endpoints.value = data.endpoints.map(
+        (metaEp) => new Endpoint(metaEp.client_id, metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, metaEp.amended, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes)
+      );
       infrastructureQueues.value = data.infrastructure_queues.map(toQueue);
       excludedQueues.value = data.excluded_queues.map(toQueue);
       /* only used for save, not load */
