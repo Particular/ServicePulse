@@ -5,7 +5,6 @@ import ServiceControlAvailable from "../ServiceControlAvailable.vue";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
-import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
 import OnOffSwitch from "../OnOffSwitch.vue";
 import FAIcon from "@/components/FAIcon.vue";
 import ActionButton from "@/components/ActionButton.vue";
@@ -15,7 +14,7 @@ import { useHealthChecksStore } from "@/stores/HealthChecksStore";
 import { storeToRefs } from "pinia";
 
 const healthChecksStore = useHealthChecksStore();
-const { emailNotifications, canManageNotifications, canTestNotifications } = storeToRefs(healthChecksStore);
+const { emailNotificationsEnabled, canManageNotifications, canTestNotifications } = storeToRefs(healthChecksStore);
 
 const manageDeniedTooltip = "You don't have permission to manage notifications.";
 const testDeniedTooltip = "You don't have permission to send test notifications.";
@@ -32,19 +31,15 @@ async function toggleEmailNotifications() {
   emailToggleSuccessful.value = await healthChecksStore.toggleEmailNotifications();
 }
 
-async function editEmailNotifications() {
+function editEmailNotifications() {
   emailToggleSuccessful.value = null;
   emailTestSuccessful.value = null;
   emailUpdateSuccessful.value = null;
-  // Start the form from what ServiceControl has now, not from what was loaded with the page.
-  await healthChecksStore.refresh();
   showEmailConfiguration.value = true;
 }
 
-async function saveEditedEmailNotifications(newSettings: UpdateEmailNotificationsSettingsRequest) {
-  emailUpdateSuccessful.value = null;
+function emailNotificationsSaved(saveSuccessful: boolean) {
   showEmailConfiguration.value = false;
-  const saveSuccessful = await healthChecksStore.saveEmailNotifications(newSettings);
   if (saveSuccessful) {
     emailUpdateSuccessful.value = true;
     useShowToast(TYPE.INFO, "Info", "Email settings updated.");
@@ -84,7 +79,7 @@ onMounted(async () => {
                   <div class="row">
                     <div class="col-auto">
                       <PermissionGate :allowed="canManageNotifications" :reason="manageDeniedTooltip">
-                        <OnOffSwitch id="emailNotifications" @toggle="toggleEmailNotifications" :value="emailNotifications.enabled" :disabled="!canManageNotifications" />
+                        <OnOffSwitch id="emailNotifications" @toggle="toggleEmailNotifications" :value="emailNotificationsEnabled" :disabled="!canManageNotifications" />
                       </PermissionGate>
                       <div>
                         <span class="connection-test connection-failed">
@@ -139,8 +134,8 @@ onMounted(async () => {
       </LicenseNotExpired>
 
       <Teleport to="#modalDisplay">
-        <!-- use the modal component, pass in the prop -->
-        <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration" v-bind="emailNotifications" @cancel="showEmailConfiguration = false" @save="saveEditedEmailNotifications"> </HealthCheckNotifications_EmailConfiguration>
+        <!-- The dialog reads the settings from ServiceControl when it opens, and saves them itself -->
+        <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration" @cancel="showEmailConfiguration = false" @saved="emailNotificationsSaved"> </HealthCheckNotifications_EmailConfiguration>
       </Teleport>
     </ServiceControlAvailable>
   </section>
