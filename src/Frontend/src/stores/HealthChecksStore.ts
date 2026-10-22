@@ -83,16 +83,8 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
   async function saveEmailNotifications(newSettings: UpdateEmailNotificationsSettingsRequest) {
     const result = await getResponseOrError(() => serviceControlClient.postToServiceControl("notifications/email", newSettings));
     if (result.message === "success") {
-      emailNotifications.value = {
-        enabled: emailNotifications.value.enabled,
-        enable_tls: newSettings.enable_tls,
-        smtp_server: newSettings.smtp_server,
-        smtp_port: newSettings.smtp_port,
-        authentication_account: newSettings.authorization_account,
-        authentication_password: newSettings.authorization_password,
-        from: newSettings.from,
-        to: newSettings.to,
-      };
+      // The saved settings are not copied into the store. The configuration dialog loads them from
+      // ServiceControl when it opens, and the password must not stay in memory.
       return true;
     } else {
       logger.error(result.message);

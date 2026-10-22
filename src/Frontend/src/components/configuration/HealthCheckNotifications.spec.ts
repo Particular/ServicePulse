@@ -15,6 +15,7 @@ interface ComponentDSL {
     discardEmailConfigurationChanges(): Promise<void>;
     requestTestNotification(): Promise<void>;
     provideValidEmailConfiguration(): Promise<void>;
+    settingsChangeInServiceControl(changes: Partial<EmailSettings>): void;
   };
   verify: {
     emailNotificationsAreEnabled(): void;
@@ -30,6 +31,8 @@ interface ComponentDSL {
     emailConfigurationWasSaved(): void;
     emailConfigurationWasNotSaved(): void;
     emailConfigurationMatches(config: Partial<EmailSettings>): void;
+    storedPasswordIsNotShownAndCanBeKept(): void;
+    limitingTheSmtpAccountIsRecommended(): void;
   };
 }
 
@@ -260,6 +263,70 @@ describe("FEATURE: Health check notifications", () => {
     });
   });
 
+  describe("RULE: The email configuration dialog shows the settings that ServiceControl has now", () => {
+    test("EXAMPLE: Another user changed the settings after the page was loaded", async () => {
+      /*
+       * Given the page was loaded with the To address old@example.com
+       * And another user changed the To address in ServiceControl to new@example.com
+       * When the Email configuration popup is opened
+       * Then the To address is new@example.com
+       */
+      const componentDriver = renderComponent({
+        initialState: {
+          HealthChecksStore: {
+            emailNotifications: { ...emptyEmailSettings(), to: "old@example.com" },
+          },
+        },
+      });
+
+      componentDriver.actions.settingsChangeInServiceControl({ to: "new@example.com" });
+      await componentDriver.actions.openEmailConfiguration();
+      componentDriver.verify.emailConfigurationMatches({ to: "new@example.com" });
+    });
+  });
+
+  describe("RULE: The stored SMTP password is never shown", () => {
+    test("EXAMPLE: ServiceControl has a stored password for the SMTP account", async () => {
+      /*
+       * Given ServiceControl has a stored SMTP password
+       * And ServiceControl does not return it
+       * When the Email configuration popup is opened
+       * Then the password field is empty
+       * And the field explains that an empty password keeps the stored password
+       */
+      const componentDriver = renderComponent({
+        initialState: {
+          HealthChecksStore: {
+            emailNotifications: { ...emptyEmailSettings(), authentication_account: "user@example.com" },
+          },
+        },
+      });
+
+      await componentDriver.actions.openEmailConfiguration();
+      componentDriver.verify.storedPasswordIsNotShownAndCanBeKept();
+    });
+  });
+
+  describe("RULE: The email configuration recommends limiting what the SMTP account can send", () => {
+    test("EXAMPLE: The Email configuration popup is opened", async () => {
+      /*
+       * When the Email configuration popup is opened
+       * Then it recommends a dedicated SMTP account with limited send permissions
+       * And it links to the documentation
+       */
+      const componentDriver = renderComponent({
+        initialState: {
+          HealthChecksStore: {
+            emailNotifications: emptyEmailSettings(),
+          },
+        },
+      });
+
+      await componentDriver.actions.openEmailConfiguration();
+      componentDriver.verify.limitingTheSmtpAccountIsRecommended();
+    });
+  });
+
   describe("RULE: Sending a test notification indicates whether delivery succeeded or failed", () => {
     test("EXAMPLE: The email configuration is invalid", async () => {
       /*
@@ -342,6 +409,12 @@ function renderComponent({ initialState = {} }: { initialState?: Record<string, 
       async requestTestNotification() {
         await user.click(screen.getByRole("button", { name: /send test notification/i }));
       },
+      settingsChangeInServiceControl(changes: Partial<EmailSettings>) {
+        vi.mocked(store.refresh).mockImplementation(() => {
+          store.emailNotifications = { ...store.emailNotifications, ...changes };
+          return Promise.resolve();
+        });
+      },
       async provideValidEmailConfiguration() {
         await user.type(screen.getByLabelText(/smtp server address/i), "smtp.example.com");
         await user.type(screen.getByLabelText(/smtp server port/i), "587");
@@ -385,6 +458,16 @@ function renderComponent({ initialState = {} }: { initialState?: Record<string, 
       },
       emailConfigurationWasNotSaved() {
         expect(store.saveEmailNotifications).not.toHaveBeenCalled();
+      },
+      storedPasswordIsNotShownAndCanBeKept() {
+        const password = screen.getByLabelText(/authentication password/i);
+        expect(password).toHaveValue("");
+        expect(password).toHaveAttribute("placeholder", expect.stringMatching(/leave empty to keep the stored password/i));
+        expect(password).toHaveAccessibleDescription(/stored password is never shown/i);
+      },
+      limitingTheSmtpAccountIsRecommended() {
+        expect(screen.getByText(/use a dedicated smtp account/i)).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /securing the smtp account/i })).toHaveAttribute("href", "https://docs.particular.net/servicecontrol/security/smtp-account");
       },
       emailConfigurationMatches(config: Partial<EmailSettings>) {
         if (config.smtp_server !== undefined) {
