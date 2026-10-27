@@ -2,6 +2,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
 import serviceControlClient from "@/components/serviceControlClient";
 import { useHealthChecksStore } from "@/stores/HealthChecksStore";
+import type EmailNotifications from "@/resources/EmailNotifications";
+
+const storedPassword = "stored-secret";
 
 beforeEach(() => {
   setActivePinia(createPinia());
@@ -21,12 +24,12 @@ describe("FEATURE: Turning email notifications on and off", () => {
        * And they are shown as on
        */
       const store = await storeWithEmailNotifications({ enabled: false });
-      const toggle = toggleSucceeds();
+      const toggle = postSucceeds();
 
       await store.toggleEmailNotifications();
 
       expect(toggle).toHaveBeenCalledWith("notifications/email/toggle", { enabled: true });
-      expect(store.emailNotifications.enabled).toBe(true);
+      expect(store.emailNotificationsEnabled).toBe(true);
     });
 
     test("EXAMPLE: The one where email notifications are switched on and then off again without reloading, and they are turned off", async () => {
@@ -38,14 +41,14 @@ describe("FEATURE: Turning email notifications on and off", () => {
        * And they are shown as off
        */
       const store = await storeWithEmailNotifications({ enabled: false });
-      const toggle = toggleSucceeds();
+      const toggle = postSucceeds();
 
       await store.toggleEmailNotifications();
       await store.toggleEmailNotifications();
 
       expect(toggle).toHaveBeenNthCalledWith(1, "notifications/email/toggle", { enabled: true });
       expect(toggle).toHaveBeenNthCalledWith(2, "notifications/email/toggle", { enabled: false });
-      expect(store.emailNotifications.enabled).toBe(false);
+      expect(store.emailNotificationsEnabled).toBe(false);
     });
 
     test("COUNTER-EXAMPLE: The one where ServiceControl rejects the change, and they are shown as they were", async () => {
@@ -61,28 +64,28 @@ describe("FEATURE: Turning email notifications on and off", () => {
       const toggled = await store.toggleEmailNotifications();
 
       expect(toggled).toBe(false);
-      expect(store.emailNotifications.enabled).toBe(false);
+      expect(store.emailNotificationsEnabled).toBe(false);
     });
   });
 });
 
-describe("HealthChecksStore", () => {
-  test("does not keep the SMTP password in memory after the settings are saved", async () => {
-    vi.spyOn(serviceControlClient, "postToServiceControl").mockResolvedValue(new Response(null, { status: 200 }));
-    const store = useHealthChecksStore();
+describe("FEATURE: The stored SMTP password is write-only", () => {
+  describe("RULE: Must not hold on to the SMTP password", () => {
+    test("EXAMPLE: The one where ServiceControl older than 6.21.2 returns the stored password when the page loads, and it is not kept", async () => {
+      /*
+       * Given ServiceControl older than 6.21.2, which returns the stored password
+       * When the page loads the email notification settings
+       * Then whether notifications are enabled is known
+       * And the password is not kept
+       */
+      vi.spyOn(serviceControlClient, "fetchTypedFromServiceControl").mockResolvedValue([new Response(), settingsWithStoredPassword()]);
+      const store = useHealthChecksStore();
 
-    const saved = await store.saveEmailNotifications({
-      smtp_server: "smtp.example.com",
-      smtp_port: 587,
-      authorization_account: "user@example.com",
-      authorization_password: "secret",
-      enable_tls: true,
-      from: "from@example.com",
-      to: "to@example.com",
+      await store.refresh();
+
+      expect(store.emailNotificationsEnabled).toBe(true);
+      expect(JSON.stringify(store.$state)).not.toContain(storedPassword);
     });
-
-    expect(saved).toBe(true);
-    expect(store.emailNotifications.authentication_password).toBe("");
   });
 });
 
@@ -93,6 +96,19 @@ async function storeWithEmailNotifications({ enabled }: { enabled: boolean }) {
   return store;
 }
 
-function toggleSucceeds() {
+function postSucceeds() {
   return vi.spyOn(serviceControlClient, "postToServiceControl").mockResolvedValue(new Response(null, { status: 200 }));
+}
+
+function settingsWithStoredPassword(): EmailNotifications {
+  return {
+    enabled: true,
+    enable_tls: true,
+    smtp_server: "smtp.example.com",
+    smtp_port: 587,
+    authentication_account: "user@example.com",
+    authentication_password: storedPassword,
+    from: "from@example.com",
+    to: "to@example.com",
+  };
 }

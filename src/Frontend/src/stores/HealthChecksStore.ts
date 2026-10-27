@@ -1,25 +1,15 @@
-import type EmailSettings from "@/components/configuration/EmailSettings";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
 import serviceControlClient from "@/components/serviceControlClient";
 import type EmailNotifications from "@/resources/EmailNotifications";
-import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
 import { useEnvironmentAndVersionsStore } from "./EnvironmentAndVersionsStore";
 import logger from "@/logger";
 import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
 import { ApiRoutes } from "@/composables/apiRoutes";
 
 export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
-  const emailNotifications = ref<EmailSettings>({
-    enabled: null,
-    enable_tls: null,
-    smtp_server: "",
-    smtp_port: null,
-    authentication_account: "",
-    authentication_password: "",
-    from: "",
-    to: "",
-  });
+  // Only page-level state is kept here. The email configuration dialog reads and saves the settings it edits itself.
+  const emailNotificationsEnabled = ref<boolean | null>(null);
 
   const environmentStore = useEnvironmentAndVersionsStore();
   const hasResponseStatusInHeaders = environmentStore.serviceControlIsGreaterThan("5.2");
@@ -29,41 +19,26 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
   const canTestNotifications = computed(() => canCall(ApiRoutes.testNotifications));
 
   async function refresh() {
-    let result: EmailNotifications | null;
     try {
       const [, data] = await serviceControlClient.fetchTypedFromServiceControl<EmailNotifications>("notifications/email");
-      result = data;
+      emailNotificationsEnabled.value = data.enabled;
     } catch (err) {
       logger.error(err);
-      result = {
-        enabled: false,
-        enable_tls: false,
-      };
+      emailNotificationsEnabled.value = false;
     }
-
-    emailNotifications.value = {
-      enabled: result.enabled,
-      enable_tls: result.enable_tls,
-      smtp_server: result.smtp_server ? result.smtp_server : "",
-      smtp_port: result.smtp_port ? result.smtp_port : null,
-      authentication_account: result.authentication_account ? result.authentication_account : "",
-      authentication_password: result.authentication_password ? result.authentication_password : "",
-      from: result.from ? result.from : "",
-      to: result.to ? result.to : "",
-    };
   }
 
   async function toggleEmailNotifications() {
-    const previous = emailNotifications.value.enabled;
+    const previous = emailNotificationsEnabled.value;
     const enabled = !(previous ?? true);
     // Show the new state straight away, so the next toggle sends the opposite value.
-    emailNotifications.value.enabled = enabled;
+    emailNotificationsEnabled.value = enabled;
     const result = await getResponseOrError(() => serviceControlClient.postToServiceControl("notifications/email/toggle", { enabled }));
     if (result.message === "success") return true;
     else {
       logger.error(result.message);
       //set it back to what it was
-      emailNotifications.value.enabled = previous;
+      emailNotificationsEnabled.value = previous;
       return false;
     }
   }
@@ -75,18 +50,6 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
     );
     if (result.message === "success") return true;
     else {
-      logger.error(result.message);
-      return false;
-    }
-  }
-
-  async function saveEmailNotifications(newSettings: UpdateEmailNotificationsSettingsRequest) {
-    const result = await getResponseOrError(() => serviceControlClient.postToServiceControl("notifications/email", newSettings));
-    if (result.message === "success") {
-      // The saved settings are not copied into the store. The configuration dialog loads them from
-      // ServiceControl when it opens, and the password must not stay in memory.
-      return true;
-    } else {
       logger.error(result.message);
       return false;
     }
@@ -109,11 +72,10 @@ export const useHealthChecksStore = defineStore("HealthChecksStore", () => {
 
   return {
     refresh,
-    emailNotifications,
+    emailNotificationsEnabled,
     canManageNotifications,
     canTestNotifications,
     toggleEmailNotifications,
-    saveEmailNotifications,
     testEmailNotifications,
   };
 });

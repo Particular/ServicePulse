@@ -1,25 +1,57 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import type EmailSettings from "@/components/configuration/EmailSettings";
+import { computed, onMounted, ref } from "vue";
+import serviceControlClient from "@/components/serviceControlClient";
+import type EmailNotifications from "@/resources/EmailNotifications";
 import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
 import ModalDialog from "../ModalDialog.vue";
 import ActionButton from "../ActionButton.vue";
 import ExternalLink from "@/components/ExternalLink.vue";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import logger from "@/logger";
 
+// The dialog reads the settings from ServiceControl when it opens, edits them here, and writes them back when saved.
+// Nothing outlives the dialog: closing it drops everything below.
 const emit = defineEmits<{
-  save: [settings: UpdateEmailNotificationsSettingsRequest];
+  saved: [succeeded: boolean];
   cancel: [];
 }>();
 
-const settings = defineProps<EmailSettings>();
+const loading = ref(true);
+const loadFailed = ref(false);
+const saving = ref(false);
 
-const smtp_server = ref(settings.smtp_server);
-const smtp_port = ref(settings.smtp_port);
-const authentication_account = ref(settings.authentication_account);
-const authentication_password = ref(settings.authentication_password);
-const enable_tls = ref(settings.enable_tls);
-const from = ref(settings.from);
-const to = ref(settings.to);
+const smtp_server = ref("");
+const smtp_port = ref<number | null>(null);
+const authentication_account = ref("");
+// Always starts empty: the stored password is never shown.
+const authentication_password = ref("");
+const enable_tls = ref<boolean | null>(null);
+const from = ref("");
+const to = ref("");
+
+// Backward compatibility with ServiceControl before 6.21.2: those versions return the stored password, and replace it
+// with whatever a save sends. It is kept here, never shown, to send back when the password is left empty.
+// ServiceControl 6.21.2 and later (https://github.com/Particular/ServiceControl/pull/5980) never return it, so this
+// stays empty, and they keep the stored password themselves when an empty one is sent.
+let storedPassword = "";
+
+onMounted(async () => {
+  try {
+    const [, settings] = await serviceControlClient.fetchTypedFromServiceControl<EmailNotifications>("notifications/email");
+    smtp_server.value = settings.smtp_server ?? "";
+    smtp_port.value = settings.smtp_port || null;
+    authentication_account.value = settings.authentication_account ?? "";
+    enable_tls.value = settings.enable_tls;
+    from.value = settings.from ?? "";
+    to.value = settings.to ?? "";
+    // Only ServiceControl before 6.21.2 returns the password (backward compatibility, see storedPassword).
+    storedPassword = settings.authentication_password ?? "";
+  } catch (err) {
+    logger.error(err);
+    loadFailed.value = true;
+  }
+  loading.value = false;
+});
 
 const emailRe = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -44,17 +76,38 @@ function validateMultipleEmailsCommaSeparated(value: string) {
   return result.every((address) => emailRe.test(address));
 }
 
-function save() {
-  const updatedSettings: UpdateEmailNotificationsSettingsRequest = {
+async function save() {
+  const settings: UpdateEmailNotificationsSettingsRequest = {
     smtp_server: smtp_server.value,
     smtp_port: smtp_port.value ?? 0,
     authorization_account: authentication_account.value,
-    authorization_password: authentication_password.value,
+    authorization_password: passwordToSave(),
     enable_tls: enable_tls.value ?? false,
     from: from.value,
     to: to.value,
   };
-  emit("save", updatedSettings);
+  saving.value = true;
+  try {
+    const response = await serviceControlClient.postToServiceControl("notifications/email", settings);
+    if (!response.ok) logger.error(`Saving the email settings failed: ${response.statusText}`);
+    emit("saved", response.ok);
+  } catch (err) {
+    logger.error(err);
+    emit("saved", false);
+  } finally {
+    saving.value = false;
+  }
+}
+
+function passwordToSave() {
+  // A new password replaces the stored one.
+  if (authentication_password.value) return authentication_password.value;
+  // Without an account, the password is never used, so it is removed.
+  if (!authentication_account.value) return "";
+  // Otherwise keep the stored password. For backward compatibility with ServiceControl before 6.21.2, which would erase
+  // it, it is sent back. ServiceControl 6.21.2 and later (https://github.com/Particular/ServiceControl/pull/5980) keep
+  // it themselves when an empty password is sent, and storedPassword is empty there.
+  return storedPassword;
 }
 
 function close() {
@@ -65,7 +118,9 @@ function close() {
 <template>
   <ModalDialog id="email-config-dialog" title="Email configuration" @close="close" width="800px">
     <template #modalBody>
-      <div class="notificationsForm">
+      <LoadingSpinner v-if="loading" />
+      <div v-else-if="loadFailed" class="alert alert-danger" role="alert">The email settings could not be loaded from ServiceControl. Close this dialog and try again.</div>
+      <div v-else class="notificationsForm">
         <div class="row">
           <div class="form-group" :class="{ 'has-error': !smtpServerIsValid }">
             <label for="smtpServerAddress">SMTP server address</label>
@@ -111,7 +166,7 @@ function close() {
       </div>
     </template>
     <template #modalFooter>
-      <ActionButton variant="primary" :disabled="!formIsValid" @click="save">Save</ActionButton>
+      <ActionButton variant="primary" :disabled="loading || loadFailed || saving || !formIsValid" @click="save">Save</ActionButton>
       <ActionButton @click="close">Cancel</ActionButton>
     </template>
   </ModalDialog>
