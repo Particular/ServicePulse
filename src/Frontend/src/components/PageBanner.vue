@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import FAIcon from "@/components/FAIcon.vue";
+import ExternalLink from "@/components/ExternalLink.vue";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 export interface BannerMessage {
@@ -11,10 +12,13 @@ defineProps<{
   message: BannerMessage;
   showAction?: boolean;
   actionLabel?: string;
+  actionUrl?: string;
+  dismissible?: boolean;
 }>();
 
 defineEmits<{
   action: [];
+  dismiss: [];
 }>();
 </script>
 
@@ -26,9 +30,13 @@ defineEmits<{
         <strong>{{ message.title }}</strong>
         <p>{{ message.description }}</p>
       </div>
-      <button v-if="showAction" class="banner-link" @click="$emit('action')">
-        {{ actionLabel ?? "Get Started" }}
-      </button>
+      <template v-if="showAction">
+        <ExternalLink v-if="actionUrl" :href="actionUrl" class="banner-link">{{ actionLabel ?? "Get Started" }}</ExternalLink>
+        <button v-else class="banner-link" @click="$emit('action')">
+          {{ actionLabel ?? "Get Started" }}
+        </button>
+      </template>
+      <button v-if="dismissible" type="button" class="btn-close banner-dismiss" aria-label="Dismiss" @click="$emit('dismiss')"></button>
     </div>
   </div>
 </template>
@@ -90,5 +98,9 @@ defineEmits<{
 
 .banner-link:hover {
   background-color: #0056b3;
+}
+
+.banner-dismiss {
+  flex-shrink: 0;
 }
 </style>
