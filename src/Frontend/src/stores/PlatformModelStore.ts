@@ -114,6 +114,7 @@ function mapPrimary(primaryRoot: PrimaryRootResult | null, configuration: Config
     errorQueue: configuration?.transport?.error_queue,
     forwardErrorMessages: configuration?.transport?.forward_error_messages,
     errorRetentionPeriod: configuration?.data_retention?.error_retention_period,
+    storageType: configuration?.storage?.storage_type,
   };
 }
 

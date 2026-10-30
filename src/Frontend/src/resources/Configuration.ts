@@ -5,6 +5,10 @@ export default interface Configuration {
   transport: Transport;
   plugins: Plugins;
   mass_transit_connector?: MassTransitConnector;
+  storage?: Storage;
+}
+interface Storage {
+  storage_type?: string;
 }
 interface MassTransitConnector {
   version: string;

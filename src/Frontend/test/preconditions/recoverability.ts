@@ -51,6 +51,15 @@ export const hasErrorRetentionPeriod =
     });
   };
 
+export const hasStorageType =
+  (storageType: string) =>
+  ({ driver }: SetupFactoryOptions) => {
+    const serviceControlUrl = window.defaultConfig.service_control_url;
+    driver.mockEndpoint(`${serviceControlUrl}configuration`, {
+      body: { ...serviceControlConfiguration("30.00:00:00"), storage: { storage_type: storageType } },
+    });
+  };
+
 export const archivedGroupsWithClassifierDefaulthandler = ({ driver }: SetupFactoryOptions) => {
   const serviceControlUrl = window.defaultConfig.service_control_url;
   driver.mockEndpoint(`${serviceControlUrl}errors/groups{/:classifier}`, {
