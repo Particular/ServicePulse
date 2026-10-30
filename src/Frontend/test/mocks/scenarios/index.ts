@@ -41,6 +41,8 @@ const scenarios: Record<string, () => Promise<ScenarioModule>> = {
   // Recoverability scenarios
   "recoverability-available": () => import("./recoverability/recoverability-available"),
   "recoverability-unavailable": () => import("./recoverability/recoverability-unavailable"),
+  // Saga timeout scenarios
+  timeouts: () => import("./timeouts/timeouts"),
 };
 
 export async function loadScenario(): Promise<ScenarioModule> {
