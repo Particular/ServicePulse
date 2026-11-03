@@ -14,8 +14,7 @@ const isStorageOptionsSupported = environmentStore.serviceControlIsGreaterThan(m
 const { store: platformModelStore } = usePlatformModelAutoRefresh();
 const { model, primary } = storeToRefs(platformModelStore);
 
-// An error instance that doesn't report a storage type predates the storage options, so RavenDB is the only thing it can be on
-const errorInstanceUsesRavenDB = computed(() => /raven/i.test(primary.value?.storageType ?? "RavenDB"));
+const errorInstanceUsesRavenDB = computed(() => /raven/i.test(primary.value?.storageType ?? ""));
 
 function loadDismissed() {
   try {
@@ -40,7 +39,7 @@ const isVisible = computed(() => !dismissed.value && isStorageOptionsSupported.v
 
 const message: BannerMessage = {
   title: "ServiceControl supports new storage options",
-  description: "With the upgrade to v7, ServiceControl now supports Microsoft SQL Server and PostgreSQL providing better performance and more flexibility for cloud deployments.",
+  description: "ServiceControl 7 now supports Microsoft SQL Server and PostgreSQL, which give better performance and more flexibility, on-premises or in the cloud.",
 };
 </script>
 

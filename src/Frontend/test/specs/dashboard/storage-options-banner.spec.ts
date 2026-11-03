@@ -27,6 +27,7 @@ describe("FEATURE: ServiceControl 7 storage options banner", () => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlMainInstance("6.21.3"));
+      await driver.setUp(precondition.hasStorageType("RavenDB"));
 
       // Act
       await driver.goTo("/");
@@ -40,6 +41,7 @@ describe("FEATURE: ServiceControl 7 storage options banner", () => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlMainInstance(serviceControl7));
+      await driver.setUp(precondition.hasStorageType("RavenDB"));
 
       // Act
       await driver.goTo("/");
@@ -47,7 +49,7 @@ describe("FEATURE: ServiceControl 7 storage options banner", () => {
       // Assert
       await waitFor(() => expect(storageOptionsBanner()).toBeInTheDocument());
       const banner = storageOptionsBanner()!;
-      expect(storageOptionsBannerDescription(banner)).toBe("With the upgrade to v7, ServiceControl now supports Microsoft SQL Server and PostgreSQL providing better performance and more flexibility for cloud deployments.");
+      expect(storageOptionsBannerDescription(banner)).toBe("ServiceControl 7 now supports Microsoft SQL Server and PostgreSQL, which give better performance and more flexibility, on-premises or in the cloud.");
 
       const link = storageOptionsLink(banner);
       expect(link).toHaveAttribute("href", "https://docs.particular.net/servicecontrol/storage");
@@ -83,16 +85,17 @@ describe("FEATURE: ServiceControl 7 storage options banner", () => {
       expect(storageOptionsBanner()).toBeNull();
     });
 
-    test("EXAMPLE: An error instance that does not report its storage type is treated as RavenDB", async ({ driver }) => {
+    test("EXAMPLE: An error instance that does not report its storage type does not show the banner", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlMainInstance(serviceControl7));
 
       // Act
       await driver.goTo("/");
+      await dashboardDataHasLoaded();
 
       // Assert
-      await waitFor(() => expect(storageOptionsBanner()).toBeInTheDocument());
+      expect(storageOptionsBanner()).toBeNull();
     });
   });
 
@@ -101,6 +104,7 @@ describe("FEATURE: ServiceControl 7 storage options banner", () => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlMainInstance(serviceControl7));
+      await driver.setUp(precondition.hasStorageType("RavenDB"));
       await driver.goTo("/");
       await waitFor(() => expect(storageOptionsBanner()).toBeInTheDocument());
 
@@ -122,6 +126,7 @@ describe("FEATURE: ServiceControl 7 storage options banner", () => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasServiceControlMainInstance(serviceControl7));
+      await driver.setUp(precondition.hasStorageType("RavenDB"));
       localStorage.setItem(dismissedStorageKey, "true");
 
       // Act
