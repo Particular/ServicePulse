@@ -11,6 +11,7 @@ import ThroughputReportView from "@/views/ThroughputReportView.vue";
 import AuditView from "@/views/AuditView.vue";
 import LoggedOutView from "@/views/LoggedOutView.vue";
 import PlatformHealthView from "@/views/PlatformHealthView.vue";
+import TimeoutsView from "@/views/TimeoutsView.vue";
 
 export interface RouteItem {
   path: string;
@@ -144,6 +145,34 @@ const config: RouteItem[] = [
     path: routeLinks.customChecks,
     title: "Custom checks",
     component: CustomChecksView,
+  },
+  {
+    path: routeLinks.timeouts.root,
+    component: TimeoutsView,
+    title: "Timeouts",
+    redirect: routeLinks.timeouts.pending.link,
+    children: [
+      {
+        title: "Pending Timeouts",
+        path: routeLinks.timeouts.pending.template,
+        component: () => import("@/components/timeouts/TimeoutsList.vue"),
+      },
+      {
+        title: "Overdue Timeouts",
+        path: routeLinks.timeouts.overdue.template,
+        component: () => import("@/components/timeouts/TimeoutsList.vue"),
+      },
+      {
+        title: "All Timeouts",
+        path: routeLinks.timeouts.all.template,
+        component: () => import("@/components/timeouts/TimeoutsList.vue"),
+      },
+    ],
+  },
+  {
+    path: routeLinks.timeouts.details.template,
+    title: "Timeout",
+    component: () => import("@/components/timeouts/TimeoutDetails.vue"),
   },
   {
     path: routeLinks.events,
