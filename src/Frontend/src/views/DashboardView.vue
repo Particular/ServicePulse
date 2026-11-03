@@ -6,6 +6,7 @@ import CustomChecksDashboardItem from "@/components/customchecks/CustomChecksDas
 import HeartbeatsDashboardItem from "@/components/heartbeats/HeartbeatsDashboardItem.vue";
 import FailedMessagesDashboardItem from "@/components/failedmessages/FailedMessagesDashboardItem.vue";
 import PlatformCapabilitiesDashboardItem from "@/components/platformcapabilities/PlatformCapabilitiesDashboardItem.vue";
+import StorageOptionsBanner from "@/components/dashboard/StorageOptionsBanner.vue";
 import { useConfigurationStore } from "@/stores/ConfigurationStore";
 import { storeToRefs } from "pinia";
 
@@ -17,6 +18,7 @@ const { isMassTransitConnected } = storeToRefs(configurationStore);
   <div class="container">
     <ServiceControlAvailable>
       <LicenseNotExpired>
+        <StorageOptionsBanner />
         <div class="row">
           <div class="col-12">
             <h6>System status</h6>
