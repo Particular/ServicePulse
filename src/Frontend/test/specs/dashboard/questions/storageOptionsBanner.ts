@@ -11,7 +11,7 @@ export function storageOptionsBannerDescription(banner: HTMLElement): string {
 }
 
 export function storageOptionsLink(banner: HTMLElement): HTMLAnchorElement {
-  return within(banner).getByRole<HTMLAnchorElement>("link", { name: "See storage options" });
+  return within(banner).getByRole<HTMLAnchorElement>("link", { name: "Get started" });
 }
 
 export function storageOptionsDismissButton(banner: HTMLElement): HTMLButtonElement {

@@ -49,7 +49,7 @@ describe("FEATURE: ServiceControl 7 storage options banner", () => {
       // Assert
       await waitFor(() => expect(storageOptionsBanner()).toBeInTheDocument());
       const banner = storageOptionsBanner()!;
-      expect(storageOptionsBannerDescription(banner)).toBe("ServiceControl 7 now supports Microsoft SQL Server and PostgreSQL, which give better performance and more flexibility, on-premises or in the cloud.");
+      expect(storageOptionsBannerDescription(banner)).toBe("ServiceControl 7 now supports SQL Server and PostgreSQL, on your own servers or as a managed cloud service.");
 
       const link = storageOptionsLink(banner);
       expect(link).toHaveAttribute("href", "https://docs.particular.net/servicecontrol/storage");

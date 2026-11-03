@@ -39,12 +39,12 @@ const isVisible = computed(() => !dismissed.value && isStorageOptionsSupported.v
 
 const message: BannerMessage = {
   title: "ServiceControl supports new storage options",
-  description: "ServiceControl 7 now supports Microsoft SQL Server and PostgreSQL, which give better performance and more flexibility, on-premises or in the cloud.",
+  description: "ServiceControl 7 now supports SQL Server and PostgreSQL, on your own servers or as a managed cloud service.",
 };
 </script>
 
 <template>
-  <PageBanner v-if="isVisible" class="storage-options-banner" :message="message" show-action action-label="See storage options" :action-url="learnMoreUrl" dismissible @dismiss="dismiss" />
+  <PageBanner v-if="isVisible" class="storage-options-banner" :message="message" show-action action-label="Get started" :action-url="learnMoreUrl" dismissible @dismiss="dismiss" />
 </template>
 
 <style scoped>
