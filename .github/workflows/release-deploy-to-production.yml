@@ -38,23 +38,15 @@ jobs:
             deploy-environment: production
   push-docker-images:
     needs: publish-release-notes
-    uses: Particular/deployment-workflows/.github/workflows/push-docker-images.yml@main
+    uses: Particular/deployment-workflows/.github/workflows/push-docker-images.yml@1.0.0
     with:
       version: ${{ inputs.version }}
-    secrets: inherit
-  push-powershell-packages:
-    needs: publish-release-notes
-    uses: Particular/deployment-workflows/.github/workflows/push-powershell-packages.yml@1.0.0
-    with:
-      version: ${{ inputs.version }}
-      package-pattern: "TotallyLegit.ServiceControl.Management.*.nupkg"
-      deploy-environment: production
     secrets: inherit
   push-release-info-to-aws-s3:
     needs: publish-release-notes
     uses: Particular/deployment-workflows/.github/workflows/push-release-info-to-aws-s3.yml@1.0.0
     with:
       version: ${{ inputs.version }}
-      product: "TotallyLegit.App"
-      bucket: "test.platformupdate.particular.net"
+      product: "servicepulse"
+      bucket: "platformupdate.particular.net"
     secrets: inherit
