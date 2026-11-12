@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
 import { RouterView, useRoute } from "vue-router";
+import AppSidebar from "./components/AppSidebar.vue";
 import PageFooter from "./components/PageFooter.vue";
-import PageHeader from "./components/PageHeader.vue";
 import "bootstrap";
 import LicenseNotifications from "@/components/LicenseNotifications.vue";
 import BackendChecksNotifications from "@/components/BackendChecksNotifications.vue";
@@ -49,13 +49,17 @@ watch(
 
 <template>
   <template v-if="shouldShowApp">
-    <page-header v-if="shouldShowFullLayout" />
-    <div v-if="shouldShowFullLayout" class="container-fluid" id="main-content">
-      <RouterView />
+    <div v-if="shouldShowFullLayout" class="app-shell">
+      <AppSidebar />
+      <div class="app-view">
+        <main class="container-fluid" id="main-content">
+          <RouterView />
+        </main>
+        <page-footer />
+      </div>
     </div>
     <RouterView v-else />
     <LicenseNotifications v-if="shouldShowFullLayout" />
     <BackendChecksNotifications v-if="shouldShowFullLayout" />
-    <page-footer v-if="shouldShowFullLayout" />
   </template>
 </template>

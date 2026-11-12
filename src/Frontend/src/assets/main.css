@@ -1,4 +1,5 @@
 @import "bootstrap/dist/css/bootstrap.css";
+@import "tokens.css";
 @import "footer.css";
 @import "tabs.css";
 @import "dropdown.css";
@@ -38,7 +39,27 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  min-width: 930px;
+}
+
+.app-shell {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* The content column: the current view, with the footer below it (never under the sidebar). */
+.app-view {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+@media (max-width: 767px) {
+  .app-shell {
+    flex-direction: column;
+  }
 }
 
 .fa {
@@ -82,6 +103,7 @@ body {
   padding-bottom: 40px;
   overflow: auto;
   flex: 1;
+  min-width: 0;
 }
 
 h1 {

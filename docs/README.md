@@ -23,6 +23,7 @@ ServicePulse is the web operations console of the Particular Service Platform. I
 ## Architecture and design
 
 - [Product](PRODUCT.md) — who ServicePulse is for, the situations it is used in, and what it must do
+- [Design system](DESIGN.md) — how the UI looks and behaves, the layout rules, and the tokens mirrored in `src/Frontend/src/assets/tokens.css`
 - [Platform topology](platform-topology.md) — how ServicePulse models ServiceControl instances and which ones it calls directly
 - [Platform health page](frontend/platform-health-page.md) — how Platform health derives its rows and severity
 - [Custom checks page](frontend/custom-checks-page.md) — how internal platform custom checks relate to other views

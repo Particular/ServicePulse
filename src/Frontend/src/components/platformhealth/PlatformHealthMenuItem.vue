@@ -54,8 +54,7 @@ const tooltip = computed(() => {
 </template>
 
 <style scoped>
-@import "@/assets/navbar.css";
-@import "@/assets/header-menu-item.css";
+@import "@/assets/sidebar-item.css";
 
 .tooltip-target {
   display: inline-flex;

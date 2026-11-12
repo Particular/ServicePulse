@@ -38,6 +38,9 @@ const scenarios: Record<string, () => Promise<ScenarioModule>> = {
   "monitoring-no-endpoints": () => import("./monitoring/monitoring-no-endpoints"),
   // Platform health scenarios
   "platform-health": () => import("./platform-health/platform-health"),
+  // Licensing scenarios
+  "license-trial": () => import("./licensing/license-trial"),
+  "license-trial-expired": () => import("./licensing/license-trial-expired"),
   // Recoverability scenarios
   "recoverability-available": () => import("./recoverability/recoverability-available"),
   "recoverability-unavailable": () => import("./recoverability/recoverability-unavailable"),

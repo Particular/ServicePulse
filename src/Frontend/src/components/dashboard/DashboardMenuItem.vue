@@ -13,8 +13,7 @@ import FAIcon from "@/components/FAIcon.vue";
 </template>
 
 <style scoped>
-@import "@/assets/navbar.css";
-@import "@/assets/header-menu-item.css";
+@import "@/assets/sidebar-item.css";
 
 .dashboard-icon {
   pointer-events: none;

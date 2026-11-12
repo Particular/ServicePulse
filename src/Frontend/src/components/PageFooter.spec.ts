@@ -1,6 +1,6 @@
 import { render, screen } from "@component-test-utils";
 import { createTestingPinia } from "@pinia/testing";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import PageFooter from "@/components/PageFooter.vue";
 import { useLicenseStore } from "@/stores/LicenseStore";
 
@@ -9,44 +9,26 @@ const RouterLinkStub = {
   template: '<a :href="typeof to === `string` ? to : to?.link ?? ``"><slot /></a>',
 };
 
-const platformHealthStore = vi.hoisted(() => ({
-  outdatedOnly: false,
-  rows: [] as Array<{ upgradeAvailable: boolean }>,
-}));
-
-vi.mock("@/composables/usePlatformHealthStoreAutoRefresh", () => ({
-  default: () => ({
-    store: platformHealthStore,
-  }),
-}));
-
 describe("PageFooter", () => {
-  test("shows updates available and links to platform health when any row is outdated", () => {
-    platformHealthStore.outdatedOnly = false;
-    platformHealthStore.rows = [{ upgradeAvailable: false }, { upgradeAvailable: true }];
+  test("shows the trial license bar for a trial license", () => {
+    renderFooter(true);
 
-    renderFooter();
-
-    const updatesLink = screen.getByRole("link", { name: /Updates available/i });
-    expect(updatesLink).toBeInTheDocument();
-    expect(updatesLink).toHaveAttribute("href", "/platform-health");
+    expect(screen.getByRole("status", { name: /trial license bar information/i })).toBeInTheDocument();
   });
 
-  test("shows platform up to date when no rows are outdated", () => {
-    platformHealthStore.outdatedOnly = false;
-    platformHealthStore.rows = [{ upgradeAvailable: false }];
+  test("shows nothing for a non-trial license", () => {
+    renderFooter(false);
 
-    renderFooter();
-
-    expect(screen.getByText("Platform up to date")).toBeInTheDocument();
+    expect(screen.queryByRole("status", { name: /trial license bar information/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
   });
 });
 
-function renderFooter() {
+function renderFooter(isTrialLicense: boolean) {
   const pinia = createTestingPinia({ stubActions: false });
   const licenseStore = useLicenseStore(pinia);
   licenseStore.license.license_status = "valid" as never;
-  licenseStore.licenseStatus.isTrialLicense = false;
+  licenseStore.licenseStatus.isTrialLicense = isTrialLicense;
 
   return render(PageFooter, {
     global: {

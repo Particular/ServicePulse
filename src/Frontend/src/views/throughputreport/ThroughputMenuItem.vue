@@ -22,6 +22,5 @@ const { endpoints, validId, error: licenseDetailsError } = storeToRefs(licenseDe
 </template>
 
 <style scoped>
-@import "@/assets/navbar.css";
-@import "@/assets/header-menu-item.css";
+@import "@/assets/sidebar-item.css";
 </style>

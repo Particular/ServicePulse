@@ -18,12 +18,12 @@ async function handleLogout() {
 </script>
 
 <template>
-  <div v-if="user" class="dropdown user-profile-menu">
+  <div v-if="user" class="dropup user-profile-menu">
     <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <FAIcon :icon="faUser" title="User Profile" />
       <span class="navbar-label">{{ user.profile.name || user.profile.email || "User" }}</span>
     </a>
-    <ul class="dropdown-menu dropdown-menu-end">
+    <ul class="dropdown-menu">
       <li class="user-info">
         <span class="user-name">{{ user.profile.name || "User" }}</span>
         <span v-if="user.profile.email" class="user-email">{{ user.profile.email }}</span>
@@ -37,58 +37,11 @@ async function handleLogout() {
 </template>
 
 <style scoped>
-@import "@/assets/navbar.css";
-@import "@/assets/header-menu-item.css";
+@import "@/assets/sidebar-item.css";
 @import "@/assets/dropdown.css";
-
-.user-profile-menu {
-  max-width: 185px;
-}
-
-.user-profile-menu .dropdown-toggle {
-  display: block;
-  color: var(--bs-link-color);
-  text-decoration: none;
-  padding: 10px 15px;
-}
-
-.user-profile-menu .dropdown-toggle:hover {
-  color: #fff;
-}
 
 .user-profile-menu .dropdown-menu {
   min-width: 200px;
-  position: absolute;
-}
-
-.user-profile-menu .navbar-label {
-  margin-left: 8px;
-  max-width: 135px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: inline-block;
-  vertical-align: middle;
-}
-
-@media (min-width: 768px) {
-  .user-profile-menu .dropdown-toggle {
-    padding-bottom: 15px;
-    padding-top: 20px;
-  }
-}
-
-@media (max-width: 1685px) {
-  .user-profile-menu .navbar-label {
-    display: none;
-  }
-}
-
-@media (max-width: 1439px) {
-  .user-profile-menu .dropdown-toggle {
-    padding-top: 18px;
-    padding-bottom: 17px;
-  }
 }
 
 .user-info {

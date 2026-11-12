@@ -1,0 +1,20 @@
+/* Design tokens for the application shell. docs/DESIGN.md describes them; change both together. */
+:root {
+  --sp-brand: #00a3c4;
+  --sp-canvas: #f2f6f7;
+  --sp-danger: #ce4844;
+  --sp-trial: #b22222;
+
+  --sp-chrome: #1a1a1a;
+  --sp-chrome-ink: #b4bcbd;
+  --sp-chrome-ink-muted: #8a9496;
+  --sp-chrome-ink-active: #ffffff;
+  --sp-chrome-hover: #262a2b;
+  --sp-chrome-active: #2f3537;
+  --sp-chrome-divider: #2c3132;
+
+  --sp-sidebar-width: 248px;
+  --sp-sidebar-width-collapsed: 64px;
+  --sp-sidebar-item-height: 40px;
+  --sp-radius-sm: 6px;
+}

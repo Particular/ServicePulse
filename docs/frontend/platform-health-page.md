@@ -213,7 +213,7 @@ npx vitest run test/mocks/platform-health-state.spec.ts
 | `src/Frontend/src/resources/PlatformHealth.ts` | Page-specific response/row types |
 | `src/Frontend/test/mocks/platform-health-state.ts` | Runtime mock topology and custom-check controls |
 | `src/Frontend/src/components/platformhealth/PlatformHealthMenuItem.vue` | Navigation severity and tooltip behavior |
-| `src/Frontend/src/components/PageFooter.vue` | Aggregate platform update status in the footer |
+| `src/Frontend/src/components/platformhealth/PlatformUpdatesMenuItem.vue` | Aggregate platform update status in the sidebar |
 
 ## Troubleshooting
 
