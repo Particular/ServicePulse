@@ -17,7 +17,8 @@
     "test:component": "vitest run ./src",
     "test:coverage": "vitest run --coverage",
     "test:application:vitest": "npx vitest run ./test/specs",
-    "test:application": "npm run test:application:vitest"
+    "test:application": "npm run test:application:vitest",
+    "ai:setup": "impeccable install --project --providers=claude --yes"
   },
   "dependencies": {
     "@codemirror/lang-json": "6.0.2",
@@ -70,6 +71,7 @@
     "eslint-plugin-prettier": "5.5.6",
     "eslint-plugin-vue": "10.9.2",
     "globals": "17.6.0",
+    "impeccable": "4.8.2",
     "jsdom": "29.1.1",
     "msw": "2.14.6",
     "prettier": "3.8.3",

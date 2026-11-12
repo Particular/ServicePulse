@@ -24,3 +24,15 @@ The mock backend runs in a service worker. A browser that cannot register one, s
 ## Check before opening a pull request
 
 From `src/Frontend`, run `npm run type-check`, `npm run lint`, `npm run test:component`, and `npm run test:application`.
+
+## Impeccable
+
+Use the [Impeccable](https://impeccable.style) design skill for design reviews and refinement of the UI, such as critique, audit, and polish. Impeccable reads `docs/PRODUCT.md` and `docs/DESIGN.md` but not the UI guideline, so read the guideline before you run an Impeccable command, and follow the guideline when the two disagree. If an Impeccable command creates `PRODUCT.md` or `DESIGN.md` at the repository root, merge its content into the file under `docs/` and delete the root copy.
+
+Its version is pinned in `src/Frontend/package.json`, and `.impeccable/config.json` enables its design detector hook. If the Impeccable skill is not available in your session, ask the user to install it from `src/Frontend`:
+
+1. Run `npm install`.
+2. Run `npm run ai:setup`.
+3. Restart the session.
+
+`ai:setup` installs the skill, its agents, and its hooks into this repository's `.claude/` folder for Claude Code; they are not committed. For other tools, change `--providers` in the script, for example to `--providers=cursor`. Use either a globally installed Impeccable plugin or this setup, not both.
