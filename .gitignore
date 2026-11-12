@@ -105,3 +105,12 @@ src/scaffolding.config
 # Files use to contain envvar values, used by tools like direnv
 .env
 .envrc
+
+# Impeccable: per-developer state
+.impeccable/config.local.json
+.impeccable/hook.cache.json
+.impeccable/hook.pending.json
+# Impeccable: installed by `npm run ai:setup` (src/Frontend)
+.claude/skills/impeccable/
+.claude/agents/impeccable-*.md
+.claude/settings.local.json
