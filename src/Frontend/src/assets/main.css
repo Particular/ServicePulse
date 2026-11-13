@@ -1,6 +1,5 @@
 @import "bootstrap/dist/css/bootstrap.css";
 @import "tokens.css";
-@import "footer.css";
 @import "tabs.css";
 @import "dropdown.css";
 @import "toast.css";
@@ -49,10 +48,7 @@ body {
 }
 
 #app {
-  display: flex;
-  flex-direction: column;
   height: 100vh;
-  min-width: 930px;
 }
 
 .fa {
@@ -96,6 +92,11 @@ body {
   padding-bottom: 40px;
   overflow: auto;
   flex: 1;
+}
+
+/* Views are not yet laid out for content narrower than 930px. */
+#main-content > * {
+  min-width: 930px;
 }
 
 h1 {

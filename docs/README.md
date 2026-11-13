@@ -26,6 +26,7 @@ ServicePulse is the web operations console of the Particular Service Platform. I
 - [Platform topology](platform-topology.md) — how ServicePulse models ServiceControl instances and which ones it calls directly
 - [Platform health page](frontend/platform-health-page.md) — how Platform health derives its rows and severity
 - [Custom checks page](frontend/custom-checks-page.md) — how internal platform custom checks relate to other views
+- [Navigation shell](frontend/navigation-shell.md) — how the side bar and footer behave at each width, and why views keep a 930px content width
 
 ## Guidelines
 

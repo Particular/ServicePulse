@@ -2,7 +2,7 @@
 import { computed, watch } from "vue";
 import { RouterView, useRoute } from "vue-router";
 import PageFooter from "./components/PageFooter.vue";
-import PageHeader from "./components/PageHeader.vue";
+import NavigationSideBar from "./components/NavigationSideBar.vue";
 import "bootstrap";
 import LicenseNotifications from "@/components/LicenseNotifications.vue";
 import BackendChecksNotifications from "@/components/BackendChecksNotifications.vue";
@@ -49,13 +49,37 @@ watch(
 
 <template>
   <template v-if="shouldShowApp">
-    <page-header v-if="shouldShowFullLayout" />
-    <div v-if="shouldShowFullLayout" class="container-fluid" id="main-content">
-      <RouterView />
+    <div v-if="shouldShowFullLayout" class="app-shell">
+      <NavigationSideBar />
+      <div class="app-main">
+        <main class="container-fluid" id="main-content">
+          <RouterView />
+        </main>
+        <PageFooter />
+      </div>
     </div>
     <RouterView v-else />
     <LicenseNotifications v-if="shouldShowFullLayout" />
     <BackendChecksNotifications v-if="shouldShowFullLayout" />
-    <page-footer v-if="shouldShowFullLayout" />
   </template>
 </template>
+
+<style scoped>
+.app-shell {
+  display: flex;
+  height: 100vh;
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  .app-shell {
+    flex-direction: column;
+  }
+}
+</style>
