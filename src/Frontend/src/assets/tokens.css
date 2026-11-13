@@ -1,4 +1,4 @@
-/* Design tokens for the application shell. */
+/* Design tokens for the application shell. docs/DESIGN.md describes them; change both together. */
 :root {
   --sp-canvas: #f2f6f7;
   --sp-danger: #ce4844;

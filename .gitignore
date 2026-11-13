@@ -114,3 +114,5 @@ src/scaffolding.config
 .claude/skills/impeccable/
 .claude/agents/impeccable-*.md
 .claude/settings.local.json
+# Impeccable: regenerable cache of docs/DESIGN.md; docs/DESIGN.md is the source
+.impeccable/design.json
