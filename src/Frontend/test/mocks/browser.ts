@@ -27,6 +27,7 @@ export const setupComplete = (async () => {
   await driver.setUp(precondition.serviceControlWithMonitoring);
   //override the default mocked endpoints with a custom list
   await driver.setUp(precondition.hasCustomChecks(3, 2));
+  await driver.setUp(precondition.hasSagaTimeouts());
 
   await driver.setUp(
     precondition.monitoredEndpointsNamed([

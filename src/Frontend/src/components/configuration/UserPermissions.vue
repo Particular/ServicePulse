@@ -78,6 +78,16 @@ export const groups: ApplicationCapabilityGroup[] = [
     ],
   },
   {
+    area: "Saga timeouts",
+    capabilities: [
+      { label: "View", ref: ApiRoutes.viewTimeouts },
+      { label: "Reschedule", ref: ApiRoutes.rescheduleTimeout },
+      { label: "Trigger", ref: ApiRoutes.triggerTimeout },
+      { label: "Cancel", ref: ApiRoutes.cancelTimeout },
+      { label: "Forget", ref: ApiRoutes.forgetTimeout },
+    ],
+  },
+  {
     area: "Configuration — Throughput",
     capabilities: [
       { label: "View", ref: ApiRoutes.viewThroughput },

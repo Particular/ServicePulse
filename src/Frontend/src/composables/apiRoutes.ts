@@ -22,6 +22,8 @@ export const ApiRoutes = {
   viewRedirects: { method: "GET", path: "/api/redirects" }, // error:redirects:view (MessageRedirectsController)
   viewEndpoints: { method: "GET", path: "/api/endpoints" }, // error:endpoints:view (EndpointsMonitoringController)
   manageThroughput: { method: "POST", path: "/api/licensing/settings/masks/update" }, // error:throughput:manage (LicensingController)
+  viewTimeouts: { method: "GET", path: "/api/timeouts" }, // error:timeouts:view
+  viewSagaTimeouts: { method: "GET", path: "/api/sagas/{}/timeouts" }, // error:timeouts:view
   // ---- actions ----
   manageEndpointSettings: { method: "PATCH", path: "/api/endpointssettings/{}" },
   manageNotifications: { method: "POST", path: "/api/notifications/email" },
@@ -36,5 +38,9 @@ export const ApiRoutes = {
   deleteGroup: { method: "POST", path: "/api/recoverability/groups/{}/errors/archive" },
   restoreGroup: { method: "POST", path: "/api/recoverability/groups/{}/errors/unarchive" },
   deleteEndpointInstance: { method: "DELETE", path: "/api/endpoints/{}" },
+  rescheduleTimeout: { method: "POST", path: "/api/timeouts/{}/reschedule" }, // error:timeouts:manage
+  triggerTimeout: { method: "POST", path: "/api/timeouts/{}/trigger" }, // error:timeouts:manage
+  cancelTimeout: { method: "POST", path: "/api/timeouts/{}/cancel" }, // error:timeouts:manage
+  forgetTimeout: { method: "DELETE", path: "/api/timeouts/{}" }, // error:timeouts:manage
   deleteMonitoredEndpoint: { method: "DELETE", path: "/monitored-instance/{}/{}" }, // Monitoring instance serves at root (no /api prefix)
 } as const satisfies Record<string, RouteRef>;
