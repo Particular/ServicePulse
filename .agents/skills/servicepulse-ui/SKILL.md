@@ -31,7 +31,7 @@ The guideline sets which views and widths to check. When a `docs/` page of the a
 4. Keep the mock instance of the change running while you ask the person who asked for the change to accept a difference.
 5. Give them a link to the view in that instance, with the mock scenario, the width to set, and any step needed to reach the state, such as a tab to open.
 
-For a change to the shell or to shared styles, cover at least Dashboard, Failed Messages with a message's details, Monitoring with an endpoint's details, All Messages (`audit-available` scenario), Platform health, and Configuration. No mock scenario serves message details or conversations, so check a message's sequence diagram against a running ServiceControl with audit data.
+For a change to the shell or to shared styles, cover at least Dashboard, Failed Messages with a message's details, Monitoring with an endpoint's details, All Messages with a message's sequence diagram (`audit-available` scenario), Platform health, and Configuration.
 
 ## Check before opening a pull request
 
