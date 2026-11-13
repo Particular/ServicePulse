@@ -1,5 +1,5 @@
 @import "bootstrap/dist/css/bootstrap.css";
-@import "footer.css";
+@import "tokens.css";
 @import "tabs.css";
 @import "dropdown.css";
 @import "toast.css";
@@ -26,6 +26,19 @@
   --fa-width: auto;
 }
 
+/* Hidden visually, still read by screen readers. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 body {
   padding-top: 0px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -35,10 +48,7 @@ body {
 }
 
 #app {
-  display: flex;
-  flex-direction: column;
   height: 100vh;
-  min-width: 930px;
 }
 
 .fa {
@@ -46,7 +56,7 @@ body {
 }
 
 .badge.badge-important {
-  background-color: #ce4844;
+  background-color: var(--sp-danger);
   background-image: none;
   border: none;
 }
@@ -82,6 +92,11 @@ body {
   padding-bottom: 40px;
   overflow: auto;
   flex: 1;
+}
+
+/* Views are not yet laid out for content narrower than 930px. */
+#main-content > * {
+  min-width: 930px;
 }
 
 h1 {

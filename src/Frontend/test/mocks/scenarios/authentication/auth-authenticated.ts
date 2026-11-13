@@ -14,7 +14,7 @@
  * Test:
  *   1. Open browser to the dev server URL
  *   2. Dashboard should load directly (no login redirect)
- *   3. User profile menu should appear in header
+ *   3. User profile menu should appear at the bottom of the side bar
  */
 import { setupWorker } from "msw/browser";
 import type { Driver } from "../../../driver";

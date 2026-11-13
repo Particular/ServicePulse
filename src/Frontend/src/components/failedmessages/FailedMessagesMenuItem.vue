@@ -12,13 +12,8 @@ const { failedMessageCount } = storeToRefs(store);
 
 <template>
   <RouterLink :to="routeLinks.failedMessage.root">
-    <FAIcon :icon="faEnvelope" title="Failed Messages" />
-    <span class="navbar-label">Failed Messages</span>
+    <FAIcon :icon="faEnvelope" />
+    <span class="side-bar-label">Failed Messages</span>
     <span v-if="failedMessageCount > 0" class="badge badge-important">{{ failedMessageCount }}</span>
   </RouterLink>
 </template>
-
-<style scoped>
-@import "@/assets/navbar.css";
-@import "@/assets/header-menu-item.css";
-</style>

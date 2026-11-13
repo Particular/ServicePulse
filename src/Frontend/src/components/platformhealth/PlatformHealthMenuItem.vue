@@ -46,7 +46,7 @@ const tooltip = computed(() => {
 <template>
   <RouterLink :to="routeLinks.platformHealth">
     <FAIcon :icon="faServer" />
-    <span class="navbar-label">Platform health</span>
+    <span class="side-bar-label">Platform health</span>
     <span title="" class="tooltip-target" v-tippy="tooltip">
       <ExclamationMark :type="warningLevel" v-if="warningLevel !== WarningLevel.None" />
     </span>
@@ -54,9 +54,6 @@ const tooltip = computed(() => {
 </template>
 
 <style scoped>
-@import "@/assets/navbar.css";
-@import "@/assets/header-menu-item.css";
-
 .tooltip-target {
   display: inline-flex;
 }
