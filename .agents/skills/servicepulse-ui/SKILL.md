@@ -7,7 +7,7 @@ metadata:
 
 # ServicePulse UI
 
-Follow [the UI guideline](../../../docs/guidelines/ui.md). It controls when this skill or any other skill disagrees with it.
+Read [the UI guideline](../../../docs/guidelines/ui.md) before you change code, and follow it. It controls when this skill or any other skill disagrees with it.
 
 Before you change the UI, read [the product description](../../../docs/PRODUCT.md) and, once it exists, `docs/DESIGN.md`.
 
