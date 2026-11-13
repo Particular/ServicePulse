@@ -1,0 +1,19 @@
+/* Design tokens for the application shell. */
+:root {
+  --sp-canvas: #f2f6f7;
+  --sp-danger: #ce4844;
+  --sp-trial: #b22222;
+  --sp-healthy: #00c468;
+
+  --sp-chrome: #1a1a1a;
+  --sp-chrome-ink: #b5b5b5;
+  --sp-chrome-ink-active: #ffffff;
+  --sp-chrome-hover: #2b2b2b;
+  --sp-chrome-divider: #333333;
+  --sp-chrome-strip: #0d0d0d;
+  --sp-chrome-strip-ink: #a6a6a6;
+
+  --sp-side-bar-width: 224px;
+  --sp-side-bar-collapsed-width: 64px;
+  --sp-radius-sm: 4px;
+}
