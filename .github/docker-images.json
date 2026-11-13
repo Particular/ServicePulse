@@ -1,0 +1,7 @@
+[
+  {
+    "name": "servicepulse",
+    "readme_filepath": "./Container-README.md",
+    "short_description": "Keep track of the health and performance of your system's endpoints."
+  }
+]
