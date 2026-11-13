@@ -20,7 +20,7 @@
 - The constraints of a bigger change must cover what it has to respect regardless of the assumptions, such as requirements from `docs/PRODUCT.md`, accessibility, existing behavior, scope, and stakeholder decisions.
 - A bigger change should state the preservation of existing behavior as one constraint and list the behaviors it covers as review criteria, which need no separate confirmation.
 - Each design decision in a bigger change must name the assumption or constraint it rests on.
-- A bigger change must describe the resulting navigation or page structure in a `docs/` page, new or existing, and list a new page in `docs/README.md`.
+- A bigger change must leave a `docs/` page current on how the navigation or page structure works: update the page that covers it, or add one and list it in `docs/README.md`. The page describes the current design, not the change; the pull request carries the change.
 - The pull request of a bigger change must list its assumptions, constraints, and decisions, mark each as new, existing, or changed, and state which assumptions turned out wrong or partly wrong.
 - A UI change must be checked in the running UI with mock data on every existing view it can affect, at a width on each side of every layout breakpoint it can affect, and compared with the same views before the change; a change to the shell or to shared styles affects every view.
 - The pull request of every UI change, including a change to behavior only, must state that the layout check was done or why the change cannot affect a view's layout, and must list a view and width only for a layout difference it found, with whether the difference was fixed or accepted by the person who asked for the change.
