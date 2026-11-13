@@ -29,7 +29,7 @@ ServicePulse is the web operations console of the Particular Service Platform. I
 
 ## Guidelines
 
-- [UI changes](guidelines/ui.md) — `src/Frontend/**`; product and design context for any UI change, the process for bigger UX/UI changes, the layout check for every UI change, and how UI code treats Bootstrap. Read it before any UI change. Skill: `servicepulse-ui`.
+- [UI changes](guidelines/ui.md) — every change under `src/Frontend/**` that users can see or interact with: check the layout with mock data and state the check in the pull request, use the shared components instead of adding Bootstrap component classes, and for a change to the navigation, the page structure, or the visual direction, list assumptions and constraints for confirmation before design work starts. Skill: `servicepulse-ui`.
 
 ## Decisions and rationale
 

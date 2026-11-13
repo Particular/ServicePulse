@@ -1,6 +1,6 @@
 # UI changes
 
-## Scope
+## Applies to
 
 - Paths: `src/Frontend/**`
 - Changes: anything users see or interact with in ServicePulse, such as views, components, styles, navigation, and UI copy.

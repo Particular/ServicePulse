@@ -34,23 +34,23 @@ Prefer public records close to the implementation. Keep `docs/README.md` current
 Every change to code under `src/` keeps `docs/` accurate. This applies to changes written by people and by coding agents.
 
 1. Before you change code, read `docs/README.md`. Then read the `docs/` pages, guidelines, ADRs, and upstream contracts it links for the area you change.
-2. Follow each guideline that `docs/README.md` lists for the paths you change. When a guideline names a skill, load the skill before you change code. The guideline controls: when the skill disagrees with it, follow the guideline and report the difference.
+2. Read `docs/README.md` and each guideline it lists that applies to the change. An entry states when its guideline applies: to every change under its paths, to a kind of change, or to code of a certain shape. Decide from that statement, not from the guideline's subject. Follow each guideline that applies, and load its skill, if it names one, before you change code. The guideline controls: when the skill disagrees with it, follow the guideline and report the difference.
 3. After you change code, review each `docs/` page and ADR that describes the changed behavior, configuration, or constraints.
 4. Update a `docs/` page in the same change when the code makes it inaccurate or incomplete.
 5. Update `docs/README.md` when you add, replace, or retire a canonical source.
 6. When the change conflicts with an ADR, flag the conflict in the pull request and ask the owner before you change the ADR or the code.
-7. In the pull request description, or in the response for unpublished work, list the `docs/` pages you reviewed and what you changed. When no update is needed, say so and give the reason. List the guidelines you followed, and name any rule you did not follow with the reason.
+7. In the pull request description, or in the response for unpublished work, list the `docs/` pages you reviewed and what you changed. When no update is needed, say so and give the reason. For each guideline that `docs/README.md` lists, say whether it applies to the change and, when it does, whether you followed it; name any rule you did not follow with the reason.
 
 ## Guidelines and skills
 
-`docs/guidelines/` holds rules that a change in this repository must follow. Each guideline names the paths it applies to, and `docs/README.md` lists every guideline. Skills live under `.agents/skills/`; `.claude/skills/` only links to them, so edit a skill only under `.agents/skills/`. A skill that applies a guideline links to it and does not restate it, and the guideline controls. A skill that sets no rule, such as a procedure for running a test suite, can stand alone. Put a rule that a reviewer would enforce in a guideline, not only in a skill. `docs/guidelines/README.md` describes the structure of both.
+`docs/guidelines/` holds rules that a change in this repository must follow. Each guideline states when it applies, and `docs/README.md` lists every guideline with that statement and its main rule in one clause. Skills live under `.agents/skills/`; `.claude/skills/` only links to them, so edit a skill only under `.agents/skills/`. A skill that applies a guideline links to it and does not restate it, and the guideline controls. A skill that sets no rule, such as a procedure for running a test suite, can stand alone. Put a rule that a reviewer would enforce in a guideline, not only in a skill. `docs/guidelines/README.md` describes the structure of both.
 
 ## Writing
 
 These rules apply to everything written for a reader: pull request descriptions, commit messages, `docs/`, ADRs, code comments, and review replies. Write in en-US.
 
 - Start with the main point: the decision, the change, or the answer. Add only the background the reader needs to act on it or to agree with it.
-- Every sentence adds something the reader does not already have from the code, the diff, the title, or earlier text in the same document. Cut sentences that announce, summarize, or repeat.
+- Every sentence adds something the reader does not already have from the code, the diff, the title, or earlier text in the same document. Cut sentences that announce, summarize, or repeat. In a pull request description that means no preamble, no heading or bold line that repeats the title, no walk through the diff file by file, and no closing summary.
 - State facts plainly. Do not add weight with a contrast against a claim nobody made, a one-line closer, inflated significance, or words such as pivotal, seamless, or robust used figuratively. Keep a contrast that corrects something a reader would likely assume.
 - Write short, direct sentences, under 25 words where possible, with a named actor and an active verb. Keep the passive when the source does not say who acts. Keep should and must where the text sets a rule. Qualify a claim only when the evidence is uncertain, and say what is uncertain.
 - Use one term for one concept, and use the term the code uses. Define a term on first use when the audience may not know it. Avoid idioms and phrasal verbs that a non-native reader or a translation tool can misread.
