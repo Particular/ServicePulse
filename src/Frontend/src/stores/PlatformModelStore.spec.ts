@@ -180,6 +180,30 @@ describe("PlatformModelStore", () => {
     expect(store.remotes[0].errorRetentionPeriod).toBeUndefined();
   });
 
+  test("maps the storage type the primary reports in its configuration", async () => {
+    getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl", health: "healthy", version: "7.0.0" }));
+    getConfiguration.mockResolvedValue({ json: () => Promise.resolve({ host: {}, storage: { storage_type: "SQLServer" } }) } as never);
+    getRemoteInstances.mockResolvedValue([]);
+    getMonitoringRoot.mockResolvedValue(null);
+
+    const store = usePlatformModelStore();
+    await store.refresh();
+
+    expect(store.primary?.storageType).toBe("SQLServer");
+  });
+
+  test("leaves the storage type undefined when the primary does not report one", async () => {
+    getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl", health: "healthy", version: "7.0.0" }));
+    getConfiguration.mockResolvedValue({ json: () => Promise.resolve({ host: {} }) } as never);
+    getRemoteInstances.mockResolvedValue([]);
+    getMonitoringRoot.mockResolvedValue(null);
+
+    const store = usePlatformModelStore();
+    await store.refresh();
+
+    expect(store.primary?.storageType).toBeUndefined();
+  });
+
   test("skips remote discovery when the primary root is unavailable", async () => {
     getRoot.mockRejectedValue(new Error("primary unavailable"));
     getRemoteInstances.mockResolvedValue([
