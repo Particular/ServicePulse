@@ -103,7 +103,7 @@ async function toggleDefaultSetting() {
           <div class="defaultSetting">
             <label>Track Instances by default on new endpoints</label>
             <div class="switch">
-              <PermissionGate :allowed="canManageEndpointSettings" :reason="manageDeniedTooltip">
+              <PermissionGate block :allowed="canManageEndpointSettings" :reason="manageDeniedTooltip">
                 <OnOffSwitch id="defaultTIV" @toggle="toggleDefaultSetting" :value="defaultTrackingInstancesValue" :disabled="!canManageEndpointSettings" />
               </PermissionGate>
             </div>

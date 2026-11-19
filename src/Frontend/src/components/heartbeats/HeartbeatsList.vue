@@ -100,7 +100,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
             </div>
             <div v-if="columns.includes(ColumnNames.TrackToggle)" role="cell" aria-label="tracked-instances" class="col-2 centre">
               <div class="switch">
-                <PermissionGate :allowed="canManageEndpointSettings" :reason="manageDeniedTooltip">
+                <PermissionGate block :allowed="canManageEndpointSettings" :reason="manageDeniedTooltip">
                   <OnOffSwitch :id="endpoint.name" @toggle="changeEndpointSettings(endpoint)" :value="endpoint.track_instances" :disabled="!canManageEndpointSettings" />
                 </PermissionGate>
               </div>

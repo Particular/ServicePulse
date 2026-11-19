@@ -78,7 +78,7 @@ onMounted(async () => {
                 <div class="col-12 no-side-padding">
                   <div class="row">
                     <div class="col-auto">
-                      <PermissionGate :allowed="canManageNotifications" :reason="manageDeniedTooltip">
+                      <PermissionGate block :allowed="canManageNotifications" :reason="manageDeniedTooltip">
                         <OnOffSwitch id="emailNotifications" @toggle="toggleEmailNotifications" :value="emailNotificationsEnabled" :disabled="!canManageNotifications" />
                       </PermissionGate>
                       <div>

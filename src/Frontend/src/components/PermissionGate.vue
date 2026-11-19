@@ -7,15 +7,21 @@
 // any other disable conditions still apply); this wrapper adds the tooltip, lets pointer
 // events reach the wrapper so the tooltip shows even over a disabled button, and tidies the
 // disabled look of link-style buttons.
+//
+// The wrapper is inline by default, for buttons and links that sit in a line of text. Set
+// `block` for block-level content, such as an OnOffSwitch, so the wrapper doesn't change its
+// layout: an inline wrapper aligns the content to the text baseline and stops its margins
+// from collapsing.
 interface Props {
   allowed: boolean;
   reason?: string;
+  block?: boolean;
 }
-withDefaults(defineProps<Props>(), { reason: "" });
+withDefaults(defineProps<Props>(), { reason: "", block: false });
 </script>
 
 <template>
-  <span class="permission-gate" :class="{ denied: !allowed }" v-tippy="!allowed ? reason : ''">
+  <span class="permission-gate" :class="{ denied: !allowed, block }" v-tippy="!allowed ? reason : ''">
     <slot />
   </span>
 </template>
@@ -23,6 +29,12 @@ withDefaults(defineProps<Props>(), { reason: "" });
 <style scoped>
 .permission-gate {
   display: inline-flex;
+}
+
+/* Block-level, as the content would be without the wrapper. fit-content keeps the tooltip on the content. */
+.permission-gate.block {
+  display: block;
+  width: fit-content;
 }
 
 .permission-gate.denied {
