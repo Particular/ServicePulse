@@ -136,10 +136,6 @@ async function toggleDefaultSetting() {
   line-height: 1em;
 }
 
-.defaultSetting .switch {
-  margin-top: -8px;
-}
-
 .instructions > div {
   margin-bottom: 5px;
 }
