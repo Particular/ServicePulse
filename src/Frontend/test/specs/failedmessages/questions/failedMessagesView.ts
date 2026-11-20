@@ -32,7 +32,7 @@ export function allFailedMessagesTabBadge(): string | null {
 }
 
 export function failedMessagesNavBadge(): string | null {
-  const navItem = Array.from(document.querySelectorAll<HTMLElement>("a")).find((anchor) => normalise(anchor.querySelector(".navbar-label")?.textContent ?? "") === "Failed Messages");
+  const navItem = Array.from(document.querySelectorAll<HTMLElement>("a")).find((anchor) => normalise(anchor.querySelector(".side-bar-label")?.textContent ?? "") === "Failed Messages");
   const badge = navItem?.querySelector<HTMLElement>("span.badge");
   return badge ? normalise(badge.textContent ?? "") : null;
 }

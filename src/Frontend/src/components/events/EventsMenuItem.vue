@@ -7,12 +7,7 @@ import { faListUl } from "@fortawesome/free-solid-svg-icons";
 
 <template>
   <RouterLink :to="routeLinks.events">
-    <FAIcon :icon="faListUl" title="Events" />
-    <span class="navbar-label">Events</span>
+    <FAIcon :icon="faListUl" />
+    <span class="side-bar-label">Events</span>
   </RouterLink>
 </template>
-
-<style scoped>
-@import "@/assets/navbar.css";
-@import "@/assets/header-menu-item.css";
-</style>

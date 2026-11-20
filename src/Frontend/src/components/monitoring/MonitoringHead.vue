@@ -9,10 +9,10 @@ const { isMassTransitConnected } = storeToRefs(configurationStore);
 
 <template>
   <div class="row monitoring-head">
-    <div class="col-sm-4 no-side-padding list-section">
+    <div class="col-auto no-side-padding list-section">
       <h1>Endpoints overview</h1>
     </div>
-    <div class="col-sm-8 no-side-padding toolbar-menus">
+    <div class="col no-side-padding toolbar-menus">
       <MonitoringFilter />
     </div>
     <div class="col-12" v-if="isMassTransitConnected">
