@@ -22,6 +22,7 @@ export interface PlatformInstance {
   forwardErrorMessages?: boolean;
   errorRetentionPeriod?: string;
   auditRetentionPeriod?: string;
+  persistenceType?: string;
 }
 
 export interface PlatformModel {

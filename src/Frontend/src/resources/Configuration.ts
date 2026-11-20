@@ -3,6 +3,7 @@ export default interface Configuration {
   data_retention: DataRetention;
   performance_tunning: PerformanceTuning;
   transport: Transport;
+  storage?: Storage;
   plugins: Plugins;
   mass_transit_connector?: MassTransitConnector;
 }
@@ -10,6 +11,9 @@ interface MassTransitConnector {
   version: string;
   logs: Array<{ level: string; message: string; date: string }>;
   error_queues: Array<{ name: string; ingesting: boolean }>;
+}
+interface Storage {
+  storage_type?: string;
 }
 interface Plugins {
   heartbeat_grace_period: string;
