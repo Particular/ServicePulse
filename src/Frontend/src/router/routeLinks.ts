@@ -114,6 +114,20 @@ const monitoringLinks = (root: string) => {
   };
 };
 
+const timeoutsLinks = (root: string) => {
+  function createLink(template: string) {
+    return { link: `${root}/${template}`, template: template };
+  }
+
+  return {
+    root,
+    pending: createLink("pending"),
+    overdue: createLink("overdue"),
+    all: createLink("all"),
+    details: { link: (timeoutId: string) => `${root}/${encodeURIComponent(timeoutId)}`, template: `${root}/:timeoutId` },
+  };
+};
+
 const routeLinks = {
   dashboard: "/dashboard",
   platformHealth: "/platform-health",
@@ -121,6 +135,7 @@ const routeLinks = {
   monitoring: monitoringLinks("/monitoring"),
   failedMessage: failedMessagesLinks("/failed-messages"),
   customChecks: "/custom-checks",
+  timeouts: timeoutsLinks("/timeouts"),
   events: "/events",
   messages: messagesLinks("/messages"),
   configuration: configurationLinks("/configuration"),
