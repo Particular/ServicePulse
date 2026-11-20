@@ -25,13 +25,15 @@
 - A UI change must be checked in the running UI with mock data on every existing view it can affect, at a width on each side of every layout breakpoint it can affect, and compared with the same views before the change; a change to the shell or to shared styles affects every view.
 - The pull request of every UI change, including a change to behavior only, must state that the layout check was done or why the change cannot affect a view's layout, and must list a view and width only for a layout difference it found, with whether the difference was fixed or accepted by the person who asked for the change.
 - Until Bootstrap is removed, views must use the shared components in `src/Frontend/src/components`, such as `ActionButton`, `ModalDialog`, `ConfirmDialog`, and `DropDown`, and extend them when needed.
+- Until Bootstrap is removed, a shared component should use Bootstrap's built-in component when one exists, rather than drawing its own with custom CSS.
+- A component must lay itself out correctly inside any parent, and a layout problem must be fixed in the component that has it, not with options or styles on its parents.
 - Views must not add Bootstrap component classes, such as `btn`, `modal`, `dropdown`, `alert`, and `badge`, or `data-bs-*` attributes.
 - New code should use Bootstrap grid and utility classes only for layout, until replacements exist.
 - `docs/DESIGN.md` must name components by role, never by a Bootstrap class, and must record what Bootstrap theming cannot yet deliver as a known gap.
 
 ## Rationale
 
-[#3189](https://github.com/Particular/ServicePulse/pull/3189) introduced these rules. Written assumptions let reviewers check a bigger change against them rather than against taste, and shared components keep the Bootstrap removal inside those components. A short list of facts, decision-bearing assumptions, and constraints is one a person can confirm before design work starts. Views size themselves with viewport media queries, so a change outside a view can break its layout without failing a test, and layouts break first at the edges of a breakpoint.
+[#3189](https://github.com/Particular/ServicePulse/pull/3189) introduced these rules. Written assumptions let reviewers check a bigger change against them rather than against taste, and shared components keep the Bootstrap removal inside those components. A short list of facts, decision-bearing assumptions, and constraints is one a person can confirm before design work starts. Views size themselves with viewport media queries, so a change outside a view can break its layout without failing a test, and layouts break first at the edges of a breakpoint. The rules on Bootstrap's built-in components and on components that lay themselves out come from the review of [#3194](https://github.com/Particular/ServicePulse/pull/3194) and [#3195](https://github.com/Particular/ServicePulse/pull/3195): a custom switch broke inside a wrapper, and a fix in the wrapper would have had to be repeated by every parent.
 
 ## Skill
 
