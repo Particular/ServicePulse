@@ -10,6 +10,8 @@ export interface RemoteInstanceHostConfiguration {
 export interface RemoteInstanceConfiguration {
   host?: RemoteInstanceHostConfiguration;
   data_retention?: RemoteInstanceDataRetention;
+  storage?: { storage_type?: string };
+  persistence?: { persistence_type?: string };
 }
 
 export enum RemoteInstanceType {

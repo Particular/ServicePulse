@@ -109,6 +109,9 @@ export function getPlatformHealthConfiguration() {
     data_retention: {
       error_retention_period: "15.00:00:00",
     },
+    storage: {
+      storage_type: "SQLServer",
+    },
   };
 }
 

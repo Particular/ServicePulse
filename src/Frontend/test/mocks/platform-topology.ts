@@ -115,6 +115,7 @@ export function toRemoteInstances(topology: Pick<PlatformTopology, "remotes">): 
         instance_name: remote.name,
       },
       data_retention: remote.instanceType === "error" ? { error_retention_period: "14.00:00:00" } : { audit_retention_period: "7.00:00:00" },
+      ...(remote.instanceType === "error" ? { storage: { storage_type: "RavenDB" } } : { persistence: { persistence_type: "PostgreSQL" } }),
     },
     platform_health_status: remote.status,
     platform_health_id: remote.id,
