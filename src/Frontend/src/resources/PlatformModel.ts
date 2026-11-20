@@ -23,6 +23,7 @@ export interface PlatformInstance {
   errorRetentionPeriod?: string;
   auditRetentionPeriod?: string;
   storageType?: string;
+  persistenceType?: string;
 }
 
 export interface PlatformModel {

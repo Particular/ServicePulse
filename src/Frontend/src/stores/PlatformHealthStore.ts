@@ -208,6 +208,10 @@ function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: s
     infoDetails.push(`Audit retention: ${formatTimeSpan(instance.auditRetentionPeriod)}`);
   }
 
+  if (instance.persistenceType) {
+    infoDetails.push(`Storage Type: ${instance.persistenceType}`);
+  }
+
   return {
     id: instance.id,
     type: formatRowType(instance),

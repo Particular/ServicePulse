@@ -47,9 +47,11 @@ Rows expand from the health badge to show details.
 
 Those details come from:
 
-- informational row context: API URL, transport type, error/audit queue names, forward error messages setting, and error/audit retention periods (when available from instance configuration)
+- informational row context: API URL, transport type, error/audit queue names, forward error messages setting, error/audit retention periods, and persistence type (when available from instance configuration)
 - matching internal platform custom checks when available
 - fallback page-specific messages when no custom-check detail is available
+
+The information table shows the persistence type as reported by the API under the `Storage Type` label. Primary and remote error instances use `storage.storage_type`; audit instances use the raw setting in `persistence.persistence_type`. Remote rows prefer `storage.storage_type` when both fields are present. Responses without a persistence type produce no persistence line. The platform model excludes `persistence_settings`, which can contain connection strings and certificate secrets. The support export includes only the mapped persistence type.
 
 Built-in custom-check `healthDetails` can include both the failure summary and a `Reported at: <timestamp>` line.
 
@@ -181,6 +183,7 @@ The support export includes both the current Platform health payload and the cur
 | File | Type | Description |
 |------|------|-------------|
 | `src/Frontend/src/stores/PlatformHealthStore.spec.ts` | Component/unit | Platform health severity, row derivation, and internal check inference |
+| `src/Frontend/src/stores/PlatformModelStore.spec.ts` | Unit | Mapping of ServiceControl configuration responses into platform instances |
 | `src/Frontend/src/views/PlatformHealthView.spec.ts` | Component | Page rendering, upgrade cues, row expansion, and support modal behavior |
 | `src/Frontend/test/mocks/platform-health-state.spec.ts` | Unit | Runtime mock helper behavior and custom-check preset switching |
 
@@ -190,6 +193,7 @@ Use the shared commands in `docs/frontend/testing-basics.md`, then run these Pla
 
 ```bash
 npx vitest run src/stores/PlatformHealthStore.spec.ts
+npx vitest run src/stores/PlatformModelStore.spec.ts
 npx vitest run src/views/PlatformHealthView.spec.ts
 npx vitest run test/mocks/platform-health-state.spec.ts
 ```
@@ -198,8 +202,9 @@ npx vitest run test/mocks/platform-health-state.spec.ts
 
 | Area | Covered behavior |
 |------|------------------|
-| Platform health store | warning/danger severity, unavailable audit remotes, remote error instance danger, monitoring presence, version fallback, internal custom-check health inference, transport and retention details in infoDetails |
-| Platform health view | support download gating, known-version-only upgrade cue rendering, plain-text names, API-in-details rendering, monitoring row rendering, always-expandable health badges |
+| Platform health store | warning/danger severity, unavailable audit remotes, remote error instance danger, monitoring presence, version fallback, internal custom-check health inference, transport, retention, and persistence details in infoDetails |
+| Platform health view | support download gating, known-version-only upgrade cue rendering, plain-text names, API-in-details rendering, monitoring row rendering, always-expandable health badges, persistence type in expanded details |
+| Platform model store | persistence type mapping from the primary `storage`, remote error `storage`, and remote audit `persistence` shapes, `storage` precedence, absence on older responses, clearing on refresh, support JSON that includes the type and omits `persistence_settings` |
 | Mock helpers | independent topology and custom-check switching |
 
 ## Key Source Files
