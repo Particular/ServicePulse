@@ -498,10 +498,10 @@ function renderComponent({ initialState = {}, settingsInServiceControl = emptyEm
     },
     verify: {
       emailNotificationsAreEnabled() {
-        expect(screen.getByRole("switch", { name: /emailNotifications/i })).toHaveAttribute("aria-checked", "true");
+        expect(screen.getByRole("switch", { name: /emailNotifications/i })).toBeChecked();
       },
       emailNotificationsAreDisabled() {
-        expect(screen.getByRole("switch", { name: /emailNotifications/i })).toHaveAttribute("aria-checked", "false");
+        expect(screen.getByRole("switch", { name: /emailNotifications/i })).not.toBeChecked();
       },
       emailConfigurationIsAccessible() {
         expect(screen.getByRole("dialog", { name: /email configuration/i })).toBeInTheDocument();

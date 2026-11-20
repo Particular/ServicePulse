@@ -17,8 +17,8 @@ export async function getEndpointsForConfiguration() {
       const endpointName = String(within(row).getByRole("link", { name: "details-link" }).textContent);
       const instances = String(within(row).getByLabelText("instance-count").textContent);
       const lastHeartbeat = String(within(row).getByTitle("Last Heartbeat").textContent);
-      const trackingCheckbox = <HTMLInputElement>within(row).getByRole("checkbox", { hidden: true });
-      const trackingEnabled = trackingCheckbox.ariaLabel === `onoffswitch${endpointName}` && trackingCheckbox.checked;
+      const trackingSwitch = <HTMLInputElement>within(row).getByRole("switch", { name: endpointName });
+      const trackingEnabled = trackingSwitch.checked;
 
       return [
         endpointName,
