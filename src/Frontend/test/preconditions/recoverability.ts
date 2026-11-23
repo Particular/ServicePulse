@@ -53,14 +53,14 @@ export const hasErrorRetentionPeriod =
 
 export const archivedGroupsWithClassifierDefaulthandler = ({ driver }: SetupFactoryOptions) => {
   const serviceControlUrl = window.defaultConfig.service_control_url;
-  driver.mockEndpoint(`${serviceControlUrl}errors/groups{/:classifier}`, {
+  driver.mockEndpoint(`${serviceControlUrl}errors/groups/:classifier?`, {
     body: [],
   });
 };
 
 export const recoverabilityGroupsWithClassifierDefaulthandler = ({ driver }: SetupFactoryOptions) => {
   const serviceControlUrl = window.defaultConfig.service_control_url;
-  driver.mockEndpoint(`${serviceControlUrl}recoverability/groups{/:classifier}`, {
+  driver.mockEndpoint(`${serviceControlUrl}recoverability/groups/:classifier?`, {
     body: [],
   });
 };
@@ -291,7 +291,7 @@ export const hasFailedMessage =
       body: failedMessage,
     });
 
-    driver.mockEndpoint(`${serviceControlUrl}recoverability/groups{/:classifier}?`, {
+    driver.mockEndpoint(`${serviceControlUrl}recoverability/groups/:classifier?`, {
       body: [
         {
           id: withGroupId,

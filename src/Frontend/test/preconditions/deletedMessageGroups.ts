@@ -47,7 +47,7 @@ export const hasDeletedMessageGroups =
     const table = [...groups];
     const restoredGroupIds: string[] = [];
 
-    driver.mockEndpointDynamic(`${serviceControlUrl}errors/groups{/:classifier}`, "get", () => Promise.resolve({ body: [...table] }));
+    driver.mockEndpointDynamic(`${serviceControlUrl}errors/groups/:classifier?`, "get", () => Promise.resolve({ body: [...table] }));
 
     driver.mockEndpointDynamic(`${serviceControlUrl}recoverability/groups/:groupId/errors/unarchive`, "post", (_url, params) => {
       const groupId = String(params.groupId);
