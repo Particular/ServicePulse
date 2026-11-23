@@ -102,7 +102,8 @@ export const getCustomChecks =
   ({ driver }: SetupFactoryOptions) => {
     const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
 
-    const failedCustomChecks = customChecks.filter((check) => check.status === "Fail");
+    let remainingCustomChecks = customChecks;
+    let failedCustomChecks = customChecks.filter((check) => check.status === "Fail");
 
     driver.mockEndpointDynamic(`${serviceControlInstanceUrl}customchecks`, "get", (url) => {
       const status = url.searchParams.get("status");
@@ -114,11 +115,14 @@ export const getCustomChecks =
       }
 
       return Promise.resolve({
-        body: customChecks,
-        headers: { "Total-Count": customChecks.length.toString() },
+        body: remainingCustomChecks,
+        headers: { "Total-Count": remainingCustomChecks.length.toString() },
       });
     });
-    driver.mockEndpointDynamic(`${serviceControlInstanceUrl}customchecks/:id`, "delete", () => {
+    driver.mockEndpointDynamic(`${serviceControlInstanceUrl}customchecks/:id`, "delete", (_url, params) => {
+      const deletedId = `customchecks/${params.id}`;
+      remainingCustomChecks = remainingCustomChecks.filter((check) => check.id !== deletedId);
+      failedCustomChecks = failedCustomChecks.filter((check) => check.id !== deletedId);
       return Promise.resolve({
         body: { message: "Successfully deleted" },
         status: 200,
