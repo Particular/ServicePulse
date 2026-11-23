@@ -53,7 +53,7 @@ describe("FEATURE: Endpoint details", () => {
       await selectHistoryPeriod(60);
 
       //Assert
-      expect(await endpointDetailsGraphsCurrentValues()).toEqual(["10", "7.78", "5.55", "333", "111"]);
+      await waitFor(async () => expect(await endpointDetailsGraphsCurrentValues()).toEqual(["10", "7.78", "5.55", "333", "111"]));
       expect(await endpointDetailsGraphsAverageValues()).toEqual(["8.89", "6.67", "4.44", "222", "100"]);
     });
   });
@@ -76,6 +76,7 @@ describe("FEATURE: Endpoint details", () => {
         // Act
         await driver.goTo("/monitoring/endpoint/Endpoint1");
         await selectHistoryPeriod(historyPeriod, true);
+        await vi.advanceTimersByTimeAsync(0);
 
         // Assert
         // Wait for component to update from selected history period immediately

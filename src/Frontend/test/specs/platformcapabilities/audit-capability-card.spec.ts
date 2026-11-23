@@ -121,8 +121,7 @@ describe("FEATURE: Audit capability card", () => {
       expect(actionButton).toBeInTheDocument();
       expect(actionButton?.textContent).toMatch(/View Messages/i);
 
-      const messagesIndicator = await auditingIndicatorByLabel("Messages");
-      expect(messagesIndicator).toBeInTheDocument();
+      await waitFor(async () => expect(await auditingIndicatorByLabel("Messages")).toBeInTheDocument());
     });
   });
 
