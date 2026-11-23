@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import * as precondition from "../../test/preconditions";
 import { createTestingPinia } from "@pinia/testing";
 import { Transport } from "@/views/throughputreport/transport";
-import { makeDriverForTests, render, screen, userEvent } from "@component-test-utils";
+import { makeDriverForTests, render, screen, userEvent, waitFor } from "@component-test-utils";
 import type { Driver } from "../../test/driver";
 import { disableMonitoring } from "../../test/drivers/vitest/setup";
 import makeRouter from "@/router";
@@ -47,6 +47,14 @@ describe("EndpointsView tests", () => {
     return { debug, driver };
   }
 
+  async function enabledDownloadReportButton() {
+    return await waitFor(() => {
+      const button = screen.getByRole("button", { name: /Download Report/i });
+      expect(button).toBeEnabled();
+      return button;
+    });
+  }
+
   describe("when minimum requirements", () => {
     test("are met", async () => {
       await renderComponent(Transport.AmazonSQS, async (driver) => {
@@ -71,7 +79,7 @@ describe("EndpointsView tests", () => {
       await renderComponent(Transport.AmazonSQS, async (driver) => {
         await driver.setUp(precondition.hasLicensingReportAvailable());
       });
-      expect(screen.getByRole("button", { name: /Download Report/i })).toBeEnabled();
+      expect(await enabledDownloadReportButton()).toBeEnabled();
     });
 
     test("is unavailable", async () => {
@@ -80,8 +88,8 @@ describe("EndpointsView tests", () => {
         await driver.setUp(precondition.hasLicensingReportAvailable({ report_can_be_generated: false, reason: reason }));
       });
 
+      expect(await screen.findByText(reason)).toBeInTheDocument();
       expect(screen.getByRole("button", { name: /Download Report/i })).toBeDisabled();
-      expect(screen.getByText(reason)).toBeInTheDocument();
     });
   });
 
@@ -103,8 +111,8 @@ describe("EndpointsView tests", () => {
 
       const use = userEvent.setup();
 
-      await use.click(screen.getByRole("button", { name: /Download Report/i }));
-      expect(screen.queryAllByText(new RegExp(`Please email '${fileName}' to your Particular account manager.`)).length).toBeGreaterThanOrEqual(1);
+      await use.click(await enabledDownloadReportButton());
+      expect((await screen.findAllByText(new RegExp(`Please email '${fileName}' to your Particular account manager.`))).length).toBeGreaterThanOrEqual(1);
     });
 
     test("and there are warnings, dialog is displayed", async () => {
@@ -115,8 +123,8 @@ describe("EndpointsView tests", () => {
 
       const use = userEvent.setup();
 
-      await use.click(screen.getByRole("button", { name: /Download Report/i }));
-      expect(screen.getByText("Not all endpoints/queues have an Endpoint Type set.")).toBeInTheDocument();
+      await use.click(await enabledDownloadReportButton());
+      expect(await screen.findByText("Not all endpoints/queues have an Endpoint Type set.")).toBeInTheDocument();
     });
   });
 });

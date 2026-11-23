@@ -429,7 +429,7 @@ describe("FEATURE: Configuring queue redirects", () => {
       await submitRedirectDialog(dialog, "modify");
 
       await waitFor(() => expect(isRedirectListed("Sales.Service", "Archive.Service")).toBe(true));
-      expect(isNotificationVisible(/redirect updated successfully/i)).toBe(true);
+      await waitFor(() => expect(isNotificationVisible(/redirect updated successfully/i)).toBe(true));
       expect(bed.retriedQueues).toHaveLength(0);
     });
 

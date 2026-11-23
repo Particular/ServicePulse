@@ -87,7 +87,7 @@ describe("SetupView tests", () => {
       disableMonitoring();
       await renderComponent();
 
-      expect(screen.getByText(/Successfully connected to Audit instance/i)).toBeInTheDocument();
+      expect(await screen.findByText(/Successfully connected to Audit instance/i)).toBeInTheDocument();
       expect(screen.queryByText(/Successfully connected to Monitoring/i)).not.toBeInTheDocument();
     });
 
@@ -117,8 +117,8 @@ describe("SetupView tests", () => {
         );
       });
 
-      expect(screen.getByText(/Successfully connected to Audit/i)).toBeInTheDocument();
-      expect(screen.getByText(/Successfully connected to Monitoring/i)).toBeInTheDocument();
+      expect(await screen.findByText(/Successfully connected to Audit/i)).toBeInTheDocument();
+      expect(await screen.findByText(/Successfully connected to Monitoring/i)).toBeInTheDocument();
     });
   });
 
@@ -127,7 +127,7 @@ describe("SetupView tests", () => {
       disableMonitoring();
       await renderComponent(Transport.AmazonSQS);
 
-      expect(screen.getByText(/Successfully connected to Amazon SQS for usage collection/i)).toBeInTheDocument();
+      expect(await screen.findByText(/Successfully connected to Amazon SQS for usage collection/i)).toBeInTheDocument();
     });
 
     test("display failure", async () => {
@@ -155,7 +155,7 @@ describe("SetupView tests", () => {
         );
       });
 
-      expect(screen.getByText(/The connection to Amazon SQS was not successful/i)).toBeInTheDocument();
+      expect(await screen.findByText(/The connection to Amazon SQS was not successful/i)).toBeInTheDocument();
     });
   });
 });
