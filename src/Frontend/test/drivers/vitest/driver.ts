@@ -6,6 +6,7 @@ import makeRouter from "../../../src/router";
 import { mockEndpoint, mockEndpointDynamic } from "../../utils";
 import { h, type App } from "vue";
 import { mockServer } from "../../mock-server";
+import { settleRequestsAfterTest } from "./requestsInFlight";
 
 function makeDriver() {
   let app: App<Element>;
@@ -81,7 +82,7 @@ const test = testVitest.extend<{ driver: Driver }>({
     driver.disposeApp();
 
     // We need to wait for any pending promises to resolve before resetting handlers and clearing storage
-    await flushPromises();
+    await settleRequestsAfterTest();
 
     mockServer.resetHandlers();
     //Make JSDOM create a fresh document per each test run
