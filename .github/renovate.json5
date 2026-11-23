@@ -1,4 +1,8 @@
 {
+  extends: [
+    'group:monorepos',
+    'group:recommended',
+  ],
   packageRules: [
     {
       matchDatasources: [
@@ -49,6 +53,7 @@
         'vue-router',
         'pinia',
         '@pinia/testing',
+        '@vue/devtools-api',
         'vue-tsc',
         '@vue/tsconfig',
       ],
@@ -122,7 +127,7 @@
       groupName: 'msw',
       groupSlug: 'msw-group',
       prBodyNotes: [
-        '> [!WARNING]\n> **Do not auto-merge or merge via this PR directly.** `msw` runs a post-install script that regenerates `mockServiceWorker.js` with the new version number. After merging, you must manually run `npx msw init <PUBLIC_DIR>` to update this generated file, then commit the result.',
+        '> [!WARNING]\n> **Do not auto-merge or merge via this PR directly.** Installing `msw` does not regenerate `public/mockServiceWorker.js`, which must match the installed version. After merging, you must manually run `npx msw init` in `src/Frontend` to update this generated file, then commit the result.',
       ],
     },
   ],
