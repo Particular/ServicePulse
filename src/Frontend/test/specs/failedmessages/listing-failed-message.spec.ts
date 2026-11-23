@@ -196,7 +196,8 @@ describe("FEATURE: All Failed Messages", () => {
   });
 
   describe("RULE: Row hover functionality", () => {
-    test("EXAMPLE: Hovering the cursor over a failed message row should indicate that it is active, selectable, and show the 'Request Retry' action", async ({ driver }) => {
+    // jsdom does not match :hover, and this row's hover state and Request Retry action are CSS-only: https://github.com/jsdom/jsdom/pull/4223
+    test.skip("EXAMPLE: Hovering the cursor over a failed message row should indicate that it is active, selectable, and show the 'Request Retry' action", async ({ driver }) => {
       const { middle } = failedMessagesFixture();
       await givenFailedMessagesAreShown(driver, asList({ middle }));
 
