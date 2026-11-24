@@ -195,7 +195,7 @@ watch(
 }
 
 .collapsed .brand {
-  width: 32px;
+  width: 42px;
   overflow: hidden;
 }
 
