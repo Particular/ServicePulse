@@ -51,7 +51,7 @@ Those details come from:
 - matching internal platform custom checks when available
 - fallback page-specific messages when no custom-check detail is available
 
-The information table shows the persistence type as reported by the API under the `Storage Type` label. Primary and remote error instances use `storage.storage_type`; audit instances use the raw setting in `persistence.persistence_type`. Remote rows prefer `storage.storage_type` when both fields are present. Responses without a persistence type produce no persistence line. The platform model excludes `persistence_settings`, which can contain connection strings and certificate secrets. The support export includes only the mapped persistence type.
+The information table shows the persistence type as reported by the API under the `Storage type` label. Primary and remote error instances use `storage.storage_type`; audit instances use the raw setting in `persistence.persistence_type`. Remote rows prefer `storage.storage_type` when both fields are present. Responses without a persistence type produce no persistence line. The platform model excludes `persistence_settings`, which can contain connection strings and certificate secrets. The support export includes only the mapped persistence type.
 
 Built-in custom-check `healthDetails` can include both the failure summary and a `Reported at: <timestamp>` line.
 

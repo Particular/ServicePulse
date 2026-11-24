@@ -252,7 +252,7 @@ describe("PlatformHealthView", () => {
     await user.click(screen.getAllByRole("button", { name: /Healthy/i })[0]);
     expect(screen.getByText("API")).toBeInTheDocument();
     expect(screen.getByText("http://localhost:33333/api/")).toBeInTheDocument();
-    expect(screen.getByText("Storage Type")).toBeInTheDocument();
+    expect(screen.getByText("Storage type")).toBeInTheDocument();
     expect(screen.getByText("SQLServer")).toBeInTheDocument();
   });
 

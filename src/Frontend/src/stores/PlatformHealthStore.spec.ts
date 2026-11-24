@@ -50,12 +50,12 @@ describe("PlatformHealthStore", () => {
     expect(primaryRow.infoDetails).toContain("Error log queue: error.log");
     expect(primaryRow.infoDetails).toContain("Forward error messages: Yes");
     expect(primaryRow.infoDetails).toContain("Error retention: 14 days");
-    expect(primaryRow.infoDetails).toContain("Storage Type: SQLServer");
+    expect(primaryRow.infoDetails).toContain("Storage type: SQLServer");
 
     const auditRow = store.rows[1];
     expect(auditRow.infoDetails).toContain("API: http://Particular.ServiceControl.Audit/api/");
     expect(auditRow.infoDetails).toContain("Audit retention: 7 days");
-    expect(auditRow.infoDetails).toContain("Storage Type: PostgreSQL");
+    expect(auditRow.infoDetails).toContain("Storage type: PostgreSQL");
     expect(auditRow.infoDetails).not.toContain(expect.stringContaining("Transport"));
   });
 
