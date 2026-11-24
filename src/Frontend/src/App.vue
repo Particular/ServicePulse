@@ -75,6 +75,9 @@ watch(
   flex-direction: column;
   flex: 1;
   min-width: 0;
+  /* See "Stacking" in docs/frontend/navigation-shell.md. */
+  isolation: isolate;
+  view-transition-name: main-content;
 }
 
 @media (max-width: 767px) {

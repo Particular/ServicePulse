@@ -18,7 +18,7 @@ import PlatformVersionInfo from "@/components/PlatformVersionInfo.vue";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import UserProfileMenuItem from "@/components/UserProfileMenuItem.vue";
 import FAIcon from "@/components/FAIcon.vue";
-import { faAnglesLeft, faAnglesRight, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faAnglesLeft, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useAuthStore } from "@/stores/AuthStore";
 import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
 import { useSideBarCollapsed } from "@/composables/useSideBarCollapsed";
@@ -58,13 +58,31 @@ const menuItems = computed(() => {
 const isMedium = useMediaQuery("(min-width: 768px) and (max-width: 1279px)");
 const overlayOpen = ref(false);
 const railOnly = computed(() => (isMedium.value ? !overlayOpen.value : collapsed.value));
+const prefersReducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+
+function morphSideBar(update: () => void) {
+  if (prefersReducedMotion.value || !("startViewTransition" in document)) {
+    update();
+    return;
+  }
+  document.startViewTransition(async () => {
+    update();
+    await nextTick();
+  });
+}
 
 function toggleRail() {
-  if (isMedium.value) {
-    overlayOpen.value = !overlayOpen.value;
-  } else {
-    toggleCollapsed();
-  }
+  morphSideBar(() => {
+    if (isMedium.value) {
+      overlayOpen.value = !overlayOpen.value;
+    } else {
+      toggleCollapsed();
+    }
+  });
+}
+
+function closeOverlay() {
+  if (overlayOpen.value) morphSideBar(() => (overlayOpen.value = false));
 }
 
 // The collapsed rail shows icons only, so each item names itself on hover and focus.
@@ -86,13 +104,13 @@ async function openDrawer() {
 }
 
 function closeOverlays() {
-  overlayOpen.value = false;
+  closeOverlay();
   if (!drawerOpen.value) return;
   drawerOpen.value = false;
   drawerButton.value?.focus();
 }
 
-onClickOutside(sideBar, () => (overlayOpen.value = false));
+onClickOutside(sideBar, closeOverlay);
 
 const route = useRoute();
 watch(
@@ -124,7 +142,7 @@ watch(
         <img alt="ServicePulse" src="@/assets/logo.svg" />
       </RouterLink>
       <button type="button" class="collapse-button" :aria-expanded="!railOnly" aria-controls="side-bar" v-tippy="railOnly ? 'Expand navigation' : 'Collapse navigation'" @click="toggleRail">
-        <FAIcon :icon="railOnly ? faAnglesRight : faAnglesLeft" />
+        <FAIcon :icon="faAnglesLeft" />
         <span class="visually-hidden">{{ railOnly ? "Expand navigation" : "Collapse navigation" }}</span>
       </button>
       <button type="button" class="drawer-close" aria-controls="side-bar" @click="closeOverlays">
@@ -166,7 +184,14 @@ watch(
   top: 0;
   background-color: var(--sp-chrome);
   color: var(--sp-chrome-ink);
-  z-index: 1000;
+  view-transition-name: side-bar;
+}
+
+/* One layer above the isolated content area. Within it, the drawer covers the backdrop and the backdrop covers the top bar by DOM order. */
+.mobile-bar,
+.drawer-backdrop,
+.side-bar {
+  z-index: 1;
 }
 
 .side-bar.collapsed {
@@ -313,6 +338,42 @@ nav {
   background-color: var(--sp-chrome-hover);
 }
 
+.collapsed .collapse-button :deep(svg) {
+  rotate: 180deg;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .collapse-button :deep(svg) {
+    transition: rotate var(--sp-motion-duration) var(--sp-motion-ease);
+  }
+}
+
+/* Parts that change place between the rail and the full side bar morph on their own. See docs/frontend/navigation-shell.md. */
+.side-bar-top .brand {
+  view-transition-name: side-bar-logo;
+}
+
+.collapse-button {
+  view-transition-name: side-bar-toggle;
+}
+
+nav {
+  view-transition-name: side-bar-nav;
+}
+
+.side-bar-bottom {
+  view-transition-name: side-bar-bottom;
+}
+
+.side-bar-bottom :deep(.update-status) {
+  view-transition-name: side-bar-update-status;
+}
+
+.nav-items :deep(.badge),
+.nav-items :deep(.fa-triangle-exclamation) {
+  view-transition-name: match-element;
+}
+
 .mobile-bar,
 .drawer-close,
 .drawer-backdrop,
@@ -347,7 +408,6 @@ nav {
     position: sticky;
     top: 0;
     background-color: var(--sp-chrome);
-    z-index: 999;
   }
 
   .mobile-bar .brand img {
@@ -373,18 +433,24 @@ nav {
     width: min(var(--sp-side-bar-width), 85vw);
     transform: translateX(-100%);
     visibility: hidden;
-    transition:
-      transform 0.2s ease,
-      visibility 0.2s;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition:
+        transform var(--sp-motion-duration) var(--sp-motion-ease),
+        visibility var(--sp-motion-duration);
+    }
   }
 
-  /* Visible at once on open, so focus can move into the drawer before the slide finishes. */
   .side-bar.open {
     transform: none;
     visibility: visible;
-    transition:
-      transform 0.2s ease,
-      visibility 0s;
+
+    /* Visible at once on open, so focus can move into the drawer before the slide finishes. */
+    @media (prefers-reduced-motion: no-preference) {
+      transition:
+        transform var(--sp-motion-duration) var(--sp-motion-ease),
+        visibility 0s;
+    }
   }
 
   /* The drawer always shows labels; collapsing applies to wider screens only. */
@@ -428,13 +494,62 @@ nav {
     position: fixed;
     inset: 0;
     background-color: rgb(0 0 0 / 50%);
-    z-index: 999;
   }
 }
+</style>
 
-@media (prefers-reduced-motion: reduce) {
-  .side-bar {
-    transition: none !important;
-  }
+<style>
+::view-transition-group(*) {
+  animation-duration: var(--sp-motion-duration);
+  animation-timing-function: var(--sp-motion-ease);
+}
+
+::view-transition-group(side-bar),
+::view-transition-group(main-content),
+::view-transition-group(side-bar-logo),
+::view-transition-group(side-bar-nav),
+::view-transition-group(side-bar-bottom) {
+  overflow: clip;
+}
+
+::view-transition-group(side-bar) {
+  background-color: var(--sp-chrome);
+}
+
+/* The panel, the content, and the toggle show only their new state. Fading between the content's two centred layouts doubles the text, and the toggle's icon rotates live in its new state. */
+::view-transition-old(side-bar),
+::view-transition-old(main-content),
+::view-transition-old(side-bar-toggle) {
+  display: none;
+}
+
+::view-transition-new(side-bar),
+::view-transition-new(main-content),
+::view-transition-new(side-bar-toggle) {
+  animation: none;
+}
+
+/* These snapshots keep their own size, so the moving edge reveals or clips them instead of stretching them. */
+::view-transition-new(side-bar),
+::view-transition-new(main-content),
+::view-transition-old(side-bar-nav),
+::view-transition-new(side-bar-nav) {
+  height: 100%;
+  object-fit: none;
+  object-position: left top;
+}
+
+::view-transition-old(side-bar-bottom),
+::view-transition-new(side-bar-bottom) {
+  height: 100%;
+  object-fit: none;
+  object-position: left bottom;
+}
+
+/* Both logo snapshots scale with the group's height, so the mark keeps its proportions while the wordmark is clipped. */
+::view-transition-old(side-bar-logo),
+::view-transition-new(side-bar-logo) {
+  width: auto;
+  height: 100%;
 }
 </style>

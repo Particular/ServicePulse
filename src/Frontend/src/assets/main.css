@@ -23,6 +23,8 @@
   --sp-side-bar-width: 224px;
   --sp-side-bar-collapsed-width: 64px;
   --sp-radius-sm: 4px;
+  --sp-motion-duration: 300ms;
+  --sp-motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
 
   --bs-btn-hover-color: #333;
   --bs-btn-hover-bg: #e6e6e6;

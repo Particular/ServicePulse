@@ -132,6 +132,10 @@ Desktop is the main target ([product](PRODUCT.md)), and desktop screens are wide
 
 Flat. Regions are separated by colour (dark chrome against a light canvas) and by 1px dividers. The one shadow is on the side bar while it overlays content on medium screens (`box-shadow: 4px 0 16px rgb(0 0 0 / 30%)`), so it reads as above the page.
 
+## Motion
+
+Only the side bar moves in the shell. When it resizes between the rail and full width, each part that changes place, such as the logo, the collapse button, the items, and the count badges, travels to its new position. On phones the side bar slides in as a drawer. Both take 300ms on a standard ease-in-out curve, set by `--sp-motion-duration` and `--sp-motion-ease` in `main.css`, and new shell animations use the same two tokens. When the user prefers reduced motion, the side bar changes at once.
+
 ## Shapes
 
 Square side bar items. Small 4px rounding on icon buttons in the side bar, such as the collapse button and the update status icon. Count badges are pills.
@@ -170,7 +174,7 @@ Carries license information only: for a valid trial license, a trial bar reading
 
 - **Do** put a count or warning next to the navigation item it belongs to.
 - **Do** keep a text label on every navigation item, also for screen readers when it is visually hidden.
-- **Do** use the `--sp-*` tokens in `main.css` for colours, sizes, and rounding in new shell styles.
+- **Do** use the `--sp-*` tokens in `main.css` for colours, sizes, rounding, and motion in new shell styles.
 - **Do** name components by role, such as "side bar item" or "count badge", not by a library's class names.
 - **Do** build views from the shared components in `src/Frontend/src/components`, as the [UI guideline](guidelines/ui.md) requires.
 

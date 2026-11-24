@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, useId, useTemplateRef, watch } from "vue";
 import CodeEditor from "@/components/CodeEditor.vue";
 import DiffMaximizeIcon from "@/assets/diff-maximize.svg";
 import DiffCloseIcon from "@/assets/diff-close.svg";
@@ -28,10 +28,13 @@ withDefaults(
 // Component state for maximize functionality
 const showMaximizeModal = ref(false);
 const showMaximizeButton = ref(false);
+const maximizeDialog = useTemplateRef<HTMLDialogElement>("maximizeDialog");
+const maximizeTitleId = useId();
 
-// Handle maximize functionality
-const toggleMaximizeModal = () => {
-  showMaximizeModal.value = !showMaximizeModal.value;
+watch(maximizeDialog, (dialog) => dialog?.showModal());
+
+const openMaximizeModal = () => {
+  showMaximizeModal.value = true;
 };
 
 // Handle mouse enter/leave for showing maximize button
@@ -42,23 +45,6 @@ const onEditorMouseEnter = () => {
 const onEditorMouseLeave = () => {
   showMaximizeButton.value = false;
 };
-
-// Handle ESC key to close modal
-const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === "Escape" && showMaximizeModal.value) {
-    showMaximizeModal.value = false;
-  }
-};
-
-// Setup keyboard events for maximize modal
-onMounted(() => {
-  window.addEventListener("keydown", handleKeyDown);
-});
-
-// Clean up event listeners when component is destroyed
-onBeforeUnmount(() => {
-  window.removeEventListener("keydown", handleKeyDown);
-});
 </script>
 
 <template>
@@ -72,7 +58,7 @@ onBeforeUnmount(() => {
         <template #toolbarRight>
           <slot name="toolbarRight">
             <!-- Maximize Button (shown on hover) -->
-            <button v-if="showMaximizeButton" @click="toggleMaximizeModal" class="maximize-button" v-tippy="`Maximize view`">
+            <button v-if="showMaximizeButton" @click="openMaximizeModal" class="maximize-button" v-tippy="`Maximize view`">
               <img :src="DiffMaximizeIcon" alt="Maximize" width="14" height="14" />
             </button>
           </slot>
@@ -81,19 +67,17 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Maximize modal for CodeEditor -->
-    <div v-if="showMaximizeModal" class="maximize-modal">
-      <div class="maximize-modal-content">
-        <div class="maximize-modal-toolbar">
-          <span class="maximize-modal-title">{{ modalTitle }}</span>
-          <button @click="toggleMaximizeModal" class="maximize-modal-close" v-tippy="`Close`">
-            <img :src="DiffCloseIcon" alt="Close" width="16" height="16" />
-          </button>
-        </div>
-        <div class="maximize-modal-body">
-          <CodeEditor class="maximazable-code-editor--pop-up-instance" v-model="modelValue" :language="language" :read-only="readOnly" :show-copy-to-clipboard="true" :show-gutter="true" :aria-label="ariaLabel" :extensions="[]" />
-        </div>
+    <dialog v-if="showMaximizeModal" ref="maximizeDialog" class="maximize-modal" :aria-labelledby="maximizeTitleId" @close="showMaximizeModal = false">
+      <div class="maximize-modal-toolbar">
+        <span :id="maximizeTitleId" class="maximize-modal-title" tabindex="-1" autofocus>{{ modalTitle }}</span>
+        <button @click="maximizeDialog?.close()" class="maximize-modal-close" v-tippy="`Close`">
+          <img :src="DiffCloseIcon" alt="Close" width="16" height="16" />
+        </button>
       </div>
-    </div>
+      <div class="maximize-modal-body">
+        <CodeEditor class="maximazable-code-editor--pop-up-instance" v-model="modelValue" :language="language" :read-only="readOnly" :show-copy-to-clipboard="true" :show-gutter="true" :aria-label="ariaLabel" :extensions="[]" />
+      </div>
+    </dialog>
   </div>
 </template>
 
@@ -122,27 +106,26 @@ onBeforeUnmount(() => {
 }
 
 .maximize-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.maximize-modal-content {
-  background-color: white;
   width: 95vw;
+  max-width: none;
   height: 90vh;
+  max-height: none;
+  padding: 0;
+  border: none;
   border-radius: 4px;
   overflow: hidden;
+  color: inherit;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.maximize-modal[open] {
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.maximize-modal::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .maximize-modal-toolbar {

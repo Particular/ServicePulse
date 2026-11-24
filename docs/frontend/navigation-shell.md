@@ -12,6 +12,8 @@ The shell is the part of ServicePulse that every page shares: the navigation sid
 
 On wide screens the browser remembers the collapsed choice in `localStorage` under `servicepulse.sideBarCollapsed` (`useSideBarCollapsed.ts`). On medium screens the overlay closes on navigation, Escape, or a click outside it, and the stored choice does not apply.
 
+Expanding and collapsing the side bar on medium and wide screens runs as a view transition (`morphSideBar` in `NavigationSideBar.vue`). The side bar and the content area resize and slide together. The logo, the collapse button, the item list, the bottom section, the update status icon, and each count badge and warning mark have their own view transition name, so each one moves from its old box to its new one. The moving edge clips the labels and the wordmark, and the collapse button's chevron rotates. The phone drawer slides with a CSS transition. Closing the overlay by navigating skips the animation, as does every change when the user prefers reduced motion.
+
 ## Content width
 
 Views size themselves with viewport media queries and expect at least 930px of content. `#main-content` keeps a 930px minimum width for its view, so narrower content scrolls horizontally instead of breaking the view layout. This is why the side bar stays a rail between 768px and 1279px: an expanded side bar there takes 224px from views that have no room for it. Phones get horizontal scrolling for the same reason; making views work below 930px is separate work.
@@ -35,6 +37,12 @@ The hosting mode is "Integrated" when `window.defaultConfig.isIntegrated` is set
 ## Footer
 
 `PageFooter.vue` renders only for a valid trial license and states that it is for non-production use. It is hidden for the MassTransit connector and when the license is unavailable. It sits below the content area and does not cover content.
+
+## Stacking
+
+`.app-main` in `App.vue` sets `isolation: isolate`, so the content area is its own stacking context. A z-index inside a view orders elements only within the content area and cannot lift them above the side bar. The top bar, the drawer backdrop, and the side bar each set `z-index: 1` to sit above the content area. Among those three, DOM order puts the drawer above the backdrop and the backdrop above the top bar.
+
+Content that must cover the whole page, including the side bar, must open as a modal `<dialog>` with `showModal()`. The browser renders a modal dialog in the top layer, above every stacking context, so it needs no z-index. `ModalDialog.vue` and the maximized views in `MaximizableCodeEditor.vue` and `DiffViewer.vue` open this way. An element attached to `body` renders below a modal dialog, so `mount.ts` attaches tooltips to the nearest `<dialog>`, and to `body` only outside one.
 
 ## Checking the shell locally
 
