@@ -115,6 +115,7 @@ function mapPrimary(primaryRoot: PrimaryRootResult | null, configuration: Config
     forwardErrorMessages: configuration?.transport?.forward_error_messages,
     errorRetentionPeriod: configuration?.data_retention?.error_retention_period,
     storageType: configuration?.storage?.storage_type,
+    persistenceType: configuration?.storage?.storage_type,
   };
 }
 
@@ -133,6 +134,7 @@ function mapRemotes(remotes: RemoteInstance[]): PlatformInstance[] {
       apiUrl: remote.api_uri,
       errorRetentionPeriod: remote.configuration?.data_retention?.error_retention_period,
       auditRetentionPeriod: remote.configuration?.data_retention?.audit_retention_period,
+      persistenceType: remote.configuration?.storage?.storage_type ?? remote.configuration?.persistence?.persistence_type,
     };
   });
 }

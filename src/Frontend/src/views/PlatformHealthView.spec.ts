@@ -221,6 +221,7 @@ describe("PlatformHealthView", () => {
         version: "6.19.3",
         health: "healthy",
         apiUrl: "http://localhost:33333/api/",
+        persistenceType: "SQLServer",
       },
       remotes: [
         {
@@ -251,6 +252,8 @@ describe("PlatformHealthView", () => {
     await user.click(screen.getAllByRole("button", { name: /Healthy/i })[0]);
     expect(screen.getByText("API")).toBeInTheDocument();
     expect(screen.getByText("http://localhost:33333/api/")).toBeInTheDocument();
+    expect(screen.getByText("Storage type")).toBeInTheDocument();
+    expect(screen.getByText("SQLServer")).toBeInTheDocument();
   });
 
   test("renders monitoring when present alongside remote error instances", () => {

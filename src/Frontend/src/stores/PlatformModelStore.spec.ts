@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
 import { usePlatformModelStore } from "@/stores/PlatformModelStore";
+import { usePlatformHealthStore } from "@/stores/PlatformHealthStore";
+import { useCustomChecksStore } from "@/stores/CustomChecksStore";
 import { RemoteInstanceType } from "@/resources/RemoteInstance";
 
 const getRoot = vi.fn();
@@ -202,6 +204,74 @@ describe("PlatformModelStore", () => {
     await store.refresh();
 
     expect(store.primary?.storageType).toBeUndefined();
+  });
+
+  test("maps the persistence type from the primary and from error and audit remotes", async () => {
+    getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl", health: "healthy", version: "6.19.3" }));
+    getConfiguration.mockResolvedValue({ json: () => Promise.resolve({ storage: { storage_type: "SQLServer" } }) } as never);
+    getRemoteInstances.mockResolvedValue([
+      { api_uri: "http://localhost:33334/api/", version: "6.19.3", status: "online", configuration: { data_retention: { error_retention_period: "14.00:00:00" }, storage: { storage_type: "RavenDB" } } },
+      { api_uri: "http://localhost:33335/api/", version: "6.19.3", status: "online", configuration: { data_retention: { audit_retention_period: "7.00:00:00" }, persistence: { persistence_type: "PostgreSQL" } } },
+    ]);
+    getMonitoringRoot.mockResolvedValue(null);
+
+    const store = usePlatformModelStore();
+    await store.refresh();
+
+    expect(store.primary?.persistenceType).toBe("SQLServer");
+    expect(store.remotes[0].persistenceType).toBe("RavenDB");
+    expect(store.remotes[1].persistenceType).toBe("PostgreSQL");
+  });
+
+  test("prefers storage.storage_type over persistence.persistence_type on a remote", async () => {
+    getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl", health: "healthy", version: "6.19.3" }));
+    getRemoteInstances.mockResolvedValue([{ api_uri: "http://localhost:33334/api/", version: "6.19.3", status: "online", configuration: { storage: { storage_type: "RavenDB" }, persistence: { persistence_type: "raw" } } }]);
+    getMonitoringRoot.mockResolvedValue(null);
+
+    const store = usePlatformModelStore();
+    await store.refresh();
+
+    expect(store.remotes[0].persistenceType).toBe("RavenDB");
+  });
+
+  test("leaves the persistence type undefined when responses omit it and clears it on refresh", async () => {
+    getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl", health: "healthy", version: "6.19.3" }));
+    getConfiguration.mockResolvedValueOnce({ json: () => Promise.resolve({ storage: { storage_type: "RavenDB" } }) } as never);
+    getRemoteInstances.mockResolvedValueOnce([{ api_uri: "http://localhost:33334/api/", version: "6.19.3", status: "online", configuration: { persistence: { persistence_type: "PostgreSQL" } } }]);
+    getMonitoringRoot.mockResolvedValue(null);
+
+    const store = usePlatformModelStore();
+    await store.refresh();
+    expect(store.primary?.persistenceType).toBe("RavenDB");
+    expect(store.remotes[0].persistenceType).toBe("PostgreSQL");
+
+    getConfiguration.mockResolvedValueOnce({ json: () => Promise.resolve({ host: {} }) } as never);
+    getRemoteInstances.mockResolvedValueOnce([{ api_uri: "http://localhost:33334/api/", version: "6.19.3", status: "online", configuration: {} }]);
+    await store.refresh();
+
+    expect(store.primary?.persistenceType).toBeUndefined();
+    expect(store.remotes[0].persistenceType).toBeUndefined();
+  });
+
+  test("includes the persistence type but not persistence_settings in the support JSON", async () => {
+    getRoot.mockResolvedValue(rootResponse({ name: "Particular.ServiceControl", health: "healthy", version: "6.19.3" }));
+    getConfiguration.mockResolvedValue({
+      json: () =>
+        Promise.resolve({
+          storage: { storage_type: "SQLServer" },
+          persistence_settings: { connection_string: "SENTINEL_CONNECTION_STRING", client_certificate_password: "SENTINEL_CERT_PASSWORD", client_certificate_base64: "SENTINEL_CERT_BASE64" },
+        }),
+    } as never);
+    getRemoteInstances.mockResolvedValue([]);
+    getMonitoringRoot.mockResolvedValue(null);
+    useCustomChecksStore().refresh = vi.fn(() => Promise.resolve());
+
+    const healthStore = usePlatformHealthStore();
+    await healthStore.refresh();
+
+    expect(healthStore.supportDownloadJson).toContain("SQLServer");
+    expect(healthStore.supportDownloadJson).not.toContain("SENTINEL");
+    expect(healthStore.supportDownloadJson).not.toContain("persistence_settings");
   });
 
   test("skips remote discovery when the primary root is unavailable", async () => {
