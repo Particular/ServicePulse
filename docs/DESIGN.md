@@ -66,7 +66,7 @@ components:
 
 # Design System: ServicePulse
 
-This document describes the visual rules of ServicePulse. The values above are mirrored as CSS custom properties in `src/Frontend/src/assets/tokens.css`, for example `colors.chrome` as `--sp-chrome`; `colors.brand` is the existing `--sp-blue` in `main.css`. Change a value in both places in the same pull request. [Navigation shell](frontend/navigation-shell.md) describes how the shell behaves at each width.
+This document describes the visual rules of ServicePulse. The values above are mirrored as `--sp-*` CSS custom properties on `:root` in `src/Frontend/src/assets/main.css`, for example `colors.chrome` as `--sp-chrome` and `colors.brand` as `--sp-blue`. Change a value in both places in the same pull request. [Navigation shell](frontend/navigation-shell.md) describes how the shell behaves at each width.
 
 ## Overview
 
@@ -170,7 +170,7 @@ Carries license information only: for a valid trial license, a trial bar reading
 
 - **Do** put a count or warning next to the navigation item it belongs to.
 - **Do** keep a text label on every navigation item, also for screen readers when it is visually hidden.
-- **Do** use the tokens in `tokens.css` for colours, sizes, and rounding in new shell styles.
+- **Do** use the `--sp-*` tokens in `main.css` for colours, sizes, and rounding in new shell styles.
 - **Do** name components by role, such as "side bar item" or "count badge", not by a library's class names.
 - **Do** build views from the shared components in `src/Frontend/src/components`, as the [UI guideline](guidelines/ui.md) requires.
 
