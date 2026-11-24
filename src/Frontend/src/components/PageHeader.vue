@@ -12,6 +12,7 @@ import DashboardMenuItem from "@/components/dashboard/DashboardMenuItem.vue";
 import FeedbackButton from "@/components/FeedbackButton.vue";
 import ThroughputMenuItem from "@/views/throughputreport/ThroughputMenuItem.vue";
 import AuditMenuItem from "./audit/AuditMenuItem.vue";
+import TimeoutsMenuItem from "@/components/timeouts/TimeoutsMenuItem.vue";
 import PlatformHealthMenuItem from "@/components/platformhealth/PlatformHealthMenuItem.vue";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import UserProfileMenuItem from "@/components/UserProfileMenuItem.vue";
@@ -39,6 +40,7 @@ const menuItems = computed(() => {
     ...(isMonitoringEnabled && canCall(ApiRoutes.viewMonitoredEndpoints) ? [MonitoringMenuItem] : []),
     ...(canCall(ApiRoutes.viewAuditMessages) ? [AuditMenuItem] : []),
     ...(canCall(ApiRoutes.viewFailedMessages) ? [FailedMessagesMenuItem] : []),
+    ...(canCall(ApiRoutes.viewTimeouts) ? [TimeoutsMenuItem] : []),
     ...(canCall(ApiRoutes.viewCustomChecks) ? [CustomChecksMenuItem] : []),
     ...(canCall(ApiRoutes.viewEventLog) ? [EventsMenuItem] : []),
     PlatformHealthMenuItem,
