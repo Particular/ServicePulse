@@ -21,14 +21,14 @@ const updatesAvailable = computed(() => platformHealthStore.rows.some((row) => r
 
 <template>
   <div class="version-info" :class="{ collapsed }">
-    <span class="version-text"><span class="sr-only">ServicePulse </span>v{{ environment.sp_version }} · {{ hostingMode }}</span>
+    <span class="version-text"><span class="visually-hidden">ServicePulse </span>v{{ environment.sp_version }} · {{ hostingMode }}</span>
     <RouterLink v-if="updatesAvailable" class="update-status" :to="routeLinks.platformHealth" v-tippy="'Updates available'">
       <FAIcon class="updates-icon" :icon="faArrowTurnUp" />
-      <span class="sr-only">Updates available</span>
+      <span class="visually-hidden">Updates available</span>
     </RouterLink>
     <span v-else class="update-status" v-tippy="'Platform up to date'">
       <FAIcon class="up-to-date-icon" :icon="faCircleCheck" />
-      <span class="sr-only">Platform up to date</span>
+      <span class="visually-hidden">Platform up to date</span>
     </span>
   </div>
 </template>

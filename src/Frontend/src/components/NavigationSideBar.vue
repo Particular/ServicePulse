@@ -108,7 +108,7 @@ watch(
   <header class="mobile-bar">
     <button ref="drawerButton" type="button" class="drawer-button" aria-controls="side-bar" :aria-expanded="drawerOpen" @click="openDrawer">
       <FAIcon :icon="faBars" />
-      <span class="sr-only">Open navigation</span>
+      <span class="visually-hidden">Open navigation</span>
     </button>
     <RouterLink class="brand" :to="routeLinks.dashboard">
       <img alt="ServicePulse" src="@/assets/logo.svg" />
@@ -125,11 +125,11 @@ watch(
       </RouterLink>
       <button type="button" class="collapse-button" :aria-expanded="!railOnly" aria-controls="side-bar" v-tippy="railOnly ? 'Expand navigation' : 'Collapse navigation'" @click="toggleRail">
         <FAIcon :icon="railOnly ? faAnglesRight : faAnglesLeft" />
-        <span class="sr-only">{{ railOnly ? "Expand navigation" : "Collapse navigation" }}</span>
+        <span class="visually-hidden">{{ railOnly ? "Expand navigation" : "Collapse navigation" }}</span>
       </button>
       <button type="button" class="drawer-close" aria-controls="side-bar" @click="closeOverlays">
         <FAIcon :icon="faXmark" />
-        <span class="sr-only">Close navigation</span>
+        <span class="visually-hidden">Close navigation</span>
       </button>
     </div>
 
