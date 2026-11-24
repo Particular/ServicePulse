@@ -5,7 +5,7 @@ import * as precondition from "../../../../test/preconditions";
 import { minimumSCVersionForThroughput } from "@/views/throughputreport/isThroughputSupported";
 import Toast from "vue-toastification";
 import { disableMonitoring } from "../../../../test/drivers/vitest/setup";
-import { flushPromises } from "@vue/test-utils";
+import { requestsSettled } from "../../../../test/drivers/vitest/requestsInFlight";
 import { createTestingPinia } from "@pinia/testing";
 import { setActivePinia } from "pinia";
 
@@ -29,7 +29,7 @@ describe("MaskView tests", () => {
     setActivePinia(createTestingPinia({ stubActions: false }));
 
     const { debug } = render(MasksView, { global: { plugins: [Toast] } });
-    await flushPromises();
+    await requestsSettled();
 
     return { debug, driver };
   }
@@ -68,6 +68,6 @@ describe("MaskView tests", () => {
     driver.mockEndpoint(`${window.defaultConfig.service_control_url}licensing/settings/masks/update`, { body: undefined, method: "post" });
     await use.click(screen.getByRole("button", { name: /Save/i }));
 
-    expect(screen.queryAllByText(/Masks Saved/i).length).toBeGreaterThanOrEqual(1);
+    expect((await screen.findAllByText(/Masks Saved/i)).length).toBeGreaterThanOrEqual(1);
   });
 });

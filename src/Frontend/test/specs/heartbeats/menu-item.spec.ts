@@ -32,7 +32,7 @@ describe("FEATURE: Menu item", () => {
 
       await driver.goTo("dashboard");
 
-      vi.advanceTimersByTime(5000);
+      await vi.advanceTimersByTimeAsync(5000);
 
       await waitFor(async () => {
         const heartbeatMenuItem = await queryHeartbeatMenuItem();
@@ -42,7 +42,7 @@ describe("FEATURE: Menu item", () => {
       });
 
       await driver.setUp(precondition.hasAHealthyEndpointWithNamePrefix("ResurrectingEndpoint"));
-      vi.advanceTimersByTime(5000);
+      await vi.advanceTimersByTimeAsync(5000);
 
       await waitFor(async () => {
         const heartbeatMenuItem = await queryHeartbeatMenuItem();

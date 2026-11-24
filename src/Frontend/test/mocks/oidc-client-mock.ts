@@ -27,6 +27,11 @@ export interface MockUser {
   };
 }
 
+export interface OidcClientModuleMock {
+  UserManager: new () => unknown;
+  WebStorageStateStore: new () => unknown;
+}
+
 export const defaultMockUser: MockUser = {
   access_token: "mock-access-token-for-testing",
   expired: false,
@@ -43,7 +48,7 @@ export const defaultMockUser: MockUser = {
  *
  * @param user - The mock user to return from getUser(), or null for unauthenticated
  */
-export function createOidcMock(user: MockUser | null = defaultMockUser) {
+export function createOidcMock(user: MockUser | null = defaultMockUser): OidcClientModuleMock {
   return {
     UserManager: class MockUserManager {
       getUser = vi.fn().mockResolvedValue(user);
@@ -75,7 +80,7 @@ export function createOidcMockUnauthenticated() {
  * Creates a mock where signinSilent fails (simulates IdP session expired).
  * Initial authentication works, but token renewal fails.
  */
-export function createOidcMockWithFailingSilentRenew(user: MockUser = defaultMockUser) {
+export function createOidcMockWithFailingSilentRenew(user: MockUser = defaultMockUser): OidcClientModuleMock {
   return {
     UserManager: class MockUserManager {
       getUser = vi.fn().mockResolvedValue(user);
@@ -101,7 +106,7 @@ export function createOidcMockWithFailingSilentRenew(user: MockUser = defaultMoc
  * Creates a mock where signinCallback fails (simulates invalid redirect URI).
  * This happens when the identity provider rejects the OAuth callback.
  */
-export function createOidcMockWithInvalidRedirectUri() {
+export function createOidcMockWithInvalidRedirectUri(): OidcClientModuleMock {
   return {
     UserManager: class MockUserManager {
       getUser = vi.fn().mockResolvedValue(null);

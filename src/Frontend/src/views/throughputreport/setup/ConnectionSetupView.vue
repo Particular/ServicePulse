@@ -41,8 +41,7 @@ const needsConfiguration = computed(() => {
       <div class="col-12">
         <h4>Broker Settings</h4>
         <p class="nogap">
-          Settings to ensure that usage data is being collected from <a :href="store.transportDocsLinkForInstructions()">{{ store.transportNameForInstructions() }}</a
-          >.<br />
+          Settings to ensure that usage data is being collected from <a :href="store.transportDocsLinkForInstructions()">{{ store.transportNameForInstructions() }}</a>.<br />
           Some settings can be automatically configured based on the current transport configuration, so if you have a <FAIcon :icon="faCheck" class="text-success" /> above it means that ServiceControl has successfully connected to
           {{ store.transportNameForInstructions() }}.
         </p>

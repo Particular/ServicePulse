@@ -52,7 +52,7 @@ export const hasFailedMessageGroups =
     const table = [...groups];
     const bed: FailedMessageGroupsTestBed = { groups: table, requestedClassifiers: [], retriedGroupIds: [], deletedGroupIds: [], removedNoteGroupIds: [] };
 
-    driver.mockEndpointDynamic(`${serviceControlUrl}recoverability/groups{/:classifier}?`, "get", (_url, params) => {
+    driver.mockEndpointDynamic(`${serviceControlUrl}recoverability/groups/:classifier?`, "get", (_url, params) => {
       bed.requestedClassifiers.push(params.classifier ? decodeURIComponent(String(params.classifier)) : "");
       return Promise.resolve({ body: table.map((group) => ({ ...group })) });
     });

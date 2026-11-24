@@ -67,10 +67,10 @@ export const serviceControlWithMonitoring = async ({ driver }: SetupFactoryOptio
   //http://localhost:33333/api/edit/config default handler
   await driver.setUp(precondition.recoverabilityEditConfigDefaultHandler);
 
-  //http://localhost:33333/api/errors/groups{/:classifier}? default handler
+  //http://localhost:33333/api/errors/groups/:classifier? default handler
   await driver.setUp(precondition.archivedGroupsWithClassifierDefaulthandler);
 
-  //http://localhost:33333/api/recoverability/groups{/:classifier} default handler
+  //http://localhost:33333/api/recoverability/groups/:classifier? default handler
   await driver.setUp(precondition.recoverabilityGroupsWithClassifierDefaulthandler);
 
   //Default handler for /api/licensing/report/available

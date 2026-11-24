@@ -4,6 +4,7 @@ import * as precondition from "../../preconditions";
 import { customChecksListElement, customChecksDismissButtonList, customChecksFailedRowsList } from "./questions/failedCustomChecks";
 import { waitFor } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
+import { requestsSettled } from "../../drivers/vitest/requestsInFlight";
 
 describe("FEATURE: Dismiss custom checks", () => {
   describe("RULE: Dismiss button should be visible", () => {
@@ -41,15 +42,15 @@ describe("FEATURE: Dismiss custom checks", () => {
         expect(await customChecksFailedRowsList()).toHaveLength(failingCustomCheckCount); //count of failed checks matches failing count set
       });
 
-      let dismissButtonList = await customChecksDismissButtonList();
+      const dismissButtonList = await customChecksDismissButtonList();
       expect(dismissButtonList).toHaveLength(failingCustomCheckCount); //count of dismiss button matches the failed custom check count
+
+      await requestsSettled();
 
       //click the dismiss button
       await userEvent.click(dismissButtonList[0]);
 
-      //get the new  dismiss button list
-      dismissButtonList = await customChecksDismissButtonList();
-      expect(dismissButtonList).toHaveLength(failingCustomCheckCount - 1); //count of dismiss button is decreased by 1
+      await waitFor(async () => expect(await customChecksDismissButtonList()).toHaveLength(failingCustomCheckCount - 1)); //count of dismiss button is decreased by 1
     });
   });
 });

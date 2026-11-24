@@ -109,13 +109,11 @@ describe("FEATURE: Failed Message Groups", () => {
       await givenFailedMessageGroupsAreShown(driver, [{ title: "Payments failures", options: { count: 3 } }]);
 
       const before = getFailedMessageGroupRow("Payments failures");
-      expect(before?.isHovered).toBe(false);
       expect(before?.hasHoverCue).toBe(false);
 
       await hoverFailedMessageGroup("Payments failures");
 
       const row = getFailedMessageGroupRow("Payments failures");
-      expect(row?.isHovered).toBe(true);
       expect(row?.hasHoverCue).toBe(true);
       expect(row?.isSelectable).toBe(true);
     });

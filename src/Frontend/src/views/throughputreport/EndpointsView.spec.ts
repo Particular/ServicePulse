@@ -11,6 +11,10 @@ import EndpointsView from "./EndpointsView.vue";
 import { serviceControlWithThroughput } from "@/views/throughputreport/serviceControlWithThroughput";
 import { setActivePinia } from "pinia";
 
+vi.mock("@/composables/isRouteSelected.ts", () => ({
+  default: vi.fn(() => true),
+}));
+
 describe("EndpointsView tests", () => {
   async function setup(transport: Transport) {
     const driver = makeDriverForTests();
@@ -27,10 +31,6 @@ describe("EndpointsView tests", () => {
 
     const driver = await setup(transport);
     await preSetup(driver);
-
-    vi.mock("@/composables/isRouteSelected.ts", () => ({
-      default: vi.fn(() => true),
-    }));
 
     const { debug } = render(EndpointsView, {
       global: {
@@ -64,7 +64,7 @@ describe("EndpointsView tests", () => {
   test("broker displays the two tabs", async () => {
     await renderComponent(Transport.AmazonSQS);
 
-    expect(screen.getByText(/Detected Broker Queues/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Detected Broker Queues/i)).toBeInTheDocument();
   });
 
   test("non broker displays only one tabs", async () => {

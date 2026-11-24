@@ -169,7 +169,16 @@ export const useLicenseDetailsStore = defineStore("LicenseDetailsStore", () => {
       const sortedEndpointSizes = sortedProducts.map((product, i) => new EndpointSize(product.product_code, i > 0 ? (sortedProducts[i - 1].monthly_throughput ?? 0) + 1 : 0, product.monthly_throughput));
       endpointSizes.value = sortedEndpointSizes;
       endpoints.value = data.endpoints.map(
-        (metaEp) => new Endpoint(metaEp.client_id, metaEp.name, metaEp.queues.map(toQueue), metaEp.classification, metaEp.amended, sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!, sortedEndpointSizes)
+        (metaEp) =>
+          new Endpoint(
+            metaEp.client_id,
+            metaEp.name,
+            metaEp.queues.map(toQueue),
+            metaEp.classification,
+            metaEp.amended,
+            sortedEndpointSizes.find((es) => es.name === metaEp.endpoint_size)!,
+            sortedEndpointSizes
+          )
       );
       infrastructureQueues.value = data.infrastructure_queues.map(toQueue);
       excludedQueues.value = data.excluded_queues.map(toQueue);

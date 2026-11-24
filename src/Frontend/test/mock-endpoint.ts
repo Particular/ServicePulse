@@ -1,4 +1,5 @@
-import { type DefaultBodyType, http, HttpResponse, type StrictRequest, type PathParams } from "msw";
+import type { DefaultBodyType, PathParams } from "msw";
+import { http, HttpResponse, type StrictRequest } from "msw/http";
 import type { SetupWorker } from "msw/browser";
 import type { SetupServer } from "msw/node";
 import type { MockEndpointDynamicOptions, MockEndpointOptions, Method } from "./driver";

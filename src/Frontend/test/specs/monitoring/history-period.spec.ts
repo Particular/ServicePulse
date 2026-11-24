@@ -90,27 +90,27 @@ describe("FEATURE: Endpoint history periods", () => {
 
       //Act & Assert
       await driver.goTo(`monitoring`);
-      expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
+      await waitFor(async () => expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]));
 
       await driver.setUp(precondition.hasEndpointWithMetricsPoints(2.96, 2.26, 2.1, 36, 147));
       await selectHistoryPeriod(5);
-      expect(await endpointSparklineValues("Endpoint1")).toEqual(["2.96", "2.26", "2.1", "36", "147"]);
+      await waitFor(async () => expect(await endpointSparklineValues("Endpoint1")).toEqual(["2.96", "2.26", "2.1", "36", "147"]));
 
       await driver.setUp(precondition.hasEndpointWithMetricsPoints(10, 6.98, 9.97, 63, 194));
       await selectHistoryPeriod(10);
-      expect(await endpointSparklineValues("Endpoint1")).toEqual(["10", "6.98", "9.97", "63", "194"]);
+      await waitFor(async () => expect(await endpointSparklineValues("Endpoint1")).toEqual(["10", "6.98", "9.97", "63", "194"]));
 
       await driver.setUp(precondition.hasEndpointWithMetricsPoints(3.65, 2.7, 2.84, 39, 152));
       await selectHistoryPeriod(15);
-      expect(await endpointSparklineValues("Endpoint1")).toEqual(["3.65", "2.7", "2.84", "39", "152"]);
+      await waitFor(async () => expect(await endpointSparklineValues("Endpoint1")).toEqual(["3.65", "2.7", "2.84", "39", "152"]));
 
       await driver.setUp(precondition.hasEndpointWithMetricsPoints(12, 7.87, 11.45, 68, 203));
       await selectHistoryPeriod(30);
-      expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "7.87", "11.45", "68", "203"]);
+      await waitFor(async () => expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "7.87", "11.45", "68", "203"]));
 
       await driver.setUp(precondition.hasEndpointWithMetricsPoints(13, 8.37, 11.61, 72, 206));
       await selectHistoryPeriod(60);
-      expect(await endpointSparklineValues("Endpoint1")).toEqual(["13", "8.37", "11.61", "72", "206"]);
+      await waitFor(async () => expect(await endpointSparklineValues("Endpoint1")).toEqual(["13", "8.37", "11.61", "72", "206"]));
     });
   });
   describe("RULE: Endpoint history period data should be displayed at the interval selected by the history period", () => {

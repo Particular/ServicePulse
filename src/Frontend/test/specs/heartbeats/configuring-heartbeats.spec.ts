@@ -14,7 +14,6 @@ import { getListedEndpointNames } from "./questions/getListedEndpointNames";
 import { getColumnSortDirection } from "./questions/getColumnSortDirection";
 import { sortEndpointsBy } from "./actions/sortEndpointsBy";
 import { waitFor } from "@testing-library/vue";
-import { flushPromises } from "@vue/test-utils";
 import { EndpointStatus } from "@/resources/Heartbeat";
 
 vi.mock("@vueuse/core", async (importOriginal) => {
@@ -93,9 +92,6 @@ describe("FEATURE: Heartbeats configuration", () => {
       await toggleHeartbeatMonitoring("TestEndpoint_1");
 
       await driver.goTo("heartbeats/unhealthy");
-      // Force all the initial pending remote calls on the page to resolve.
-      await flushPromises();
-
       const unhealthyEndpoint = await getHeartbeatEndpointRecord("TestEndpoint_1");
 
       expect(unhealthyEndpoint).toBeTruthy();
@@ -117,9 +113,6 @@ describe("FEATURE: Heartbeats configuration", () => {
       await toggleHeartbeatMonitoring("Healthy_UnmonitoredEndpoint");
 
       await driver.goTo("heartbeats/healthy");
-      // Force all the initial pending remote calls on the page to resolve.
-      await flushPromises();
-
       const healthyEndpoint = await getHeartbeatEndpointRecord("Healthy_UnmonitoredEndpoint");
 
       expect(healthyEndpoint).toBeTruthy();
@@ -141,9 +134,6 @@ describe("FEATURE: Heartbeats configuration", () => {
       await toggleHeartbeatMonitoring("Unhealthy_UnmonitoredEndpoint");
 
       await driver.goTo("heartbeats/unhealthy");
-      // Force all the initial pending remote calls on the page to resolve.
-      await flushPromises();
-
       const healthyEndpoint = await getHeartbeatEndpointRecord("Unhealthy_UnmonitoredEndpoint");
 
       expect(healthyEndpoint).toBeTruthy();

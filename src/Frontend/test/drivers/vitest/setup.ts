@@ -1,10 +1,11 @@
-import { afterAll, beforeAll, beforeEach, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 import { config } from "@vue/test-utils";
 import { mockServer } from "../../mock-server";
 import "@testing-library/jest-dom/vitest";
 import monitoringClient from "@/components/monitoring/monitoringClient";
 import serviceControlClient from "@/components/serviceControlClient";
 import VueTippy from "vue-tippy";
+import { settleRequestsAfterTest, trackRequestsInFlight } from "./requestsInFlight";
 
 function getBoundingClientRect(): DOMRect {
   const rect = {
@@ -46,6 +47,20 @@ export function disableMonitoring() {
   serviceControlClient.resetUrl();
 }
 
+trackRequestsInFlight();
+
+// jsdom navigates when an <a> without href is clicked; browsers don't: https://html.spec.whatwg.org/multipage/links.html#links-created-by-a-and-area-elements
+window.addEventListener(
+  "click",
+  (event) => {
+    const anchor = event.target instanceof Element ? event.target.closest("a") : null;
+    if (anchor && !anchor.hasAttribute("href")) {
+      event.preventDefault();
+    }
+  },
+  { capture: true }
+);
+
 beforeEach(() => {
   vi.stubGlobal("defaultConfig", defaultConfig);
   monitoringClient.resetUrl();
@@ -60,10 +75,14 @@ beforeAll(() => {
   Range.prototype.getClientRects = (): DOMRectList => new FakeDOMRectList();
 
   mockServer.listen({
-    onUnhandledRequest: (_, print) => {
-      print.warning();
+    onUnhandledFrame: ({ defaults }) => {
+      defaults.warn();
     },
   });
+});
+
+afterEach(async () => {
+  await settleRequestsAfterTest();
 });
 
 afterAll(() => {

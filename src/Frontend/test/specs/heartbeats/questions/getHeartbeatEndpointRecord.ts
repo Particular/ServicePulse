@@ -1,4 +1,4 @@
-import { screen, within, waitFor } from "@testing-library/vue";
+import { screen, within } from "@testing-library/vue";
 
 export type EndpointRecord = {
   name: string;
@@ -9,11 +9,7 @@ export type EndpointRecord = {
 };
 
 export async function getHeartbeatEndpointRecord(endpointName: string) {
-  const endpointRow = await waitFor(() => screen.queryByRole("row", { name: endpointName }));
-
-  if (!endpointRow) {
-    return null;
-  }
+  const endpointRow = await screen.findByRole("row", { name: endpointName });
   return createRecordFromRowElement(endpointRow);
 }
 
