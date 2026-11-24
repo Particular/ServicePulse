@@ -209,7 +209,7 @@ function toRow(instance: PlatformInstance, latestVersion: string, upgradeLink: s
   }
 
   if (instance.persistenceType) {
-    infoDetails.push(`Storage Type: ${instance.persistenceType}`);
+    infoDetails.push(`Storage type: ${instance.persistenceType}`);
   }
 
   return {
