@@ -7,6 +7,11 @@ import VueTippy from "vue-tippy";
 import { createPinia } from "pinia";
 import SimpleTypeahead from "vue3-simple-typeahead";
 
+const tippyOptions = {
+  // A modal dialog renders in the browser's top layer, above anything appended to body.
+  defaultProps: { appendTo: (reference: Element) => reference.closest("dialog") ?? document.body },
+};
+
 const toastOptions: PluginOptions = {
   position: POSITION.BOTTOM_RIGHT,
   timeout: 5000,
@@ -23,7 +28,7 @@ export function mount({ router }: { router: Router }) {
   });
 
   const app = createApp(AuthApp);
-  app.use(router).use(Toast, toastOptions).use(SimpleTypeahead).use(createPinia()).use(VueTippy);
+  app.use(router).use(Toast, toastOptions).use(SimpleTypeahead).use(createPinia()).use(VueTippy, tippyOptions);
   app.mount(`#app`);
 
   app.config.errorHandler = (err, instance) => {

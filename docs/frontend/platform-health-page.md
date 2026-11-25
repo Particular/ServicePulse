@@ -76,7 +76,7 @@ Current severity rules:
 - `none`
   - no availability or degradation issues
 
-When severity is `none` but at least one row has an upgrade cue, the nav shows the info/outdated-only state.
+When severity is `none` but at least one row has an upgrade cue, the nav shows the info/outdated-only state. The update status at the bottom of the side bar reports an upgrade cue regardless of severity.
 
 ## Shared Model Split
 
@@ -215,7 +215,7 @@ npx vitest run src/views/PlatformHealthView.spec.ts
 | `src/Frontend/src/resources/PlatformHealth.ts` | Page-specific response/row types |
 | `src/Frontend/test/mocks/platform-health-state.ts` | Runtime mock topology and custom-check controls |
 | `src/Frontend/src/components/platformhealth/PlatformHealthMenuItem.vue` | Navigation severity and tooltip behavior |
-| `src/Frontend/src/components/PageFooter.vue` | Aggregate platform update status in the footer |
+| `src/Frontend/src/components/PlatformVersionInfo.vue` | Aggregate platform update status at the bottom of the side bar |
 
 ## Troubleshooting
 

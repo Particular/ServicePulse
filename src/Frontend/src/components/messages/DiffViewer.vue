@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, useId, useTemplateRef, watch } from "vue";
 import DiffContent from "./DiffContent.vue";
 import DiffMaximizeIcon from "@/assets/diff-maximize.svg";
 import DiffCloseIcon from "@/assets/diff-close.svg";
@@ -31,17 +31,13 @@ const props = withDefaults(defineProps<Props>(), {
 // Component state for maximize functionality
 const showMaximizeModal = ref(false);
 const showMaximizeButton = ref(false);
+const maximizeDialog = useTemplateRef<HTMLDialogElement>("maximizeDialog");
+const maximizeTitleId = useId();
 
-// Handle maximize functionality
-const toggleMaximizeModal = () => {
-  showMaximizeModal.value = !showMaximizeModal.value;
-};
+watch(maximizeDialog, (dialog) => dialog?.showModal());
 
-// Handle ESC key to close modal
-const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === "Escape" && showMaximizeModal.value) {
-    showMaximizeModal.value = false;
-  }
+const openMaximizeModal = () => {
+  showMaximizeModal.value = true;
 };
 
 // Handle mouse enter/leave for showing maximize button
@@ -54,25 +50,13 @@ const onDiffMouseEnter = () => {
 const onDiffMouseLeave = () => {
   showMaximizeButton.value = false;
 };
-
-// Setup keyboard events
-onMounted(() => {
-  if (props.showMaximizeIcon) {
-    window.addEventListener("keydown", handleKeyDown);
-  }
-});
-
-// Clean up event listeners when component is destroyed
-onBeforeUnmount(() => {
-  window.removeEventListener("keydown", handleKeyDown);
-});
 </script>
 
 <template>
   <div class="diff-viewer" @mouseenter="onDiffMouseEnter" @mouseleave="onDiffMouseLeave">
     <div class="diff-wrapper">
       <!-- Maximize Button -->
-      <button v-if="showMaximizeIcon && showMaximizeButton" @click="toggleMaximizeModal" class="maximize-button" title="Maximize diff view">
+      <button v-if="showMaximizeIcon && showMaximizeButton" @click="openMaximizeModal" class="maximize-button" title="Maximize diff view">
         <img :src="DiffMaximizeIcon" alt="Maximize" width="14" height="14" />
       </button>
 
@@ -91,30 +75,28 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Maximize Modal with separate DiffContent instance -->
-    <div v-if="showMaximizeModal" class="maximize-modal">
-      <div class="maximize-modal-content">
-        <div class="maximize-modal-toolbar">
-          <span class="maximize-modal-title">{{ leftTitle }} vs {{ rightTitle }}</span>
-          <button @click="toggleMaximizeModal" class="maximize-modal-close" title="Close">
-            <img :src="DiffCloseIcon" alt="Close" width="16" height="16" />
-          </button>
-        </div>
-        <div class="maximize-modal-body">
-          <!-- Separate DiffContent instance for modal -->
-          <DiffContent
-            :old-value="oldValue"
-            :new-value="newValue"
-            :split-view="splitView"
-            :hide-line-numbers="hideLineNumbers"
-            :show-diff-only="showDiffOnly"
-            :extra-lines-surrounding-diff="extraLinesSurroundingDiff"
-            :left-title="leftTitle"
-            :right-title="rightTitle"
-            :compare-method="compareMethod"
-          />
-        </div>
+    <dialog v-if="showMaximizeModal" ref="maximizeDialog" class="maximize-modal" :aria-labelledby="maximizeTitleId" @close="showMaximizeModal = false">
+      <div class="maximize-modal-toolbar">
+        <span :id="maximizeTitleId" class="maximize-modal-title" tabindex="-1" autofocus>{{ leftTitle }} vs {{ rightTitle }}</span>
+        <button @click="maximizeDialog?.close()" class="maximize-modal-close" title="Close">
+          <img :src="DiffCloseIcon" alt="Close" width="16" height="16" />
+        </button>
       </div>
-    </div>
+      <div class="maximize-modal-body">
+        <!-- Separate DiffContent instance for modal -->
+        <DiffContent
+          :old-value="oldValue"
+          :new-value="newValue"
+          :split-view="splitView"
+          :hide-line-numbers="hideLineNumbers"
+          :show-diff-only="showDiffOnly"
+          :extra-lines-surrounding-diff="extraLinesSurroundingDiff"
+          :left-title="leftTitle"
+          :right-title="rightTitle"
+          :compare-method="compareMethod"
+        />
+      </div>
+    </dialog>
   </div>
 </template>
 
@@ -152,27 +134,26 @@ onBeforeUnmount(() => {
 
 /* Modal styles */
 .maximize-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.maximize-modal-content {
-  background-color: white;
   width: 95vw;
+  max-width: none;
   height: 90vh;
+  max-height: none;
+  padding: 0;
+  border: none;
   border-radius: 4px;
   overflow: hidden;
+  color: inherit;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.maximize-modal[open] {
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.maximize-modal::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .maximize-modal-toolbar {

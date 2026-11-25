@@ -12,13 +12,8 @@ const { disconnectedEndpointsCount } = storeToRefs(statsStore);
 
 <template>
   <RouterLink :to="routeLinks.monitoring.root">
-    <FAIcon :icon="faChartLine" title="Monitoring" />
-    <span class="navbar-label">Monitoring</span>
+    <FAIcon :icon="faChartLine" />
+    <span class="side-bar-label">Monitoring</span>
     <span v-if="disconnectedEndpointsCount > 0" class="badge badge-important">{{ disconnectedEndpointsCount }}</span>
   </RouterLink>
 </template>
-
-<style scoped>
-@import "@/assets/navbar.css";
-@import "@/assets/header-menu-item.css";
-</style>

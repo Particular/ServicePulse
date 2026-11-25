@@ -7,12 +7,7 @@ import { faEnvelopeOpen } from "@fortawesome/free-solid-svg-icons";
 
 <template>
   <RouterLink :to="routeLinks.messages.root">
-    <FAIcon :icon="faEnvelopeOpen" title="All Messages" />
-    <span class="navbar-label">All Messages</span>
+    <FAIcon :icon="faEnvelopeOpen" />
+    <span class="side-bar-label">All Messages</span>
   </RouterLink>
 </template>
-
-<style scoped>
-@import "@/assets/navbar.css";
-@import "@/assets/header-menu-item.css";
-</style>

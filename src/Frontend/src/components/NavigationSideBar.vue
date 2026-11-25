@@ -1,0 +1,555 @@
+<script setup lang="ts">
+import { computed, nextTick, ref, watch } from "vue";
+import { RouterLink, useRoute } from "vue-router";
+import { onClickOutside, useMediaQuery } from "@vueuse/core";
+import routeLinks from "@/router/routeLinks";
+import CustomChecksMenuItem from "@/components/customchecks/CustomChecksMenuItem.vue";
+import HeartbeatsMenuItem from "@/components/heartbeats/HeartbeatsMenuItem.vue";
+import ConfigurationMenuItem from "@/components/configuration/ConfigurationMenuItem.vue";
+import FailedMessagesMenuItem from "@/components/failedmessages/FailedMessagesMenuItem.vue";
+import MonitoringMenuItem from "@/components/monitoring/MonitoringMenuItem.vue";
+import EventsMenuItem from "@/components/events/EventsMenuItem.vue";
+import DashboardMenuItem from "@/components/dashboard/DashboardMenuItem.vue";
+import FeedbackButton from "@/components/FeedbackButton.vue";
+import ThroughputMenuItem from "@/views/throughputreport/ThroughputMenuItem.vue";
+import AuditMenuItem from "./audit/AuditMenuItem.vue";
+import PlatformHealthMenuItem from "@/components/platformhealth/PlatformHealthMenuItem.vue";
+import PlatformVersionInfo from "@/components/PlatformVersionInfo.vue";
+import monitoringClient from "@/components/monitoring/monitoringClient";
+import UserProfileMenuItem from "@/components/UserProfileMenuItem.vue";
+import FAIcon from "@/components/FAIcon.vue";
+import { faAnglesLeft, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { useAuthStore } from "@/stores/AuthStore";
+import { useAllowedRoutes } from "@/composables/useAllowedRoutes";
+import { useSideBarCollapsed } from "@/composables/useSideBarCollapsed";
+import { ApiRoutes } from "@/composables/apiRoutes";
+import { storeToRefs } from "pinia";
+
+const isMonitoringEnabled = monitoringClient.isMonitoringEnabled;
+
+const authStore = useAuthStore();
+const { authEnabled, isAuthenticated } = storeToRefs(authStore);
+
+const { canCall, ready } = useAllowedRoutes();
+const { collapsed, toggleCollapsed } = useSideBarCollapsed();
+
+// Each item gates on the specific route ServiceControl enforces for that area.
+// Gate-on-ready: render nothing until permissions are known, so items never appear and
+// then disappear. canCall() fails open, so auth-disabled / failed-load shows everything.
+// prettier-ignore
+const menuItems = computed(() => {
+  if (!ready.value) return [];
+  return [
+    DashboardMenuItem,
+    ...(canCall(ApiRoutes.viewHeartbeats) ? [HeartbeatsMenuItem] : []),
+    ...(isMonitoringEnabled && canCall(ApiRoutes.viewMonitoredEndpoints) ? [MonitoringMenuItem] : []),
+    ...(canCall(ApiRoutes.viewAuditMessages) ? [AuditMenuItem] : []),
+    ...(canCall(ApiRoutes.viewFailedMessages) ? [FailedMessagesMenuItem] : []),
+    ...(canCall(ApiRoutes.viewCustomChecks) ? [CustomChecksMenuItem] : []),
+    ...(canCall(ApiRoutes.viewEventLog) ? [EventsMenuItem] : []),
+    PlatformHealthMenuItem,
+    ...(canCall(ApiRoutes.viewThroughput) ? [ThroughputMenuItem] : []),
+    ConfigurationMenuItem,
+  ];
+});
+
+// Views size themselves for at least 930px of content, so on medium screens the side bar
+// stays a rail and expands over the content instead of pushing it.
+const isMedium = useMediaQuery("(min-width: 768px) and (max-width: 1279px)");
+const overlayOpen = ref(false);
+const railOnly = computed(() => (isMedium.value ? !overlayOpen.value : collapsed.value));
+const prefersReducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+
+function morphSideBar(update: () => void) {
+  if (prefersReducedMotion.value || !("startViewTransition" in document)) {
+    update();
+    return;
+  }
+  document.startViewTransition(async () => {
+    update();
+    await nextTick();
+  });
+}
+
+function toggleRail() {
+  morphSideBar(() => {
+    if (isMedium.value) {
+      overlayOpen.value = !overlayOpen.value;
+    } else {
+      toggleCollapsed();
+    }
+  });
+}
+
+function closeOverlay() {
+  if (overlayOpen.value) morphSideBar(() => (overlayOpen.value = false));
+}
+
+// The collapsed rail shows icons only, so each item names itself on hover and focus.
+const labelTooltip = {
+  content: (reference: Element) => reference.querySelector(".side-bar-label")?.textContent?.trim() ?? "",
+  placement: "right",
+  trigger: "mouseenter focusin",
+  onShow: () => (railOnly.value ? undefined : false),
+};
+
+const drawerOpen = ref(false);
+const drawerButton = ref<HTMLButtonElement>();
+const sideBar = ref<HTMLElement>();
+
+async function openDrawer() {
+  drawerOpen.value = true;
+  await nextTick();
+  sideBar.value?.querySelector<HTMLElement>("a, button")?.focus();
+}
+
+function closeOverlays() {
+  closeOverlay();
+  if (!drawerOpen.value) return;
+  drawerOpen.value = false;
+  drawerButton.value?.focus();
+}
+
+onClickOutside(sideBar, closeOverlay);
+
+const route = useRoute();
+watch(
+  () => route.fullPath,
+  () => {
+    drawerOpen.value = false;
+    overlayOpen.value = false;
+  }
+);
+</script>
+
+<template>
+  <header class="mobile-bar">
+    <button ref="drawerButton" type="button" class="drawer-button" aria-controls="side-bar" :aria-expanded="drawerOpen" @click="openDrawer">
+      <FAIcon :icon="faBars" />
+      <span class="visually-hidden">Open navigation</span>
+    </button>
+    <RouterLink class="brand" :to="routeLinks.dashboard">
+      <img alt="ServicePulse" src="@/assets/logo.svg" />
+    </RouterLink>
+  </header>
+
+  <div v-if="drawerOpen" class="drawer-backdrop" @click="closeOverlays"></div>
+  <div class="side-bar-spacer"></div>
+
+  <aside id="side-bar" ref="sideBar" class="side-bar" :class="{ collapsed: railOnly, open: drawerOpen, overlay: isMedium && overlayOpen }" @keydown.esc="closeOverlays">
+    <div class="side-bar-top">
+      <RouterLink class="brand" :to="routeLinks.dashboard">
+        <img alt="ServicePulse" src="@/assets/logo.svg" />
+      </RouterLink>
+      <button type="button" class="collapse-button" :aria-expanded="!railOnly" aria-controls="side-bar" v-tippy="railOnly ? 'Expand navigation' : 'Collapse navigation'" @click="toggleRail">
+        <FAIcon :icon="faAnglesLeft" />
+        <span class="visually-hidden">{{ railOnly ? "Expand navigation" : "Collapse navigation" }}</span>
+      </button>
+      <button type="button" class="drawer-close" aria-controls="side-bar" @click="closeOverlays">
+        <FAIcon :icon="faXmark" />
+        <span class="visually-hidden">Close navigation</span>
+      </button>
+    </div>
+
+    <nav aria-label="Main">
+      <ul class="nav-items">
+        <li v-for="menuItem in menuItems" :key="menuItem?.name" v-tippy="labelTooltip">
+          <component :is="menuItem" />
+        </li>
+      </ul>
+    </nav>
+
+    <div class="side-bar-bottom">
+      <ul class="nav-items">
+        <li v-if="authEnabled && isAuthenticated" v-tippy="labelTooltip">
+          <UserProfileMenuItem />
+        </li>
+        <li v-tippy="labelTooltip">
+          <FeedbackButton />
+        </li>
+      </ul>
+      <PlatformVersionInfo :collapsed="railOnly" />
+    </div>
+  </aside>
+</template>
+
+<style scoped>
+.side-bar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: var(--sp-side-bar-width);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  background-color: var(--sp-chrome);
+  color: var(--sp-chrome-ink);
+  view-transition-name: side-bar;
+}
+
+/* One layer above the isolated content area. Within it, the drawer covers the backdrop and the backdrop covers the top bar by DOM order. */
+.mobile-bar,
+.drawer-backdrop,
+.side-bar {
+  z-index: 1;
+}
+
+.side-bar.collapsed {
+  width: var(--sp-side-bar-collapsed-width);
+}
+
+.side-bar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 60px;
+  padding: 0 8px 0 16px;
+  flex-shrink: 0;
+}
+
+.collapsed .side-bar-top {
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 0 4px;
+}
+
+.brand img {
+  width: 150px;
+}
+
+.collapsed .brand {
+  width: 42px;
+  overflow: hidden;
+}
+
+.collapsed .brand img {
+  width: 160px;
+}
+
+/* Only the item list scrolls, so the user menu at the bottom can open over it without being clipped. */
+nav {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.nav-items {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.nav-items :deep(a) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  min-height: 40px;
+  padding: 8px 20px;
+  border-left: 4px solid transparent;
+  color: var(--sp-chrome-ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-items :deep(a:hover) {
+  background-color: var(--sp-chrome-hover);
+  color: var(--sp-chrome-ink-active);
+}
+
+.nav-items :deep(a:focus-visible),
+.side-bar button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -2px;
+}
+
+.nav-items :deep(a.router-link-active) {
+  border-left-color: var(--sp-blue);
+  background-color: var(--sp-chrome-hover);
+  color: var(--sp-chrome-ink-active);
+}
+
+.nav-items :deep(svg) {
+  width: 16px;
+  flex-shrink: 0;
+}
+
+.nav-items :deep(.side-bar-label) {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.collapsed .nav-items :deep(a) {
+  padding: 8px 0 8px 20px;
+}
+
+/* Visually hidden, so the label stays the link's accessible name. */
+.collapsed .nav-items :deep(.side-bar-label) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.collapsed .nav-items :deep(.badge) {
+  position: absolute;
+  top: 2px;
+  left: 30px;
+  padding: 2px 5px;
+  font-size: 10px;
+}
+
+.collapsed .nav-items :deep(.fa-triangle-exclamation) {
+  position: absolute;
+  top: 6px;
+  left: 32px;
+  width: 12px;
+}
+
+.side-bar-bottom {
+  border-top: 1px solid var(--sp-chrome-divider);
+  flex-shrink: 0;
+}
+
+.side-bar button {
+  background: none;
+  border: none;
+  color: var(--sp-chrome-ink);
+}
+
+.side-bar button:hover {
+  color: var(--sp-chrome-ink-active);
+}
+
+.collapse-button {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--sp-radius-sm);
+}
+
+.side-bar .collapse-button:hover {
+  background-color: var(--sp-chrome-hover);
+}
+
+.collapsed .collapse-button :deep(svg) {
+  rotate: 180deg;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .collapse-button :deep(svg) {
+    transition: rotate var(--sp-motion-duration) var(--sp-motion-ease);
+  }
+}
+
+/* Parts that change place between the rail and the full side bar morph on their own. See docs/frontend/navigation-shell.md. */
+.side-bar-top .brand {
+  view-transition-name: side-bar-logo;
+}
+
+.collapse-button {
+  view-transition-name: side-bar-toggle;
+}
+
+nav {
+  view-transition-name: side-bar-nav;
+}
+
+.side-bar-bottom {
+  view-transition-name: side-bar-bottom;
+}
+
+.side-bar-bottom :deep(.update-status) {
+  view-transition-name: side-bar-update-status;
+}
+
+.nav-items :deep(.badge),
+.nav-items :deep(.fa-triangle-exclamation) {
+  view-transition-name: match-element;
+}
+
+.mobile-bar,
+.drawer-close,
+.drawer-backdrop,
+.side-bar-spacer {
+  display: none;
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .side-bar-spacer {
+    display: block;
+    flex-shrink: 0;
+    width: var(--sp-side-bar-collapsed-width);
+  }
+
+  .side-bar {
+    position: fixed;
+    left: 0;
+  }
+
+  .side-bar.overlay {
+    box-shadow: 4px 0 16px rgb(0 0 0 / 30%);
+  }
+}
+
+@media (max-width: 767px) {
+  .mobile-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 56px;
+    padding: 0 8px;
+    position: sticky;
+    top: 0;
+    background-color: var(--sp-chrome);
+  }
+
+  .mobile-bar .brand img {
+    width: 140px;
+  }
+
+  .drawer-button {
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    color: #fff;
+  }
+
+  .drawer-button:focus-visible {
+    outline: 2px solid #fff;
+  }
+
+  .side-bar,
+  .side-bar.collapsed {
+    position: fixed;
+    left: 0;
+    width: min(var(--sp-side-bar-width), 85vw);
+    transform: translateX(-100%);
+    visibility: hidden;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition:
+        transform var(--sp-motion-duration) var(--sp-motion-ease),
+        visibility var(--sp-motion-duration);
+    }
+  }
+
+  .side-bar.open {
+    transform: none;
+    visibility: visible;
+
+    /* Visible at once on open, so focus can move into the drawer before the slide finishes. */
+    @media (prefers-reduced-motion: no-preference) {
+      transition:
+        transform var(--sp-motion-duration) var(--sp-motion-ease),
+        visibility 0s;
+    }
+  }
+
+  /* The drawer always shows labels; collapsing applies to wider screens only. */
+  .side-bar.collapsed .nav-items :deep(.side-bar-label) {
+    position: static;
+    width: auto;
+    height: auto;
+    clip: auto;
+  }
+
+  .side-bar.collapsed .nav-items :deep(a) {
+    padding: 8px 20px;
+  }
+
+  .side-bar.collapsed .side-bar-top {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 8px 0 16px;
+  }
+
+  .side-bar.collapsed .brand {
+    width: auto;
+  }
+
+  .side-bar.collapsed .brand img {
+    width: 150px;
+  }
+
+  .drawer-close {
+    display: block;
+    width: 44px;
+    height: 44px;
+  }
+
+  .collapse-button {
+    display: none;
+  }
+
+  .drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgb(0 0 0 / 50%);
+  }
+}
+</style>
+
+<style>
+::view-transition-group(*) {
+  animation-duration: var(--sp-motion-duration);
+  animation-timing-function: var(--sp-motion-ease);
+}
+
+::view-transition-group(side-bar),
+::view-transition-group(main-content),
+::view-transition-group(side-bar-logo),
+::view-transition-group(side-bar-nav),
+::view-transition-group(side-bar-bottom) {
+  overflow: clip;
+}
+
+::view-transition-group(side-bar) {
+  background-color: var(--sp-chrome);
+}
+
+/* The panel, the content, and the toggle show only their new state. Fading between the content's two centred layouts doubles the text, and the toggle's icon rotates live in its new state. */
+::view-transition-old(side-bar),
+::view-transition-old(main-content),
+::view-transition-old(side-bar-toggle) {
+  display: none;
+}
+
+::view-transition-new(side-bar),
+::view-transition-new(main-content),
+::view-transition-new(side-bar-toggle) {
+  animation: none;
+}
+
+/* These snapshots keep their own size, so the moving edge reveals or clips them instead of stretching them. */
+::view-transition-new(side-bar),
+::view-transition-new(main-content),
+::view-transition-old(side-bar-nav),
+::view-transition-new(side-bar-nav) {
+  height: 100%;
+  object-fit: none;
+  object-position: left top;
+}
+
+::view-transition-old(side-bar-bottom),
+::view-transition-new(side-bar-bottom) {
+  height: 100%;
+  object-fit: none;
+  object-position: left bottom;
+}
+
+/* Both logo snapshots scale with the group's height, so the mark keeps its proportions while the wordmark is clipped. */
+::view-transition-old(side-bar-logo),
+::view-transition-new(side-bar-logo) {
+  width: auto;
+  height: 100%;
+}
+</style>

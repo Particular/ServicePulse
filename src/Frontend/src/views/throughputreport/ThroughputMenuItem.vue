@@ -14,14 +14,9 @@ const { endpoints, validId, error: licenseDetailsError } = storeToRefs(licenseDe
 
 <template>
   <RouterLink :to="routeLinks.throughput.root">
-    <FAIcon :icon="faFileLines" title="Usage" />
-    <span class="navbar-label">Usage</span>
+    <FAIcon :icon="faFileLines" />
+    <span class="side-bar-label">Usage</span>
     <ExclamationMark v-if="licenseDetailsError || !validId" :type="WarningLevel.Danger" />
     <ExclamationMark v-else-if="endpoints.some((endpoint) => !endpoint.matchesLicensedSize)" :type="WarningLevel.Warning" />
   </RouterLink>
 </template>
-
-<style scoped>
-@import "@/assets/navbar.css";
-@import "@/assets/header-menu-item.css";
-</style>
