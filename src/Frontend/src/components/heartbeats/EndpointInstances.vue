@@ -79,7 +79,7 @@ async function proceedWarningDialog() {
     await store.toggleEndpointMonitor(
       filteredValidInstances.value.filter((instance) => (dialogWarningOperation.value === Operation.Unmute && !instance.monitor_heartbeat) || (dialogWarningOperation.value === Operation.Mute && instance.monitor_heartbeat))
     );
-    useShowToast(TYPE.SUCCESS, `All endpoint instances ${dialogWarningOperation.value}`, "", false, { timeout: 1000 });
+    useShowToast(TYPE.SUCCESS, `All endpoint instances ${dialogWarningOperation.value === Operation.Mute ? "muted" : "unmuted"}`, "", false, { timeout: 1000 });
   } catch {
     useShowToast(TYPE.ERROR, "Save failed", "", false, { timeout: 3000 });
   }
@@ -105,9 +105,10 @@ async function deleteAllInstances() {
 }
 
 async function toggleAlerts(instance: EndpointsView) {
+  const muting = instance.monitor_heartbeat;
   try {
     await store.toggleEndpointMonitor([instance]);
-    useShowToast(TYPE.SUCCESS, `Endpoint instance ${!instance.monitor_heartbeat ? "muted" : "unmuted"}`, "", false, { timeout: 1000 });
+    useShowToast(TYPE.SUCCESS, `Endpoint instance ${muting ? "muted" : "unmuted"}`, "", false, { timeout: 1000 });
   } catch {
     useShowToast(TYPE.ERROR, "Save failed", "", false, { timeout: 3000 });
   }
