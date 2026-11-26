@@ -13,8 +13,10 @@ import { getHeartbeatFilterValue } from "./questions/getHeartbeatFilterValue";
 import { getListedEndpointNames } from "./questions/getListedEndpointNames";
 import { getColumnSortDirection } from "./questions/getColumnSortDirection";
 import { sortEndpointsBy } from "./actions/sortEndpointsBy";
-import { waitFor } from "@testing-library/vue";
+import { screen, waitFor } from "@testing-library/vue";
+import UserEvent from "@testing-library/user-event";
 import { EndpointStatus } from "@/resources/Heartbeat";
+import { isNotificationVisible } from "../configuration/questions/notifications";
 
 vi.mock("@vueuse/core", async (importOriginal) => {
   const originalModule = await importOriginal<typeof import("@vueuse/core")>();
@@ -138,6 +140,37 @@ describe("FEATURE: Heartbeats configuration", () => {
 
       expect(healthyEndpoint).toBeTruthy();
       expect(healthyEndpoint?.instancesMuted).toBe(0);
+    });
+
+    test("EXAMPLE: Muting and then unmuting an instance shows a toast that matches each action", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.HasHealthyAndUnHealthyEndpoints(1, 1));
+      await driver.goTo("heartbeats/instances/TestEndpoint_1");
+
+      await toggleHeartbeatMonitoring("TestEndpoint_1");
+
+      await waitFor(() => expect(isNotificationVisible(/^endpoint instance muted$/i)).toBe(true));
+      expect(isNotificationVisible(/^endpoint instance unmuted$/i)).toBe(false);
+
+      await toggleHeartbeatMonitoring("TestEndpoint_1");
+
+      await waitFor(() => expect(isNotificationVisible(/^endpoint instance unmuted$/i)).toBe(true));
+    });
+
+    test("EXAMPLE: Muting and then unmuting all instances shows a toast that says muted and then unmuted", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.HasHealthyAndUnHealthyEndpoints(1, 1));
+      await driver.goTo("heartbeats/instances/TestEndpoint_1");
+
+      await UserEvent.click(await screen.findByRole("button", { name: /Mute Alerts on All/ }));
+      await UserEvent.click(await screen.findByRole("button", { name: "Yes" }));
+
+      await waitFor(() => expect(isNotificationVisible(/^all endpoint instances muted$/i)).toBe(true));
+
+      await UserEvent.click(await screen.findByRole("button", { name: /Unmute Alerts on All/ }));
+      await UserEvent.click(await screen.findByRole("button", { name: "Yes" }));
+
+      await waitFor(() => expect(isNotificationVisible(/^all endpoint instances unmuted$/i)).toBe(true));
     });
   });
 
