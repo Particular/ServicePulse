@@ -180,6 +180,40 @@ describe("Feature: 3 Visual Representation of Saga Timeline", () => {
   });
 });
 
+describe("Feature: Saga state that is not a JSON object", () => {
+  describe("Rule: Render saga updates whose state is valid JSON but not an object.", () => {
+    test("EXAMPLE: A saga whose state is serialized as a JSON string", () => {
+      const messageStore = {} as MessageStore;
+      messageStore.state = {} as MessageStore["state"];
+      messageStore.state.data = {} as MessageStore["state"]["data"];
+      messageStore.state.data.invoked_saga = {
+        has_saga: true,
+        saga_id: "123",
+        saga_type: "ServiceControl.SmokeTest.AuditingSaga",
+      };
+
+      const firstChange = new Date("2025-03-28T03:04:05.000Z");
+      const secondChange = new Date("2025-03-28T03:04:06.000Z");
+      const sagaHistory: SagaHistory = {
+        ...sampleSagaHistory,
+        changes: [
+          { ...sampleSagaHistory.changes[0], start_time: secondChange, finish_time: secondChange, status: "updated", state_after_change: '"second state"' },
+          { ...sampleSagaHistory.changes[1], start_time: firstChange, finish_time: firstChange, status: "new", state_after_change: '"first state"' },
+        ],
+      };
+
+      const componentDriver = rendercomponent({
+        initialState: {
+          MessageStore: messageStore,
+          SagaDiagramStore: { sagaHistory },
+        },
+      });
+
+      componentDriver.verify.thereAreTheFollowingSagaChangesInThisOrder([firstChange, secondChange]);
+    });
+  });
+});
+
 function rendercomponent({ initialState = {} }: { initialState?: { MessageStore?: MessageStore; SagaDiagramStore?: { sagaHistory: SagaHistory } } }): componentDSL {
   const router = makeRouter();
 

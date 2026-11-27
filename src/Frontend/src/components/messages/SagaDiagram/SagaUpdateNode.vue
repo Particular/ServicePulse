@@ -74,12 +74,17 @@ const formatJsonValue = (value: unknown): string => {
 };
 
 // Process JSON state and remove standard properties
-const processState = (state: string | undefined): object => {
+const processState = (state: string | undefined): unknown => {
   if (!state) return {};
 
   let stateObj: Record<string, unknown>;
   try {
     const parsedState = parse(state);
+
+    // Saga data with a custom converter can serialize to a JSON primitive, which has no keys to filter
+    if (typeof parsedState !== "object" || parsedState === null) {
+      return parsedState;
+    }
 
     stateObj = parsedState as Record<string, unknown>;
   } catch (e) {
